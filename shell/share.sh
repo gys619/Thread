@@ -1,4 +1,4 @@
-#!/usr/bin/env bashconfig=$dir_root/config
+#!/usr/bin/env bash
 
 ##目录
 config=$dir_root/config
