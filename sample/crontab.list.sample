@@ -1,5 +1,5 @@
 # 更新
-42 * * * * bash /$dir_root/shell/update.sh >> $dir_root/log/update.log 2>&1
+42 * * * * bash /$dir_root/shell/update.sh >> $dir_root/logs/update.log 2>&1
 
 # 运行
-8 5 * * * bash run.sh >> $dir_root/log/run.log 2>&1
+8 5 * * * bash run.sh >> $dir_root/logs/run.log 2>&1
