@@ -23,7 +23,6 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     && ln -sf ${dir_root}/shell/run.sh /usr/local/bin/run \
     && ln -sf ${dir_root}/shell/push.sh /usr/local/bin/push \
     && ln -sf ${dir_root}/shell/update.sh /usr/local/bin/update \
-    && ln -sf ${dir_root}/shell/share.sh /usr/local/bin/share \
     && ln -sf ${dir_root}/shell/upcron.sh /usr/local/bin/upcron \
     && chmod -R 777 ${dir_root}
 ENTRYPOINT ["./docker/docker-entrypoint.sh"]

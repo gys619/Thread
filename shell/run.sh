@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
 
-# 加权
-chmod -R 777 $dir_root
-
 ## 导入通用变量与函数
-shell=/$dir_root/shell
-. $shell/share.sh
+shell=$dir_root/shell
+config=$dir_root/config
+. $shell/push.sh
 . $config/config"$1".sh
 
 ##运行脚本

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 #导入变量
-shell=/$dir_root/shell
-. $shell/share.sh
+config=$dir_root/config
+ListCron=$config/crontab.list
 
 #更新cron
 crontab ${ListCron}
