@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-config=$dir_root/config
-. file_config=$config/config.sh
-
 echo -e "======================1. 检测配置文件========================\n"
 if [ -s ${dir_root}/config/crontab.list ]
 then
