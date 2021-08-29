@@ -22,8 +22,8 @@ function Git_log {
     echo "未设置自定义提交内容，默认拉取主仓库更新内容"
     mkdir -p $tongbu/log
     git log --pretty=format:"%s %cr" > $tongbu/log/diy.log
-    cp -rf $tongbu/log/diy.log $dir_log/diy.log
-    cd $dir_log
+    cp -rf $tongbu/log/diy.log $logs
+    cd $logs
     diy_commit=`head -1 diy.log`
     echo "拉取成功"
   else
