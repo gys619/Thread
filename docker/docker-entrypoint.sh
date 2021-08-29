@@ -21,9 +21,15 @@ if [ ! -s ${dir_root}/config/config.sh ]; then
   echo
 fi
 
-if [ ! -d "${dir_root}/log/" ]; then
+if [ ! -d "${dir_root}/logs/" ]; then
   echo -e "检测到log文件夹不存在，创建文件夹...\n"
-  mkdir -p ${dir_root}/log
+  mkdir -p ${dir_root}/logs
+  echo
+fi
+
+if [ ! -d "${dir_root}/diy/" ]; then
+  echo -e "检测到diy文件夹不存在，创建文件夹...\n"
+  mkdir -p ${dir_root}/diy
   echo
 fi
 
