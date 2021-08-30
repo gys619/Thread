@@ -78,8 +78,9 @@ function Count_diy_party_warehouse {
 
 #合并仓库(网络仓库)
 function Change_diy_party_warehouse {
-  j=${diySum}
-  while [[ $j -ge 1 ]]; do
+  j=1
+  h=${diySum}
+  while [[ $j -le $h ]]; do
     Tmp_warehouse=diy_party_warehouse$j
     Tmp_warehouse_branch=diy_party_warehouse_branch$j
     Tmp_diy_feihebing=diy_feihebing$j
@@ -136,7 +137,7 @@ function Change_diy_party_warehouse {
         rm -rf $tongbu/$pint_diy_feihebing
       fi
     fi
-    let j--
+    let j++
   done
 }
 
