@@ -8,7 +8,17 @@ function Git_PullShell {
   git reset --hard origin/master
 }
 
+function Update_Config {
+  if [ $? = 0 ]; then
+    echo -e "更新config.sh.sample\n"
+    cp -rf ${dir_root}/sample/config.sh.sample ${dir_root}/config/config.sh.sample
+  else
+    echo -e "更新shell失败了"
+  fi
+}
+
 echo "开始运行"
 Git_PullShell
+Update_Config
 echo "运行结束，退出"
 exit
