@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source $config/config"$1".sh
+
 #创建文件夹
 function Mkdir_folder {
   rm -rf $tongbu
@@ -108,8 +110,8 @@ function Change_diy_party_warehouse {
           sleep 3s
         else
           echo "您已选择跳过同名文件"
-          cp -n $tongbu/diy/* $hebing
-          cp -n $tongbu/diy/. $hebing
+          yes n | cp-i $tongbu/diy/* $hebing
+          yes n | cp-i $tongbu/diy/. $hebing
           sleep 3s
         fi
         rm -rf $tongbu/diy

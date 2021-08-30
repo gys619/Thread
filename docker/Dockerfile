@@ -17,6 +17,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
                              tzdata \
                              tar \
                              jq \
+                             vim \
     && rm -rf /var/cache/apk/* \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && git clone -b ${PUSH_BRANCH} ${PUSH_URL} ${dir_root} \
