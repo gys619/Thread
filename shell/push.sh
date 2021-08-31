@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source $config/config"$1".sh
+logs=$dir_root/logs
 
 #创建文件夹
 function Mkdir_folder {
@@ -24,7 +25,7 @@ function Git_log {
     echo "未设置自定义提交内容，默认拉取主仓库更新内容"
     mkdir -p $tongbu/log
     git log --pretty=format:"%s %cr" > $tongbu/log/diy.log
-    cp -rf $tongbu/log/diy.log $logs
+    cp $tongbu/log/diy.log $logs/diy.log
     cd $logs
     diy_commit=`head -1 diy.log`
     echo "拉取成功"
