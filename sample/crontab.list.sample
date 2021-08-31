@@ -1,8 +1,8 @@
 # 更新shell脚本
-42 * * * * bash update.sh >> $dir_root/logs/update.log 2>&1
+42 * * * * bash $dir_root/update.sh >> $dir_root/logs/update.log 2>&1
 
 # 设定自动更新cron的间隔
-10 * * * * bash cron.sh >> $dir_root/logs/upcron.log 2>&1
+10 * * * * bash $dir_root/upcron.sh >> $dir_root/logs/upcron.log 2>&1
 
 # 运行（run.sh、run.sh1对应config、config1）
-8 5 * * * bash run.sh >> $dir_root/logs/run.log 2>&1
+8 5 * * * bash $dir_root/run.sh >> $dir_root/logs/run.log 2>&1
