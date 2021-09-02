@@ -53,7 +53,7 @@ function Initialization {
 function Pull_diy_Third_party_warehouse {
   cd $tongbu
   echo "正在克隆第三方仓库"
-  git clone -b ${github_proxy_url}$diy_Third_party_warehouse_branch $diy_Third_party_warehouse_url $hebing
+  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $hebing
   if [ $? = 0 ]; then
       echo "克隆第三方仓库成功"
       cd $hebing
@@ -99,7 +99,7 @@ function Change_diy_party_warehouse {
       echo "您已选择将所有文件合并到根目录，开始执行"
       sleep 3s
       mkdir -p $tongbu/diy
-      git clone -b ${github_proxy_url}$pint_branch $pint_warehouse $tongbu/diy
+      git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $tongbu/diy
       if [ $? = 0 ]; then
         echo "克隆$j号仓库成功，开始合并$j号仓库"
         sleep 3s
@@ -126,7 +126,7 @@ function Change_diy_party_warehouse {
       echo "您已选择将文件夹合并到根目录，开始执行"
       sleep 3s
       mkdir -p $tongbu/$pint_diy_feihebing
-      git clone -b ${github_proxy_url}$pint_branch $pint_warehouse $tongbu/$pint_diy_feihebing
+      git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $tongbu/$pint_diy_feihebing
       if [ $? = 0 ]; then
         echo "克隆$j号仓库成功，开始合并$j号仓库"
         cd $tongbu/$pint_diy_feihebing
