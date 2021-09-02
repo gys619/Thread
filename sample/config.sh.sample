@@ -25,7 +25,7 @@ diy_feihebing2="ninja"
 diy_user_name="kangwenhang"
 diy_user_email="kangwenhang@hotmail.com"
 github_api="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-#提交名称及地址（commit不填写默认拉取主第三方库的更新日志）
+#提交名称及地址（commit不填写默认拉取主第三方库的更新日志，diy_url地址【不带https://】）
 diy_commit="提交测试"
 diy_url="github.com/kangwenhang/baibai.git"
 diy_branch="master"
