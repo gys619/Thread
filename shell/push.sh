@@ -146,18 +146,23 @@ function Change_diy_party_warehouse {
 #合并仓库(本地仓库)
 function Local_Change_diy_party_warehouse {
   echo "开始合并本地文件，目标文件夹$dir_root/diy"
-  echo "识别为config$1 diy文件夹"
+  echo "识别为diy文件夹config$1 "
   if [ ! -d "$dir_root/diy/config$1" ];then
     echo "文件夹不存在,创建config$1文件夹"
     mkdir $dir_root/diy/config$1
-    cp -rf $dir_root/diy/config$1/* $hebing
-    cp -rf $dir_root/diy/config$1/. $hebing
-    echo "合并完成"
+    echo "文件夹创建完成，请自行导入文件"
   else
-    echo "文件夹已经存在,进行下一步"
+    cd $dir_root/diy/config$1
+    count=`ls $*|wc -w`
+    if [ "$count" > "0" ];
+    then
+    echo "文件夹已经存在,且存在文件，进行下一步"
     cp -rf $dir_root/diy/config$1/* $hebing
     cp -rf $dir_root/diy/config$1/. $hebing
     echo "合并完成"
+    else
+    echo "文件夹为空文件夹，跳过合并"
+    fi
   fi
 }
 
