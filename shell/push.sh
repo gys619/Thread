@@ -142,7 +142,13 @@ function Change_diy_party_warehouse {
   done
 }
 
-#合并仓库(本地仓库，正在开发)
+#合并仓库(本地仓库)
+function Local_Change_diy_party_warehouse {
+  echo "开始合并本地文件，目标文件夹$dir_root/diy"
+  cp -rf $dir_root/diy/* $hebing
+  cp -rf $dir_root/diy/. $hebing
+  echo "合并完成"
+}
 
 #替换文件内容(正在开发)
 
@@ -173,6 +179,7 @@ Initialization
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
+Local_Change_diy_party_warehouse
 Push_github
 echo "运行结束，退出"
 exit
