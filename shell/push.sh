@@ -52,6 +52,7 @@ function Initialization {
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
   cd $tongbu
+  git config --global http.version HTTP/1.1
   echo "正在克隆第三方仓库"
   git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $hebing
   if [ $? = 0 ]; then
