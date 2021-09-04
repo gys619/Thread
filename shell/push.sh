@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-
-source $config/config"$1".sh
+config_use=config"$1"
+source $config/$config_use.sh
 logs=$dir_root/logs
+diy_config=$dir_root/diy/$config_use
 
 #创建文件夹
 function Mkdir_folder {
@@ -39,12 +40,12 @@ function Initialization {
   if [ "$diy_folder" = "" ]; then
     echo "未设定临时文件夹，请自行设定，此次由系统自动创建"
     diy_folder=user_1
-    tongbu=/$diy_folder
+    tongbu=$dir_root/$diy_folder
     echo "创建完成，开始执行初始化"
     Mkdir_folder
   else
     echo "开始执行初始化"
-    tongbu=/$diy_folder
+    tongbu=$dir_root/$diy_folder
     Mkdir_folder
   fi
 }
@@ -146,22 +147,21 @@ function Change_diy_party_warehouse {
 #合并仓库(本地仓库)
 function Local_Change_diy_party_warehouse {
   echo "开始合并本地文件，目标文件夹$dir_root/diy"
-  echo "识别为diy文件夹config$1 "
-  if [ ! -d "$dir_root/diy/config$1" ];then
-    echo "文件夹不存在,创建config$1文件夹"
-    mkdir $dir_root/diy/config$1
+  echo "识别为diy文件夹$config_use"
+  if [ ! -d "$dir_root/diy/$config_use" ];then
+    echo "文件夹不存在,创建$config_use文件夹"
+    mkdir -p $diy_config
     echo "文件夹创建完成，请自行导入文件"
   else
-    cd $dir_root/diy/config$1
+    cd $diy_config
     count=`ls $*|wc -w`
-    if [ "$count" > "0" ];
-    then
-    echo "文件夹已经存在,且存在文件，进行下一步"
-    cp -rf $dir_root/diy/config$1/* $hebing
-    cp -rf $dir_root/diy/config$1/. $hebing
-    echo "合并完成"
+    if [ "$count" > "0" ];then
+      echo "文件夹已经存在,且存在文件，进行下一步"
+      cp -rf $diy_config/* $hebing
+      cp -rf $diy_config/. $hebing
+      echo "合并完成"
     else
-    echo "文件夹为空文件夹，跳过合并"
+      echo "文件夹为空文件夹，跳过合并"
     fi
   fi
 }
