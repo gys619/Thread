@@ -207,6 +207,7 @@ function Change_diy_party_warehouse {
     Clone_Pull
     let j++
   done
+  Local_Change_diy_party_warehouse
 }
 
 #合并仓库(网络仓库-RAW-正在开发)
@@ -275,7 +276,6 @@ Initialization
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
-Local_Change_diy_party_warehouse
 Push_github
 echo "运行结束，退出"
 exit
