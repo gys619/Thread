@@ -225,7 +225,6 @@ function Local_Change_diy_party_warehouse {
       echo "文件夹为空文件夹，跳过合并"
     else
       echo "文件夹已经存在，且存在文件，进行下一步"
-      rm -rf 0
       cp -rf $diy_config/* $tongbu
       cp -rf $diy_config/. $tongbu
       echo "合并完成"
