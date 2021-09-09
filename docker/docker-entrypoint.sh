@@ -33,6 +33,12 @@ if [ ! -d "${dir_root}/diy/" ]; then
   echo
 fi
 
+if [ ! -d "${dir_root}/backup/" ]; then
+  echo -e "检测到backup文件夹不存在，创建文件夹...\n"
+  mkdir -p ${dir_root}/backup
+  echo
+fi
+
 echo -e "======================2. 创建映射关系========================\n"
 bash /$dir_root/link.sh
 echo -e "创建完成"
