@@ -124,7 +124,7 @@ function Consolidated_Warehouse {
     mkdir -p $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/* $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/. $repo_path/$pint_diy_feihebing
-    cp -rf $repo_path/$pint_diy_feihebing $hebing
+    cp -rf $repo_path/$pint_diy_feihebing $tongbu
     echo "合并${author}仓库成功，清理文件"
     rm -rf $repo_path/$pint_diy_feihebing
   fi
