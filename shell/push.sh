@@ -85,9 +85,9 @@ function Clone_Pull {
       cd $repo_path
       git pull origin $pint_branch
       if [ $? = 0 ]; then
-        echo "克隆(更新)${author}仓库成功，开始备份仓库内容"
+        echo "克隆(更新)$author仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
-        echo "备份成功，开始合并${author}仓库"
+        echo "备份成功，开始合并$author仓库"
         Consolidated_Warehouse
       else
         echo "克隆(更新)${author}仓库失败，请确认问题"
