@@ -117,7 +117,7 @@ function Clone_Pull {
 
 #合并仓库
 function Consolidated_Warehouse {
- if [ "$pint_diy_feihebing" = ""]; then
+ if [ "$pint_diy_feihebing" = "" ]; then
     echo "您已选择将所有文件合并到根目录，开始执行"
     sleep 3s
     cd $repo_path
