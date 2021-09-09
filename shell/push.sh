@@ -39,6 +39,33 @@ function Git_log {
   fi
 }
 
+#第三方仓库(网络仓库)
+function Pull_diy_Third_party_warehouse {
+  git config --global http.version HTTP/1.1
+  echo "正在克隆第三方仓库"
+  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
+  if [ $? = 0 ]; then
+    echo "克隆第三方仓库成功"
+    Git_log
+  else
+    l=1
+    while [[ l -le 3 ]]; do
+      echo "上传失败,重试执行第$l次"
+      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
+      if [ $? = 0 ]; then
+        echo "克隆第三方仓库成功"
+        Git_log
+        return
+      else
+        let l++
+      fi
+    done
+    echo "克隆第三方仓库失败，正在恢复文件"
+    rm -rf $tongbu
+    exit
+  fi
+}
+
 #识别clone或者pull
 function Clone_Pull {
   if [ ! -d "$repo_path" ];then
@@ -46,12 +73,12 @@ function Clone_Pull {
     mkdir -p $repo_path
     git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
     if [ $? = 0 ]; then
-      echo "克隆(更新)$j仓库成功，开始备份仓库内容"
+      echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
       cp -rf $repo_path $dir_backup
-      echo "备份成功，开始合并$j仓库"
+      echo "备份成功，开始合并$j号仓库"
       Consolidated_Warehouse
     else
-      echo "克隆(更新)$j仓库失败，请确认问题"
+      echo "克隆(更新)$j号仓库失败，请确认问题"
       echo "识别备份并确认拷贝备份文件"
       cp -rf $dir_backup/${uniq_path}/* $repo_path
       cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -67,12 +94,12 @@ function Clone_Pull {
       echo "执行clone"
       git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
       if [ $? = 0 ]; then
-        echo "克隆(更新)$j仓库成功，开始备份仓库内容"
+        echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
-        echo "备份成功，开始合并$j仓库"
+        echo "备份成功，开始合并$j号仓库"
         Consolidated_Warehouse
       else
-        echo "克隆(更新)$j仓库失败，请确认问题"
+        echo "克隆(更新)$j号仓库失败，请确认问题"
         echo "识别备份并确认拷贝备份文件"
         cp -rf $dir_backup/${uniq_path}/* $repo_path
         cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -85,12 +112,12 @@ function Clone_Pull {
       cd $repo_path
       git pull origin $pint_branch
       if [ $? = 0 ]; then
-        echo "克隆(更新)$j仓库成功，开始备份仓库内容"
+        echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
-        echo "备份成功，开始合并$j仓库"
+        echo "备份成功，开始合并$j号仓库"
         Consolidated_Warehouse
       else
-        echo "克隆(更新)$j仓库失败，请确认问题"
+        echo "克隆(更新)$j号仓库失败，请确认问题"
         echo "识别备份并确认拷贝备份文件"
         cp -rf $dir_backup/${uniq_path}/* $repo_path
         cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -117,7 +144,7 @@ function Consolidated_Warehouse {
       yes n | cp -ir $repo_path/* $tongbu
       yes n | cp -ir $repo_path/. $tongbu
     fi
-    echo "合并$j仓库成功"
+    echo "合并$j号仓库成功"
   else
     echo "您已选择将文件夹合并到根目录，开始执行"
     sleep 3s
@@ -125,7 +152,7 @@ function Consolidated_Warehouse {
     cp -rf $repo_path/* $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/. $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/$pint_diy_feihebing $tongbu
-    echo "合并$j仓库成功，清理文件"
+    echo "合并$j号仓库成功，清理文件"
     rm -rf $repo_path/$pint_diy_feihebing
   fi
 }
@@ -143,35 +170,6 @@ get_uniq_path() {
 
   uniq_path="${author}_${repo}"
   [[ $branch ]] && uniq_path="${uniq_path}_${branch}"
-}
-
-#第三方仓库(网络仓库)
-function Pull_diy_Third_party_warehouse {
-  git config --global http.version HTTP/1.1
-  echo "正在克隆第三方仓库"
-  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
-  if [ $? = 0 ]; then
-    echo "克隆第三方仓库成功"
-    cd $tongbu
-    Git_log
-  else
-    l=1
-    while [[ l -le 3 ]]; do
-      echo "上传失败,重试执行第$k次"
-      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
-      if [ $? = 0 ]; then
-        echo "克隆第三方仓库成功"
-        cd $tongbu
-        Git_log
-        return
-      else
-        let l++
-      fi
-    done
-    echo "克隆第三方仓库失败，正在恢复文件"
-    rm -rf $tongbu
-    exit
-  fi
 }
 
 #自定义仓库数量(网络仓库)
@@ -238,6 +236,7 @@ function Local_Change_diy_party_warehouse {
 function Push_github {
   cd $tongbu
   Delete_git
+  git init
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
