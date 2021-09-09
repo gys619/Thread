@@ -252,7 +252,6 @@ function Local_Change_diy_party_warehouse {
 function Push_github {
   cd $tongbu
   Delete_git
-  git config --global core.autocrlf input
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
