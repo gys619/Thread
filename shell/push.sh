@@ -46,12 +46,12 @@ function Clone_Pull {
     mkdir -p $repo_path
     git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
     if [ $? = 0 ]; then
-      echo "克隆(更新)${author}仓库成功，开始备份仓库内容"
+      echo "克隆(更新)$j仓库成功，开始备份仓库内容"
       cp -rf $repo_path $dir_backup
-      echo "备份成功，开始合并${author}仓库"
+      echo "备份成功，开始合并$j仓库"
       Consolidated_Warehouse
     else
-      echo "克隆(更新)${author}仓库失败，请确认问题"
+      echo "克隆(更新)$j仓库失败，请确认问题"
       echo "识别备份并确认拷贝备份文件"
       cp -rf $dir_backup/${uniq_path}/* $repo_path
       cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -67,12 +67,12 @@ function Clone_Pull {
       echo "执行clone"
       git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
       if [ $? = 0 ]; then
-        echo "克隆(更新)${author}仓库成功，开始备份仓库内容"
+        echo "克隆(更新)$j仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
-        echo "备份成功，开始合并${author}仓库"
+        echo "备份成功，开始合并$j仓库"
         Consolidated_Warehouse
       else
-        echo "克隆(更新)${author}仓库失败，请确认问题"
+        echo "克隆(更新)$j仓库失败，请确认问题"
         echo "识别备份并确认拷贝备份文件"
         cp -rf $dir_backup/${uniq_path}/* $repo_path
         cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -85,12 +85,12 @@ function Clone_Pull {
       cd $repo_path
       git pull origin $pint_branch
       if [ $? = 0 ]; then
-        echo "克隆(更新)$author仓库成功，开始备份仓库内容"
+        echo "克隆(更新)$j仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
-        echo "备份成功，开始合并$author仓库"
+        echo "备份成功，开始合并$j仓库"
         Consolidated_Warehouse
       else
-        echo "克隆(更新)${author}仓库失败，请确认问题"
+        echo "克隆(更新)$j仓库失败，请确认问题"
         echo "识别备份并确认拷贝备份文件"
         cp -rf $dir_backup/${uniq_path}/* $repo_path
         cp -rf $dir_backup/${uniq_path}/. $repo_path
@@ -117,7 +117,7 @@ function Consolidated_Warehouse {
       yes n | cp -ir $repo_path/* $tongbu
       yes n | cp -ir $repo_path/. $tongbu
     fi
-    echo "合并${author}仓库成功"
+    echo "合并$j仓库成功"
   else
     echo "您已选择将文件夹合并到根目录，开始执行"
     sleep 3s
@@ -125,7 +125,7 @@ function Consolidated_Warehouse {
     cp -rf $repo_path/* $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/. $repo_path/$pint_diy_feihebing
     cp -rf $repo_path/$pint_diy_feihebing $tongbu
-    echo "合并${author}仓库成功，清理文件"
+    echo "合并$j仓库成功，清理文件"
     rm -rf $repo_path/$pint_diy_feihebing
   fi
 }
