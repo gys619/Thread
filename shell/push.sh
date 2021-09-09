@@ -164,13 +164,26 @@ function Pull_diy_Third_party_warehouse {
   echo "正在克隆第三方仓库"
   git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
   if [ $? = 0 ]; then
-      echo "克隆第三方仓库成功"
-      cd $tongbu
-      Git_log
-    else
-      echo "克隆第三方仓库失败，正在恢复文件"
-      rm -rf $tongbu
-      exit
+    echo "克隆第三方仓库成功"
+    cd $tongbu
+    Git_log
+  else
+    k=1
+    while [[ k -le 3 ]]; do
+      echo "上传失败,重试执行第$k次"
+      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
+      if [ $? = 0 ]; then
+        echo "克隆第三方仓库成功"
+        cd $tongbu
+        Git_log
+        return
+      else
+        let k++
+      fi
+    done
+    echo "克隆第三方仓库失败，正在恢复文件"
+    rm -rf $tongbu
+    exit
   fi
 }
 
@@ -253,21 +266,23 @@ function Push_github {
   git config --global http.version HTTP/2
   git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
   if [ $? = 0 ]; then
-      echo "上传成功"
-      rm -rf $tongbu
-    else
-      k=1
-      while [[ k -le 3 ]]; do
-        echo "上传失败,重试执行第$k次"
-        git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
-          if [ $? = 0 ]; then
-            echo "上传成功"
-            rm -rf $tongbu
-            return
-          else
-            let k++
-          fi
-      done
+    echo "上传成功"
+    rm -rf $tongbu
+  else
+    k=1
+    while [[ k -le 3 ]]; do
+      echo "上传失败,重试执行第$k次"
+      git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
+      if [ $? = 0 ]; then
+        echo "上传成功"
+        rm -rf $tongbu
+        return
+      else
+        let k++
+      fi
+    done
+    echo "上传失败，正在恢复文件"
+    rm -rf $tongbu
   fi
 }
 
