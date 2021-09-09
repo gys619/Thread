@@ -7,9 +7,11 @@ logs=$dir_root/logs
 diy_config=$dir_root/diy/$config_use
 dir_repo=$dir_root/repo
 dir_backup=$dir_root/backup
+tongbu=$dir_root/temporary_file
 
 #初始化文件夹
-function Mkdir_folder {
+function Initialization {
+  echo "开始执行初始化"
   rm -rf $tongbu
   echo "初始化完成"
   sleep 3s
@@ -34,21 +36,6 @@ function Git_log {
     echo "拉取成功"
   else
     echo "已设置提交内容，进行下一步"
-  fi
-}
-
-#初始化文件夹
-function Initialization {
-  if [ "$diy_folder" = "" ]; then
-    echo "未设定临时文件夹，请自行设定，此次由系统自动创建"
-    diy_folder=user_1
-    tongbu=$dir_root/$diy_folder
-    echo "创建完成，开始执行初始化"
-    Mkdir_folder
-  else
-    echo "开始执行初始化"
-    tongbu=$dir_root/$diy_folder
-    Mkdir_folder
   fi
 }
 
