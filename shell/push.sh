@@ -155,8 +155,8 @@ function Pull_diy_Third_party_warehouse {
     cd $tongbu
     Git_log
   else
-    k=1
-    while [[ k -le 3 ]]; do
+    l=1
+    while [[ l -le 3 ]]; do
       echo "上传失败,重试执行第$k次"
       git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
       if [ $? = 0 ]; then
@@ -165,7 +165,7 @@ function Pull_diy_Third_party_warehouse {
         Git_log
         return
       else
-        let k++
+        let l++
       fi
     done
     echo "克隆第三方仓库失败，正在恢复文件"
