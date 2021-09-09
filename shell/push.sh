@@ -207,7 +207,6 @@ function Change_diy_party_warehouse {
     Clone_Pull
     let j++
   done
-  Local_Change_diy_party_warehouse
 }
 
 #合并仓库(网络仓库-RAW-正在开发)
@@ -217,15 +216,15 @@ function Local_Change_diy_party_warehouse {
   echo "开始合并本地文件，目标文件夹$dir_root/diy"
   echo "识别为diy文件夹$config_use"
   if [ ! -d "$dir_root/diy/$config_use" ];then
-    echo "文件夹不存在,创建$config_use文件夹"
+    echo "$diy_config文件夹不存在,创建$config_use文件夹"
     mkdir -p $diy_config
-    echo "文件夹创建完成，请自行导入文件"
+    echo "$diy_config文件夹创建完成，请自行导入文件"
   else
     cd $diy_config
     if [ "`ls -A $diy_config`" = "" ];then
-      echo "文件夹为空文件夹，跳过合并"
+      echo "$diy_config文件夹为空文件夹，跳过合并"
     else
-      echo "文件夹已经存在，且存在文件，进行下一步"
+      echo "$diy_config文件夹已经存在，且存在文件，进行下一步"
       cp -rf $diy_config/* $tongbu
       cp -rf $diy_config/. $tongbu
       echo "合并完成"
@@ -237,7 +236,7 @@ function Local_Change_diy_party_warehouse {
 
 #上传文件至github
 function Push_github {
-  cd $tongbu
+  cd $tongbu\
   Delete_git
   git add .
   git config user.name "$diy_user_name"
@@ -275,6 +274,7 @@ Initialization
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
+Local_Change_diy_party_warehouse
 Push_github
 echo "运行结束，退出"
 exit
