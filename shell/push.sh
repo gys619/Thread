@@ -7,6 +7,7 @@ logs=$dir_root/logs
 diy_config=$dir_root/diy/$config_use
 dir_repo=$dir_root/repo
 dir_backup=$dir_root/backup
+dir_sample=$dir_root/sample
 tongbu=$dir_root/temporary_file
 
 #初始化文件夹
@@ -41,7 +42,7 @@ function Git_log {
 
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
-  git config --global http.version HTTP/1.1
+  git config --global http.version $http_version
   echo "正在克隆第三方仓库"
   git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
   if [ $? = 0 ]; then
@@ -50,7 +51,7 @@ function Pull_diy_Third_party_warehouse {
   else
     l=1
     while [[ l -le 3 ]]; do
-      echo "上传失败,重试执行第$l次"
+      echo "克隆失败,重试执行第$l次"
       git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
       if [ $? = 0 ]; then
         echo "克隆第三方仓库成功"
@@ -217,7 +218,8 @@ function Local_Change_diy_party_warehouse {
   if [ ! -d "$dir_root/diy/$config_use" ];then
     echo "$diy_config文件夹不存在,创建$config_use文件夹"
     mkdir -p $diy_config
-    echo "$diy_config文件夹创建完成，请自行导入文件"
+    cp -fv $dir_sample/gitignore.sample $diy_config/.gitignore
+    echo "$diy_config文件夹创建完成，请自行导入文件，黑白名单请填写$diy_config/.gitignore 中的内容"
   else
     cd $diy_config
     if [ "`ls -A $diy_config`" = "" ];then
@@ -236,7 +238,7 @@ function Local_Change_diy_party_warehouse {
 #上传文件至github
 function Push_github {
   cd $tongbu
-  Delete_git
+  git rm -r --cached .
   git init
   git add .
   git config user.name "$diy_user_name"
@@ -246,7 +248,7 @@ function Push_github {
   git config --global sendpack.sideband false
   git config --local sendpack.sideband false
   git config --global http.postBuffer 524288000
-  git config --global http.version HTTP/2
+  git config --global http.version $http_version
   git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
   if [ $? = 0 ]; then
     echo "上传成功"
