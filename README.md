@@ -1,10 +1,13 @@
 # 个人研究学习自用
 # 青龙拉取链接
 ``` 
-ql repo https://github.com/gys619/jd.git "jd_|gua_|jddj_|jd-|jr-|jx-|jd|jx_|getJDCookie" "scf_test_event|activity|backUp|jd_delCoupon|sendNotify.js|jd_opencard[\w.]*" "ZooFaker_Necklace.js|JDJRValidator_Pure.js|sign_graphics_validate.js|jddj_cookie|function|^jd[^_]|USER|utils|ql.js|jdCookie.js" 
+ql repo https://github.com/gys619/jdd.git "jd_|gua_|jddj_|jd-|jr-|jx-|jd|jx_|getJDCookie" "scf_test_event|activity|backUp|jd_delCoupon|sendNotify.js" "ZooFaker_Necklace.js|JDJRValidator_Pure.js|sign_graphics_validate.js|jddj_cookie|function|^jd[^_]|USER|utils|ql.js|jdCookie.js" 
+```
+```
+推荐定时 0 */6 * * *
 ```
 ### 因为he1pu和yuannian会改smieksmiek(瓜佬)的开卡脚本，所以会有重复的
-*加了黑名单，不加he1pu和yuannian的开卡脚本了，需要的可以自己更改repo链接
+* 加了黑名单，不加he1pu和yuannian的开卡脚本了，需要的可以自己更改repo链接
 ### 有以下库合成 （在faker2的基础上加上其他仓库脚本集成）互助码也是他们的，本人没有
 * [smiek2221](https://github.com/smiek2221/scripts.git)
 * [yuannian1112](https://github.com/yuannian1112/jd_scripts.git)
