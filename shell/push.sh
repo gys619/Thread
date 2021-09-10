@@ -238,7 +238,6 @@ function Local_Change_diy_party_warehouse {
 #上传文件至github
 function Push_github {
   cd $tongbu
-  git rm -r --cached .
   git init
   git add .
   git config user.name "$diy_user_name"
