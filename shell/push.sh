@@ -110,6 +110,7 @@ function Clone_Pull {
     else
       echo "执行git pull"
       cd $repo_path
+      git reset --hard
       git pull origin $pint_branch
       if [ $? = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
