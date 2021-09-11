@@ -9,7 +9,7 @@ function Git_PullShell {
 }
 
 function Update_Config {
-  if [ $? = 0 ]; then
+  if [ $ExitStatusShell = 0 ]; then
     echo -e "更新config.sh.sample\n"
     cp -rf ${dir_root}/sample/config.sh.sample ${dir_root}/config/config.sh.sample
     echo -e "提升权限"

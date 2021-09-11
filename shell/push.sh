@@ -67,6 +67,12 @@ function Pull_diy_Third_party_warehouse {
   fi
 }
 
+function Git_Pull {
+  git fetch --all
+  ExitStatusShell=$?
+  git reset --hard origin/$pint_branch
+}
+
 #识别clone或者pull
 function Clone_Pull {
   if [ ! -d "$repo_path" ];then
@@ -111,9 +117,8 @@ function Clone_Pull {
     else
       echo "执行git pull"
       cd $repo_path
-      git reset --hard
-      git pull origin $pint_branch
-      if [ $? = 0 ]; then
+      Git_Pull
+      if [ $ExitStatusShell = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
         cp -rf $repo_path $dir_backup
         echo "备份成功，开始合并$j号仓库"
