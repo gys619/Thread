@@ -40,9 +40,19 @@ function Git_log {
   fi
 }
 
+#网络协议
+function Http_Version {
+  if [ "$http_version" = "" ]; then
+    echo "http协议未设置，将采用默认协议"
+    http_version="HTTP/2"
+  else
+    echo "http协议已设置，将采用$http_version协议"
+    git config --global http.version $http_version
+  fi
+}
+
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
-  git config --global http.version $http_version
   echo "正在克隆第三方仓库"
   git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
   if [ $? = 0 ]; then
@@ -253,7 +263,6 @@ function Push_github {
   git config --global sendpack.sideband false
   git config --local sendpack.sideband false
   git config --global http.postBuffer 524288000
-  git config --global http.version $http_version
   git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
   if [ $? = 0 ]; then
     echo "上传成功"
@@ -278,6 +287,7 @@ function Push_github {
 
 echo "开始运行"
 Initialization
+Http_Version
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
