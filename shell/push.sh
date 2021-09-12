@@ -267,7 +267,7 @@ function Push_github {
   git config --global sendpack.sideband false
   git config --local sendpack.sideband false
   git config --global http.postBuffer 524288000
-  git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
+  git push --force "https://$diy_user_name:$github_api@$diy_url" HEAD:$diy_branch
   if [ $? = 0 ]; then
     echo "上传成功"
     rm -rf $tongbu
@@ -275,7 +275,7 @@ function Push_github {
     k=1
     while [[ k -le 3 ]]; do
       echo "上传失败,重试执行第$k次"
-      git push --force "https://$diy_user_name:$github_api@$diy_url" master:$diy_branch
+      git push --force "https://$diy_user_name:$github_api@$diy_url" HEAD:$diy_branch
       if [ $? = 0 ]; then
         echo "上传成功"
         rm -rf $tongbu
