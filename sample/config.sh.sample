@@ -22,6 +22,16 @@ diy_party_warehouse2="https://github.com/MoonBegonia/ninja.git"
 diy_feihebing2="ninja"
 #自定义————本地仓库—————（仅有一个）
 ##暂无变量自行添加文件至/diy/config*文件夹下
+#raw单文件下载————网络仓库—————
+## 一行一个文件下载链接，首尾一对半角括号，示例：
+## OwnRawFile=(
+##     https://gitee.com/wabdwdd/scipts/raw/master/jd_abc.js
+##     https://github.com/lonfeg/loon/raw/main/jd_dudi.js
+##     https://github.com/sunsem/qx/raw/main/z_dida.js
+## )
+OwnRawFile=(
+
+)
 #github用户名，授权码
 diy_user_name="kangwenhang"
 diy_user_email="kangwenhang@hotmail.com"

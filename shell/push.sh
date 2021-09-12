@@ -7,7 +7,10 @@ diy_config=$dir_root/diy/$config_use
 diy_logs=$logs/$config_use
 dir_repo=$dir_root/repo
 dir_backup=$dir_root/backup
+dir_backup_raw=$dir_backup/raw
 dir_sample=$dir_root/sample
+dir_raw=$dir_root/raw
+raw_flie=$dir_raw/$config_use
 tongbu=$dir_root/temporary_file/$config_use
 tongbu_push=$tongbu/push
 tongbu_temp=$tongbu/temp
@@ -233,6 +236,42 @@ function Change_diy_party_warehouse {
 }
 
 #合并仓库(网络仓库-RAW-正在开发)
+Update_Own_Raw () {
+    local rm_mark
+    mkdir -p $raw_flie
+    mkdir -p $dir_backup_raw
+    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
+    for ((i=0; i<${#OwnRawFile[*]}; i++)); do
+        raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
+        echo "开始下载：${OwnRawFile[i]} \n\n保存路径：$raw_flie/${raw_file_name[$i]}\n"
+        wget -q --no-check-certificate -O "$raw_flie/${raw_file_name[$i]}.new" ${OwnRawFile[i]}
+        if [[ $? -eq 0 ]]; then
+            mv "$raw_flie/${raw_file_name[$i]}.new" "$raw_flie/${raw_file_name[$i]}"
+            echo "下载 ${raw_file_name[$i]} 成功,开始备份成功后的文件\n"
+            cp -af $raw_flie/${raw_file_name[$i]} $dir_backup_raw/${raw_file_name[$i]}
+            echo "备份完成，开始合并\n"
+            cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
+            echo "合并完成"
+        else
+            echo "下载 ${raw_file_name[$i]} 失败，保留之前正常下载的版本...\n"
+            [ -f "$raw_flie/${raw_file_name[$i]}.new" ] && rm -f "$dir_raw/${raw_file_name[$i]}.new"
+            echo "开始合并\n"
+            cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
+            echo "合并完成"
+        fi
+    done
+
+    for file in $(ls $raw_flie); do
+        rm_mark="yes"
+        for ((i=0; i<${#raw_file_name[*]}; i++)); do
+            if [[ $file == ${raw_file_name[$i]} ]]; then
+                rm_mark="no"
+                break
+            fi
+        done
+        [[ $rm_mark == yes ]] && rm -f $raw_flie/$file 2>/dev/null
+    done
+}
 
 #合并仓库(本地仓库)
 function Local_Change_diy_party_warehouse {
@@ -297,6 +336,7 @@ Http_Version
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
+Update_Own_Raw
 Local_Change_diy_party_warehouse
 Push_github
 echo "运行结束，退出"
