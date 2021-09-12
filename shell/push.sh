@@ -30,6 +30,7 @@ function Delete_git {
 function Git_log {
   if [ "$diy_commit" = "" ]; then
     echo "未设置自定义提交内容，默认拉取主仓库更新内容"
+    mkdir -p $diy_logs
     git log --pretty=format:"%s %cd" > $diy_logs/diy.log
     cd $diy_logs
     diy_commit=`head -1 diy.log`
