@@ -93,6 +93,7 @@ function Clone_Pull {
   if [ ! -d "$repo_path" ];then
     echo "文件夹不存在，创建并执行clone"
     mkdir -p $repo_path
+    cd $dir_repo
     git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
     if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
@@ -109,7 +110,7 @@ function Clone_Pull {
     fi
   else
     echo "文件夹存在，进行下一步"
-    cd $repo_path
+    cd $dir_repo
     ls -a
     if [ ! -d "$repo_path/.git/" ];then
       echo "执行clone"
