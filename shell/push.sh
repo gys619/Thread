@@ -9,7 +9,9 @@ diy_logs=$logs/$config_use
 dir_repo=$dir_root/repo
 dir_backup=$dir_root/backup
 dir_sample=$dir_root/sample
-tongbu=$dir_root/temporary_file
+tongbu=$dir_root/temporary_file/$config_use
+tongbu_push=$tongbu/push
+tongbu_temp=$tongbu/temp
 
 #初始化文件夹
 function Initialization {
@@ -31,7 +33,7 @@ function Git_log {
   if [ "$diy_commit" = "" ]; then
     echo "未设置自定义提交内容，默认拉取主仓库更新内容"
     mkdir -p $diy_logs
-    git log --pretty=format:"%s %cd" > $diy_logs/diy.log
+    git log --pretty=format:"%s %cr" > $diy_logs/diy.log
     cd $diy_logs
     diy_commit=`head -1 diy.log`
     echo "拉取成功"
@@ -54,19 +56,19 @@ function Http_Version {
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
   echo "正在克隆第三方仓库"
-  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
+  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu_push
   if [ $? = 0 ]; then
     echo "克隆第三方仓库成功"
-    cd $tongbu
+    cd $tongbu_push
     Git_log
   else
     l=1
     while [[ l -le 3 ]]; do
       echo "克隆失败,重试执行第$l次"
-      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu
+      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu_push
       if [ $? = 0 ]; then
         echo "克隆第三方仓库成功"
-        cd $tongbu
+        cd $tongbu_push
         Git_log
         return
       else
@@ -93,14 +95,13 @@ function Clone_Pull {
     git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
     if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-      cp -rf $repo_path $dir_backup
+      cp -af $repo_path $dir_backup
       echo "备份成功，开始合并$j号仓库"
       Consolidated_Warehouse
     else
       echo "克隆(更新)$j号仓库失败，请确认问题"
       echo "识别备份并确认拷贝备份文件"
-      cp -rf $dir_backup/${uniq_path}/* $repo_path
-      cp -rf $dir_backup/${uniq_path}/. $repo_path
+      cp -af $dir_backup/${uniq_path}/. $repo_path
       Consolidated_Warehouse
       echo "清理失败缓存"
       rm -rf $repo_path
@@ -114,14 +115,13 @@ function Clone_Pull {
       git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
       if [ $? = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-        cp -rf $repo_path $dir_backup
+        cp -af $repo_path $dir_backup
         echo "备份成功，开始合并$j号仓库"
         Consolidated_Warehouse
       else
         echo "克隆(更新)$j号仓库失败，请确认问题"
         echo "识别备份并确认拷贝备份文件"
-        cp -rf $dir_backup/${uniq_path}/* $repo_path
-        cp -rf $dir_backup/${uniq_path}/. $repo_path
+        cp -af $dir_backup/${uniq_path}/. $repo_path
         Consolidated_Warehouse
         echo "清理失败缓存"
         rm -rf $repo_path
@@ -132,14 +132,12 @@ function Clone_Pull {
       Git_Pull
       if [ $ExitStatusShell = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-        cp -rf $repo_path $dir_backup
+        cp -af $repo_path $dir_backup
         echo "备份成功，开始合并$j号仓库"
         Consolidated_Warehouse
       else
-        echo "克隆(更新)$j号仓库失败，请确认问题"
-        echo "识别备份并确认拷贝备份文件"
-        cp -rf $dir_backup/${uniq_path}/* $repo_path
-        cp -rf $dir_backup/${uniq_path}/. $repo_path
+        echo "克隆(更新)$j号仓库失败，使用备份文件"
+        cp -af $dir_backup/${uniq_path}/. $repo_path
         Consolidated_Warehouse
         echo "清理失败缓存"
         rm -rf $repo_path
@@ -153,26 +151,32 @@ function Consolidated_Warehouse {
  if [ "$pint_diy_feihebing" = "" ]; then
     echo "您已选择将所有文件合并到根目录，开始执行"
     sleep 3s
-    cd $repo_path
+    mkdir -p $tongbu_temp
     if [ "$pint_fugai" = "" -o "$pint_fugai" = "1"  ]; then
       echo "您已选择强制覆盖同名文件"
-      cp -rf $repo_path/* $tongbu
-      cp -rf $repo_path/. $tongbu
+      cp -af $repo_path/. $tongbu_temp
+      cd $tongbu_temp
+      Delete_git
+      cp -af $tongbu_temp/. $tongbu_push
     else
       echo "您已选择跳过同名文件"
-      yes n | cp -ir $repo_path/* $tongbu
-      yes n | cp -ir $repo_path/. $tongbu
+      cp -af $repo_path/. $tongbu_temp
+      cd $tongbu_temp
+      Delete_git
+      yes n | cp -ia $tongbu_temp/. $tongbu_push
     fi
-    echo "合并$j号仓库成功"
+    echo "合并$j号仓库成功，清理文件"
+    rm -rf $tongbu_temp
   else
     echo "您已选择将文件夹合并到根目录，开始执行"
     sleep 3s
-    mkdir -p $repo_path/$pint_diy_feihebing
-    cp -rf $repo_path/* $repo_path/$pint_diy_feihebing
-    cp -rf $repo_path/. $repo_path/$pint_diy_feihebing
-    cp -rf $repo_path/$pint_diy_feihebing $tongbu
+    mkdir -p $tongbu_temp/$pint_diy_feihebing
+    cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
+    cd $tongbu_temp/$pint_diy_feihebing
+    Delete_git
+    cp -af $tongbu_temp/$pint_diy_feihebing $tongbu_push
     echo "合并$j号仓库成功，清理文件"
-    rm -rf $repo_path/$pint_diy_feihebing
+    rm -rf $tongbu_temp
   fi
 }
 
@@ -243,8 +247,7 @@ function Local_Change_diy_party_warehouse {
       echo "$diy_config文件夹为空文件夹，跳过合并"
     else
       echo "$diy_config文件夹已经存在，且存在文件，进行下一步"
-      cp -rf $diy_config/* $tongbu
-      cp -rf $diy_config/. $tongbu
+      cp -af $diy_config/. $tongbu_push
       echo "合并完成"
     fi
   fi
@@ -254,8 +257,7 @@ function Local_Change_diy_party_warehouse {
 
 #上传文件至github
 function Push_github {
-  cd $tongbu
-  Delete_git
+  cd $tongbu_push
   git init
   git add .
   git config user.name "$diy_user_name"
