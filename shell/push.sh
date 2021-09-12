@@ -243,19 +243,19 @@ Update_Own_Raw () {
     [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
     for ((i=0; i<${#OwnRawFile[*]}; i++)); do
         raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
-        echo "开始下载：${OwnRawFile[i]} \n\n保存路径：$raw_flie/${raw_file_name[$i]}\n"
+        echo "开始下载：${OwnRawFile[i]} 保存路径：$raw_flie/${raw_file_name[$i]}"
         wget -q --no-check-certificate -O "$raw_flie/${raw_file_name[$i]}.new" ${OwnRawFile[i]}
         if [[ $? -eq 0 ]]; then
             mv "$raw_flie/${raw_file_name[$i]}.new" "$raw_flie/${raw_file_name[$i]}"
-            echo "下载 ${raw_file_name[$i]} 成功,开始备份成功后的文件\n"
+            echo "下载 ${raw_file_name[$i]} 成功,开始备份成功后的文件"
             cp -af $raw_flie/${raw_file_name[$i]} $dir_backup_raw/${raw_file_name[$i]}
-            echo "备份完成，开始合并\n"
+            echo "备份完成，开始合并"
             cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
             echo "合并完成"
         else
-            echo "下载 ${raw_file_name[$i]} 失败，保留之前正常下载的版本...\n"
+            echo "下载 ${raw_file_name[$i]} 失败，保留之前正常下载的版本..."
             [ -f "$raw_flie/${raw_file_name[$i]}.new" ] && rm -f "$dir_raw/${raw_file_name[$i]}.new"
-            echo "开始合并\n"
+            echo "开始合并"
             cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
             echo "合并完成"
         fi
