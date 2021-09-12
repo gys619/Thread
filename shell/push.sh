@@ -82,6 +82,8 @@ function Pull_diy_Third_party_warehouse {
 }
 
 function Git_Pull {
+  git remote remove origin
+  git remote add origin $pint_warehouse
   git fetch --all
   ExitStatusShell=$?
   git reset --hard origin/$pint_branch
