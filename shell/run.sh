@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
 ## 导入通用变量与函数
+config_use=config"$1"
 shell=$dir_root/shell
+logs=$dir_root/logs
 config=$dir_root/config
-source $shell/push.sh
-source $config/config"$1".sh
+diy_logs=$logs/$config_use
+log_time=$(date "+%Y-%m-%d-%H-%M-%S.%N")
+log_path="$diy_logs/$log_time.log"
+. $config/$config_use.sh
 
 ##运行脚本
-source push
+mkdir -p $diy_logs
+source $shell/push.sh 2>&1 | tee $log_path
+exit

@@ -2,7 +2,6 @@
 
 #变量判定
 config_use=config"$1"
-source $config/$config_use.sh
 logs=$dir_root/logs
 diy_config=$dir_root/diy/$config_use
 diy_logs=$logs/$config_use
@@ -12,6 +11,7 @@ dir_sample=$dir_root/sample
 tongbu=$dir_root/temporary_file/$config_use
 tongbu_push=$tongbu/push
 tongbu_temp=$tongbu/temp
+source $config/$config_use.sh
 
 #初始化文件夹
 function Initialization {
@@ -32,7 +32,6 @@ function Delete_git {
 function Git_log {
   if [ "$diy_commit" = "" ]; then
     echo "未设置自定义提交内容，默认拉取主仓库更新内容"
-    mkdir -p $diy_logs
     git log --pretty=format:"%s %cr" > $diy_logs/diy.log
     cd $diy_logs
     diy_commit=`head -1 diy.log`

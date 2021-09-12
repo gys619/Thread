@@ -2,7 +2,10 @@
 42 * * * * $dir_root/update.sh >> $dir_root/logs/update.log 2>&1
 
 # 设定自动更新cron的间隔
-10 * * * * $dir_root/upcron.sh >> $dir_root/logs/upcron.log 2>&1
+10 * * * * $dir_root/upcron.sh
+
+#删除旧日志
+59 7 * * 1 $dir_root/rmlog.sh
 
 # 运行（run.sh、run.sh1对应config、config1）
-0,30 * * * * $dir_root/run.sh >> $dir_root/logs/run.log 2>&1
+0,30 * * * * $dir_root/run.sh
