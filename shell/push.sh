@@ -176,10 +176,19 @@ function Consolidated_Warehouse {
     echo "您已选择将文件夹合并到根目录，开始执行"
     sleep 3s
     mkdir -p $tongbu_temp/$pint_diy_feihebing
-    cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
-    cd $tongbu_temp/$pint_diy_feihebing
-    Delete_git
-    cp -af $tongbu_temp/$pint_diy_feihebing $tongbu_push
+    if [ "$pint_fugai" = "" -o "$pint_fugai" = "1"  ]; then
+      echo "您已选择强制覆盖同名文件"
+      cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
+      cd $tongbu_temp/$pint_diy_feihebing
+      Delete_git
+      cp -af $tongbu_temp/$pint_diy_feihebing $tongbu_push
+    else
+      echo "您已选择跳过同名文件"
+      cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
+      cd $tongbu_temp/$pint_diy_feihebing
+      Delete_git
+      yes n | cp -ia $tongbu_temp/$pint_diy_feihebing $tongbu_push
+    fi
     echo "合并$j号仓库成功，清理文件"
     rm -rf $tongbu_temp
   fi
