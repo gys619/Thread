@@ -15,7 +15,8 @@ function Update_Config {
     echo -e "提升权限"
     chmod -R 777 $dir_root
   else
-    echo -e "更新shell失败了"
+    echo -e "更新shell失败了，提升权限"
+    chmod -R 777 $dir_root
   fi
 }
 
