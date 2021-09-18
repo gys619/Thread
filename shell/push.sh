@@ -235,7 +235,7 @@ function Change_diy_party_warehouse {
   j=1
   h=${diySum}
   while [[ $j -le $h ]]; do
-    Tmp_warehouse=diy_party_warehouse$j
+    Tmp_warehouse=${diy_party_warehouse$j}
     Tmp_warehouse_branch=diy_party_warehouse_branch$j
     Tmp_diy_feihebing=diy_feihebing$j
     Tmp_fugai=fugai$j
