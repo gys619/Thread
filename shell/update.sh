@@ -1,16 +1,7 @@
 #!/usr/bin/env bash
 
-function Http_Version {
-  if [ "$http_version" = "" ]; then
-    echo "http协议未设置，将采用默认协议"
-    http_version="HTTP/2"
-  else
-    echo "http协议已设置，将采用$http_version协议"
-    git config --global http.version $http_version
-  fi
-}
-
 function Git_PullShell {
+  git config --global http.version HTTP/1.1
   echo -e "更新shell脚本\n"
   cd $dir_root
   git fetch --all
