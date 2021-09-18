@@ -154,11 +154,11 @@ function Clone_Pull {
 }
 
 #自定义仓库前后缀
-function prefix_suffix {
-  if [ prefix$j = "" ] && [ suffix$j = "" ]; then
+#function prefix_suffix {
+#  if [ prefix$j = "" ] && [ suffix$j = "" ]; then
 
-  fi
-}
+#  fi
+#}
 
 #合并仓库（网络仓库）
 function Consolidated_Warehouse {
