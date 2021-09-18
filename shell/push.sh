@@ -84,9 +84,10 @@ function Pull_diy_Third_party_warehouse {
   fi
 }
 
+#pull函数
 function Git_Pull {
   git remote remove origin
-  git remote add origin $pint_warehouse
+  git remote add origin $Tmp_warehouse
   git fetch --all
   ExitStatusShell=$?
   git reset --hard origin/$pint_branch
@@ -98,7 +99,7 @@ function Clone_Pull {
     echo "文件夹不存在，创建并执行clone"
     mkdir -p $repo_path
     cd $dir_repo
-    git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
+    git clone -b $pint_branch ${github_proxy_url}$Tmp_warehouse $repo_path
     if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
       cp -af $repo_path $dir_backup
@@ -118,7 +119,7 @@ function Clone_Pull {
     ls -a
     if [ ! -d "$repo_path/.git/" ];then
       echo "执行clone"
-      git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
+      git clone -b $pint_branch ${github_proxy_url}$Tmp_warehouse $repo_path
       if [ $? = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
         cp -af $repo_path $dir_backup
@@ -152,7 +153,14 @@ function Clone_Pull {
   fi
 }
 
-#合并仓库
+#自定义仓库前后缀
+function prefix_suffix {
+  if [ prefix$j = "" ] && [ suffix$j = "" ]; then
+
+  fi
+}
+
+#合并仓库（网络仓库）
 function Consolidated_Warehouse {
  if [ "$pint_diy_feihebing" = "" ]; then
     echo "您已选择将所有文件合并到根目录，开始执行"
@@ -195,6 +203,7 @@ function Consolidated_Warehouse {
   fi
 }
 
+#库名称判定(网络仓库)
 get_uniq_path() {
   local url="$1"
   local branch="$2"
@@ -221,7 +230,7 @@ function Count_diy_party_warehouse {
   done
 }
 
-#合并仓库(网络仓库-clone)
+#合并仓库(网络仓库)
 function Change_diy_party_warehouse {
   j=1
   h=${diySum}
@@ -230,22 +239,26 @@ function Change_diy_party_warehouse {
     Tmp_warehouse_branch=diy_party_warehouse_branch$j
     Tmp_diy_feihebing=diy_feihebing$j
     Tmp_fugai=fugai$j
+    Tmp_prefix=prefix$j
+    Tmp_suffix=suffix$j
     warehouse_Tmp=${!Tmp_warehouse}
     branch_Tmp=${!Tmp_warehouse_branch}
     feihebing_Tmp=${!Tmp_diy_feihebing}
     fugai_Tmp=${!Tmp_fugai}
+    prefix_Tmp=${!Tmp_prefix}
+    suffix_Tmp=${!Tmp_suffix}
     pint_warehouse=$(printf ${warehouse_Tmp})
     pint_branch=$(printf ${branch_Tmp})
     pint_diy_feihebing=$(printf ${feihebing_Tmp})
     pint_fugai=$(printf ${fugai_Tmp})
-    get_uniq_path "$pint_warehouse" "$pint_branch"
+    get_uniq_path "$Tmp_warehouse" "$pint_branch"
     local repo_path="${dir_repo}/${uniq_path}"
     Clone_Pull
     let j++
   done
 }
 
-#合并仓库(网络仓库-RAW-正在开发)
+#合并仓库(网络仓库-RAW)
 Update_Own_Raw () {
     local rm_mark
     mkdir -p $raw_flie
@@ -341,6 +354,7 @@ function Push_github {
   fi
 }
 
+#执行函数
 echo "开始运行"
 Initialization
 Http_Version
