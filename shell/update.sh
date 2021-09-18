@@ -22,7 +22,6 @@ function Update_Config {
 }
 
 echo "开始运行"
-Http_Version
 Git_PullShell
 Update_Config
 echo "运行结束，退出"
