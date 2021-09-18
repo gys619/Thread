@@ -67,6 +67,7 @@ function Pull_diy_Third_party_warehouse {
     l=1
     while [[ l -le 3 ]]; do
       echo "克隆失败,重试执行第$l次"
+      sleep 20s
       git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu_push
       if [ $? = 0 ]; then
         echo "克隆第三方仓库成功"
@@ -325,6 +326,7 @@ function Push_github {
     k=1
     while [[ k -le 3 ]]; do
       echo "上传失败,重试执行第$k次"
+      sleep 20s
       git push --force "https://$diy_user_name:$github_api@$diy_url" HEAD:$diy_branch
       if [ $? = 0 ]; then
         echo "上传成功"
