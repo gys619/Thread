@@ -87,7 +87,7 @@ function Pull_diy_Third_party_warehouse {
 #pull函数
 function Git_Pull {
   git remote remove origin
-  git remote add origin $Tmp_warehouse
+  git remote add origin $pint_warehouse
   git fetch --all
   ExitStatusShell=$?
   git reset --hard origin/$pint_branch
@@ -99,7 +99,7 @@ function Clone_Pull {
     echo "文件夹不存在，创建并执行clone"
     mkdir -p $repo_path
     cd $dir_repo
-    git clone -b $pint_branch ${github_proxy_url}$Tmp_warehouse $repo_path
+    git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
     if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
       cp -af $repo_path $dir_backup
@@ -119,7 +119,7 @@ function Clone_Pull {
     ls -a
     if [ ! -d "$repo_path/.git/" ];then
       echo "执行clone"
-      git clone -b $pint_branch ${github_proxy_url}$Tmp_warehouse $repo_path
+      git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
       if [ $? = 0 ]; then
         echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
         cp -af $repo_path $dir_backup
@@ -235,7 +235,7 @@ function Change_diy_party_warehouse {
   j=1
   h=${diySum}
   while [[ $j -le $h ]]; do
-    Tmp_warehouse=${diy_party_warehouse$j}
+    Tmp_warehouse=diy_party_warehouse$j
     Tmp_warehouse_branch=diy_party_warehouse_branch$j
     Tmp_diy_feihebing=diy_feihebing$j
     Tmp_fugai=fugai$j
@@ -251,7 +251,7 @@ function Change_diy_party_warehouse {
     pint_branch=$(printf ${branch_Tmp})
     pint_diy_feihebing=$(printf ${feihebing_Tmp})
     pint_fugai=$(printf ${fugai_Tmp})
-    get_uniq_path "$Tmp_warehouse" "$pint_branch"
+    get_uniq_path "$pint_warehouse" "$pint_branch"
     local repo_path="${dir_repo}/${uniq_path}"
     Clone_Pull
     let j++
