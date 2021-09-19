@@ -148,7 +148,7 @@ function Clone_Pull {
 
 #重命名仓库文件
 function prefix_suffix {
-  if [[ rename_name$j = "" ]] && [[ rename_file$j = "" ]]; then
+  if [[ $pint_name = "" ]] && [[ $pint_file = "" ]]; then
     echo "未定义重命名参数"
   else
     echo "已定义重命名参数，开始重命名文件"
