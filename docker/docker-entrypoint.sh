@@ -43,6 +43,6 @@ echo -e "======================2. 创建映射关系========================\n"
 bash /$dir_root/link.sh
 echo -e "创建完成"
 
-cron -f >/dev/null
+/sbin/service crond start >/dev/null
 
 exec "$@"
