@@ -21,6 +21,8 @@ RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && git config --global http.sslverify false \
+    && git config --global https.sslverify false \
     && git clone -b ${PUSH_BRANCH} ${PUSH_URL} ${dir_root} \
     && ln -sf ${dir_root}/shell/run.sh /usr/local/bin/run \
     && ln -sf ${dir_root}/shell/push.sh /usr/local/bin/push \
