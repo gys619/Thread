@@ -1,4 +1,4 @@
-FROM debian:unstable-slim
+FROM alpine:3.14.2
 ARG PUSH_URL=https://github.com/kangwenhang/docker.git
 ARG PUSH_BRANCH=master
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
@@ -7,9 +7,10 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     PS1="\u@\h:\w \$ " \
     dir_root=/push
 WORKDIR ${dir_root}
-RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends bash \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk update -f \
+    && apk upgrade \
+    && apk --no-cache add -f bash \
                              git \
                              curl \
                              wget \
@@ -17,13 +18,8 @@ RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
                              tar \
                              jq \
                              vim \
-                             cron \
     && rm -rf /var/cache/apk/* \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get autoremove \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && git config --global http.sslverify false \
-    && git config --global https.sslverify false \
     && git clone -b ${PUSH_BRANCH} ${PUSH_URL} ${dir_root} \
     && ln -sf ${dir_root}/shell/run.sh /usr/local/bin/run \
     && ln -sf ${dir_root}/shell/push.sh /usr/local/bin/push \
