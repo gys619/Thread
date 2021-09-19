@@ -17,6 +17,7 @@ RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list \
                              tar \
                              jq \
                              vim \
+                             cron \
     && rm -rf /var/cache/apk/* \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove \
