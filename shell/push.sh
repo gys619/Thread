@@ -93,14 +93,9 @@ function Git_Pull {
   git reset --hard origin/$pint_branch
 }
 
-#识别clone或者pull
-function Clone_Pull {
-  if [ ! -d "$repo_path" ];then
-    echo "文件夹不存在，创建并执行clone"
-    mkdir -p $repo_path
-    cd $dir_repo
-    git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
-    if [ $? = 0 ]; then
+#clone函数
+function Git_Clone {
+  if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
       cp -af $repo_path $dir_backup
       echo "备份成功，开始合并$j号仓库"
@@ -112,7 +107,17 @@ function Clone_Pull {
       Consolidated_Warehouse
       echo "清理失败缓存"
       rm -rf $repo_path
-    fi
+  fi
+}
+
+#识别clone或者pull
+function Clone_Pull {
+  if [ ! -d "$repo_path" ];then
+    echo "文件夹不存在，创建并执行clone"
+    mkdir -p $repo_path
+    cd $dir_repo
+    git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
+    Git_Clone
   else
     echo "文件夹存在，进行下一步"
     cd $dir_repo
@@ -120,19 +125,7 @@ function Clone_Pull {
     if [ ! -d "$repo_path/.git/" ];then
       echo "执行clone"
       git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
-      if [ $? = 0 ]; then
-        echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-        cp -af $repo_path $dir_backup
-        echo "备份成功，开始合并$j号仓库"
-        Consolidated_Warehouse
-      else
-        echo "克隆(更新)$j号仓库失败，请确认问题"
-        echo "识别备份并确认拷贝备份文件"
-        cp -af $dir_backup/${uniq_path}/. $repo_path
-        Consolidated_Warehouse
-        echo "清理失败缓存"
-        rm -rf $repo_path
-      fi
+      Git_Clone
     else
       echo "执行git pull"
       cd $repo_path
@@ -153,12 +146,16 @@ function Clone_Pull {
   fi
 }
 
-#自定义仓库前后缀
-#function prefix_suffix {
-#  if [ prefix$j = "" ] && [ suffix$j = "" ]; then
-
-#  fi
-#}
+#重命名仓库文件
+function prefix_suffix {
+  if [[ rename_name$j = "" ]] && [[ rename_file$j = "" ]]; then
+    echo "未定义重命名参数"
+  else
+    echo "已定义重命名参数，开始重命名文件"
+    rename $pint_name $pint_file
+    echo "重命名完成"
+  fi
+}
 
 #合并仓库（网络仓库）
 function Consolidated_Warehouse {
@@ -166,17 +163,15 @@ function Consolidated_Warehouse {
     echo "您已选择将所有文件合并到根目录，开始执行"
     sleep 3s
     mkdir -p $tongbu_temp
+    cp -af $repo_path/. $tongbu_temp
+    cd $tongbu_temp
+    Delete_git
+    prefix_suffix
     if [ "$pint_fugai" = "" -o "$pint_fugai" = "1"  ]; then
       echo "您已选择强制覆盖同名文件"
-      cp -af $repo_path/. $tongbu_temp
-      cd $tongbu_temp
-      Delete_git
       cp -af $tongbu_temp/. $tongbu_push
     else
       echo "您已选择跳过同名文件"
-      cp -af $repo_path/. $tongbu_temp
-      cd $tongbu_temp
-      Delete_git
       yes n | cp -ia $tongbu_temp/. $tongbu_push
     fi
     echo "合并$j号仓库成功，清理文件"
@@ -185,17 +180,15 @@ function Consolidated_Warehouse {
     echo "您已选择将文件夹合并到根目录，开始执行"
     sleep 3s
     mkdir -p $tongbu_temp/$pint_diy_feihebing
+    cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
+    cd $tongbu_temp/$pint_diy_feihebing
+    Delete_git
+    prefix_suffix
     if [ "$pint_fugai" = "" -o "$pint_fugai" = "1"  ]; then
       echo "您已选择强制覆盖同名文件"
-      cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
-      cd $tongbu_temp/$pint_diy_feihebing
-      Delete_git
       cp -af $tongbu_temp/$pint_diy_feihebing $tongbu_push
     else
       echo "您已选择跳过同名文件"
-      cp -af $repo_path/. $tongbu_temp/$pint_diy_feihebing
-      cd $tongbu_temp/$pint_diy_feihebing
-      Delete_git
       yes n | cp -ia $tongbu_temp/$pint_diy_feihebing $tongbu_push
     fi
     echo "合并$j号仓库成功，清理文件"
@@ -239,18 +232,20 @@ function Change_diy_party_warehouse {
     Tmp_warehouse_branch=diy_party_warehouse_branch$j
     Tmp_diy_feihebing=diy_feihebing$j
     Tmp_fugai=fugai$j
-    Tmp_prefix=prefix$j
-    Tmp_suffix=suffix$j
+    Tmp_name=rename_name$j
+    Tmp_file=rename_file$j
     warehouse_Tmp=${!Tmp_warehouse}
     branch_Tmp=${!Tmp_warehouse_branch}
     feihebing_Tmp=${!Tmp_diy_feihebing}
     fugai_Tmp=${!Tmp_fugai}
-    prefix_Tmp=${!Tmp_prefix}
-    suffix_Tmp=${!Tmp_suffix}
+    name_Tmp=${!Tmp_name}
+    file_Tmp=${!Tmp_file}
     pint_warehouse=$(printf ${warehouse_Tmp})
     pint_branch=$(printf ${branch_Tmp})
     pint_diy_feihebing=$(printf ${feihebing_Tmp})
     pint_fugai=$(printf ${fugai_Tmp})
+    pint_name=$(printf ${name_Tmp})
+    pint_file=$(printf ${file_Tmp})
     get_uniq_path "$pint_warehouse" "$pint_branch"
     local repo_path="${dir_repo}/${uniq_path}"
     Clone_Pull
