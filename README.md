@@ -1,33 +1,93 @@
-# 个人研究学习自用
-# 青龙拉取链接
+# 说明
+ * 个人研究学习自用
+ * 合集加的最后结尾大佬们脚本,没改互助码
+# 海压竹枝低复举，风吹山角晦还明。
+## 青龙拉取链接
 ``` 
-ql repo https://github.com/gys619/jd.git "jd_|gua_|jddj_|jd-|jr-|jx-|jd|jx_|getJDCookie" "scf_test_event|activity|backUp|jd_delCoupon|sendNotify.js|jd_opencard[\w.]*" "ZooFaker_Necklace.js|JDJRValidator_Pure.js|sign_graphics_validate.js|jddj_cookie|function|^jd[^_]|USER|utils|ql.js|jdCookie.js" 
+ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|wskey" "activity|backUp|scf_test_event" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_Pure|sign_graphics_validate|jddj_cookie|function|sign"
 ```
-### 因为he1pu和yuannian会改smieksmiek(瓜佬)的开卡脚本，所以会有重复的
-*加了黑名单，不加he1pu和yuannian的开卡脚本了，需要的可以自己更改repo链接
-### 有以下库合成 （在faker2的基础上加上其他仓库脚本集成）互助码也是他们的，本人没有
-* [smiek2221](https://github.com/smiek2221/scripts.git)
-* [yuannian1112](https://github.com/yuannian1112/jd_scripts.git)
-*  [faker2](https://github.com/shufflewzc/faker2.git)
-*  [JDDJ](https://github.com/passerby-b/JDDJ.git)
-*  [he1pu](https://github.com/he1pu/JDHelp.git)
-*  [airacg](https://github.com/airacg/jd_task.git)
-*  [ccwav](https://github.com/ccwav/QLScript.git)
+```
+推荐定时 0 */4 * * *
+```
 
-# 下面是[Oreomeow大佬](https://github.com/Oreomeow/VIP/blob/main/Tasks/qlrepo/Readme.md)整理的一些仓库
-## 青龙拉取常用京东脚本库
-## 说明
-- 更新一个整库脚本
-```
-ql repo <repourl> <path> <blacklist> <dependence> <branch>
-```
-- 更新单个脚本文件
-```
-ql raw <fileurl>
-```
-下面是示例
+### 更新日志
+<details>
+<summary>查看</summary>
 
-## 整库
+* 取消he1pu大佬的强制更新脚本，会自己加他的脚本！
+* 注意修改[airacg](https://github.com/airacg/jd_task.git)大佬的任务定时
+* 加了[Oreomeow大佬](https://raw.githubusercontent.com/Oreomeow/VIP/main/Conf/Qinglong/config.sample.sh)的config模板
+* 财富岛新手任务
+  * 修改青龙配置文件,如下,加个ts
+  ```
+   #ql repo命令拉取脚本时需要拉取的文件后缀，直接写文件后缀名即可
+   RepoFileExtensions="js py ts"
+   ```
+* 加了[Zy143L](https://github.com/Zy143L/wskey.git)大佬得wskey
+* 不加he1pu和yuannian的开卡脚本
+* ~~加了hwkxk得欢太商城脚本，自己在config.ini填写ck~~
+* [退会：JDMemberCloseAccount](https://github.com/yqchilde/JDMemberCloseAccount)
+ 
+ 
+</details>
+
+### 安装青龙需要一些的依赖
+<details>
+<summary>查看依赖列表</summary>
+ 安装青龙的一些依赖，按需求安装
+
+* docker exec -it qinglong bash -c "npm install -g typescript"
+
+* docker exec -it qinglong bash -c "npm install axios date-fns"
+
+* docker exec -it qinglong bash -c "npm install crypto -g"
+
+* docker exec -it qinglong bash -c "npm install png-js"
+
+* docker exec -it qinglong bash -c "npm install -g npm"
+
+* docker exec -it qinglong bash -c "pnpm i png-js"
+
+* docker exec -it qinglong bash -c "pip3 install requests"
+
+* docker exec -it qinglong bash -c "apk add --no-cache build-base g++ cairo-dev pango-dev giflib-dev && cd scripts && npm install canvas --build-from-source"
+
+* docker exec -it qinglong bash -c "apk add python3 zlib-dev gcc jpeg-dev python3-dev musl-dev freetype-dev"
+
+* docker exec -it qinglong bash -c "cd /ql/scripts/ && apk add --no-cache build-base g++ cairo-dev pango-dev giflib-dev && npm i && npm i -S ts-node typescript @types/node date-fns axios png-js canvas --build-from-source"
+
+或者
+
+* npm install -g png-js
+* npm install -g date-fns
+* npm install -g axios
+* npm install -g crypto-js
+* npm install -g ts-md5
+* npm install -g tslib
+* npm install -g @types/node
+* npm install -g requests
+
+</details>
+
+
+
+### 青龙拉取常用京东脚本库([Oreomeow大佬](https://github.com/Oreomeow/VIP/blob/main/Tasks/qlrepo/Readme.md)整理的一些仓库)
+<details>
+<summary>京东脚本库</summary>
+ 
+
+#### 说明
+ - 更新一个整库脚本
+ ```
+ ql repo <repourl> <path> <blacklist> <dependence> <branch>
+ ```
+ - 更新单个脚本文件
+ ```
+ ql raw <fileurl>
+ ```
+ 下面是示例
+
+#### 整库
 - `Unknown 备份托管等`
   
   1. `JDHelloWorld`
@@ -108,8 +168,8 @@ ql repo https://github.com/Wenmoux/scripts.git "other|jd" "" "" "wen"
 ql repo https://github.com/Tsukasa007/my_script.git "jd_|jx_" "jdCookie|USER_AGENTS|sendNotify|backup" "" "master"
 ```
 
-## 单脚本
-### 名称之后标注`﹢`的单脚本，若上面已拉取仓库的可以不拉，否则会重复拉取。这里适用于只拉取部分脚本使用
+#### 单脚本
+#### 名称之后标注`﹢`的单脚本，若上面已拉取仓库的可以不拉，否则会重复拉取。这里适用于只拉取部分脚本使用
 > `curtinlv`﹢
 
 >> 入会
@@ -162,7 +222,7 @@ or
 ql repo https://github.com/NobyDa/Script.git "JD-DailyBonus" "" "JD_DailyBonus" "master"
 ```
 
-## 已删库存档
+#### 已删库存档
 - `monk-coder`
 ```
 ql repo https://github.com/monk-dust/dust.git "i-chenzhe|normal|member|car" "backup"
@@ -183,3 +243,26 @@ ql repo https://github.com/longzhuzhu/nianyu.git "qx"
 ```
 ql repo https://github.com/panghu999/panghu.git "jd_"
 ```
+</details>
+ 
+ 
+
+ 
+ 
+ 
+
+### 致谢
+* [@kangwenhang](https://github.com/kangwenhang)
+* [@smiek2221](https://github.com/smiek2221/scripts.git)
+* [@yuannian1112](https://github.com/yuannian1112/jd_scripts.git)
+*  [@shufflewzc](https://github.com/shufflewzc/faker2.git)
+*  [@passerby-b](https://github.com/passerby-b/JDDJ.git)
+*  [@he1pu](https://github.com/he1pu/JDHelp.git)
+*  [@airacg](https://github.com/airacg/jd_task.git)
+*  [@ccwav](https://github.com/ccwav/QLScript.git)
+*  [@hwkxk](https://github.com/hwkxk/HeytapTask.git)
+*  [@Zy143L](https://github.com/Zy143L/wskey.git)
+*  [@X1a0He](https://github.com/X1a0He/jd_scripts_fixed)
+*  [@AlterGu](https://github.com/AlterGu/qinglong_note)
+*  [@Mashiro2000](https://github.com/Mashiro2000/HeyTap)
+
