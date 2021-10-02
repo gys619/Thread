@@ -22,10 +22,7 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
                           tar \
                           jq \
                           vim \
-                          perl-base \
-                          make \
                           busybox \
-    && perl -MCPAN -e 'install File::Rename' \
     && apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* \
