@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo -e "======================1. 检测配置文件========================\n"
+echo -e "======================检测配置文件========================\n"
 if [ -s ${dir_root}/config/crontab.list ]
 then
   echo -e "检测到config配置目录下存在crontab.list，自动导入定时任务...\n"
@@ -33,15 +33,17 @@ if [ ! -d "${dir_root}/diy/" ]; then
   echo
 fi
 
-if [ ! -d "${dir_root}/backup/" ]; then
-  echo -e "检测到backup文件夹不存在，创建文件夹...\n"
-  mkdir -p ${dir_root}/backup
+if [ ! -d "${dir_root}/backup/old/" ]; then
+  echo -e "检测到/backup/old文件夹不存在，创建文件夹...\n"
+  mkdir -p ${dir_root}/backup/old
   echo
 fi
 
-echo -e "======================2. 创建映射关系========================\n"
-bash /$dir_root/link.sh
-echo -e "创建完成"
+if [ ! -d "${dir_root}/backup/raw/" ]; then
+  echo -e "检测到/backup/raw文件夹不存在，创建文件夹...\n"
+  mkdir -p ${dir_root}/backup/raw
+  echo
+fi
 
 crond -f >/dev/null
 
