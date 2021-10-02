@@ -33,4 +33,4 @@ jobs:
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          docker buildx build --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}" --output "type=image,push=true" --platform=linux/amd64,linux/arm/v7,linux/arm64 --tag k1483162508/push:2.0 docker/
+          docker buildx build --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}" --output "type=image,push=true" --platform=linux/amd64,linux/arm/v7,linux/arm64 --tag k1483162508/push:3.0 docker/
