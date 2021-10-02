@@ -45,6 +45,6 @@ if [ ! -d "${dir_root}/backup/raw/" ]; then
   echo
 fi
 
-crond -f >/dev/null
+cron -f >/dev/null
 
 exec "$@"
