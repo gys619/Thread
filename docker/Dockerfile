@@ -4,8 +4,10 @@ ARG PUSH_BRANCH=master
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     LANG=zh_CN.UTF-8 \
     SHELL=/bin/bash \
+    DEBIAN_FRONTEND=noninteractive \
     PS1="\u@\h:\w \$ " \
     dir_root=/push
+SHELL ["/bin/bash", "-c"]
 WORKDIR ${dir_root}
 RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
     && apt-get upgrade \
