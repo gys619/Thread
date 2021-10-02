@@ -48,7 +48,7 @@ fi
 echo -e "======================启动定时========================\n"
 service cron start
 service rsyslog start
-sed -i 's/#cron.*/cron/g' /etc/rsyslog.d/50-default.conf
+sudo sed -i 's/#cron.*/cron/g' /etc/rsyslog.d/50-default.conf
 service rsyslog restart
 service cron restart
 tail -f /var/log/cron.log
