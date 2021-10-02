@@ -19,7 +19,7 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
                           tar \
                           jq \
                           vim \
-                          perl \
+                          perl-base \
                           make \
     && perl -MCPAN -e 'install File::Rename' \
     && apt-get clean \
