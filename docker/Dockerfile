@@ -3,6 +3,7 @@ ARG PUSH_URL=https://github.com/kangwenhang/docker.git
 ARG PUSH_BRANCH=master
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     LANG=zh_CN.UTF-8 \
+    LC_ALL=C \
     SHELL=/bin/bash \
     DEBIAN_FRONTEND=noninteractive \
     PS1="\u@\h:\w \$ " \
