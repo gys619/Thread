@@ -8,8 +8,8 @@ ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
     dir_root=/push
 WORKDIR ${dir_root}
 RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
-    && apt-get clean \
     && apt-get upgrade \
+    && apt-get update \
     && apt-get install -y bash \
                           git \
                           curl \
