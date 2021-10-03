@@ -5,5 +5,9 @@ config=$dir_root/config
 ListCron=$config/crontab.list
 
 #更新cron
-crontab ${ListCron}
-exit
+echo "开始更新cron"
+while :
+do
+    crontab ${ListCron}
+    sleep 15
+done

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo -e "======================检测配置文件========================\n"
+echo -e "======================1.检测配置文件========================\n"
 if [ -s ${dir_root}/config/crontab.list ]
 then
   echo -e "检测到config配置目录下存在crontab.list，自动导入定时任务...\n"
@@ -45,9 +45,10 @@ if [ ! -d "${dir_root}/backup/raw/" ]; then
   echo
 fi
 
-echo -e "======================启动定时========================\n"
+echo -e "======================2.启动定时========================\n"
 service rsyslog start
 service cron start
+. ./push/shell/upcron.sh
 tail -f /var/log/cron.log
 
 exec "$@"
