@@ -48,7 +48,7 @@ fi
 echo -e "======================2.启动定时========================\n"
 service rsyslog start
 service cron start
-. ./push/shell/upcron.sh
+. /push/shell/upcron.sh
 tail -f /var/log/cron.log
 
 exec "$@"
