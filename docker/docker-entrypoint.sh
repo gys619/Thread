@@ -46,12 +46,8 @@ if [ ! -d "${dir_root}/backup/raw/" ]; then
 fi
 
 echo -e "======================启动定时========================\n"
-service cron start
 service rsyslog start
-sudo sed -i 's/$PrivDrop/# $PrivDrop/g' /etc/rsyslog.conf
-sudo sed -i 's/#cron/cron/g' /etc/rsyslog.d/50-default.conf
-service rsyslog restart
-service cron restart
+service cron start
 tail -f /var/log/cron.log
 
 exec "$@"

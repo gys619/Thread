@@ -29,6 +29,8 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
     && apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* \
+    && sed -i 's/$PrivDrop/# $PrivDrop/g' /etc/rsyslog.conf \
+    && sed -i 's/#cron/cron/g' /etc/rsyslog.d/50-default.conf \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && git clone -b ${PUSH_BRANCH} ${PUSH_URL} ${dir_root} \
     && ln -sf ${dir_root}/shell/run.sh /usr/local/bin/run \
