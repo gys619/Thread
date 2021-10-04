@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ## 导入通用变量与函数
+dir_root=/push
 config_use=config"$1"
 shell=$dir_root/shell
 logs=$dir_root/logs

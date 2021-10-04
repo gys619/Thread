@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 #导入变量
+dir_root=/push
 config=$dir_root/config
 ListCron=$config/crontab.list
 md5=package_md5

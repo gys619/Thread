@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+dir_root=/push
+
 function Git_PullShell {
   git config --global http.version HTTP/1.1
   echo -e "更新shell脚本\n"
