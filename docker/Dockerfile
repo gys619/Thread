@@ -26,6 +26,10 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
                           rsyslog \
                           sudo \
                           postfix \
+                          nodejs \
+                          npm \
+    && npm install -g pm2 \
+    && rm -rf /root/.npm \
     && apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* \

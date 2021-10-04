@@ -45,10 +45,14 @@ if [ ! -d "${dir_root}/backup/raw/" ]; then
   echo
 fi
 
-echo -e "======================2.启动定时========================\n"
+echo -e "==================2. 启动定时同步（15s同步一次）========================\n"
+
+pm2 ${dir_root}/shell/upcron.sh --interpreter bash
+echo -e "定时同步启动成功...\n"
+
+echo -e "======================3.启动定时========================\n"
 service rsyslog start
 service cron start
-. /push/shell/upcron.sh
 tail -f /var/log/cron.log
 
 exec "$@"
