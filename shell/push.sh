@@ -154,6 +154,7 @@ function Consolidated_Warehouse {
 
 #识别clone或者pull
 function Clone_Pull {
+  echo "======================开始执行$j号仓库的拉取合并========================"
   if [ ! -d "$repo_path" ];then
     echo "文件夹不存在，创建并执行clone"
     mkdir -p $repo_path
@@ -172,6 +173,7 @@ function Clone_Pull {
       Git_Pull
     fi
   fi
+  echo "========================$j号仓库的拉取合并结束========================"
 }
 
 #重命名仓库文件
