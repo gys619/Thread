@@ -81,7 +81,7 @@ function Git_Pull {
   git reset --hard origin/$pint_branch
   if [ $? = 0 ] && [ $ExitStatusShell = 0 ]; then
     echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-    mv -u $dir_backup/${uniq_path} $old_backup
+    rsync -a $dir_backup/${uniq_path} $old_backup
     cp -af $repo_path $dir_backup
     echo "备份成功，开始合并$j号仓库"
     Consolidated_Warehouse
@@ -99,7 +99,7 @@ function Git_Clone {
   git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
   if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-      mv -u $dir_backup/${uniq_path} $old_backup
+      rsync -a $dir_backup/${uniq_path} $old_backup
       cp -af $repo_path $dir_backup
       echo "备份成功，开始合并$j号仓库"
       Consolidated_Warehouse
@@ -154,7 +154,7 @@ function Consolidated_Warehouse {
 
 #识别clone或者pull
 function Clone_Pull {
-  echo "======================开始执行$j号仓库的拉取合并========================"
+  echo -e "\n======================开始执行$j号仓库的拉取合并========================\n"
   if [ ! -d "$repo_path" ];then
     echo "文件夹不存在，创建并执行clone"
     mkdir -p $repo_path
@@ -173,7 +173,7 @@ function Clone_Pull {
       Git_Pull
     fi
   fi
-  echo "========================$j号仓库的拉取合并结束========================"
+  echo -e "\n========================$j号仓库的拉取合并结束========================\n"
 }
 
 #重命名仓库文件
@@ -232,12 +232,12 @@ function Change_diy_party_warehouse {
     fugai_Tmp=${!Tmp_fugai}
     name_Tmp=${!Tmp_name}
     file_Tmp=${!Tmp_file}
-    pint_warehouse=$(printf ${warehouse_Tmp})
-    pint_branch=$(printf ${branch_Tmp})
-    pint_diy_feihebing=$(printf ${feihebing_Tmp})
-    pint_fugai=$(printf ${fugai_Tmp})
-    pint_name=$(printf ${name_Tmp})
-    pint_file=$(printf ${file_Tmp})
+    pint_warehouse=${warehouse_Tmp}
+    pint_branch=${branch_Tmp}
+    pint_diy_feihebing=${feihebing_Tmp}
+    pint_fugai=${fugai_Tmp}
+    pint_name=${name_Tmp}
+    pint_file=${file_Tmp}
     get_uniq_path "$pint_warehouse" "$pint_branch"
     local repo_path="${dir_repo}/${uniq_path}"
     Clone_Pull
@@ -248,7 +248,7 @@ function Change_diy_party_warehouse {
 #合并仓库(网络仓库-RAW)
 Update_Own_Raw () {
     local rm_mark
-    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "--------------------------------------------------------------\n"
+    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "\n=========================开始拉取raw并合并==========================\n"
     for ((i=0; i<${#OwnRawFile[*]}; i++)); do
         raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
         echo "开始下载：${OwnRawFile[i]} 保存路径：$raw_flie/${raw_file_name[$i]}"
@@ -268,7 +268,7 @@ Update_Own_Raw () {
             echo "合并完成"
         fi
     done
-
+    
     for file in $(ls $raw_flie); do
         rm_mark="yes"
         for ((i=0; i<${#raw_file_name[*]}; i++)); do
@@ -279,12 +279,13 @@ Update_Own_Raw () {
         done
         [[ $rm_mark == yes ]] && rm -f $raw_flie/$file 2>/dev/null
     done
+    echo -e "\n=========================拉取raw并合并结束===========================\n"
 }
 
 #合并仓库(本地仓库)
 function Local_Change_diy_party_warehouse {
-  echo "开始合并本地文件，目标文件夹$dir_root/diy"
-  echo "识别为diy文件夹$config_use"
+  echo -e "\n=========================开始识别并合并diy文件==========================\n"
+  echo "开始合并本地文件，目标文件夹$dir_root/diy，识别为diy文件夹$config_use"
   if [ ! -d "$dir_root/diy/$config_use" ];then
     echo "$diy_config文件夹不存在,创建$config_use文件夹"
     mkdir -p $diy_config
@@ -300,12 +301,14 @@ function Local_Change_diy_party_warehouse {
       echo "合并完成"
     fi
   fi
+  echo -e "\n=========================识别并合并diy文件结束==========================\n"
 }
 
 #替换文件内容(正在开发)
 
 #上传文件至github
 function Push_github {
+  echo -e "\n===========================开始上传文件至网端==========================\n"
   cd $tongbu_push
   git init
   git add .
@@ -337,6 +340,7 @@ function Push_github {
     echo "上传失败，正在恢复文件"
     rm -rf $tongbu
   fi
+  echo -e "\n===========================上传文件至网端结束==========================\n"
 }
 
 #执行函数
