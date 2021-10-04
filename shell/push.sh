@@ -128,7 +128,7 @@ function Consolidated_Warehouse {
       cp -af $tongbu_temp/. $tongbu_push
     else
       echo "您已选择跳过同名文件"
-      yes n | cp -ia $tongbu_temp/. $tongbu_push
+      cp -n $tongbu_temp/. $tongbu_push
     fi
     echo "合并$j号仓库成功，清理文件"
     rm -rf $tongbu_temp
@@ -145,7 +145,7 @@ function Consolidated_Warehouse {
       cp -af $tongbu_temp/$pint_diy_feihebing $tongbu_push
     else
       echo "您已选择跳过同名文件"
-      yes n | cp -ia $tongbu_temp/$pint_diy_feihebing $tongbu_push
+      cp -n $tongbu_temp/$pint_diy_feihebing $tongbu_push
     fi
     echo "合并$j号仓库成功，清理文件"
     rm -rf $tongbu_temp
