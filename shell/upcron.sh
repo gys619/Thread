@@ -3,11 +3,35 @@
 #导入变量
 config=$dir_root/config
 ListCron=$config/crontab.list
+package=/push/shell/upcron.sh
+md5=package_md5
+package_md5_new=$(md5sum -b $package | awk '{print $1}'|sed 's/ //g')
 
-#更新cron
-echo "开始更新cron"
+# 创建md5的函数
+function creatmd5()
+{
+    echo $package_md5_new > $md5
+}
+
+# 判断文件是否存在
+if [ ! -f $md5 ] ; then
+    echo "md5file is not exsit,create md5file......."
+    creatmd5
+    exit
+fi
+
+# 对象对比判断
 while :
 do
-    crontab ${ListCron}
+    package_md5_old=$(cat $md5|sed 's/ //g')
+    echo $package_md5_new
+    echo $package_md5_old
+    if [ "$package_md5_new" == "$package_md5_old" ];then
+        echo ""
+    else
+        echo "定时变动"
+        creatmd5
+        crontab ${ListCron}
+    fi
     sleep 15
 done
