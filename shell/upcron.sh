@@ -3,9 +3,8 @@
 #导入变量
 config=$dir_root/config
 ListCron=$config/crontab.list
-package=/push/shell/upcron.sh
 md5=package_md5
-package_md5_new=$(md5sum -b $package | awk '{print $1}'|sed 's/ //g')
+package_md5_new=$(md5sum -b ${ListCron} | awk '{print $1}'|sed 's/ //g')
 
 # 创建md5的函数
 function creatmd5()
