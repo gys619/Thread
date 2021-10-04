@@ -82,6 +82,7 @@ function Git_Pull {
   if [ $? = 0 ] && [ $ExitStatusShell = 0 ]; then
     echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
     rsync -a $dir_backup/${uniq_path} $old_backup
+    rm -rf $dir_backup/${uniq_path}
     cp -af $repo_path $dir_backup
     echo "备份成功，开始合并$j号仓库"
     Consolidated_Warehouse
@@ -100,6 +101,7 @@ function Git_Clone {
   if [ $? = 0 ]; then
       echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
       rsync -a $dir_backup/${uniq_path} $old_backup
+      rm -rf $dir_backup/${uniq_path}
       cp -af $repo_path $dir_backup
       echo "备份成功，开始合并$j号仓库"
       Consolidated_Warehouse
