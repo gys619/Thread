@@ -1,21 +1,7 @@
 #!/usr/bin/env bash
 
 #变量判定
-dir_root=/push
-config_use=config"$1"
-logs=$dir_root/logs
-diy_config=$dir_root/diy/$config_use
-diy_logs=$logs/$config_use
-dir_repo=$dir_root/repo
-dir_backup=$dir_root/backup
-dir_backup_raw=$dir_backup/raw
-old_backup=$dir_backup/old
-dir_sample=$dir_root/sample
-dir_raw=$dir_root/raw
-raw_flie=$dir_raw/$config_use
-tongbu=$dir_root/temporary_file/$config_use
-tongbu_push=$tongbu/push
-tongbu_temp=$tongbu/temp
+source /push/shell/share.sh
 source $config/$config_use.sh
 
 #初始化文件夹

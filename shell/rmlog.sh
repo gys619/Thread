@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 
 ## 导入通用变量与函数
-dir_root=/push
-logs=$dir_root/logs
-diy_logs=$logs/$config_use
-
+. /push/shell/share.sh
 days=$1
 
 detect_macos() {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-dir_root=/push
+## 导入通用变量与函数
+. /push/shell/share.sh
 
 function Git_PullShell {
   git config --global http.version HTTP/1.1

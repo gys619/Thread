@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 #导入变量
-dir_root=/push
-config=$dir_root/config
-ListCron=$config/crontab.list
+. /push/shell/share.sh
 md5=package_md5
 
 # 创建md5的函数

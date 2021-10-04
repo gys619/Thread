@@ -35,10 +35,5 @@ RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
     && sed -i 's/#cron/cron/g' /etc/rsyslog.d/50-default.conf \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && git clone -b ${PUSH_BRANCH} ${PUSH_URL} ${dir_root} \
-    && ln -sf ${dir_root}/shell/run.sh /usr/local/bin/run \
-    && ln -sf ${dir_root}/shell/push.sh /usr/local/bin/push \
-    && ln -sf ${dir_root}/shell/update.sh /usr/local/bin/update \
-    && ln -sf ${dir_root}/shell/upcron.sh /usr/local/bin/upcron \
-    && ln -sf ${dir_root}/shell/rmlog.sh /usr/local/bin/rmlog \
     && chmod -R 777 ${dir_root}
 ENTRYPOINT ["./docker/docker-entrypoint.sh"]
