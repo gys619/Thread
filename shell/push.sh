@@ -43,6 +43,15 @@ function Http_Version {
   fi
 }
 
+#清除库内容
+function Del_Party{
+  for m in `ls`;do
+    if [ "$m" != .git ];then
+    rm -rf $m
+    fi
+  done
+}
+
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
   echo "正在克隆第三方仓库"
@@ -50,7 +59,7 @@ function Pull_diy_Third_party_warehouse {
   if [ $? = 0 ]; then
     echo "克隆第三方仓库成功"
     cd $tongbu_push
-    rm -rf !(.git)
+    Del_Party
     Git_log
   else
     l=1
@@ -61,7 +70,7 @@ function Pull_diy_Third_party_warehouse {
       if [ $? = 0 ]; then
         echo "克隆第三方仓库成功"
         cd $tongbu_push
-        rm -rf !(.git)
+        Del_Party
         Git_log
         return
       else
