@@ -44,7 +44,7 @@ function Http_Version {
 }
 
 #清除库内容
-function Del_Party{
+function Del_Party {
   for m in `ls`;do
     if [ "$m" != .git ];then
     rm -rf $m
