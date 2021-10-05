@@ -46,20 +46,22 @@ function Http_Version {
 #第三方仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
   echo "正在克隆第三方仓库"
-  git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu_push
+  git clone -b $diy_branch ${github_proxy_url}https://$diy_url $tongbu_push
   if [ $? = 0 ]; then
     echo "克隆第三方仓库成功"
     cd $tongbu_push
+    rm -rf !(.git)
     Git_log
   else
     l=1
     while [[ l -le 3 ]]; do
       echo "克隆失败,重试执行第$l次"
       sleep 20s
-      git clone -b $diy_Third_party_warehouse_branch ${github_proxy_url}$diy_Third_party_warehouse_url $tongbu_push
+      git clone -b $diy_branch ${github_proxy_url}https://$diy_url $tongbu_push
       if [ $? = 0 ]; then
         echo "克隆第三方仓库成功"
         cd $tongbu_push
+        rm -rf !(.git)
         Git_log
         return
       else
