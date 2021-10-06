@@ -1,4 +1,4 @@
-##上传脚本2.1版本---参数说明
+##上传脚本3.0版本---参数说明
 
 ##############################################自定义合并上传仓库变量############################################
 #网络协议版本
@@ -6,10 +6,6 @@ http_version="HTTP/2"
 
 #自定义代理加速
 github_proxy_url="https://ghproxy.com/"
-
-#主第三方仓库————网络仓库—————（有且只能有一个，建议使用空库，或基于其修改的底层仓库）
-diy_Third_party_warehouse_branch="master"
-diy_Third_party_warehouse_url="https://github.com/whyour/qinglong.git"
 
 #自定义————网络仓库—————(diy_feihebing为自定义文件夹，不填写即合并【所有文件】到根目录，改为其他即合并【文件夹】到根目录)
 ##fugai即是否覆盖同名文件，不填写或者1为强制覆盖，0为不覆盖
@@ -48,6 +44,7 @@ diy_user_email="kangwenhang@hotmail.com"
 github_api="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 #提交名称及地址（commit不填写默认拉取主第三方库的更新日志，diy_url地址【不带https://】）
+##库在云端必须存在
 diy_commit="提交测试"
 diy_url="github.com/kangwenhang/baibai.git"
 diy_branch="master"

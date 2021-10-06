@@ -43,6 +43,23 @@ function Http_Version {
   fi
 }
 
+#设定超时
+function Git_Limit_Time {
+  if [ "$lowSpeedLimit" = "" ]; then
+    echo "未定义lowSpeedLimit参数，采用默认"
+  else
+    echo "定义lowSpeedLimit参数为$lowSpeedLimit"
+    git config --global http.lowSpeedLimit $lowSpeedLimit
+  fi
+  if [ "$lowSpeedTime" = "" ]; then
+    echo "未定义lowSpeedTime参数，采用默认"
+  else
+    echo "定义lowSpeedTime参数为$lowSpeedTime"
+    git config --global http.lowSpeedTime $lowSpeedTime
+    
+  fi
+}
+
 #清除库内容
 function Del_Party {
   for m in `ls`;do
@@ -52,12 +69,12 @@ function Del_Party {
   done
 }
 
-#第三方仓库(网络仓库)
+#主仓库(网络仓库)
 function Pull_diy_Third_party_warehouse {
-  echo "正在克隆第三方仓库"
+  echo "正在克隆主仓库"
   git clone -b $diy_branch ${github_proxy_url}https://$diy_url $tongbu_push
   if [ $? = 0 ]; then
-    echo "克隆第三方仓库成功"
+    echo "克隆第主仓库成功"
     cd $tongbu_push
     Del_Party
     Git_log
@@ -65,22 +82,48 @@ function Pull_diy_Third_party_warehouse {
     l=1
     while [[ l -le 3 ]]; do
       echo "克隆失败,重试执行第$l次"
-      sleep 20s
       git clone -b $diy_branch ${github_proxy_url}https://$diy_url $tongbu_push
       if [ $? = 0 ]; then
-        echo "克隆第三方仓库成功"
+        echo "克隆主仓库成功"
         cd $tongbu_push
         Del_Party
         Git_log
         return
       else
         let l++
+        sleep 20s
       fi
     done
-    echo "克隆第三方仓库失败，正在恢复文件"
+    echo "克隆主仓库失败，正在恢复文件"
     rm -rf $tongbu
     exit
   fi
+}
+
+#备份仓库
+function Git_Backup {
+  echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
+  if [ ! -d "$dir_backup/${uniq_path}" ];then
+    cp -af $repo_path $dir_backup
+  else
+    rsync -a $dir_backup/${uniq_path} $old_backup
+    rm -rf $dir_backup/${uniq_path}
+    cp -af $repo_path $dir_backup
+  fi
+  echo "备份成功，开始合并$j号仓库"
+  Consolidated_Warehouse
+}
+
+function Git_Backup_Old {
+  echo "克隆(更新)$j号仓库失败，使用备份文件"
+  if [ ! -d "$dir_backup/${uniq_path}" ];then
+    echo "无备份文件，跳过此库"
+  else
+    cp -af $dir_backup/${uniq_path}/. $repo_path
+    Consolidated_Warehouse
+  fi
+  echo "清理失败缓存"
+  rm -rf $repo_path
 }
 
 #pull函数
@@ -91,38 +134,20 @@ function Git_Pull {
   ExitStatusShell=$?
   git reset --hard origin/$pint_branch
   if [ $? = 0 ] && [ $ExitStatusShell = 0 ]; then
-    echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-    rsync -a $dir_backup/${uniq_path} $old_backup
-    rm -rf $dir_backup/${uniq_path}
-    cp -af $repo_path $dir_backup
-    echo "备份成功，开始合并$j号仓库"
-    Consolidated_Warehouse
+    Git_Backup
   else
-    echo "克隆(更新)$j号仓库失败，使用备份文件"
-    cp -af $dir_backup/${uniq_path}/. $repo_path
-    Consolidated_Warehouse
-    echo "清理失败缓存"
-    rm -rf $repo_path
+    Git_Backup_Old
   fi
 }
+
 
 #clone函数
 function Git_Clone {
   git clone -b $pint_branch ${github_proxy_url}$pint_warehouse $repo_path
   if [ $? = 0 ]; then
-      echo "克隆(更新)$j号仓库成功，开始备份仓库内容"
-      rsync -a $dir_backup/${uniq_path} $old_backup
-      rm -rf $dir_backup/${uniq_path}
-      cp -af $repo_path $dir_backup
-      echo "备份成功，开始合并$j号仓库"
-      Consolidated_Warehouse
-    else
-      echo "克隆(更新)$j号仓库失败，请确认问题"
-      echo "识别备份并确认拷贝备份文件"
-      cp -af $dir_backup/${uniq_path}/. $repo_path
-      Consolidated_Warehouse
-      echo "清理失败缓存"
-      rm -rf $repo_path
+    Git_Backup
+  else
+    Git_Backup_Old
   fi
 }
 
@@ -360,6 +385,7 @@ function Push_github {
 echo "开始运行"
 Initialization
 Http_Version
+Git_Limit_Time
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
