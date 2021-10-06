@@ -22,8 +22,8 @@ lowSpeedTime=15
 # diy_party_warehouse1="https://github.com/kangwenhang/baibai.git"
 # diy_feihebing1=""
 # fugai1=""
-# rename_name1='s/^/logo/'
-# rename_file1="*.*"
+# rename_name1='s/^/logo/'【此处的rename为perl版本，具体用法请百度】
+# rename_file1="*.*"【此处的rename为perl版本，具体用法请百度】
 
 #一号仓库
 diy_party_warehouse_branch1=""
@@ -35,7 +35,7 @@ rename_file1=""
 
 #自定义————本地仓库—————（仅有一个）
 ##暂无变量自行添加文件至/diy/config*文件夹下
-###/diy/config*文件夹中有个【隐藏文件.gitignore】，可填写不需要上传的文件及文件夹
+###/diy/config*文件夹中有个【隐藏文件.gitignore】，可填写【不需要】上传的文件及文件夹
 
 #raw单文件下载————网络仓库—————
 ## 一行一个文件下载链接，首尾一对半角括号，示例：
