@@ -352,11 +352,13 @@ function Local_Change_diy_party_warehouse {
 function Push_github {
   echo -e "\n===========================开始上传文件至网端==========================\n"
   cd $tongbu_push
+  chmod -R 777 $tongbu_push
   git rm -r --cached .
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
   git commit --allow-empty -m "$diy_commit"
+  git config --global --add core.filemode false
   git config --global http.sslVerify "false"
   git config --global sendpack.sideband false
   git config --local sendpack.sideband false
