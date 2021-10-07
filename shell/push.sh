@@ -32,7 +32,7 @@ function Git_log {
   fi
 }
 
-#脚本前置
+#网络协议
 function Script_Pre {
   if [ "$http_version" = "" ]; then
     echo "http协议未设置，将采用默认协议"
@@ -352,6 +352,7 @@ function Local_Change_diy_party_warehouse {
 function Push_github {
   echo -e "\n===========================开始上传文件至网端==========================\n"
   cd $tongbu_push
+  git rm -r --cached .
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
