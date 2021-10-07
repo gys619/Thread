@@ -32,8 +32,8 @@ function Git_log {
   fi
 }
 
-#网络协议
-function Http_Version {
+#脚本前置
+function Script_Pre {
   if [ "$http_version" = "" ]; then
     echo "http协议未设置，将采用默认协议"
     http_version="HTTP/2"
@@ -41,10 +41,6 @@ function Http_Version {
     echo "http协议已设置，将采用$http_version协议"
     git config --global http.version $http_version
   fi
-}
-
-#设定超时
-function Git_Limit_Time {
   if [ "$lowSpeedLimit" = "" ]; then
     echo "未定义lowSpeedLimit参数，采用默认"
   else
@@ -56,7 +52,13 @@ function Git_Limit_Time {
   else
     echo "定义lowSpeedTime参数为$lowSpeedTime"
     git config --global http.lowSpeedTime $lowSpeedTime
-    
+  fi
+  if [ "$autocrlf" = "" ]; then
+    echo "未定义autocrlf参数，采用input"
+    git config --global core.autocrlf input
+  else
+    echo "定义autocrlf参数为$autocrlf"
+    git config --global core.autocrlft $autocrlf
   fi
 }
 
@@ -285,39 +287,40 @@ function Change_diy_party_warehouse {
 
 #合并仓库(网络仓库-RAW)
 Update_Own_Raw () {
-    local rm_mark
-    [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "\n=========================开始拉取raw并合并==========================\n"
-    for ((i=0; i<${#OwnRawFile[*]}; i++)); do
-        raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
-        echo "开始下载：${OwnRawFile[i]} 保存路径：$raw_flie/${raw_file_name[$i]}"
-        wget -q --no-check-certificate -O "$raw_flie/${raw_file_name[$i]}.new" ${OwnRawFile[i]}
-        if [[ $? -eq 0 ]]; then
-            mv "$raw_flie/${raw_file_name[$i]}.new" "$raw_flie/${raw_file_name[$i]}"
-            echo "下载 ${raw_file_name[$i]} 成功,开始备份成功后的文件"
-            cp -af $raw_flie/${raw_file_name[$i]} $dir_backup_raw/${raw_file_name[$i]}
-            echo "备份完成，开始合并"
-            cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
-            echo "合并完成"
-        else
-            echo "下载 ${raw_file_name[$i]} 失败，保留之前正常下载的版本..."
-            [ -f "$raw_flie/${raw_file_name[$i]}.new" ] && rm -f "$dir_raw/${raw_file_name[$i]}.new"
-            echo "开始合并"
-            cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
-            echo "合并完成"
-        fi
+  mkdir -p $raw_flie
+  local rm_mark
+  [[ ${#OwnRawFile[*]} -gt 0 ]] && echo -e "\n=========================开始拉取raw并合并==========================\n"
+  for ((i=0; i<${#OwnRawFile[*]}; i++)); do
+    raw_file_name[$i]=$(echo ${OwnRawFile[i]} | awk -F "/" '{print $NF}')
+    echo "开始下载：${OwnRawFile[i]} 保存路径：$raw_flie/${raw_file_name[$i]}"
+    wget -q --no-check-certificate -O "$raw_flie/${raw_file_name[$i]}.new" ${OwnRawFile[i]}
+    if [[ $? -eq 0 ]]; then
+      mv "$raw_flie/${raw_file_name[$i]}.new" "$raw_flie/${raw_file_name[$i]}"
+      echo "下载 ${raw_file_name[$i]} 成功,开始备份成功后的文件"
+      cp -af $raw_flie/${raw_file_name[$i]} $dir_backup_raw/${raw_file_name[$i]}
+      echo "备份完成，开始合并"
+      cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
+      echo "合并完成"
+    else
+      echo "下载 ${raw_file_name[$i]} 失败，保留之前正常下载的版本..."
+      [ -f "$raw_flie/${raw_file_name[$i]}.new" ] && rm -f "$dir_raw/${raw_file_name[$i]}.new"
+      echo "开始合并"
+      cp -af $raw_flie/${raw_file_name[$i]} $tongbu_push
+      echo "合并完成"
+    fi
+  done
+
+  for file in $(ls $raw_flie); do
+    rm_mark="yes"
+    for ((i=0; i<${#raw_file_name[*]}; i++)); do
+      if [[ $file == ${raw_file_name[$i]} ]]; then
+        rm_mark="no"
+        break
+      fi
     done
-    
-    for file in $(ls $raw_flie); do
-        rm_mark="yes"
-        for ((i=0; i<${#raw_file_name[*]}; i++)); do
-            if [[ $file == ${raw_file_name[$i]} ]]; then
-                rm_mark="no"
-                break
-            fi
-        done
-        [[ $rm_mark == yes ]] && rm -f $raw_flie/$file 2>/dev/null
-    done
-    echo -e "\n=========================拉取raw并合并结束===========================\n"
+    [[ $rm_mark == yes ]] && rm -f $raw_flie/$file 2>/dev/null
+  done
+  echo -e "\n=========================拉取raw并合并结束===========================\n"
 }
 
 #合并仓库(本地仓库)
@@ -344,11 +347,11 @@ function Local_Change_diy_party_warehouse {
 
 #替换文件内容(正在开发)
 
+
 #上传文件至github
 function Push_github {
   echo -e "\n===========================开始上传文件至网端==========================\n"
   cd $tongbu_push
-  git init
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
@@ -384,8 +387,7 @@ function Push_github {
 #执行函数
 echo "开始运行"
 Initialization
-Http_Version
-Git_Limit_Time
+Script_Pre
 Pull_diy_Third_party_warehouse
 Count_diy_party_warehouse
 Change_diy_party_warehouse
