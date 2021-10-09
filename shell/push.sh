@@ -353,7 +353,7 @@ function Push_github {
   echo -e "\n===========================开始上传文件至网端==========================\n"
   cd $tongbu_push
   chmod -R 777 $tongbu_push
-  git rm -r --cached .
+  git rm -rq --cached .
   git add .
   git config user.name "$diy_user_name"
   git config user.email "$diy_user_email"
