@@ -1164,7 +1164,7 @@ function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
     $.get({
-      url: `http://51.15.187.136:8080/queryJdCfdCode`,//`http://share.turinglabs.net/api/v3/jxcfd/query/${randomCount}/`,
+      url: ``,//`http://share.turinglabs.net/api/v3/jxcfd/query/${randomCount}/`,
       'timeout': 10000
     }, (err, resp, data) => {
       try {

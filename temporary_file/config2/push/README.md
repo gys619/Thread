@@ -1,6 +1,6 @@
 # 说明
  * 个人研究学习自用，主要是为了自己方便
- * 合集加的最后结尾大佬们脚本,没改互助码，懂得可以自己对源码，结尾已经放了链接
+ * 合集加的最后结尾大佬们脚本,删了互助码和互助池，gua佬没删，需要互助池的可以用他们合集，懂得可以自己对源码，结尾已经放了链接
  * 看到AV脚本群里 Windstill大佬说青蛙大佬也加入了，说我恰饭，那个贡献者是原来青蛙库改的不是有意的
  * 想用谁的合集都可以，结尾有其他大佬们的合集或者看Oreomeow大佬整理的那些
 ## 青龙拉取链接
@@ -19,7 +19,9 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|
 <summary>查看</summary>
 
 
-* 最新面板2.9.7拉不到可以进入容器
+* 内部互助可以把code.sh和task_before.sh放config目录下，并添加一个code的定时任务，命令:task /ql/config/code.sh
+* 加KingRan大佬仓库
+* 最新面板2.9.7或者新版拉不到可以进入容器
     ```
     docker exec -it 容器名 bash
     cd repo
@@ -272,9 +274,8 @@ ql repo https://github.com/panghu999/panghu.git "jd_"
 *  [@he1pu](https://github.com/he1pu/JDHelp.git)
 *  [@airacg](https://github.com/airacg/jd_task.git)
 *  [@ccwav](https://github.com/ccwav/QLScript.git)
-*  [@hwkxk](https://github.com/hwkxk/HeytapTask.git)
 *  [@Zy143L](https://github.com/Zy143L/wskey.git)
 *  [@X1a0He](https://github.com/X1a0He/jd_scripts_fixed)
 *  [@AlterGu](https://github.com/AlterGu/qinglong_note)
-*  [@Mashiro2000](https://github.com/Mashiro2000/HeyTap)
+*  [@KingRan](https://github.com/KingRan/JD-Scripts)
 *  [@Aaron-lv](https://github.com/Aaron-lv/sync)

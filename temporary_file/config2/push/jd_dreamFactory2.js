@@ -1308,7 +1308,7 @@ function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
     //$.get({url: `http://share.turinglabs.net/api/v3/jxfactory/query/${randomCount}/`, 'timeout': 10000}, (err, resp, data) => {
-    $.get({ url: `http://51.15.187.136:8080/queryJdFactoryCode`, 'timeout': 10000 }, (err, resp, data) => {
+    $.get({ url: ``, 'timeout': 10000 }, (err, resp, data) => {
       console.log(data);
       try {
         if (err) {

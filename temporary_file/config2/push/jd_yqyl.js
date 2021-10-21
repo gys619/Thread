@@ -1,15 +1,11 @@
 
 /*
-极速版我的百元现金
-分享到qq获取邀请码
-格式inviterId=aKIygK8y83zhxs2LmpQv46conKGFsMrny570tt6IEhU%3D
-设置变量
-export yqm="aKIygK8y83zhxs2LmpQv46conKGFsMrny570tt6IEhU%3D"（填你自己的邀请码）
-最低门槛36才能兑换红包
-活动31号结束
-至少要一两百ck，号少的可以跑一下帮作者助力，号多的先填变量再跑，否则都助力作者了
+ #柠檬邀请有礼  
+ #自定义邀请码环境变量
+export yqm="你的邀请码"
+#柠檬邀请有礼
 [task_local]
-0 10 * * * http://nm66.top/jd_yqyl.js, tag=柠檬邀请有礼, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+0 10 * * * jd_yqyl.js, tag=柠檬邀请有礼, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('柠檬邀请有礼');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -18,7 +14,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
-let yqm = 'aKIygK8y83zhxs2LmpQv46conKGFsMrny570tt6IEhU%3D';
+let yqm = '';
 let zdtx = false //设置为true自动抢提现100
 if (process.env.yqm) {
   yqm = process.env.yqm;

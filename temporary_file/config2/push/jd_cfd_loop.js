@@ -79,8 +79,8 @@ $.appId = 10028;
     }
   } while (count < 25)
 })()
-    .catch((e) => $.logErr(e))
-    .finally(() => $.done());
+  .catch((e) => $.logErr(e))
+  .finally(() => $.done());
 
 async function cfd() {
   try {
@@ -95,8 +95,8 @@ async function cfd() {
     } else {
       console.log(`热气球接客已达上限，跳过执行\n`)
     }
-     await $.wait(3000)
-     await queryshell()
+    await $.wait(3000)
+    await queryshell()
   } catch (e) {
     $.logErr(e)
   }

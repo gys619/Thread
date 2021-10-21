@@ -7,17 +7,17 @@
 ===================quantumultx================
 [task_local]
 #京东手机狂欢城助力
-11 1,8 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+10 0,8 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =====================Loon================
 [Script]
-cron "11 1,8 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力
+cron "10 0,8 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力
 
 ====================Surge================
 京东手机狂欢城助力 = type=cron,cronexp=10 0,8 * * *,wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js
 
 ============小火箭=========
-京东手机狂欢城助力 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, cronexpr="0 0,6,12,18 * * *", timeout=3600, enable=true
+京东手机狂欢城助力 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, cronexpr="10 0,8 * * *", timeout=3600, enable=true
 */
 const $ = new Env('京东手机狂欢城助力');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -43,11 +43,11 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     return;
   }
   $.temp = [];
-  $.updatePkActivityIdRes = await getAuthorShareCode('')
+  $.updatePkActivityIdRes = await getAuthorShareCode('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_cityShareCodes.json')
   if (!$.updatePkActivityIdRes) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_cityShareCodes.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    $.updatePkActivityIdRes = await getAuthorShareCode('')
+    $.updatePkActivityIdRes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_cityShareCodes.json')
   }
   await requireConfig();
   for (let i = 0; i < cookiesArr.length; i++) {
@@ -96,9 +96,9 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
         }
       }
       if ($.canHelp && ($.newShareCodes && $.newShareCodes.length)) {
-        console.log(`\n\n如果有剩余助力机会，则给作者以及随机码助力`)
+        console.log(`\n\n如果有剩余助力机会，则给作者助力`)
         for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
-           console.log(`\n${$.UserName} 去助力 ${$.newShareCodes[j]}`);
+          console.log(`\n${$.UserName} 去助力 ${$.newShareCodes[j]}`);
           $.delcode = false;
           await toHelp($.newShareCodes[j].trim());
           if ($.delcode) {
