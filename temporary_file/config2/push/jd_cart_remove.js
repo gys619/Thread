@@ -5,13 +5,7 @@
  * @LastEditTime: 2021-09-05 23:20:00
  * @LastEditors: X1a0He
  * @Description: 清空购物车，支持环境变量设置关键字，用@分隔，使用前请认真看对应注释
-
-[task_local]
-#清空购物车
-20 0 * * * jd_cart_remove.js, tag=清空购物车, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-## 清空购物车
-export JD_CART="true"
-*/
+ */
 const $ = new Env('清空购物车');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -42,7 +36,7 @@ $.keywordsNum = 0;
                 "open-url": "https://bean.m.jd.com/bean/signIndex.action"
             });
         }
-        for(let i = 7; i < cookiesArr.length; i++){
+        for(let i = 0; i < cookiesArr.length; i++){
             if(cookiesArr[i]){
                 cookie = cookiesArr[i];
                 $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])

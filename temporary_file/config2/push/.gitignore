@@ -12,6 +12,9 @@ update_task.sh
 passerby-b.boxjs.json
 crontab.list
 
+jd_dreamFactory2.js
+jd_selectionOfficer.js
+jd_cfd2.js
 jd_notifyHe1pu.js
 jd_checkCK.js
 jd_computer.js
