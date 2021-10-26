@@ -1,7 +1,7 @@
 /*
 东东超市
 Last Modified time: 2021-09-04 19:42:00
-Last Modified By X1a0He
+Modified By X1a0He
 活动入口：京东APP首页-京东超市-底部东东超市
 Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_superMarket.py
 东东超市兑换奖品请使用此脚本 jd_blueCoin.js
@@ -9,14 +9,14 @@ Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_
 =================QuantumultX==============
 [task_local]
 #东东超市
-11 0,6-23 * * * jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
+11 0-22/4 * * * jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
 ===========Loon===============
 [Script]
-cron "11 0,6-23 * * *" script-path=jd_superMarket.js,tag=东东超市
+cron "11 0-22/4 * * *" script-path=jd_superMarket.js,tag=东东超市
 =======Surge===========
-东东超市 = type=cron,cronexp="11 0,6-23 * * *",wake-system=1,timeout=3600,script-path=jd_superMarket.js
+东东超市 = type=cron,cronexp="11 0-22/4 * * *",wake-system=1,timeout=3600,script-path=jd_superMarket.js
 ==============小火箭=============
-东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 0,6-23 * * *", timeout=3600, enable=true
+东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 0-22/4 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -35,10 +35,13 @@ let joinPkTeam = true; //是否自动加入PK队伍
 let message = '',
     subTitle;
 const JD_API_HOST = 'https://api.m.jd.com/api';
+
 //助力好友分享码
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一京东账号的好友互助码请使用@符号隔开。
-let shareCodes = [] 
-!(async () => {
+//下面给出两个账号的填写示例（iOS只支持2个京东账号）
+let shareCodes = []
+
+    !(async () => {
         await requireConfig();
         if (!cookiesArr[0]) {
             $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {
@@ -61,7 +64,10 @@ let shareCodes = []
                     $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {
                         "open-url": "https://bean.m.jd.com/bean/signIndex.action"
                     });
-                    if ($.isNode()) await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+
+                    if ($.isNode()) {
+                        await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
+                    }
                     continue
                 }
                 message = '';
@@ -83,6 +89,7 @@ async function jdSuperMarket() {
     try {
         // await receiveGoldCoin();//收金币
         // await businessCircleActivity();//商圈活动
+        await smtg_shopIndex()
         await receiveBlueCoin(); //收蓝币（小费）
         // await receiveLimitProductBlueCoin();//收限时商品的蓝币
         await daySign(); //每日签到
@@ -95,14 +102,41 @@ async function jdSuperMarket() {
         // await upgrade();//升级货架和商品
         // await manageProduct();
         // await limitTimeProduct();
-        await smtg_shopIndex();
-        await smtg_newHome_xh();
+        // await smtg_newHome_xh();
+        await receiveUserUpgradeBlue()
         // await smtgHome();
-        await receiveUserUpgradeBlue();
         // await Home();
-        if (helpAu === true) await helpAuthor();
+        if (helpAu === true) {
+            await helpAuthor();
+        }
     } catch (e) {
         $.logErr(e)
+    }
+}
+
+//领取店铺升级的蓝币奖励和营业额
+async function receiveUserUpgradeBlue() {
+    // $.receiveUserUpgradeBlue = 0;
+    // if ($.userUpgradeBlueVos && $.userUpgradeBlueVos.length > 0) {
+    //     for (let item of $.userUpgradeBlueVos) {
+    //         const receiveCoin = await smtgReceiveCoin({
+    //             "id": item.id,
+    //             "type": 5
+    //         })
+    //         // $.log(`\n${JSON.stringify(receiveCoin)}`)
+    //         if (receiveCoin && receiveCoin.data['bizCode'] === 0) {
+    //             $.receiveUserUpgradeBlue += receiveCoin.data.result['receivedBlue']
+    //         }
+    //     }
+    //     $.log(`店铺升级奖励获取:${$.receiveUserUpgradeBlue}蓝币\n`)
+    // }
+    const res = await smtgReceiveCoin({
+        "type": 4,
+        "channel": "18"
+    })
+    // $.log(`${JSON.stringify(res)}\n`)
+    if (res && res.data['bizCode'] === 0) {
+        console.log(`\n收取营业额：获得 ${res.data.result['receivedTurnover']}\n`);
     }
 }
 
@@ -442,14 +476,16 @@ function receiveBlueCoin(timeout = 0) {
     return new Promise((resolve) => {
         setTimeout(() => {
             $.get(taskUrl('smtg_receiveCoin', {
-                "type": 2,
-                "channel": "18"
+                "type": 4,
+                "channel": "1",
+                "shopId":$.shopId
             }), async (err, resp, data) => {
                 try {
                     if (err) {
                         console.log('\n东东超市: API查询请求失败 ‼️‼️')
                         console.log(JSON.stringify(err));
                     } else {
+                        console.debug('receiveBlueCoin:',data)
                         data = JSON.parse(data);
                         $.data = data;
                         if ($.data.data.bizCode !== 0 && $.data.data.bizCode !== 809) {
@@ -461,7 +497,7 @@ function receiveBlueCoin(timeout = 0) {
                         if ($.data.data.bizCode === 0) {
                             $.coincount += $.data.data.result.receivedBlue;
                             $.blueCionTimes++;
-                            console.log(`【京东账号${$.index}】${$.nickName} 第${$.blueCionTimes}次领蓝币成功，获得${$.data.data.result.receivedBlue}个\n`)
+                            console.log(`【京东账号${$.index}】${$.nickName} 第${$.blueCionTimes}次领蓝币成功，获得${$.data.data.result.receivedTurnover}个\n`)
                             if (!$.data.data.result.isNextReceived) {
                                 message += `【收取小费】${$.coincount}个\n`;
                                 return
@@ -981,31 +1017,6 @@ async function limitTimeProduct() {
         }
     }
 }
-//领取店铺升级的蓝币奖励
-async function receiveUserUpgradeBlue() {
-    $.receiveUserUpgradeBlue = 0;
-    if ($.userUpgradeBlueVos && $.userUpgradeBlueVos.length > 0) {
-        for (let item of $.userUpgradeBlueVos) {
-            const receiveCoin = await smtgReceiveCoin({
-                "id": item.id,
-                "type": 5
-            })
-            // $.log(`\n${JSON.stringify(receiveCoin)}`)
-            if (receiveCoin && receiveCoin.data['bizCode'] === 0) {
-                $.receiveUserUpgradeBlue += receiveCoin.data.result['receivedBlue']
-            }
-        }
-        $.log(`店铺升级奖励获取:${$.receiveUserUpgradeBlue}蓝币\n`)
-    }
-    const res = await smtgReceiveCoin({
-        "type": 4,
-        "channel": "18"
-    })
-    // $.log(`${JSON.stringify(res)}\n`)
-    if (res && res.data['bizCode'] === 0) {
-        console.log(`\n收取营业额：获得 ${res.data.result['receivedTurnover']}\n`);
-    }
-}
 async function Home() {
     const homeRes = await smtgHome();
     if (homeRes && homeRes.data['bizCode'] === 0) {
@@ -1035,6 +1046,7 @@ function smtg_newHome_xh() {
                     console.log('\n东东超市: API查询请求失败 ‼️‼️')
                     console.log(JSON.stringify(err));
                 } else {
+                    console.debug('smtg_newHome_xh:',data)
                     data = JSON.parse(data);
                     if (data && data.data['bizCode'] === 0) {
                         $.userUpgradeBlueVos = data.data.result.userUpgradeBlueVos;
@@ -1105,6 +1117,7 @@ function smtg_shopIndex() {
                             merchandiseList,
                             level
                         } = data.data['result'];
+                        $.shopId = shopId
                         message += `【店铺等级】${level}\n`;
                         if (shelfList && shelfList.length > 0) {
                             for (let item of shelfList) {
@@ -2050,11 +2063,11 @@ function jsonParse(str) {
         }
     }
 }
-//==========================以下是给作者助力 免费拿,省钱大赢家等活动======================
-// async function helpAuthor() {
-//   await barGain();//免费拿
-//   await bigWinner();//省钱大赢家
-// }
+//==========================以下是给作者助力省钱大赢家等活动======================
+async function helpAuthor() {
+  //await barGain();//免费拿
+  await bigWinner();//省钱大赢家
+}
 // async function barGain() {
 //   let res = await getAuthorShareCode2('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/jd_barGain.json')
 //   if (!res) {
@@ -2086,85 +2099,79 @@ function jsonParse(str) {
 //   }
 // }
 
-// async function bigWinner() {
-//   let res = await getAuthorShareCode2('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/dyj.json')
-//   if (!res) {
-//     $.http.get({url: 'https://purge.jsdelivr.net/gh/zero205/updateTeam@main/shareCodes/dyj.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-//     await $.wait(1000)
-//     res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/zero205/updateTeam@main/shareCodes/dyj.json')
-//   }
-//   $.codeList = getRandomArrayElements([...(res || [])], [...(res || [])].length);
-//   for (let vo of $.codeList) {
-//     if (!vo['inviter']) continue
-//     await _618(vo['redEnvelopeId'], vo['inviter'], '1');
-//     await _618(vo['redEnvelopeId'],vo['inviter'], '2')
-//   }
-// }
+async function bigWinner() {
+  let res = await getAuthorShareCode2('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/fcdyj.json')
+  $.codeList = getRandomArrayElements([...(res || [])], [...(res || [])].length);
+  for (let vo of $.codeList) {
+    if (!vo['inviter']) continue
+    await _618(vo['redEnvelopeId'], vo['inviter'], '1');
+    await _618(vo['redEnvelopeId'],vo['inviter'], '2')
+  }
+}
 
-// function _618(redEnvelopeId, inviter, helpType = '1', linkId = 'yMVR-_QKRd2Mq27xguJG-w') {
-//   return new Promise(resolve => {
-//     $.get({
-//       url: `https://api.m.jd.com/?functionId=openRedEnvelopeInteract&body={%22linkId%22:%22${linkId}%22,%22redEnvelopeId%22:%22${redEnvelopeId}%22,%22inviter%22:%22${inviter}%22,%22helpType%22:%22${helpType}%22}&t=${+new Date()}&appid=activities_platform&clientVersion=3.5.0`,
-//       headers: {
-//         'Host': 'api.m.jd.com',
-//         'accept': 'application/json, text/plain, */*',
-//         'origin': 'https://618redpacket.jd.com',
-//         'user-agent': 'jdltapp;iPhone;3.5.0;14.2;network/wifi;hasUPPay/0;pushNoticeIsOpen/0;lang/zh_CN;model/iPhone10,2;hasOCPay/0;appBuild/1066;supportBestPay/0;pv/7.0;apprpd/;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
-//         'accept-language': 'zh-cn',
-//         'referer': `https://618redpacket.jd.com/?activityId=yMVR-_QKRd2Mq27xguJG-w&redEnvelopeId=${redEnvelopeId}&inviterId=${inviter}&helpType=1&lng=&lat=&sid=`,
-//         'Cookie': cookie
-//       }
-//     }, (err, resp, data) => {
-//       resolve()
-//     })
-//   })
-// }
-// function getAuthorShareCode2(url) {
-//   return new Promise(async resolve => {
-//     const options = {
-//       url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-//         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-//       }
-//     };
-//     if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-//       const tunnel = require("tunnel");
-//       const agent = {
-//         https: tunnel.httpsOverHttp({
-//           proxy: {
-//             host: process.env.TG_PROXY_HOST,
-//             port: process.env.TG_PROXY_PORT * 1
-//           }
-//         })
-//       }
-//       Object.assign(options, { agent })
-//     }
-//     $.get(options, async (err, resp, data) => {
-//       try {
-//         if (err) {
-//         } else {
-//           if (data) data = JSON.parse(data)
-//         }
-//       } catch (e) {
-//         // $.logErr(e, resp)
-//       } finally {
-//         resolve(data);
-//       }
-//     })
-//     await $.wait(10000)
-//     resolve();
-//   })
-// }
-// function getRandomArrayElements(arr, count) {
-//   let shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
-//   while (i-- > min) {
-//     index = Math.floor((i + 1) * Math.random());
-//     temp = shuffled[index];
-//     shuffled[index] = shuffled[i];
-//     shuffled[i] = temp;
-//   }
-//   return shuffled.slice(min);
-// }
-// prettier-ignore
+function _618(redEnvelopeId, inviter, helpType = '1', linkId = 'PFbUR7wtwUcQ860Sn8WRfw') {
+  return new Promise(resolve => {
+    $.get({
+      url: `https://api.m.jd.com/?functionId=openRedEnvelopeInteract&body={%22linkId%22:%22${linkId}%22,%22redEnvelopeId%22:%22${redEnvelopeId}%22,%22inviter%22:%22${inviter}%22,%22helpType%22:%22${helpType}%22}&t=${+new Date()}&appid=activities_platform&clientVersion=3.5.0`,
+      headers: {
+        'Host': 'api.m.jd.com',
+        'accept': 'application/json, text/plain, */*',
+        'origin': 'https://618redpacket.jd.com',
+        'user-agent': 'jdltapp;iPhone;3.5.0;14.2;network/wifi;hasUPPay/0;pushNoticeIsOpen/0;lang/zh_CN;model/iPhone10,2;hasOCPay/0;appBuild/1066;supportBestPay/0;pv/7.0;apprpd/;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+        'accept-language': 'zh-cn',
+        'referer': `https://618redpacket.jd.com/?activityId=${linkId}&redEnvelopeId=${redEnvelopeId}&inviterId=${inviter}&helpType=1&lng=&lat=&sid=`,
+        'Cookie': cookie
+      }
+    }, (err, resp, data) => {
+      resolve()
+    })
+  })
+}
+function getAuthorShareCode2(url) {
+  return new Promise(async resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(10000)
+    resolve();
+  })
+}
+function getRandomArrayElements(arr, count) {
+  let shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
+  while (i-- > min) {
+    index = Math.floor((i + 1) * Math.random());
+    temp = shuffled[index];
+    shuffled[index] = shuffled[i];
+    shuffled[i] = temp;
+  }
+  return shuffled.slice(min);
+}
 function Env(t, e) {
     "undefined" != typeof process && JSON.stringify(process.env).indexOf("GITHUB") > -1 && process.exit(0);
     class s {

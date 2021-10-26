@@ -38,6 +38,10 @@ if ($.isNode()) {
 }
 const JD_API_HOST = `https://api.m.jd.com`;
 !(async () => {
+	console.log('助力逻辑：优先助力互助码环境变量')
+    console.log('环境变量添加：环境变量：export dyjCode="cab8da78fc144424b1f2eee0531a4e3f20251632067205606@aN8mFXv3ct4DsDWk6uKZew"')
+    console.log('环境变量添加：export first="redEnvelopeId@inviter" 只支持单个账号助力')
+	console.log('请自行添加环境变量，否则将助力作者，账号太少的可以禁用"')
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {
             "open-url": "https://bean.m.jd.com/bean/signIndex.action"
@@ -53,6 +57,7 @@ const JD_API_HOST = `https://api.m.jd.com`;
     //开红包查询
     for (let i = 0; i < cookiesArr.length && $.needhelp; i++) {
         cookie = cookiesArr[i];
+		$.hotFlag = false;
         if (cookie) {
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             $.index = i + 1;
@@ -63,6 +68,7 @@ const JD_API_HOST = `https://api.m.jd.com`;
         if (!dyjCode) {
             console.log(`\n环境变量中没有检测到助力码,开始获取【京东账号${$.index}】助力码\n`)
             await open()
+			if ($.hotFlag) continue;
             await getid()
         } else {
             dyjStr = dyjCode.split("@")
@@ -162,6 +168,10 @@ function open() {
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     data = JSON.parse(data);
+					if (data.code === 16020) {
+                        $.hotFlag = true
+                        console.log(data.errMsg);
+                    }
                 }
             } catch (e) {
                 $.logErr(e, resp);
@@ -182,7 +192,7 @@ function getid() {
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     data = JSON.parse(data);
-                    console.log(data.data.state)
+                    //console.log(data.data.state)
                     if (data.data.state !== 0) {
                         if (data.success && data.data) {
                             console.log(`\n【您的redEnvelopeId】：${data.data.redEnvelopeId}`)
@@ -307,7 +317,7 @@ function help(rid, inviter, type) {
 function getAuthorShareCode() {
     return new Promise(resolve => {
         $.get({
-            url: "https://raw.githubusercontent.com/KingRan/jd/main/shareCodes/dyj.json",
+            url: "https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/fcdyj.json",
             headers: {
                 "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
             }

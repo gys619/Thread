@@ -25,6 +25,7 @@ cron "12 0-23/6 * * *" script-path=jd_pigPet.js, tag=京东金融养猪猪
  */
 
 const $ = new Env('金融养猪');
+const url = require('url');
 let cookiesArr = [], cookie = '', allMessage = '';
 const JD_API_HOST = 'https://ms.jr.jd.com/gw/generic/uc/h5/m';
 const MISSION_BASE_API = `https://ms.jr.jd.com/gw/generic/mission/h5/m`;
@@ -147,7 +148,7 @@ function pigPetSignOne() {
 //查询背包食物
 function pigPetUserBag() {
   return new Promise(async resolve => {
-    const body = {"source":0,"channelLV":"yqs","riskDeviceParam":"{}","t":Date.now(),"skuId":"1001003004","category":"1001"};
+    const body = {"source":2,"channelLV":"yqs","riskDeviceParam":"{}","t":Date.now(),"skuId":"1001003004","category":"1001"};
     $.post(taskUrl('pigPetUserBag', body), async (err, resp, data) => {
       try {
         if (err) {
@@ -194,7 +195,7 @@ function pigPetAddFood(skuId) {
   return new Promise(async resolve => {
     console.log(`skuId::::${skuId}`)
     const body = {
-      "source": 0,
+      "source": 2,
       "channelLV":"yqs",
       "riskDeviceParam":"{}",
       "skuId": skuId.toString(),
@@ -273,7 +274,7 @@ function pigPetLogin() {
 //开宝箱
 function pigPetOpenBox() {
   return new Promise(async resolve => {
-    const body = {"source":0,"channelLV":"yqs","riskDeviceParam":"{}","no":5,"category":"1001","t": Date.now()}
+    const body = {"source":2,"channelLV":"yqs","riskDeviceParam":"{}","no":5,"category":"1001","t": Date.now()}
     $.post(taskUrl('pigPetOpenBox', body), async (err, resp, data) => {
       try {
         if (err) {
@@ -316,7 +317,7 @@ function pigPetLotteryIndex() {
   $.currentCount = 0;
   return new Promise(async resolve => {
     const body = {
-      "source":0,
+      "source":2,
       "channelLV":"juheye",
       "riskDeviceParam": "{}"
     }
@@ -395,7 +396,7 @@ function pigPetSignIndex() {
 function pigPetLotteryPlay() {
   return new Promise(async resolve => {
     const body = {
-      "source":0,
+      "source":2,
       "channelLV":"juheye",
       "riskDeviceParam":"{}",
       "t":Date.now(),
@@ -437,6 +438,7 @@ async function missions() {
     if (item.status === 4) {
       console.log(`\n${item.missionName}任务已做完,开始领取奖励`)
       await pigPetDoMission(item.mid);
+      await $.wait(1000)
     } else if (item.status === 5){
       console.log(`\n${item.missionName}已领取`)
     } else if (item.status === 3){
@@ -444,9 +446,22 @@ async function missions() {
       if (item.mid === 'CPD01') {
         await pigPetDoMission(item.mid);
       } else {
-        // await pigPetDoMission(item.mid);
-        // await queryMissionReceiveAfterStatus(item.mid);
-        // await finishReadMission(item.mid);
+        await pigPetDoMission(item.mid);
+        await $.wait(1000)
+        let parse
+        if (item.url) {
+          parse = url.parse(item.url, true, true)
+        } else {
+          parse = {}
+        }
+        if (parse.query && parse.query.readTime) {
+          await queryMissionReceiveAfterStatus(parse.query.missionId);
+          await $.wait(parse.query.readTime * 1000)
+          await finishReadMission(parse.query.missionId, parse.query.readTime);
+        } else if (parse.query && parse.query.juid) {
+          await getJumpInfo(parse.query.juid)
+          await $.wait(4000)
+        }
       }
     }
   }
@@ -455,7 +470,7 @@ async function missions() {
 function pigPetDoMission(mid) {
   return new Promise(async resolve => {
     const body = {
-      "source":0,
+      "source":2,
       "channelLV":"",
       "riskDeviceParam":"{}",
       mid
@@ -496,7 +511,7 @@ function pigPetDoMission(mid) {
 function pigPetMissionList() {
   return new Promise(async resolve => {
     const body = {
-      "source":0,
+      "source":2,
       "channelLV":"",
       "riskDeviceParam":"{}",
     }
@@ -530,11 +545,48 @@ function pigPetMissionList() {
     })
   })
 }
+function getJumpInfo(juid) {
+  return new Promise(async resolve => {
+    const body = {"juid":juid}
+    const options = {
+      "url": `${MISSION_BASE_API}/getJumpInfo?reqData=${escape(JSON.stringify(body))}`,
+      "headers": {
+        'Host': 'ms.jr.jd.com',
+        'Origin': 'https://active.jd.com',
+        'Connection': 'keep-alive',
+        'Accept': 'application/json',
+        "Cookie": cookie,
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148/application=JDJR-App&deviceId=1423833363730383d273532393d243445364-d224341443d2938333530323445433033353&eufv=1&clientType=ios&iosType=iphone&clientVersion=6.1.70&HiClVersion=6.1.70&isUpdate=0&osVersion=13.7&osName=iOS&platform=iPhone 6s (A1633/A1688/A1691/A1700)&screen=667*375&src=App Store&netWork=1&netWorkType=1&CpayJS=UnionPay/1.0 JDJR&stockSDK=stocksdk-iphone_3.5.0&sPoint=&jdPay=(*#@jdPaySDK*#@jdPayChannel=jdfinance&jdPayChannelVersion=6.1.70&jdPaySdkVersion=3.00.52.00&jdPayClientName=iOS*#@jdPaySDK*#@)',
+        'Accept-Language': 'zh-cn',
+        'Referer': 'https://u1.jr.jd.com/uc-fe-wxgrowing/cloudpig/index/',
+        'Accept-Encoding': 'gzip, deflate, br'
+      }
+    }
+    $.get(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            console.log('getJumpInfo',data)
+          } else {
+            console.log(`京东服务器返回空数据`)
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
 function queryMissionReceiveAfterStatus(missionId) {
   return new Promise(resolve => {
-    const body = {"missionId": missionId.toString()};
+    const body = {"missionId": missionId};
     const options = {
-      "url": `${MISSION_BASE_API}/queryMissionReceiveAfterStatus?reqData=%7B%2522missionId%2522:%2522${Number(missionId)}%2522%7D`,
+      "url": `${MISSION_BASE_API}/queryMissionReceiveAfterStatus?reqData=${escape(JSON.stringify(body))}`,
       "headers": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate, br",
@@ -555,17 +607,6 @@ function queryMissionReceiveAfterStatus(missionId) {
         } else {
           if (data) {
             console.log('queryMissionReceiveAfterStatus',data)
-            // data = JSON.parse(data);
-            // if (data.resultCode === 0) {
-            //   if (data.resultData.resultCode === 0) {
-            //     if (data.resultData.resultData) {
-            //       // console.log(`当前大转盘剩余免费抽奖次数：：${data.resultData.resultData.currentCount}`);
-            //       $.currentCount = data.resultData.resultData.currentCount;//抽奖后剩余的抽奖次数
-            //     }
-            //   } else {
-            //     console.log(`其他情况：${JSON.stringify(data)}`)
-            //   }
-            // }
           } else {
             console.log(`京东服务器返回空数据`)
           }
@@ -579,11 +620,11 @@ function queryMissionReceiveAfterStatus(missionId) {
   })
 }
 //做完浏览任务发送信息API
-function finishReadMission(missionId) {
+function finishReadMission(missionId, readTime) {
   return new Promise(async resolve => {
-    const body = {"missionId": missionId.toString(),"readTime":10};
+    const body = {"missionId":missionId,"readTime":readTime * 1};
     const options = {
-      "url": `${MISSION_BASE_API}/finishReadMission?reqData=%7B%2522missionId%2522:%2522${Number(missionId)}%2522,%2522readTime%2522:10%7D`,
+      "url": `${MISSION_BASE_API}/finishReadMission?reqData=${escape(JSON.stringify(body))}`,
       "headers": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate, br",
@@ -604,17 +645,6 @@ function finishReadMission(missionId) {
         } else {
           if (data) {
             console.log('finishReadMission',data)
-            // data = JSON.parse(data);
-            // if (data.resultCode === 0) {
-            //   if (data.resultData.resultCode === 0) {
-            //     if (data.resultData.resultData) {
-            //       // console.log(`当前大转盘剩余免费抽奖次数：：${data.resultData.resultData.currentCount}`);
-            //       $.currentCount = data.resultData.resultData.currentCount;//抽奖后剩余的抽奖次数
-            //     }
-            //   } else {
-            //     console.log(`其他情况：${JSON.stringify(data)}`)
-            //   }
-            // }
           } else {
             console.log(`京东服务器返回空数据`)
           }
@@ -683,7 +713,6 @@ function taskUrl(function_id, body) {
       'Content-Type' : `application/x-www-form-urlencoded;charset=UTF-8`,
       'Host' : `ms.jr.jd.com`,
       'Connection' : `keep-alive`,
-      // 'User-Agent' : `jdapp;iPhone;9.0.0;13.4.1;e35caf0a69be42084e3c97eef56c3af7b0262d01;network/4g;ADID/F75E8AED-CB48-4EAC-A213-E8CE4018F214;supportApplePay/3;hasUPPay/0;pushNoticeIsOpen/1;model/iPhone11,8;addressid/2005183373;hasOCPay/0;appBuild/167237;supportBestPay/0;jdSupportDarkMode/0;pv/1287.19;apprpd/MyJD_GameMain;ref/https%3A%2F%2Fuua.jr.jd.com%2Fuc-fe-wxgrowing%2Fmoneytree%2Findex%2F%3Fchannel%3Dyxhd%26lng%3D113.325843%26lat%3D23.204628%26sid%3D2d98e88cf7d182f60d533476c2ce777w%26un_area%3D19_1601_50258_51885;psq/1;ads/;psn/e35caf0a69be42084e3c97eef56c3af7b0262d01|3485;jdv/0|kong|t_1000170135|tuiguang|notset|1593059927172|1593059927;adk/;app_device/IOS;pap/JA2015_311210|9.0.0|IOS 13.4.1;Mozilla/5.0 (iPhone; CPU iPhone OS 13_4_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
       'User-Agent' : `jdapp;android;8.5.12;9;network/wifi;model/GM1910;addressid/1302541636;aid/ac31e03386ddbec6;oaid/;osVer/28;appBuild/73078;adk/;ads/;pap/JA2015_311210|8.5.12|ANDROID 9;osv/9;pv/117.24;jdv/0|kong|t_1000217905_|jingfen|644e9b005c8542c1ac273da7763971d8|1589905791552|1589905794;ref/com.jingdong.app.mall.WebActivity;partner/oppo;apprpd/Home_Main;Mozilla/5.0 (Linux; Android 9; GM1910 Build/PKQ1.190110.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36 Edg/86.0.4240.111`,
       'Referer' : `https://u.jr.jd.com/`,
       'Accept-Language' : `zh-cn`

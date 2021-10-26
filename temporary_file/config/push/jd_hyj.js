@@ -146,7 +146,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
                 do {
                     var ret = await travel_raise()
                 } while (ret)
-                console.log(`助力码：${res.inviteId}\n`)
+                if(res.inviteId) console.log(`助力码：${res.inviteId}\n`)
 
             } catch (e) {
                 $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -288,6 +288,8 @@ function travel_collectAtuoScore() {
                             if (data.data && data['data']['bizCode'] === 0) {
 
                                 console.log(`成功领取${data.data.result.produceScore}个币`)
+                            }else {
+                                console.log(`领取金币：${data['data']['bizMsg']}`)
                             }
                         } else {
                             console.log(`secretp失败:${JSON.stringify(data)}\n`)
@@ -317,7 +319,7 @@ function travel_getTaskDetail() {
                         if (data.code === 0) {
                             if (data.data && data['data']['bizCode'] === 0) {
                                 if (data.data.result.inviteId == null) {
-                                    console.log("黑号")
+                                    console.log("你已被助力满，获取助力码失败")
                                     resolve("")
                                 }else {
                                   inviteIds.push(data.data.result.inviteId)

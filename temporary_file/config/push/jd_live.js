@@ -8,17 +8,17 @@
 ============Quantumultx===============
 [task_local]
 #京东直播
-50 12-14 * * * jd_live.js, tag=京东直播, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+50 12-14 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_live.js, tag=京东直播, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "50 12-14 * * *" script-path=jd_live.js,tag=京东直播
+cron "50 12-14 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_live.js,tag=京东直播
 
 ===============Surge=================
-京东直播 = type=cron,cronexp="50 12-14 * * *",wake-system=1,timeout=3600,script-path=jd_live.js
+京东直播 = type=cron,cronexp="50 12-14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_live.js
 
 ============小火箭=========
-京东直播 = type=cron,script-path=jd_live.js, cronexpr="50 12-14 * * *", timeout=3600, enable=true
+京东直播 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_live.js, cronexpr="50 12-14 * * *", timeout=3600, enable=true
  */
 const $ = new Env('京东直播');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -300,7 +300,7 @@ function getSign(functionid, body, uuid) {
         Host,
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
       },
-      timeout: 30000
+      timeout: 30 * 1000
     }
     $.post(options, (err, resp, data) => {
       try {
