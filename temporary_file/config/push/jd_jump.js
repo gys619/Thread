@@ -1,6 +1,6 @@
 /*
 跳跳乐瓜分京豆脚本
-更新时间：2021-09-13
+更新时间：2021-05-21
 活动入口：来客有礼(微信小程序)=>跳跳乐或京东APP=》首页=》母婴馆=》底部中间
 注：脚本好像还是会加商品到购物车，慎使用
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
@@ -288,8 +288,8 @@ async function doTask() {
     }
     if (oneTask.gridTask === 'add_cart' && oneTask.state === 'unfinish' && addFlag) {
       if (oneTask.gridTask === 'add_cart') {
-//         console.log(`不做：【${oneTask.content}】 任务`)
-//         continue
+        console.log(`不做：【${oneTask.content}】 任务`)
+        continue
       }
       console.log(`开始执行任务：${oneTask.content}`);
       let skuList = [];
