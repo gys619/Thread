@@ -4,20 +4,24 @@
 修改自 @yangtingxiao 抽奖机脚本
 活动入口：京东APP首页-闪购-闪购盲盒
 网页地址：https://h5.m.jd.com/babelDiy/Zeus/3vzA7uGuWL2QeJ5UeecbbAVKXftQ/index.html
-更新地址：https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sgmh.js
+更新地址：jd_sgmh.js
 已支持IOS双京东账号, Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #闪购盲盒
-20 8 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sgmh.js, tag=闪购盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+20 8 * * * jd_sgmh.js, tag=闪购盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
 ================Loon==============
 [Script]
-cron "20 8 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sgmh.js, tag=闪购盲盒
+cron "20 8 * * *" script-path=jd_sgmh.js, tag=闪购盲盒
+
 ===============Surge=================
-闪购盲盒 = type=cron,cronexp="20 8 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sgmh.js
+闪购盲盒 = type=cron,cronexp="20 8 * * *",wake-system=1,timeout=3600,script-path=jd_sgmh.js
+
 ============小火箭=========
-闪购盲盒 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sgmh.js, cronexpr="20 8 * * *", timeout=3600, enable=true
+闪购盲盒 = type=cron,script-path=jd_sgmh.js, cronexpr="20 8 * * *", timeout=3600, enable=true
+
  */
 const $ = new Env('闪购盲盒');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -25,7 +29,8 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let appId = '1EFRXxg' , homeDataFunPrefix = 'interact_template', collectScoreFunPrefix = 'harmony', message = ''
 let lotteryResultFunPrefix = homeDataFunPrefix, browseTime = 6
 const inviteCodes = [
- 
+  '',
+  '',
 ];
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -40,6 +45,7 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
+
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 !(async () => {
   if (!cookiesArr[0]) {
@@ -92,6 +98,7 @@ function interact_template_getHomeData(timeout = 0) {
         },
         body : `functionId=${homeDataFunPrefix}_getHomeData&body={"appId":"${appId}","taskToken":""}&client=wh5&clientVersion=1.0.0`
       }
+
       $.post(url, async (err, resp, data) => {
         try {
           data = JSON.parse(data);
@@ -107,6 +114,21 @@ function interact_template_getHomeData(timeout = 0) {
             //签到
             if (data.data.result.taskVos[i].taskName === '邀请好友助力') {
               console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.result.taskVos[i].assistTaskDetailVo.taskToken}\n`);
+			  // ***************************
+			  // 报告运行次数
+			  $.get({
+				url: `https://hz.zzf.red/api/runTimes?activityId=sgmh&sharecode=${data.data.result.taskVos[i].assistTaskDetailVo.taskToken}`,
+				timeout: 10000
+			  }, (err, resp, data) => {
+				if (err) {
+				  console.log('上报失败', err)
+				} else {
+				  if (data === '1' || data === '0') {
+					console.log('上报成功')
+				  }
+				}
+			  })
+			  // ***************************
               for (let code of $.newShareCodes) {
                 if (!code) continue
                 await harmony_collectScore(code, data.data.result.taskVos[i].taskId);
@@ -304,10 +326,13 @@ function shareCodesFormat() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `http://123/sgmh`, timeout: 10000}, (err, resp, data) => {
+    $.get({
+      url: `https://hz.zzf.red/api/sgmh/${randomCount}`,
+      timeout: 10000
+    }, (err, resp, data) => {
       try {
         if (err) {
-          console.log(JSON.stringify(err))
+          console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {

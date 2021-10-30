@@ -6,10 +6,15 @@
  19.0复制整段话 http:/J7ldD7ToqMhRJI星系牧场养牛牛，可获得DHA专属奶！%VAjYb8me2b!→去猄倲←
  
 https://lzdz-isv.isvjcloud.com/dingzhi/qqxing/pasture/activity?activityId=90121061401&lng=107.146935&lat=33.255252&sid=cad74d1c843bd47422ae20cadf6fe5aw&un_area=8_573_6627_52446
+更新地址：https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_ddnc_farmpark.js
+
+【原作者 @Wenmoux】
+
+【二次修改 @zero205】
 
 添加：自动喂食；
-修改：默认不做加购物车任务，优化黑号处理。
-需要加购FS_LEVEL=car (或者card=开卡+加购,car=只加购)
+修改：默认不做加购物车任务，优化黑号处理。By:zero205
+需要加购FS_LEVEL=car (或者card,仓库内很多脚本都是这个变量,card=开卡+加购,car=只加购)
 环境变量:
 CowKeep:保留食物的数量(低于这个才喂食物)
 ============Quantumultx===============
@@ -39,7 +44,7 @@ if ($.isNode()) {
 
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 message = ""
-$.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71ffc87"][Math.floor((Math.random() * 2))];
+$.shareuuid = ["c0eb4cc9ce4b4674baa119dc73abde30"][Math.floor((Math.random() * 3))];
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
@@ -47,7 +52,8 @@ $.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71f
         });
         return;
     }
-    console.log(`\n活动入口口令：29.0复制整段话 Https:/JXBGWf46qWgzLa 星系牧场养牛牛，可获得DHA专属奶！￥23d9a0N4FTyGv2%祛→【猄〤崬】\n`)
+    console.log(`\n【原作者 @Wenmoux】\nBy:zero205\n添加：自动喂食\n修改：跳过加购物车任务，优化黑号处理\n`);
+    console.log(`\n活动入口口令：29.0复制整段话 Https:/JXBGWf46qWgzLa 星系牧场养牛牛，可获得DHA专属奶！￥23d9a0N4FTyGv2%祛→【猄〤崬】\n\n【注意】Response code 493 (undefined)报错是正常情况，活动抽风而已，请勿反馈！！！\n`)
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
         if (cookie) {
@@ -91,7 +97,7 @@ $.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71f
                     if (task.taskid == "interact") {
                         for (l = 0; l < 20 - task.curNum; l++) {
                             await dotask(task.taskid, task.params)
-                            await $.wait(8000)
+                            await $.wait(5000)
                         }
                     } else if (task.taskid == "scansku") {
                         await getproduct()
@@ -105,24 +111,24 @@ $.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71f
                         }
                     } else {
                         await dotask(task.taskid, task.params)
-                        await $.wait(8000)
+                        await $.wait(5000)
                     }
                 }
                 await getinfo()
-                await $.wait(5000)
-                let th = $.isNode() ? (process.env.CowKeep ? process.env.CowKeep : 1000000) : ($.getdata("CowKeep") ? $.getdata("CowKeep") : 1000000)
+                await $.wait(3000)
+                let th = $.isNode() ? (process.env.CowKeep ? process.env.CowKeep : 100) : ($.getdata("CowKeep") ? $.getdata("CowKeep") : 100)
                 th = Math.max(100,th)
                 console.log(`【准备喂食,当前设置食物>${th}则喂食物,可通过设置环境变量CowKeep进行更改,需要大于100】`)
                 let boundry = 100
                 while($.foodNum >= th && boundry--) {
                     await feed()
-                    await $.wait(5000)
+                    await $.wait(3000)
                     // await getinfo2()
                     // await $.wait(3000)
                 }
                 for (k = 0; k < $.drawchance; k++) {
                     await draw()
-                    await $.wait(10000)
+                    await $.wait(2000)
                 }
                 let exchanges = Math.floor($.foodNum / 3000)
                 console.log(`可兑换 ${exchanges} 次 50京🐶`)

@@ -10,16 +10,16 @@
 ==========================Quantumultx=========================
 [task_local]
 #jd免费水果
-5 6-18/6 * * * jd_fruit.js, tag=东东农场, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdnc.png, enabled=true
+3 7-18/6 * * * jd_fruit.js, tag=东东农场, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdnc.png, enabled=true
 =========================Loon=============================
 [Script]
-cron "5 6-18/6 * * *" script-path=jd_fruit.js,tag=东东农场
+cron "3 7-18/6 * * *" script-path=jd_fruit.js,tag=东东农场
 
 =========================Surge============================
-东东农场 = type=cron,cronexp="5 6-18/6 * * *",wake-system=1,timeout=3600,script-path=jd_fruit.js
+东东农场 = type=cron,cronexp="3 7-18/6 * * *",wake-system=1,timeout=3600,script-path=jd_fruit.js
 
 =========================小火箭===========================
-东东农场 = type=cron,script-path=jd_fruit.js, cronexpr="5 6-18/6 * * *", timeout=3600, enable=true
+东东农场 = type=cron,script-path=jd_fruit.js, cronexpr="3 7-18/6 * * *", timeout=3600, enable=true
 
 jd免费水果 搬的https://github.com/liuxiaoyucc/jd-helper/blob/a6f275d9785748014fc6cca821e58427162e9336/fruit/fruit.js
 
@@ -32,7 +32,10 @@ let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, n
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一京东账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
 let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
- 
+  //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
+  '',
+  //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
+  '',
 ]
 let message = '', subTitle = '', option = {}, isFruitFinished = false;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
@@ -86,6 +89,21 @@ async function jdFruit() {
   try {
     await initForFarm();
     if ($.farmInfo.farmUserPro) {
+      // ***************************
+      // 报告运行次数
+      $.get({
+        url: `https://hz.zzf.red/api/runTimes?activityId=farm&sharecode=${$.farmInfo.farmUserPro.shareCode}`,
+        timeout: 10000
+      }, (err, resp, data) => {
+        if (err) {
+          console.log('上报失败', err)
+        } else {
+          if (data === '1' || data === '0') {
+            console.log('上报成功')
+          }
+        }
+      })
+      // ***************************
       // option['media-url'] = $.farmInfo.farmUserPro.goodsImage;
       message = `【水果名称】${$.farmInfo.farmUserPro.name}\n`;
       console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.farmInfo.farmUserPro.shareCode}\n`);
@@ -1256,10 +1274,10 @@ function timeFormat(time) {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://123/farm`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `https://hz.zzf.red/api/farm/${randomCount}`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
-          console.log(JSON.stringify(err))
+          console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
@@ -1303,7 +1321,7 @@ function requireConfig() {
     notify = $.isNode() ? require('./sendNotify') : '';
     //Node.js用户请在jdCookie.js处填写京东ck;
     const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-    const jdFruitShareCodes = $.isNode() ? require('./jdFruitShareCodes.js') : '';
+    const jdFruitShareCodes = $.isNode() ? require('./jdFruitShareCodes2.js') : '';
     //IOS等用户直接用NobyDa的jd cookie
     if ($.isNode()) {
       Object.keys(jdCookieNode).forEach((item) => {

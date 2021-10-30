@@ -84,36 +84,7 @@ $.appId = 10028;
       await $.wait(2000);
     }
   }
-  let res = await getAuthorShareCode('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/cfd.json')
-  if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/cfd.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
-    await $.wait(1000)
-    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/cfd.json')
-  }
-  $.strMyShareIds = [...(res && res.shareId || [])]
-  await shareCodesFormat()
-  for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i];
-    $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-    $.canHelp = true
-    UA = UAInfo[$.UserName]
-    if ($.newShareCodes && $.newShareCodes.length) {
-      console.log(`\n开始互助\n`);
-      for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
-        console.log(`账号${$.UserName} 去助力 ${$.newShareCodes[j]}`)
-        $.delcode = false
-        await helpByStage($.newShareCodes[j])
-        await $.wait(2000)
-        if ($.delcode) {
-          $.newShareCodes.splice(j, 1)
-          j--
-          continue
-        }
-      }
-    } else {
-      break
-    }
-  }
+
   await showMsg();
 })()
     .catch((e) => $.logErr(e))
@@ -138,15 +109,13 @@ async function cfd() {
 
     // 寻宝
     console.log(`寻宝`)
-    let XBDetail = beginInfo.XbStatus.XBDetail.filter((x) => x.dwRemainCnt !== 0)
+    let XBDetail = beginInfo.XbStatus.XBDetail.filter((x) => x.dwRemainCnt !== 0 && x.dwRemainCnt !== 2)
     if (XBDetail.length !== 0) {
       console.log(`开始寻宝`)
-      $.break = false
       for (let key of Object.keys(XBDetail)) {
         let vo = XBDetail[key]
         await $.wait(2000)
         await TreasureHunt(vo.strIndex)
-        if ($.break) break
       }
     } else {
       console.log(`暂无宝物`)
@@ -307,7 +276,6 @@ function TreasureHunt(strIndex) {
             }
           } else {
             console.log(`寻宝失败：${data.sErrMsg}`)
-            $.break = true
           }
         }
       } catch (e) {
@@ -527,7 +495,7 @@ async function mermaidOper(strStoryId, dwType, ddwTriggerDay) {
                 console.log(`昨日解救美人鱼领奖成功：获得${data.Data.Prize.strPrizeName}\n`)
               } else {
                 console.log(`昨日解救美人鱼领奖失败：${data.sErrMsg}\n`)
-              }
+              }             
               break
             default:
               break
@@ -1091,7 +1059,7 @@ async function getBuildInfo(body, buildList, type = true) {
             const body = `strBuildIndex=${data.strBuildIndex}&dwType=1`
             let collectCoinRes = await collectCoin(body)
             console.log(`【${buildNmae}】收集${collectCoinRes.ddwCoin}金币`)
-            await $.wait(3000)
+            await $.wait(2000)
             await getUserInfo(false)
             console.log(`升级建筑`)
             console.log(`【${buildNmae}】当前等级：${buildList.dwLvl}`)
@@ -1099,7 +1067,6 @@ async function getBuildInfo(body, buildList, type = true) {
             if(data.dwCanLvlUp > 0 && $.info.ddwCoinBalance >= (data.ddwNextLvlCostCoin * 3)) {
               console.log(`【${buildNmae}】满足升级条件，开始升级`)
               const body = `ddwCostCoin=${data.ddwNextLvlCostCoin}&strBuildIndex=${data.strBuildIndex}`
-              await $.wait(2000)
               let buildLvlUpRes = await buildLvlUp(body)
               if (buildLvlUpRes.iRet === 0) {
                 console.log(`【${buildNmae}】升级成功：获得${data.ddwLvlRich}财富\n`)
@@ -1187,12 +1154,9 @@ function helpByStage(shareCodes) {
           data = JSON.parse(data);
           if (data.iRet === 0 || data.sErrMsg === 'success') {
             console.log(`助力成功：获得${data.Data.GuestPrizeInfo.strPrizeName}`)
-          } else if (data.iRet === 2235 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
+          } else if (data.iRet === 2232 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
             console.log(`助力失败：${data.sErrMsg}`)
             $.canHelp = false
-          } else if (data.iRet === 2232 || data.sErrMsg === '分享链接已过期') {
-            console.log(`助力失败：${data.sErrMsg}`)
-            $.delcode = true
           } else if (data.iRet === 9999 || data.sErrMsg === '您还没有登录，请先登录哦~') {
             console.log(`助力失败：${data.sErrMsg}`)
             $.canHelp = false
@@ -1278,7 +1242,7 @@ function getUserInfo(showInvite = true) {
             console.log(`财富岛好友互助码每次运行都变化,旧的当天有效`);
             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}`);
             $.shareCodes.push(strMyShareId)
-            //await uploadShareCode(strMyShareId, $.UserName)
+            await uploadShareCode(strMyShareId, $.UserName)
           }
           $.info = {
             ...$.info,
@@ -1642,12 +1606,46 @@ function readShareCode() {
     $.get({url: ``, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
-          //console.log(JSON.stringify(err))
-          //console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
         } else {
           if (data) {
             console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
             data = JSON.parse(data);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(10000);
+    resolve()
+  })
+}
+function uploadShareCode(code, pin) {
+  return new Promise(async resolve => {
+    $.post({url: `http://transfer.nz.lu/upload/cfd?code=${code}&ptpin=${encodeURIComponent(encodeURIComponent(pin))}`, timeout: 10000}, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            if (data === 'OK') {
+              console.log(`已自动提交助力码\n`)
+            } else if (data === 'error') {
+              console.log(`助力码格式错误，乱玩API是要被打屁屁的~\n`)
+            } else if (data === 'full') {
+              console.log(`车位已满，请等待下一班次\n`)
+            } else if (data === 'exist') {
+              console.log(`助力码已经提交过了~\n`)
+            } else if (data === 'not in whitelist') {
+              console.log(`提交助力码失败，此用户不在白名单中\n`)
+            } else {
+              console.log(`未知错误：${data}\n`)
+            }
           }
         }
       } catch (e) {

@@ -1,5 +1,9 @@
 /*
-
+美丽研究院
+更新时间:2021-05-08
+活动入口：京东app首页-美妆馆-底部中间按钮
+只支持Node.js支持N个京东账号
+脚本兼容: Node.js
 cron 1 7,12,19 * * * jd_beauty.js
  */
 const $ = new Env('美丽研究院');
@@ -150,7 +154,7 @@ async function mr() {
       'user-agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
     }
   })
-  console.log(`wss://xinruimz-isv.isvjcloud.com/wss/?token=${$.token}`)
+  console.log(`wss://116.198.3.218/wss/?token=${$.token}`)
   client.onopen = async () => {
     console.log(`美容研究院服务器连接成功`);
     client.send('{"msg":{"type":"action","args":{"source":1},"action":"_init_"}}');

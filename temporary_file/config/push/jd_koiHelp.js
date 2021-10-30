@@ -119,7 +119,7 @@ function requireConfig() {
 function submitCode(shareCode) {
     if (!shareCode || shareCode == undefined || shareCode.length<=0 ) {return;}
     return new Promise(async resolve => {
-    $.get({url: `http://www.helpu.cf/jdcodes/submit.php?code=${shareCode}&type=koi&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `123/jdcodes/submit.php?code=${shareCode}&type=koi&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -149,7 +149,7 @@ function submitCode(shareCode) {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://www.helpu.cf/jdcodes/getcode.php?type=koi&num=20`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `123/jdcodes/getcode.php?type=koi&num=20`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
