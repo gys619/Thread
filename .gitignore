@@ -13,7 +13,11 @@ update_task.sh
 passerby-b.boxjs.json
 crontab.list
 
-
+jd_tyt_ks.js
+jd_MovementFaker.js	
+gua_city.js
+gua_opencard44.js
+jd_city.js
 jd_speed_redEnvelope.ts
 jd_redpocke.js
 jd_tie.js
@@ -48,3 +52,8 @@ jd_bean_change_pro.js
 jd_fruit?.js
 jd_necklace.js
 jd_exchange_joy.js
+
+
+
+superbox.js
+wx_*.js
