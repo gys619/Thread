@@ -17,8 +17,11 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|
 [退会：JDMemberCloseAccount](https://github.com/yqchilde/JDMemberCloseAccount)
 
 拉不到库是因为版本号没了，需要删了重新拉一下，运行一下下面命令就好了，库不稳，见谅！
+
 docker exec -it 容器名 bash
+
 cd repo
+
 rm -rf gys619_jdd
 
 ### 脚本说明
