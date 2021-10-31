@@ -1,6 +1,6 @@
 # 说明
  * 个人研究学习自用，主要是为了自己方便
- * 合集加的最后结尾大佬们脚本,删了互助码和互助池，gua佬没删，需要互助池的可以用他们合集，懂得可以自己对源码，结尾已经放了链接
+ * 合集加的最后结尾大佬们脚本,删了互助码和互助池，gua佬没删，需要互助池的可以用他们合集，结尾已经放了链接
  * 看到AV脚本群里 Windstill大佬说青蛙大佬也加入了，说我恰饭，那个贡献者是原来青蛙库改的不是有意的
  * 想用谁的合集都可以，结尾有其他大佬们的合集或者看Oreomeow大佬整理的那些
 ## 青龙拉取链接
@@ -14,11 +14,20 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|
 [兜兜风评价助手1.6测试版](https://github.com/gys619/gys/blob/main/doudoufeng/%E5%85%9C%E5%85%9C%E9%A3%8E%E7%9A%84%E4%B8%9C%E4%BA%AC%E8%AF%84%E4%BB%B7%E5%8A%A9%E6%89%8B(%E6%B5%8B%E8%AF%95%E7%89%88)%201.7.exe?raw=true)
 
 [退会：JDMemberCloseAccount](https://github.com/yqchilde/JDMemberCloseAccount)
-### 更新日志
+### 脚本说明
 <details>
 <summary>查看</summary>
 
 
+
+* 想跑gua开卡的可以加,false改成true
+    ```
+    export guaopencard_All="false"
+    export guaopencard_addSku_All="false"
+    export guaopencardRun_All="false"
+    export guaopencard_draw="false"
+    ```
+* 去掉多余的双十一红包脚本，自己再config里加export FLCODE=''，否则不能跑
 * 内部互助可以把code.sh和task_before.sh放config目录下，并添加一个code的定时任务，命令:task /ql/config/code.sh
 * 加KingRan大佬仓库
 * 最新面板2.9.7或者新版拉不到可以进入容器
@@ -27,7 +36,7 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|
     cd repo
     rm -rf gys619_jdd
     ```
-* 觉得重复任务多的，可以用jd_disable.py禁用重复任务
+
 * 加了[Oreomeow大佬](https://raw.githubusercontent.com/Oreomeow/VIP/main/Conf/Qinglong/config.sample.sh)的config模板,名字是jd_config.sample.sh
 * 财富岛新手任务开木板
   * 修改青龙配置文件,如下,加个ts
@@ -44,9 +53,12 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|jddj_|getJDCookie|
 <details>
 <summary>查看依赖列表</summary>
 
+
+* 最新青龙支持安装依赖需要啥依赖，去依赖管理添加即可，简单方便
 * 遇到Cannot find module 'xxxxxx'报错就进入青龙容器
 * docker exec -it QL(自己容器名) bash
 * pnpm install xxxxx(报错中引号里的复制过来)
+
  
 
  安装青龙的一些依赖，按需求安装

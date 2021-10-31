@@ -29,7 +29,7 @@ let shareList = [];
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-    if(Date.now() > '1635177600000'){
+    if(Date.now() > '1636560000000'){
         console.log(`活动已结束`);
         return ;
     }
@@ -133,17 +133,20 @@ async function main(cookie) {
     for (let i = 0; i < questions.length; i++) {
         questionInfo[questions[i].answerCode] = questions[i].skuName;
     }
+    let thisCode = '';
     if(answerCode === '999'){
-        answerCode =  Math.round((Math.random()*10))%2 === 0 ? "A" : "B";
-        console.log(`\n没有设置环境变量ANSWERCODE，随机选择队伍:${answerCode}\n`)
+        thisCode =  Math.round((Math.random()*10))%2 === 0 ? "A" : "B";
+        console.log(`\n没有设置环境变量ANSWERCODE，随机选择队伍:${thisCode}\n`)
+    }else{
+        thisCode = answerCode;
     }
-    if(answerCode){
+    if(thisCode){
         if(homePage.userAnswerCode === null){
             await takeRequest(cookie,`appid=china-joy&functionId=champion_game_prod&body={"activityDate":"${homePage.activityDate}","apiMapping":"/api/checkGuess"}&t=${Date.now()}&loginType=2`);
 
             await $.wait(1000);
-            console.log(`${userName},选择队伍：${questionInfo[answerCode]}`);
-            let guessAnswer = await takeRequest(cookie,`appid=china-joy&functionId=champion_game_prod&body={"activityDate":"${homePage.activityDate}","answerCode":"${answerCode}","apiMapping":"/api/guessAnswer"}&t=${Date.now()}&loginType=2`);
+            console.log(`${userName},选择队伍：${questionInfo[thisCode]}`);
+            let guessAnswer = await takeRequest(cookie,`appid=china-joy&functionId=champion_game_prod&body={"activityDate":"${homePage.activityDate}","answerCode":"${thisCode}","apiMapping":"/api/guessAnswer"}&t=${Date.now()}&loginType=2`);
             console.log(`${userName},选择返回：${JSON.stringify(guessAnswer)}`);
             await $.wait(1000);
             homePage = await takeRequest(cookie,`appid=china-joy&functionId=champion_game_prod&body={"apiMapping":"/api/homePage"}&t=${Date.now()}&loginType=2`);

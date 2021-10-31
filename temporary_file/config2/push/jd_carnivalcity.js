@@ -105,12 +105,6 @@ async function JD818() {
     await getHelp();//获取邀请码
     if ($.blockAccount) return
     await indexInfo(true);//获取任务
-    $.stop = false;
-    let num = 0;
-    do {
-      await headInfo()
-      num++
-    } while (!$.stop && num < 30)
     await doHotProducttask();//做热销产品任务
     await doBrandTask();//做品牌手机任务
     await doBrowseshopTask();//逛好货街，做任务
@@ -124,114 +118,6 @@ async function JD818() {
   } catch (e) {
     $.logErr(e)
   }
-}
-
-function headInfo() {
-  return new Promise(resolve => {
-    const body = {"apiMapping":"/khc/index/headInfo"}
-    $.post(taskUrl(body), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} headInfo API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              if (data.data.state === "0") {
-                if (data.data.taskType === "13" || data.data.taskType === "15") {
-                  console.log(`开始 【顶部】浏览任务,需等待6秒`)
-                  await doBrowseHead(data.data.taskIndex, data.data.taskId, data.data.taskType)
-                } else if (data.data.taskType === "14") {
-                  console.log(`开始 【顶部】加购任务`)
-                  await getHeadJoinPrize(data.data.taskId, data.data.taskIndex)
-                }
-              } else {
-                $.stop = true
-              }
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-function doBrowseHead(taskIndex, taskId, taskType) {
-  return new Promise(resolve => {
-    const body = {"taskIndex":taskIndex,"taskId":taskId,"taskType":taskType,"apiMapping":"/khc/task/doBrowseHead"}
-    $.post(taskUrl(body), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} doBrowseHead API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              await $.wait(6000)
-              await getHeadBrowsePrize(data.data.browseId)
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-function getHeadBrowsePrize(browseId) {
-  return new Promise(resolve => {
-    const body = {"browseId":browseId,"apiMapping":"/khc/task/getHeadBrowsePrize"}
-    $.post(taskUrl(body), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} getHeadBrowsePrize API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              console.log(`getHeadBrowsePrize 领取奖励结果`, JSON.stringify(data), '\n')
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-function getHeadJoinPrize(taskId, taskIndex) {
-  return new Promise(resolve => {
-    const body = {"taskId":taskId,"taskIndex":taskIndex,"apiMapping":"/khc/task/getHeadJoinPrize"}
-    $.post(taskUrl(body), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} getHeadJoinPrize API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data.code === 200) {
-              console.log(`getHeadJoinPrize 领取奖励结果`, JSON.stringify(data), '\n')
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
 }
 
 async function doHotProducttask() {

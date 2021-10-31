@@ -1,26 +1,27 @@
 /*
 东东超市
-Last Modified time: 2021-9-27
+Last Modified time: 2021-3-4 21:22:37
 活动入口：京东APP首页-京东超市-底部东东超市
+Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_superMarket.py
 东东超市兑换奖品请使用此脚本 jd_blueCoin.js
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 =================QuantumultX==============
 [task_local]
 #东东超市
-11 * * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
+11 * * * * jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
 ===========Loon===============
 [Script]
-cron "11 * * * *" script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superMarket.js,tag=东东超市
+cron "11 * * * *" script-path=jd_superMarket.js,tag=东东超市
 =======Surge===========
-东东超市 = type=cron,cronexp="11 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superMarket.js
+东东超市 = type=cron,cronexp="11 * * * *",wake-system=1,timeout=3600,script-path=jd_superMarket.js
 ==============小火箭=============
-东东超市 = type=cron,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superMarket.js, cronexpr="11 * * * *", timeout=3600, enable=true
+东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 * * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', jdSuperMarketShareArr = [], notify, newShareCodes;
-let helpAu = true;//给作者助力 免费拿,省钱大赢家.默认true是,false不助力.
+let helpAu = true;//给作者助力 免费拿,省钱大赢家等活动.默认true是,false不助力.
 helpAu = $.isNode() ? (process.env.HELP_AUTHOR ? process.env.HELP_AUTHOR === 'true' : helpAu) : helpAu;
 let jdNotify = true;//用来是否关闭弹窗通知，true表示关闭，false表示开启。
 let superMarketUpgrade = true;//自动升级,顺序:解锁升级商品、升级货架,true表示自动升级,false表示关闭自动升级
@@ -1583,7 +1584,12 @@ async function helpAuthor() {
   await bigWinner();//省钱大赢家
 }
 async function barGain() {
-  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/he1pu/params/main/codes.json')
+  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_barGain.json')
+  if (!res) {
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_barGain.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    await $.wait(1000)
+    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_barGain.json')
+  }
   $.inBargaining = [...(res && res['inBargaining'] || [])]
   $.inBargaining = getRandomArrayElements($.inBargaining, $.inBargaining.length > 3 ? 6 : $.inBargaining.length);
   for (let item of $.inBargaining) {
@@ -1609,8 +1615,13 @@ async function barGain() {
 }
 
 async function bigWinner() {
-  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/he1pu/params/main/codes.json')
-  $.codeList = getRandomArrayElements([...(res.bigWinner || [])], [...(res.bigWinner || [])].length);
+  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/bigWinner.json')
+  if (!res) {
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/bigWinner.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    await $.wait(1000)
+    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/bigWinner.json')
+  }
+  $.codeList = getRandomArrayElements([...(res || [])], [...(res || [])].length);
   for (let vo of $.codeList) {
     if (!vo['inviter']) continue
     await _618(vo['redEnvelopeId'], vo['inviter'], '1');
@@ -1628,7 +1639,7 @@ function _618(redEnvelopeId, inviter, helpType = '1', linkId = 'PFbUR7wtwUcQ860S
         'origin': 'https://618redpacket.jd.com',
         'user-agent': 'jdltapp;iPhone;3.5.0;14.2;network/wifi;hasUPPay/0;pushNoticeIsOpen/0;lang/zh_CN;model/iPhone10,2;hasOCPay/0;appBuild/1066;supportBestPay/0;pv/7.0;apprpd/;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
         'accept-language': 'zh-cn',
-        'referer': `https://618redpacket.jd.com/?activityId=yMVR-_QKRd2Mq27xguJG-w&redEnvelopeId=${redEnvelopeId}&inviterId=${inviter}&helpType=1&lng=&lat=&sid=`,
+        'referer': `https://618redpacket.jd.com/?activityId=${linkId}&redEnvelopeId=${redEnvelopeId}&inviterId=${inviter}&helpType=1&lng=&lat=&sid=`,
         'Cookie': cookie
       }
     }, (err, resp, data) => {

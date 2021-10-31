@@ -31,6 +31,7 @@ ADD_CART = $.isNode() ? (process.env.PURCHASE_SHOPS ? process.env.PURCHASE_SHOPS
 
 let inviteCodes = [
  
+]
 
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {

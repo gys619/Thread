@@ -1,29 +1,31 @@
 /*
 特物Z|万物皆可国创
 抄自 @yangtingxiao 抽奖机脚本
+活动入口：
+更新地址：https://raw.githubusercontent.com/Wenmoux/scripts/master/jd/jd_superBrand.js
 已支持IOS双京东账号, Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #特物Z|万物皆可国创
-1,10 0 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superBrand.js, tag=特物Z|万物皆可国创, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+1,10 0 * * * https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_superBrand.js, tag=特物Z|万物皆可国创, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "1,10 0 * * *" script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superBrand.js tag=特物Z|万物皆可国创
+cron "1,10 0 * * *" script-path=https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_superBrand.js tag=特物Z|万物皆可国创
 
 ===============Surge=================
-特物Z|万物皆可国创 = type=cron,cronexp="1,10 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superBrand.js
+特物Z|万物皆可国创 = type=cron,cronexp="1,10 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_superBrand.js
 
 ============小火箭=========
-特物Z|万物皆可国创 = type=cron,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superBrand.js, cronexpr="1,10 0 * * *", timeout=3600, enable=true
+特物Z|万物皆可国创 = type=cron,script-path=https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_superBrand.js, cronexpr="1,10 0 * * *", timeout=3600, enable=true
 
  */
 const $ = new Env('特物Z|万物皆可国创');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const randomCount = $.isNode() ? 20 : 5;
-const Opencardtw = $.isNode() ? (process.env.Opencardtw?process.env.Opencardtw:false):false
+const Opencardtw= $.isNode() ? (process.env.Opencardtw?process.env.Opencardtw:false):false
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
 let codeList = []
@@ -87,7 +89,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
                         }else{ 
                         if(Opencardtw){  //领取开卡奖励
                             await doTask("secondfloor", $.enpid, task.encryptAssignmentId, task.ext.brandMemberList[0].itemId, 7)
-                        }else{console.log("默认不执行开卡任务，如需执行设置环境变量：Opencardtw=true") }
+                        }else{console.log("默认不执行开卡任务") }
                         }
                     }
                 }

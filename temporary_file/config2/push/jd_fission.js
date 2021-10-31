@@ -1,9 +1,5 @@
 /*
-cron 47 0,9 * * * jd_fission.js
-东东超市限时抢京豆：
-入口-主页-京东超市-右侧
-
-每个号只有一次助力机会，默认助力CK1,并且无上限，测试好像8个CK就满了.一天30豆左右
+cron 11 0,9 * * * jd_fission.js
 */
 const $ = new Env("东东超市抢京豆");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

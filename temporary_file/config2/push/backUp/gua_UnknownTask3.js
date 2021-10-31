@@ -38,6 +38,12 @@ $.list = [
     "name":"逛发现内容",
   },
   {
+    "type": 9,
+    "projectId":"rfhKVBToUL4RGuaEo7NtSEUw2bA",
+    "assignmentId":"2bpKT3LMaEjaGyVQRr2dR8zzc9UU",
+    "name":"浏览话题",
+  },
+  {
     "type": 1,
     "projectId":"rfhKVBToUL4RGuaEo7NtSEUw2bA",
     "assignmentId":"3dw9N5yB18RaN9T1p5dKHLrWrsX",
@@ -102,27 +108,29 @@ $.temp = [];
   $.assignmentId = "3PX8SPeYoQMgo1aJBZYVkeC7QzD3"
   $.helpType = 2
   $.type = 2
-  for (let i = 0; i < cookiesArr.length && true; i++) {
-    if (cookiesArr[i]) {
-      cookie = cookiesArr[i];
-      $.canHelp = true;//能否助力
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-      if ((cookiesArr && cookiesArr.length >= 1) && $.canHelp) {
-        for (let t in $.temp) {
-          let item = $.temp[t]
-          if (!item) continue;
-          console.log(`\n${$.UserName} 去助力 ${item}`);
-          $.toHelp = ''
-          $.itemId = item
-          await takePostRequest('help');
-          await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
-          if($.toHelpMsg.indexOf('可助力') > -1){
-            await takePostRequest('interactive_done');
+  if($.temp.length > 0){
+    for (let i = 0; i < cookiesArr.length && true; i++) {
+      if (cookiesArr[i]) {
+        cookie = cookiesArr[i];
+        $.canHelp = true;//能否助力
+        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+        if ((cookiesArr && cookiesArr.length >= 1) && $.canHelp) {
+          for (let t in $.temp) {
+            let item = $.temp[t]
+            if (!item) continue;
+            console.log(`\n${$.UserName} 去助力 ${item}`);
+            $.toHelp = ''
+            $.itemId = item
+            await takePostRequest('help');
             await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
-          }else if($.toHelpMsg.indexOf('任务已完成') > -1){
-            $.temp[t] = ''
-            break;
-          }else if($.toHelpMsg.indexOf('最多助力') > -1) break;
+            if($.toHelpMsg.indexOf('可助力') > -1){
+              await takePostRequest('interactive_done');
+              await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
+            }else if($.toHelpMsg.indexOf('任务已完成') > -1){
+              $.temp[t] = ''
+              break;
+            }else if($.toHelpMsg.indexOf('最多助力') > -1) break;
+          }
         }
       }
     }
@@ -171,7 +179,6 @@ async function run() {
             await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
             if($.Task.waitDuration > 0){
               await takePostRequest('interactive_accept');
-              console.log(parseInt($.Task.waitDuration > 0 && $.Task.waitDuration*1000, 10) || 10000)
               await $.wait(parseInt($.Task.waitDuration > 0 && $.Task.waitDuration*1000, 10) || 10000)
               UA = 'JD4iPhone/167814 (iPhone; iOS 13.1.2; Scale/2.00)'
               await takePostRequest('qryViewkitCallbackResult');
@@ -242,7 +249,10 @@ async function takePostRequest(type) {
       break;
     case 'qryViewkitCallbackResult':
       url = `https://api.m.jd.com/client.action?functionId=qryViewkitCallbackResult`;
-      body = `area=16_1315_1316_53522&body=%7B%22dataSource%22%3A%22babelInteractive%22%2C%22method%22%3A%22customDoInteractiveAssignmentForBabel%22%2C%22reqParams%22%3A%22%7B%5C%22itemId%5C%22%3A%5C%225001549779%5C%22%2C%5C%22encryptProjectId%5C%22%3A%5C%22rfhKVBToUL4RGuaEo7NtSEUw2bA%5C%22%2C%5C%22encryptAssignmentId%5C%22%3A%5C%22Hys8nCmAaqKmv1G3Y3a5LJEk36Y%5C%22%7D%22%7D&build=167814&client=apple&clientVersion=10.1.4&d_brand=apple&d_model=iPhone8%2C1&eid=eidId10b812191seBCFGmtbeTX2vXF3lbgDAVwQhSA8wKqj6OA9J4foPQm3UzRwrrLdO23B3E2wCUY/bODH01VnxiEnAUvoM6SiEnmP3IPqRuO%2By/%2BZo&isBackground=N&joycious=63&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=2f7578cb634065f9beae94d013f172e197d62283&osVersion=13.1.2&partner=apple&rfs=0000&scope=01&screen=750%2A1334&sign=66ef1835f9cf7a6c3173196637e1cbdb&st=1631300134703&sv=100&uemps=0-1&uts=0f31TVRjBSsqndu4/jgUPz6uymy50MQJgF04TMIkjbf0gVLusgIW5EdhotCsxFSHKJprkovrIgyVo4dZUGgBgL/RiEhL2bvOAuOce/8hqhTGUuEXz1rwspF1DPZ87zyLDiuE0/Yr8VmOUCLV2yp05R1%2BHqoEl280hhlwUaSLrG/h7tEBMu6dCrOsOEd5oQX6H74r9en/aKB2N59xTeMu4Q%3D%3D&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D&wifiBssid=796606e8e181aa5865ec20728a27238b`;
+      let signBody = `{"dataSource":"babelInteractive","method":"customDoInteractiveAssignmentForBabel","reqParams":"{\\"itemId\\":\\"${$.itemId}\\",\\"encryptProjectId\\":\\"${$.projectId}\\",\\"encryptAssignmentId\\":\\"${$.assignmentId}\\"}"}`
+      let sign = await jdSign('qryViewkitCallbackResult', signBody)
+      if(!sign) return
+      body = sign;
       break;
     default:
       console.log(`错误${type}`);
@@ -329,6 +339,41 @@ async function dealReturn(type, data) {
   }
 }
 
+function jdSign(fn,body) {
+  return new Promise((resolve) => {
+    let url = {
+      url: `https://jd.smiek.tk/jdsign_21092132`,
+      body:`{"fn":"${fn}","body":${body}}`,
+      followRedirect:false,
+      headers: {
+        'Accept':'*/*',
+        "accept-encoding": "gzip, deflate, br",
+        'Content-Type': 'application/json',
+      },
+      timeout:30000
+    }
+    $.post(url, async (err, resp, data) => {
+      try {
+        let res = $.toObj(data,data)
+        if(res && typeof res === 'object'){
+          if(res.code && res.code == 200 && res.msg == "ok" && res.data){
+            let sign = ''
+            if(res.data.sign) sign = res.data.sign || ''
+            resolve(sign)
+          }else{
+            console.log(data)
+          }
+        }else{
+          console.log(data)
+        }
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve('')
+      }
+    })
+  })
+}
 function getPostRequest(url,body) {
   let headers =  {
     "Accept": "application/json",

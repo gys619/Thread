@@ -5,7 +5,13 @@
  * @LastEditTime: 2021-09-05 23:20:00
  * @LastEditors: X1a0He
  * @Description: 清空购物车，支持环境变量设置关键字，用@分隔，使用前请认真看对应注释
- */
+
+[task_local]
+#清空购物车
+20 0 * * * jd_cart_remove.js, tag=清空购物车, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+## 清空购物车
+export JD_CART="true"
+*/
 const $ = new Env('清空购物车');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -28,8 +34,7 @@ $.keywords = process.env.JD_CART_KEYWORDS || []
 $.keywordsNum = 0;
 !(async() => {
     console.log('使用前请确保你认真看了注释')
-    console.log('看完注释有问题就带着你的问题来找我')
-    console.log('tg: https://t.me/X1a0He')
+    console.log('环境变量添加：export JD_CART="true",当环境变量中存在JD_CART并设置为true时才会执行删除购物车')
     if($.cart){
         if(!cookiesArr[0]){
             $.msg('【京东账号一】移除购物车失败', '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {

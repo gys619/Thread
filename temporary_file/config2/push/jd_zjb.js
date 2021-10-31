@@ -1,13 +1,11 @@
 /*
-#极速版赚金币
+#柠檬赚金币
 ##入口为极速版 百元生活费 赚金币 邀请好友
 ##第一次运行可不填写邀请码 运行一次查看自己的邀请码
 export InviterPin="dS%2Bp85VyjydPuAOOnFP%2Faw%3D%3D" ##你的邀请码
-
-
 [task_local]
 #柠檬赚金币
-20 0 * * * jd_zjb.js, tag=柠檬赚金币, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+0 5 * * * http://nm66.top/jd_zjb.js, tag=柠檬赚金币, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('柠檬赚金币');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -22,6 +20,11 @@ let InviterPin = ''; //
 if (process.env.InviterPin) {
   InviterPin = process.env.InviterPin;
 }
+
+
+
+
+
 
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -57,8 +60,14 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         }
         continue
       }
-       await info()          
+     
+
+       await info()
+          
         await help()
+
+
+
     }
   }
 })()
