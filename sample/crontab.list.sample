@@ -1,8 +1,0 @@
-# 更新shell脚本
-42 * * * * /push/shell/update.sh >> $dir_root/logs/update.log
-
-#删除旧日志
-59 7 * * 1 /push/shell/rmlog.sh
-
-# 运行（run.sh、run.sh1对应config、config1）
-0,30 * * * * /push/shell/run.sh
