@@ -89,7 +89,7 @@ function wb(round,rowIdx,colIdx) {
 
   
   const nm= {
-    url: `${JD_API_HOST}/?functionId=happyDigDo&body={"round":${curRound},"rowIdx":${rowIdx},"colIdx":${colIdx},"linkId":"SS55rTBOHtnLCm3n9UMk7Q"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
+    url: `${JD_API_HOST}/?functionId=happyDigDo&body={"round":${curRound},"rowIdx":${rowIdx},"colIdx":${colIdx},"linkId":"yCcpwTLIbY6pjaM42ACUVg"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
    
     headers: {
 
@@ -127,7 +127,7 @@ function wb(round,rowIdx,colIdx) {
 }
     function home() {
  return new Promise((resolve) => {
-  let body = {"linkId":"SS55rTBOHtnLCm3n9UMk7Q"}
+  let body = {"linkId":"yCcpwTLIbY6pjaM42ACUVg"}
   $.get(taskurl('happyDigHome',body), async (err, resp, data) => {
       // console.log(data)  
       try {
@@ -170,7 +170,7 @@ function wb(round,rowIdx,colIdx) {
  
   function BROWSE_CHANNEL(taskId) {
  return new Promise((resolve) => {
-  let body = {"linkId":"SS55rTBOHtnLCm3n9UMk7Q","taskType":"BROWSE_CHANNEL","taskId":357,"channel":`${taskId}`}
+  let body = {"linkId":"yCcpwTLIbY6pjaM42ACUVg","taskType":"BROWSE_CHANNEL","taskId":357,"channel":`${taskId}`}
   $.get(taskurl('apTaskDetail',body), async (err, resp, data) => {
       
       try {
@@ -199,7 +199,7 @@ function wb(round,rowIdx,colIdx) {
  return new Promise((resolve) => {
  
   const nm= {
-    url: `${JD_API_HOST}/?functionId=happyDigHelp&body={"linkId":"SS55rTBOHtnLCm3n9UMk7Q","inviter":"${a}","inviteCode":"${b}"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
+    url: `${JD_API_HOST}/?functionId=happyDigHelp&body={"linkId":"yCcpwTLIbY6pjaM42ACUVg","inviter":"${a}","inviteCode":"${b}"}&t=1635561607124&appid=activities_platform&client=H5&clientVersion=1.0.0`,
    
     headers: {
 

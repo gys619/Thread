@@ -1,7 +1,23 @@
 /**
- * 全民抢京豆
- * 活动入口，京东APP首页，领京豆
- * 助力逻辑：优先账号内互助，再给作者助力
+全民抢京豆
+活动入口，京东APP首页，领京豆
+助力逻辑：优先账号内互助，再给作者助力
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#全民抢京豆
+20 1,16 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_qjd_help.js, tag=全民抢京豆, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
+
+================Loon==============
+[Script]
+cron "20 1,16 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_qjd_help.js,tag=全民抢京豆
+
+===============Surge=================
+全民抢京豆 = type=cron,cronexp="20 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_qjd_help.js
+
+============小火箭=========
+全民抢京豆 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_qjd_help.js, cronexpr="20 1,16 * * *", timeout=3600, enable=true
+
  **/
 const $ = new Env('全民抢京豆-内部互助版');
 const notify = $.isNode() ? require('./sendNotify') : '';
