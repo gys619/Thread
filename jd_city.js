@@ -72,13 +72,13 @@ let inviteCodes = []
       await $.wait(1000)
     }
   }
+  await shareCodesFormat()
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
     $.index = i + 1;
     UA = `jdapp;iPhone;10.2.0;13.1.2;${randomString(40)};M/5.0;network/wifi;ADID/;model/iPhone8,1;addressid/2308460611;appBuild/167853;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;`
     uuid = UA.split(';')[4]
-    await shareCodesFormat()
     let shareCodes;
     if (helpPool) {
       shareCodes = [...new Set([...inviteCodes, ...$.readShareCode])]
@@ -357,7 +357,7 @@ function randomString(e) {
 
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://123/city`, 'timeout': 15000}, (err, resp, data) => {
+    $.get({url: `http://123/city`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -373,7 +373,7 @@ function readShareCode() {
         resolve(data);
       }
     })
-    await $.wait(15000);
+    await $.wait(10000);
     resolve()
   })
 }
@@ -389,7 +389,7 @@ function shareCodesFormat() {
     } else {
       $.newShareCodes = [...new Set([...$.shareCodes, ...inviteCodes])];
     }
-    console.log(`\n第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
+    console.log(`\n您将要助力的好友${JSON.stringify($.newShareCodes)}`)
     resolve();
   })
 }
