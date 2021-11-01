@@ -1021,11 +1021,11 @@ async function tuanActivity() {
   }
 }
 async function joinLeaderTuan() {
-  let res = await updateTuanIdsCDN('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json')
+  let res = await updateTuanIdsCDN('https://raw.githubusercontent.com/123/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json')
   if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/123/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
+    res = await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/123/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
   }
   $.authorTuanIds = [...(res && res.tuanIds || [])]
   if ($.authorTuanIds && $.authorTuanIds.length) {
@@ -1398,15 +1398,15 @@ function requireConfig() {
   return new Promise(async resolve => {
     // tuanActiveId = $.isNode() ? (process.env.TUAN_ACTIVEID || tuanActiveId) : ($.getdata('tuanActiveId') || tuanActiveId);
     // if (!tuanActiveId) {
-    //   await updateTuanIdsCDN('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json');
+    //   await updateTuanIdsCDN('https://raw.githubusercontent.com/123/updateTeam/master/shareCodes/jd_updateFactoryTuanId.json');
     //   if ($.tuanConfigs && $.tuanConfigs['tuanActiveId']) {
     //     tuanActiveId = $.tuanConfigs['tuanActiveId'];
     //     console.log(`拼团活动ID: 获取成功 ${tuanActiveId}\n`)
     //   } else {
     //     if (!$.tuanConfigs) {
-    //       $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    //       $.http.get({url: 'https://purge.jsdelivr.net/gh/123/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     //       await $.wait(1000)
-    //       await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
+    //       await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/123/updateTeam@master/shareCodes/jd_updateFactoryTuanId.json');
     //       if ($.tuanConfigs && $.tuanConfigs['tuanActiveId']) {
     //         tuanActiveId = $.tuanConfigs['tuanActiveId'];
     //         console.log(`拼团活动ID: 获取成功 ${tuanActiveId}\n`)

@@ -54,7 +54,7 @@ let invite_pins = ['zhaosen2580,jd_47ee22449e303,jd_6c5e39478ec3b,jd_4346918b58d
 //下面给出好友赛跑助力的示例填写规则
 let run_pins = ['zhaosen2580,jd_47ee22449e303,jd_6c5e39478ec3b,jd_4346918b58d6e,liuz9988,88489948,jd_61f1269fd3236,jaysherlock'];
 //friendsArr内置太多会导致IOS端部分软件重启,可PR过来(此处目的:帮别人助力可得30g狗粮)
-let friendsArr = ["zhaosen2580", "jd_47ee22449e303", "jd_6c5e39478ec3b", "jd_4346918b58d6e", "liuz9988", "88489948", "jd_61f1269fd3236", "jaysherlock"]
+let friendsArr = []
 
 
 //IOS等用户直接用NobyDa的jd cookie
@@ -551,8 +551,8 @@ function getFriendPins() {
           console.log(`getFriendPins::${JSON.stringify(err)}`);
         } else {
           $.friendPins = data && JSON.parse(data);
-          if ($.friendPins && $.friendPins['friendsArr']) {
-            friendsArr = $.friendPins['friendsArr'];
+          if ($.friendPins && $.friendPins['']) {
+            friendsArr = $.friendPins[''];
             console.log(`\n共提供 ${friendsArr.length}个好友供来进行邀请助力\n`)
           }
         }

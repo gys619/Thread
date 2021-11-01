@@ -70,6 +70,6 @@ for i in cookies:
         msg = data["data"]["guestinfo"]["contenttips"]
         print(msg)
         if "我已经拿走了" in msg:
-            launchid = requests.get("https://raw.githubusercontent.com/yuannian1112/code/main/jxhlk.json").text
+            launchid = requests.get("https://raw.githubusercontent.com/123/code/main/jxhlk.json").text
     except:
         print("错误")

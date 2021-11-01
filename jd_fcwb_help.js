@@ -13,17 +13,17 @@ export fcwbroud=1  ##挖宝场次 1初级2中级3高级
 ============Quantumultx===============
 [task_local]
 #发财挖宝
-20 1,9,16 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcwb.js, tag=发财挖宝, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
+20 1,9,16 * * * https://raw.githubusercontent.com/123/JDJB/main/jd_fcwb.js, tag=发财挖宝, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "20 1,9,16 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcwb.js,tag=发财挖宝
+cron "20 1,9,16 * * *" script-path=https://raw.githubusercontent.com/123/JDJB/main/jd_fcwb.js,tag=发财挖宝
 
 ===============Surge=================
-发财挖宝 = type=cron,cronexp="20 1,9,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcwb.js
+发财挖宝 = type=cron,cronexp="20 1,9,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/123/JDJB/main/jd_fcwb.js
 
 ============小火箭=========
-发财挖宝 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcwb.js, cronexpr="20 1,9,16 * * *", timeout=3600, enable=true
+发财挖宝 = type=cron,script-path=https://raw.githubusercontent.com/123/JDJB/main/jd_fcwb.js, cronexpr="20 1,9,16 * * *", timeout=3600, enable=true
 
 * * */
 const $ = new Env('极速版-发财挖宝助力');
@@ -52,9 +52,9 @@ let fcwbinviteCode = "";
     }
     console.log(`\n注意：本脚本暂时只会执行助力，助力后，请手动进活动进行游戏（发财挖宝: 入口,极速版-》我的-》发财挖宝）\n`)
     let res = [];
-    try{res = await getAuthorShareCode('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/fcwb.json');}catch (e) {}
+    try{res = await getAuthorShareCode('https://gitee.com/123521/JD-Scripts/raw/master/shareCodes/fcwb.json');}catch (e) {}
     if(!res){
-        try{res = await getAuthorShareCode('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/fcwb.json');}catch (e) {}
+        try{res = await getAuthorShareCode('https://gitee.com/123521/JD-Scripts/raw/master/shareCodes/fcwb.json');}catch (e) {}
         if(!res){res = [];}
     }
     if(res.length > 0){
