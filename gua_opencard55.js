@@ -386,9 +386,9 @@ async function dealReturn(type, data) {
         if(type == "followShop") title = '关注'
         if(type == "addCart") title = '加购'
         if(typeof res == 'object'){
-          if(res.success && res.status == 200 && res.data){
-            res = res.data
-            if(res.status && res.status == 200){
+          if(res.success && res.success === true && res.data){
+            if(res.data.status && res.data.status == 200){
+              res = res.data
               if(type != "setMixNick" && (res.msg || res.data.isOpenCard || res.data.remark)) console.log(`${title && title+":" || ""}${res.msg || res.data.isOpenCard || res.data.remark || ''}`)
               if(type == "activity_load"){
                 if(res.msg || res.data.isOpenCard) {
@@ -427,15 +427,17 @@ async function dealReturn(type, data) {
               }else if(type == "missionInviteList"){
                 console.log(`邀请人数(${res.data.invitedLogList.total})`)
               }
-            }else if(res.msg){
-              console.log(`${title || type} ${res.msg || ''}`)
+            }else if(res.data.msg){
+              console.log(`${title || type} ${res.data.msg || ''}`)
+            }else if(res.errorMessage){
+              if(res.errorMessage.indexOf('火爆') >-1 ){
+                $.hotFlag = true
+              }
+              console.log(`${title || type} ${res.errorMessage || ''}`)
             }else{
               console.log(`${title || type} ${data}`)
             }
           }else if(res.errorMessage){
-            if(res.errorMessage.indexOf('火爆') >-1 ){
-              $.hotFlag = true
-            }
             console.log(`${title || type} ${res.errorMessage || ''}`)
           }else{
             console.log(`${title || type} ${data}`)

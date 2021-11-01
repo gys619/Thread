@@ -2,17 +2,20 @@
 
 */
 let jdSignUrl = '' // 算法url
+let got = '';
 try{
-  const got = require('got');
+  got = require('got');
 }catch(e){
-  console.log('请添加依赖"got"')
+  console.log('请添加依赖模块"got"')
 }
+
 
 jdSignUrl = process.env.gua_cleancart_SignUrl ? process.env.gua_cleancart_SignUrl : `${jdSignUrl}`
 let cookie = ''
 let out = false
 
 async function clean(ck,url,goodsArr){
+  if(!got) return false
   return new Promise(async resolve => {
     let msg = false
     try{
