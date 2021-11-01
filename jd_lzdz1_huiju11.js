@@ -70,7 +70,7 @@ if (process.env.NO_RUSH && process.env.NO_RUSH != "") {
             $.activityId = 'dzlbklzmsk20211101A'
             $.activityShopId = '1000004489'
             $.activityUrl = `https://lzdz1-isv.isvjd.com/dingzhi/dz/openCard/activity/${$.authorNum}?activityId=${$.activityId}&shareUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
-            if (isRush) {
+            if (isRush === true) {
                 console.log("未检测到不执行环境变量，执行任务")
                 await rush();
             } else {

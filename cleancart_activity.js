@@ -2,7 +2,11 @@
 
 */
 let jdSignUrl = '' // 算法url
-const got = require('got');
+try{
+  const got = require('got');
+}catch(e){
+  console.log('请添加依赖"got"')
+}
 
 jdSignUrl = process.env.gua_cleancart_SignUrl ? process.env.gua_cleancart_SignUrl : `${jdSignUrl}`
 let cookie = ''
