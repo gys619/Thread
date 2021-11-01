@@ -35,12 +35,8 @@ if ($.isNode()) {
 }
 $.invitePinTaskList = []
 $.invitePin = [
-  "NZ42T3lD49qiTGpZsSucXRS8kD-wJ4K6FxwxUpNbb4I",
-  "zZkewfd3OKs-WtoJd8Jw6OIrD81WzO3SX56S2DGMlZ0",
-  "7zG4VHS99AUEoX1mQTkC9Q",
-  "BbsjCRrQudIL06kRvqmVln053h03GiApg7HN_Vhy_Og",
-  "sAxL-dc5T6lS6wtKqP6SlA",
-  "bcVxt4PbZdbX7tiT1Q_ubg"
+  "_p6gjdwSemuAldidzb9l3xr4PUYxQ0IiGIpDIekNW0w",
+  "JT2qgWwSZ4TeP7tuwhgUDw",
 ]
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 message = ""
