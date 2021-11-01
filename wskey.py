@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 '''
-cron: 15 */8 * * * wskey.py
+cron: 15 2 * * * wskey.py
 new Env('wskey转换');
 '''
 
@@ -13,8 +13,6 @@ import sys
 import logging
 import time
 import urllib.parse
-
-
 
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
@@ -30,7 +28,8 @@ try:
 except:
     logger.info("无推送文件")
 
-ver = 1010
+ver = 1102
+
 
 # 登录青龙 返回值 token
 def get_qltoken(username, password):
@@ -53,6 +52,7 @@ def get_qltoken(username, password):
         sys.exit(1)
     else:
         return token
+
 
 # 返回值 Token
 def ql_login():
@@ -121,10 +121,29 @@ def check_ck(ck):
         headers = {
             'Cookie': ck,
             'Referer': 'https://home.m.jd.com/myJd/home.action',
-            'User-Agent': ua,
+            'user-agent': ua
         }
         try:
             res = requests.get(url=url, headers=headers, verify=False, timeout=10)
+        except:
+            # logger.info("JD接口错误, 切换第二接口")
+            url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'
+            headers = {
+                'Cookie': ck,
+                'user-agent': ua,
+                'Referer': 'https://home.m.jd.com/myJd/home.action'
+            }
+            res = requests.get(url=url, headers=headers, verify=False, timeout=30)
+            if res.status_code == 200:
+                code = int(json.loads(res.text)['retcode'])
+                pin = ck.split(";")[1]
+                if code == 0:
+                    logger.info(str(pin) + ";状态正常\n")
+                    return True
+                else:
+                    logger.info(str(pin) + ";状态失效\n")
+                    return False
+        else:
             if res.status_code == 200:
                 code = int(json.loads(res.text)['retcode'])
                 pin = ck.split(";")[1]
@@ -135,40 +154,23 @@ def check_ck(ck):
                     logger.info(str(pin) + ";状态失效\n")
                     return False
             else:
-                logger.info("JD接口错误, 切换第二接口")
-                url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'
-                headers = {
-                    'Cookie': ck,
-                    'User-Agent': ua,
-                }
-                res = requests.get(url=url, headers=headers, verify=False, timeout=30)
-                if res.status_code == 200:
-                    code = int(json.loads(res.text)['retcode'])
-                    pin = ck.split(";")[1]
-                    if code == 0:
-                        logger.info(str(pin) + ";状态正常\n")
-                        return True
-                    else:
-                        logger.info(str(pin) + ";状态失效\n")
-                        return False
-        except:
-            logger.info("\nJD接口错误! ")
-            logger.info("脚本退出")
-            sys.exit(1)
+                logger.info("JD接口错误码: ", res.status_code)
+                return False
 
 
 # 返回值 bool jd_ck
 def getToken(wskey):
+    sv, st, uuid, sign = get_sign()
     headers = {
         'cookie': wskey,
-        'User-Agent': ua,
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'charset': 'UTF-8',
-        'accept-encoding': 'br,gzip,deflate'
+        'accept-encoding': 'br,gzip,deflate',
+        'user-agent': ua
     }
     params = {
         'functionId': 'genToken',
-        'clientVersion': '10.1.2',
+        'clientVersion': '10.2.2',
         'client': 'android',
         'uuid': uuid,
         'st': st,
@@ -180,20 +182,10 @@ def getToken(wskey):
     try:
         res = requests.post(url=url, params=params, headers=headers, data=data, verify=False, timeout=10)
         res_json = json.loads(res.text)
-        # logger.info(res_json)
         tokenKey = res_json['tokenKey']
-        # logger.info("Token:", tokenKey)
     except:
-        try:
-            res = requests.post(url=url, params=params, headers=headers, data=data, verify=False, timeout=20)
-            res_json = json.loads(res.text)
-            # logger.info(res_json)
-            tokenKey = res_json['tokenKey']
-            # logger.info("Token:", tokenKey)
-            return appjmp(wskey, tokenKey)
-        except:
-            logger.info("WSKEY转换接口出错, 请稍后尝试, 脚本退出")
-            sys.exit(1)
+        logger.info("WSKEY转换接口出错, 请稍后尝试, 脚本退出")
+        sys.exit(1)
     else:
         return appjmp(wskey, tokenKey)
 
@@ -220,30 +212,31 @@ def appjmp(wskey, tokenKey):
         jd_ck = str(pt_key) + ';' + str(pt_pin) + ';'
         wskey = wskey.split(";")[0]
         if 'fake' in pt_key:
-            logger.info(str(wskey) + ";wskey状态失效\n")
+            logger.info(str(wskey) + ";WsKey状态失效\n")
             return False, jd_ck
         else:
-            logger.info(str(wskey) + ";wskey状态正常\n")
+            logger.info(str(wskey) + ";WsKey状态正常\n")
             return True, jd_ck
     except:
-        logger.info("接口转换失败, 默认wskey失效\n")
+        logger.info("JD接口转换失败, 默认WsKey失效\n")
         wskey = "pt_" + str(wskey.split(";")[0])
         return False, wskey
 
 
 # 返回值 svv, stt, suid, jign
 def get_sign():
-    url = str(base64.b64decode(
-        'aHR0cHM6Ly9oZWxsb2Rucy5jb2RpbmcubmV0L3Avc2lnbi9kL2pzaWduL2dpdC9yYXcvbWFzdGVyL3NpZ24=').decode())
+    url = str(base64.b64decode('aHR0cDovL21vZS5zaGl6dWt1Lm1sOjg0NDMvd3NrZXk=').decode())
     for i in range(3):
         try:
-            res = requests.get(url=url, verify=False, timeout=20)
+            res = jds.get(url=url, verify=False, timeout=20)
         except requests.exceptions.ConnectTimeout:
             logger.info("\n获取Sign超时, 正在重试!" + str(i))
             time.sleep(1)
+            continue
         except requests.exceptions.ReadTimeout:
             logger.info("\n获取Sign超时, 正在重试!" + str(i))
             time.sleep(1)
+            continue
         except Exception as err:
             logger.info(str(err) + "\n未知错误, 退出脚本!")
             sys.exit(1)
@@ -293,7 +286,6 @@ def ql_check(port):
     try:
         sock.connect(('127.0.0.1', port))
     except:
-        # logger.info(port, "端口检测失败")
         sock.close()
         return False
     else:
@@ -335,23 +327,21 @@ def serch_ck(pin):
         return True, key, eid
 
 
-def ql_update(eid, n_ck):
+def ql_update(e_id, n_ck):
     url = 'http://127.0.0.1:{0}/api/envs'.format(port)
     data = {
         "name": "JD_COOKIE",
         "value": n_ck,
-        "_id": eid
+        "_id": e_id
     }
     data = json.dumps(data)
     res = json.loads(s.put(url=url, data=data).text)
-    # logger.info(res)
-    if res['data']['status'] == 1:
-        ql_enable(eid)
+    ql_enable(eid)
 
 
-def ql_enable(eid):
+def ql_enable(e_id):
     url = 'http://127.0.0.1:{0}/api/envs/enable'.format(port)
-    data = '["{0}"]'.format(eid)
+    data = '["{0}"]'.format(e_id)
     res = json.loads(s.put(url=url, data=data).text)
     if res['code'] == 200:
         logger.info("\n账号启用\n--------------------\n")
@@ -361,9 +351,9 @@ def ql_enable(eid):
         return False
 
 
-def ql_disable(eid):
+def ql_disable(e_id):
     url = 'http://127.0.0.1:{0}/api/envs/disable'.format(port)
-    data = '["{0}"]'.format(eid)
+    data = '["{0}"]'.format(e_id)
     res = json.loads(s.put(url=url, data=data).text)
     if res['code'] == 200:
         logger.info("\n账号禁用成功\n--------------------\n")
@@ -382,11 +372,10 @@ def ql_insert(i_ck):
 
 
 def cloud_info():
-    url = str(base64.b64decode(
-        'aHR0cHM6Ly9oZWxsb2Rucy5jb2RpbmcubmV0L3Avc2lnbi9kL2pzaWduL2dpdC9yYXcvbWFzdGVyL2NoZWNrX2FwaQ==').decode())
+    url = str(base64.b64decode('aHR0cDovL21vZS5zaGl6dWt1Lm1sOjg0NDMvY2hlY2tfYXBp').decode())
     for i in range(3):
         try:
-            res = requests.get(url=url, verify=False, timeout=20).text
+            res = s.get(url=url, verify=False, timeout=20).text
         except requests.exceptions.ConnectTimeout:
             logger.info("\n获取云端参数超时, 正在重试!" + str(i))
         except requests.exceptions.ReadTimeout:
@@ -421,15 +410,16 @@ if __name__ == '__main__':
     else:
         logger.info(str(port) + "端口检查通过\n")
     # global cloud_arg
-    cloud_arg = cloud_info()
-    update()
-    ua = cloud_arg['User-Agent']
-    boom()
-    sv, st, uuid, sign = get_sign()  # 获取认证参数
     token = ql_login()  # 获取青龙 token
     s = requests.session()
     s.headers.update({"authorization": "Bearer " + str(token)})
     s.headers.update({"Content-Type": "application/json;charset=UTF-8"})
+    cloud_arg = cloud_info()
+    update()
+    boom()
+    ua = cloud_arg['User-Agent']
+    jds = requests.session()
+    jds.headers.update({"User-Agent": ua})
     wslist = get_wskey()
     for ws in wslist:
         wspin = ws.split(";")[0]
@@ -443,22 +433,25 @@ if __name__ == '__main__':
                     if return_ws[0]:  # bool: True
                         nt_key = str(return_ws[1])
                         # logger.info("wskey转pt_key成功", nt_key)
-                        logger.info("wskey转换成功\n")
-                        logger.info("--------------------\n")
+                        logger.info("wskey转换成功")
                         eid = return_serch[2]  # 从 return_serch 拿到 eid
                         ql_update(eid, nt_key)  # 函数 ql_update 参数 eid JD_COOKIE
                     else:
-                        logger.info(str(ws) + "wskey失效\n")
+                        # logger.info(str(wspin) + "wskey失效\n")
                         eid = return_serch[2]
-                        logger.info("禁用账号" + str(wspin))
+                        logger.info(str(wspin) + "账号禁用")
                         ql_disable(eid)
+                        dd = serch_ck(ws)[2]
+                        ql_disable(dd)
+                        text = "账号: {0} WsKey失效, 已禁用Cookie & Wskey!".format(wspin)
+                        send('WsKey转换脚本', text)
                 else:
                     logger.info(str(wspin) + "账号有效")
                     eid = return_serch[2]
                     ql_enable(eid)
                     logger.info("--------------------\n")
             else:
-                logger.info("wskey未生成pt_key\n")
+                logger.info("\n新wskey\n")
                 return_ws = getToken(ws)  # 使用 WSKEY 请求获取 JD_COOKIE bool jd_ck
                 if return_ws[0]:
                     nt_key = str(return_ws[1])
