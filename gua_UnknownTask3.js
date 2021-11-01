@@ -2,7 +2,7 @@
 
 https://prodev.m.jd.com/mall/active/2y1S9xVYdTud2VmFqhHbkcoAYhJT/index.html
 
-27 8,18 * 9 * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_UnknownTask3.js
+27 8,18 * 9 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_UnknownTask3.js
 */
 const $ = new Env('寻找内容鉴赏官');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

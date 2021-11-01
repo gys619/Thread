@@ -36,7 +36,7 @@ All变量适用
 ============Quantumultx===============
 [task_local]
 #10.20~11.3 惠聚京东 好物连连
-47 5 1-3,20-31 10,11 * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard48.js, tag=10.20~11.3 惠聚京东 好物连连, enabled=true
+47 5 1-3,20-31 10,11 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_opencard48.js, tag=10.20~11.3 惠聚京东 好物连连, enabled=true
 
 */
 let guaopencard_addSku = "false"

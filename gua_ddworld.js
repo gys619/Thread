@@ -3,7 +3,7 @@
 https://3.cn/102TmB-4K
 
 
-17 10 * * * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_UnknownTask6.js
+17 10 * * * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_UnknownTask6.js
 */
 const $ = new Env('东东世界');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

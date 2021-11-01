@@ -717,6 +717,8 @@ def isUpdate():
         exit(666)
 
 def getUserInfo(ck, pinName, userNum):
+    return ck, pinName
+    """
     url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion?orgFlag=JD_PinGou_New&callSource=mainorder&channel=4&isHomewhite=0&sceneval=2&sceneval=2&callback=GetJDUserInfoUnion'
     headers = {
         'Cookie': ck,
@@ -740,7 +742,7 @@ def getUserInfo(ck, pinName, userNum):
         message(context)
         send("【JD入会领豆】Cookie 已失效！", context)
         return ck, False
-
+    """
 # 设置Headers
 def setHeaders(cookie, intype):
     if intype == 'mall':

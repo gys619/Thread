@@ -28,17 +28,8 @@ All变量适用
 ============Quantumultx===============
 [task_local]
 #5.18~12.31 大牌联合 瓜分京豆
-47 9 * 9-12 * https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard39.js, tag=5.18~12.31 大牌联合 瓜分京豆, enabled=true
+47 9 * 9-12 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_opencard39.js, tag=5.18~12.31 大牌联合 瓜分京豆, enabled=true
 
-================Loon==============
-[Script]
-cron "47 9 * 9-12 *" script-path=https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard39.js,tag=5.18~12.31 大牌联合 瓜分京豆
-
-===============Surge=================
-5.18~12.31 大牌联合 瓜分京豆 = type=cron,cronexp="47 9 * 9-12 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard39.js
-
-============小火箭=========
-5.18~12.31 大牌联合 瓜分京豆 = type=cron,script-path=https://raw.githubusercontent.com/smiek2221/scripts/master/gua_opencard39.js, cronexpr="47 9 * 9-12 *", timeout=3600, enable=true
 
 */
 let guaopencard_addSku = "false"

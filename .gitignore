@@ -12,6 +12,7 @@ update_list.sh
 update_task.sh
 passerby-b.boxjs.json
 crontab.list
+
 jd_mf.js
 jd_jxSign.js
 jd_zhulima.js
@@ -34,7 +35,6 @@ jd_big_winner_Mod.js
 jd_tyt_ks.js
 jd_MovementFaker.js	
 gua_city.js
-gua_opencard44.js
 jd_city.js
 jd_speed_redEnvelope.ts
 jd_redpocke.js
@@ -46,8 +46,6 @@ jd_park.js
 jd_task.js
 jd_plantBean2.js
 gua_1111RedEnvelope.js
-gua_opencard50.js
-gua_opencard51.js
 jd_read.js 
 jd_redEnvelope.js
 jd_red.js
@@ -92,3 +90,8 @@ jd_jxsign.js
 jd_big_winner_Mod.js
 superbox.js
 wx_*.js
+
+
+jd_GoldcoinToGift.js
+jd_ftzy.js
+jd_aid_ftzy.js

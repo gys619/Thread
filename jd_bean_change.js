@@ -899,14 +899,14 @@ async function jdCash() {
 	isSignError = false;
 	let sign = await getSign(functionId, decodeURIComponent(body), uuid)
 		if (isSignError) {
-			console.log(`领现金任务签名获取失败,等待10秒后再次尝试...`)
-			await $.wait(10 * 1000);
+			console.log(`领现金任务签名获取失败,等待2秒后再次尝试...`)
+			await $.wait(2 * 1000);
 			isSignError = false;
 			sign = await getSign(functionId, decodeURIComponent(body), uuid);
 		}
 		if (isSignError) {
-			console.log(`领现金任务签名获取失败,等待10秒后再次尝试...`)
-			await $.wait(10 * 1000);
+			console.log(`领现金任务签名获取失败,等待2秒后再次尝试...`)
+			await $.wait(2 * 1000);
 			isSignError = false;
 			sign = await getSign(functionId, decodeURIComponent(body), uuid);
 		}
