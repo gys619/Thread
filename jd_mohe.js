@@ -7,11 +7,11 @@
 =================================Quantumultx=========================
 [task_local]
 #5G超级盲盒
-0 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "0 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
+cron "5 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
 
 ===================================Surge================================
 5G超级盲盒 = type=cron,cronexp="0 0,1-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js

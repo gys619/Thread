@@ -12,6 +12,7 @@ let testMode = process.env.TEST_MODE?.includes('on') ? true
 Object.keys(jdCookieNode).forEach((item) => {
     cookies.push(jdCookieNode[item])
 })
+
 const USER_AGENTS = [
     "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
     "jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
@@ -59,34 +60,6 @@ $.defaults.headers['Connection'] = 'keep-alive';
 $.defaults.headers['Accept-Language'] = "zh-CN,zh-Hans;q=0.9";
 $.defaults.headers['Accept-Encoding'] = "gzip, deflate, br";
 
-$.interceptors.response.use(function (res) {
-    let data = res.data;
-    if (typeof data === 'string') {
-        data = data.replace(/[\n\r| ]/g, '');
-        if (data.includes("try{jsonpCB")) {
-            data = data.replace(/try{jsonpCB.*\({/, '{')
-            .replace(/}\)([;])?}catch\(e\){}/, '}')
-        } else if (data.includes('jsonpCB')) {
-            let st = data.replace(/[\n\r]/g, '').replace(/jsonpCB.*\({/, '{');
-            data = st.substring(0, st.length - 1)
-        } else if (/try{.*\({/) {
-            data = data.replace(/try{.*\({/, '{')
-            .replace(/}\)([;])?}catch\(e\){}/, '}')
-        } else {
-            testMode ? console.log('例外', data) : ''
-        }
-        testMode ? console.log(data) : ''
-        testMode ? console.log('----------------分割线--------------------') : ''
-        return JSON.parse(data)
-    }
-
-    testMode ? console.log(JSON.stringify(data)) : ''
-    testMode ? console.log('----------------分割线---------------------') : ''
-    return data;
-}, function () {
-    return Promise.reject({})
-})
-
 function randomNumber(min = 0, max = 100) {
     return Math.min(Math.floor(min + Math.random() * (max - min)), max);
 }
@@ -101,6 +74,7 @@ class Env {
         this.ext = [];
         this.msg = [];
         this.delimiter = '';
+        this.filename = ''
         this.appId = '';
         this.algo = {};
         this.bot = false;
@@ -111,26 +85,25 @@ class Env {
         wait: [1000, 2000],
         bot: false,
         delimiter: '',
+        filename: '',
         o2o: false,
         random: false,
         once: false,
         blacklist: [],
-        whitelist: [],
-        appId: ''
+        whitelist: []
     }) {
-        console.log(`${this.now()} ${this.name} 开始运行...`)
+        console.log(
+            `${this.now()} ${this.name} ${data?.filename ? data?.filename
+                : ''} 开始运行...`)
         let start = this.timestamp();
-        if (data?.appId) {
-            this.appId = data.appId.toString();
-        }
         if (data?.delimiter) {
             this.delimiter = data?.delimiter
         }
+        if (data?.filename) {
+            this.filename = data.filename;
+        }
         if (data?.bot) {
             this.bot = data.bot;
-        }
-        if (data?.random) {
-            cookies = this.randomArray(cookies)
         }
         if (data?.blacklist?.length > 0) {
             for (const cki of data.blacklist) {
@@ -146,6 +119,10 @@ class Env {
             }
             cookies = cks;
         }
+        if (data?.random) {
+            cookies = this.randomArray(cookies)
+        }
+        await this.verify()
         this.cookies = cookies;
         if (data?.before) {
             for (let i = 0; i <= this.cookies.length; i++) {
@@ -162,7 +139,6 @@ class Env {
                         cookie: this.cookie
                     };
                     try {
-                        this.appId ? this.algo = await this._algo() : '';
                         this.ext.push(Object.assign(me, await this.before()));
                     } catch (e) {
                         console.log(e)
@@ -189,7 +165,6 @@ class Env {
                 $.defaults.headers['Cookie'] = this.cookie;
                 this.index = i + 1;
                 try {
-                    this.appId ? this.algo = await this._algo() : '';
                     await this.logic()
                     if (data?.o2o) {
                         await this.send();
@@ -209,7 +184,7 @@ class Env {
         }
         console.log(`${this.now()} ${this.name} 运行结束,耗时 ${this.timestamp()
         - start}ms\n`)
-        testMode ? console.log(this.msg) : ''
+        testMode && this.msg.length > 0 ? console.log(this.msg) : ''
         if (!data?.o2o) {
             await this.send();
         }
@@ -242,6 +217,16 @@ class Env {
         }
     }
 
+    async verify() {
+        let x = 'm_jx_';
+        this.appId = this.filename ? this.name.slice(0, 1) === 'M'
+                ? (this.filename.includes(x + 'cfd') ? '10032' :
+                    this.filename.includes(x + 'mc') ? '10028' :
+                        this.filename.includes(x + 'factory') ? 'c0ff1' : '') : ''
+            : '';
+        this.appId ? this.algo = await this._algo() : '';
+    }
+
     async wait(min, max) {
         if (max) {
             return new Promise(
@@ -270,6 +255,7 @@ class Env {
     }
 
     build(url) {
+        debugger
         if (url.match(/&callback=(jsonpCBK(.*))&/)) {
             let cb = url.match(/&callback=(jsonpCBK(.*))&/);
             url = url.replace(cb[1], this.randomCallback(cb[2].length || 0))
@@ -277,7 +263,7 @@ class Env {
         let stk = decodeURIComponent(this.getQueryString(url, '_stk') || '');
         if (stk) {
             let ens, hash, st = '',
-                ts = this.now('yyyyMMDDhhmmssSSS').toString(),
+                ts = this.now('yyyyMMDDHHmmssSSS').toString(),
                 tk = this.algo.tk, fp = this.algo.fp, em = this.algo.em;
             if (tk && fp && em) {
                 hash = em(tk, fp, ts, this.appId, CryptoJS).toString(
@@ -428,7 +414,8 @@ class Env {
     async get(url, headers) {
         url = this.appId ? this.build(url) : url
         return new Promise((resolve, reject) => {
-            $.get(url, {headers: headers}).then(data => resolve(data))
+            $.get(url, {headers: headers}).then(
+                data => resolve(this.handler(data) || data))
             .catch(e => reject(e))
         })
     }
@@ -437,9 +424,36 @@ class Env {
         url = this.appId ? this.build(url) : url
         return new Promise((resolve, reject) => {
             $.post(url, body, {headers: headers})
-            .then(data => resolve(data))
+            .then(data => resolve(this.handler(data) || data))
             .catch(e => reject(e));
         })
+    }
+
+    handler(res) {
+        let data = res.data;
+        if (typeof data === 'string') {
+            data = data.replace(/[\n\r| ]/g, '');
+            if (data.includes("try{jsonpCB")) {
+                data = data.replace(/try{jsonpCB.*\({/, '{')
+                .replace(/}\)([;])?}catch\(e\){}/, '}')
+            } else if (data.includes('jsonpCB')) {
+                let st = data.replace(/[\n\r]/g, '').replace(/jsonpCB.*\({/,
+                    '{');
+                data = st.substring(0, st.length - 1)
+            } else if (/try{.*\({/) {
+                data = data.replace(/try{.*\({/, '{')
+                .replace(/}\)([;])?}catch\(e\){}/, '}')
+            } else {
+                testMode ? console.log('例外', data) : ''
+            }
+            testMode ? console.log(data) : ''
+            testMode ? console.log('----------------分割线--------------------')
+                : ''
+            return JSON.parse(data)
+        }
+        testMode ? console.log(JSON.stringify(data)) : ''
+        testMode ? console.log('----------------分割线---------------------') : ''
+        return data;
     }
 
     randomNum(length) {
@@ -482,12 +496,12 @@ class Env {
     }
 
     now(fmt) {
-        return moment().format(fmt || 'yyyy-MM-DD hh:mm:ss.SSS')
+        return moment().format(fmt || 'yyyy-MM-DD HH:mm:ss.SSS')
     }
 
     format(date, fmt) {
         return moment(typeof date === 'string' ? date * 1 : date).format(
-            fmt || 'yyyy-MM-DD hh:mm:ss')
+            fmt || 'yyyy-MM-DD HH:mm:ss')
     }
 
     timestamp() {
@@ -562,11 +576,11 @@ class Env {
             });
         return {
             fp: fp.toString(),
-            tk: data.data.result.tk,
-            em: new Function(`return ${data.data.result.algo}`)()
+            tk: data?.data?.result?.tk || data?.result?.tk,
+            em: new Function(
+                `return ${data?.data?.result?.algo || data?.result?.algo}`)()
         }
     }
-
 }
 
 module.exports = {Env, CryptoJS, moment};

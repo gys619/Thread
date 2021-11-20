@@ -84,11 +84,11 @@ if ($.isNode()) {
       await $.wait(2000);
     }
   }
-  let res = await getAuthorShareCode('')
+  let res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/cfd.json')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/cfd.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await getAuthorShareCode('')
+    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/cfd.json')
   }
   $.strMyShareIds = [...(res && res.shareId || [])]
   await shareCodesFormat()
@@ -477,7 +477,7 @@ async function mermaidOper(strStoryId, dwType, ddwTriggerDay) {
                 console.log(`昨日解救美人鱼领奖成功：获得${data.Data.Prize.strPrizeName}\n`)
               } else {
                 console.log(`昨日解救美人鱼领奖失败：${data.sErrMsg}\n`)
-              }             
+              }
               break
             default:
               break
@@ -1144,7 +1144,6 @@ function getUserInfo(showInvite = true) {
             console.log(`财富岛好友互助码每次运行都变化,旧的当天有效`);
             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}`);
             $.shareCodes.push(strMyShareId)
-            await uploadShareCode(strMyShareId)
           }
           $.info = {
             ...$.info,
@@ -1187,11 +1186,11 @@ function getPropTask() {
           data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
           for (let key of Object.keys(data.Data.TaskList)) {
             let vo = data.Data.TaskList[key]
-            if ((vo.dwCompleteNum < vo.dwTargetNum) && ![9, 11].includes(vo.dwPointType)) {
+            if (vo.dwCompleteNum < vo.dwTargetNum) {
               await doTask(vo.ddwTaskId, 3)
               await $.wait(2000)
             } else {
-              if ((vo.dwCompleteNum >= vo.dwTargetNum) && vo.dwAwardStatus !== 1) {
+              if (vo.dwAwardStatus !== 1) {
                 console.log(`【${vo.strTaskName}】已完成，去领取奖励`)
                 await $.wait(2000)
                 await awardTask(2, vo)
@@ -1313,7 +1312,7 @@ function doTask(taskId, type = 1) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} DoTask API请求失败，请检查网路重试`)
         } else {
-          data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
         }
       } catch (e) {
         $.logErr(e, resp)
@@ -1498,7 +1497,6 @@ function taskListUrl(function_path, body = '', bizCode = 'jxbfd') {
       "Host": "m.jingxi.com",
       "Accept": "*/*",
       "Accept-Encoding": "gzip, deflate, br",
-      "User-Agent": UA,
       "Accept-Language": "zh-CN,zh-Hans;q=0.9",
       "Referer": "https://st.jingxi.com/",
       "Cookie": cookie
@@ -1541,11 +1539,11 @@ function showMsg() {
 
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `https://11111111.red/api/cfd/20`, timeout: 30 * 1000}, (err, resp, data) => {
+    $.get({url: ``, timeout: 30 * 1000}, (err, resp, data) => {
       try {
         if (err) {
-          console.log(JSON.stringify(err))
-          console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
+          //console.log(JSON.stringify(err))
+          //console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
         } else {
           if (data) {
             console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
@@ -1558,41 +1556,7 @@ function readShareCode() {
         resolve(data);
       }
     })
-    await $.wait(30 * 1000);
-    resolve()
-  })
-}
-function uploadShareCode(code) {
-  return new Promise(async resolve => {
-    $.get({url: `https://11111111.red/api/runTimes?activityId=cfd&sharecode=${code}`, timeout: 30 * 1000}, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(JSON.stringify(err))
-          console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            if (data === 'OK') {
-              console.log(`已自动提交助力码\n`)
-            } else if (data === 'error') {
-              console.log(`助力码格式错误，乱玩API是要被打屁屁的~\n`)
-            } else if (data === 'full') {
-              console.log(`车位已满，请等待下一班次\n`)
-            } else if (data === 'exist') {
-              console.log(`助力码已经提交过了~\n`)
-            } else if (data === 'not in whitelist') {
-              console.log(`提交助力码失败，此用户不在白名单中\n`)
-            } else {
-              console.log(`未知错误：${data}\n`)
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
-    await $.wait(30 * 1000);
+     await $.wait(30 * 1000);
     resolve()
   })
 }
