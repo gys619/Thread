@@ -39,7 +39,8 @@ $.logic = async function () {
         }
     }
 }
-$.run({appId: 10032, wait: [3000, 5000]}).catch(reason => console.log(reason));
+$.run({filename: 'm_jx_cfd_pearl_exchange', wait: [3000, 5000]}).catch(
+    reason => console.log(reason));
 
 /**
  * 游戏红包列表

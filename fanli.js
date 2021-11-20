@@ -1,7 +1,5 @@
-// noinspection DuplicatedCode
-
 /*
-* 38 8 * * * m_fanli.js
+* 38 8,18 * * * m_fanli.js
 * */
 const {Env} = require('./magic');
 const $ = new Env('M饭粒任务');
@@ -41,7 +39,6 @@ $.logic = async function () {
                 task = taskList[i]
             }
         }
-        $.log('debug', task)
         if (!task?.taskId) {
             $.log("没有找到可继续进行的任务，结束")
             return;

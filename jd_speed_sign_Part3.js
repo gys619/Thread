@@ -1,5 +1,5 @@
 /*
-cron "0 7 * * *" jd_speed_sign_Part2.js, tag:京东极速版任务1
+cron "0 7 * * *" jd_speed_sign_Part3.js, tag:京东极速版任务1
 */
  //详细说明参考 https://github.com/ccwav/QLScript2.
 const $ = new Env('京东极速版任务3');
@@ -28,16 +28,14 @@ const JD_API_HOST = 'https://api.m.jd.com/', actCode = 'visa-card-001';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  let lnStartAcc=Math.ceil(cookiesArr.length/5)*2;
-  let lnTotalAcc=Math.ceil(cookiesArr.length/5)*3;
-  
-  if (lnTotalAcc>cookiesArr.length){
-	  lnTotalAcc=cookiesArr.length;
-  }
+  let lnStartAcc=Math.ceil(cookiesArr.length/3)*2;
+  let lnTotalAcc=cookiesArr.length;
   if (lnStartAcc>=lnTotalAcc){
 	  console.log(`账号太少不需要第三个任务,跳出\n`);
 	  return 
   }
+	  
+  
   console.log(`本次执行第${lnStartAcc+1}到${lnTotalAcc}个账号\n`);
   for (let i = lnStartAcc ; i < lnTotalAcc; i++) {
     if (cookiesArr[i]) {
@@ -667,7 +665,6 @@ function taskGetUrl(function_id, body) {
     }
   }
 }
-
 
 function TotalBean() {
   return new Promise(async resolve => {

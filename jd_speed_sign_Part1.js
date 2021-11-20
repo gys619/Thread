@@ -29,7 +29,7 @@ const JD_API_HOST = 'https://api.m.jd.com/', actCode = 'visa-card-001';
     return;
   }
   
-  let lnTotalAcc=Math.ceil(cookiesArr.length/5);
+  let lnTotalAcc=Math.ceil(cookiesArr.length/3);
   console.log(`本次执行${lnTotalAcc}个账号\n`);
   for (let i = 0; i < lnTotalAcc; i++) {
     if (cookiesArr[i]) {
