@@ -1,16 +1,25 @@
 /*
- * 由ZCY01二次修改：脚本默认不运行
- * 由 X1a0He 修复
  * 如需运行请自行添加环境变量：JD_TRY，值填 true 即可运行
  * 脚本兼容: Node.js
  * X1a0He留
- * 由于没有兼容Qx，原脚本已失效，建议原脚本的兼容Qx注释删了
  * 脚本是否耗时只看args_xh.maxLength的大小
  * 上一作者说了每天最多300个商店，总上限为500个，jd_unsubscribe.js我已更新为批量取关版
  * 请提前取关至少250个商店确保京东试用脚本正常运行
  *
  * @Address: https://github.com/X1a0He/jd_scripts_fixed/blob/main/jd_try_xh.js
  * @LastEditors: X1a0He
+ 参考环境变量配置如下：
+export JD_TRY="true"
+export JD_TRY_PLOG="true" #是否打印输出到日志
+export JD_TRY_PASSZC="true" #过滤种草官类试用
+export JD_TRY_MAXLENGTH="50" #商品数组的最大长度
+export JD_TRY_APPLYINTERVAL="5000" #商品试用之间和获取商品之间的间隔
+export JD_TRY_APPLYNUMFILTER="100000" #过滤大于设定值的已申请人数
+export JD_TRY_MINSUPPLYNUM="1" #最小提供数量
+export JD_TRY_TABID="1@2@3@4@5@6@7@8@9@10"
+export JD_TRY_SENDNUM="10" #每隔多少账号发送一次通知，不需要可以不用设置
+cron "4 1-22/8 * * *" jd_try.js, tag:京东试用
+
  */
 const $ = new Env('京东试用')
 const URL = 'https://api.m.jd.com/client.action'
@@ -22,24 +31,40 @@ $.isPush = true;
 $.isLimit = false;
 $.isForbidden = false;
 $.wrong = false;
+$.totalPages = 0;
 $.giveupNum = 0;
 $.successNum = 0;
 $.completeNum = 0;
 $.getNum = 0;
 $.try = true;
+$.sentNum = 0;
+$.cookiesArr = []
+$.innerKeyWords =
+    [
+        "幼儿园", "教程", "英语", "辅导", "培训",
+        "孩子", "小学", "成人用品", "套套", "情趣",
+        "自慰", "阳具", "飞机杯", "男士用品", "女士用品",
+        "内衣", "高潮", "避孕", "乳腺", "肛塞", "肛门",
+        "宝宝", "玩具", "芭比", "娃娃", "男用",
+        "女用", "神油", "足力健", "老年", "老人",
+        "宠物", "饲料", "丝袜", "黑丝", "磨脚",
+        "脚皮", "除臭", "性感", "内裤", "跳蛋",
+        "安全套", "龟头", "阴道", "阴部"
+    ]
 //下面很重要，遇到问题请把下面注释看一遍再来问
 let args_xh = {
     /*
      * 商品原价，低于这个价格都不会试用，意思是
      * A商品原价49元，试用价1元，如果下面设置为50，那么A商品不会被加入到待提交的试用组
      * B商品原价99元，试用价0元，如果下面设置为50，那么B商品将会被加入到待提交的试用组
+     * C商品原价99元，试用价1元，如果下面设置为50，那么C商品将会被加入到待提交的试用组
      * 默认为0
      * */
     jdPrice: process.env.JD_TRY_PRICE * 1 || 0,
     /*
      * 获取试用商品类型，默认为1，原来不是数组形式，我以为就只有几个tab，结果后面还有我服了
      * 1 - 精选
-     * 2 - 闪电试
+     * 2 - 闪电试用
      * 3 - 家用电器(可能会有变化)
      * 4 - 手机数码(可能会有变化)
      * 5 - 电脑办公(可能会有变化)
@@ -47,14 +72,18 @@ let args_xh = {
      * 下面有一个function是可以获取所有tabId的，名为try_tabList
      * 2021-09-06 12:32:00时获取到 tabId 16个
      * 可设置环境变量：JD_TRY_TABID，用@进行分隔
-     * 默认为 1 到 10
+     * 默认为 1 到 5
      * */
-    tabId: process.env.JD_TRY_TABID && process.env.JD_TRY_TABID.split('@').map(Number) || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    tabId: process.env.JD_TRY_TABID && process.env.JD_TRY_TABID.split('@').map(Number) || [1,2,3,4,5,6,7,8,9,10],
     /*
      * 试用商品标题过滤，黑名单，当标题存在关键词时，则不加入试用组
+     * 当白名单和黑名单共存时，黑名单会自动失效，优先匹配白名单，匹配完白名单后不会再匹配黑名单，望周知
+     * 例如A商品的名称为『旺仔牛奶48瓶特价』，设置了匹配白名单，白名单关键词为『牛奶』，但黑名单关键词存在『旺仔』
+     * 这时，A商品还是会被添加到待提交试用组，白名单优先于黑名单
+     * 已内置对应的 成人类 幼儿类 宠物 老年人类关键词，请勿重复添加
      * 可设置环境变量：JD_TRY_TITLEFILTERS，关键词与关键词之间用@分隔
      * */
-    titleFilters: process.env.JD_TRY_TITLEFILTERS && process.env.JD_TRY_TITLEFILTERS.split('@') || ["流量卡", "幼儿园", "教程", "英语", "辅导", "培训", "孩子", "小学", "成人用品", "套套", "情趣", "自慰", "阳具", "飞机杯", "男士用品", "女士用品", "内衣", "高潮", "避孕"],
+    titleFilters: process.env.JD_TRY_TITLEFILTERS && process.env.JD_TRY_TITLEFILTERS.split('@') || [],
     /*
      * 试用价格(中了要花多少钱)，高于这个价格都不会试用，小于等于才会试用，意思就是
      * A商品原价49元，现在试用价1元，如果下面设置为10，那A商品将会被添加到待提交试用组，因为1 < 10
@@ -77,7 +106,7 @@ let args_xh = {
     /*
      * 商品试用之间和获取商品之间的间隔, 单位：毫秒(1秒=1000毫秒)
      * 可设置环境变量：JD_TRY_APPLYINTERVAL
-     * 默认为5000，也就是5秒
+     * 默认为3000，也就是3秒
      * */
     applyInterval: process.env.JD_TRY_APPLYINTERVAL * 1 || 5000,
     /*
@@ -102,25 +131,33 @@ let args_xh = {
      *
      * 不打印的优点：简短日志长度
      * 不打印的缺点：无法清晰知道每个商品为什么会被过滤，哪个商品被添加到了待提交试用组
-     * 可设置环境变量：JD_TRY_PLOG，默认为false
+     * 可设置环境变量：JD_TRY_PLOG，默认为true
      * */
-    printLog: process.env.JD_TRY_PLOG || false,
+    printLog: process.env.JD_TRY_PLOG || true,
     /*
-     * 白名单
+     * 白名单，是否打开，如果下面为true，那么黑名单会自动失效
+     * 白名单和黑名单无法共存，白名单永远优先于黑名单
      * 可通过环境变量控制：JD_TRY_WHITELIST，默认为false
      * */
     whiteList: process.env.JD_TRY_WHITELIST || false,
     /*
      * 白名单关键词，当标题存在关键词时，加入到试用组
+     * 例如A商品的名字为『旺仔牛奶48瓶特价』，白名单其中一个关键词是『牛奶』，那么A将会直接被添加到待提交试用组，不再进行另外判断
+     * 就算设置了黑名单也不会判断，希望这种写得那么清楚的脑瘫问题就别提issues了
      * 可通过环境变量控制：JD_TRY_WHITELIST，用@分隔
      * */
     whiteListKeywords: process.env.JD_TRY_WHITELISTKEYWORDS && process.env.JD_TRY_WHITELISTKEYWORDS.split('@') || [],
+    /*
+     * 每多少个账号发送一次通知，默认为4
+     * 可通过环境变量控制 JD_TRY_SENDNUM
+     * */
+    sendNum: process.env.JD_TRY_SENDNUM * 1 || 4,
 }
 //上面很重要，遇到问题请把上面注释看一遍再来问
 !(async() => {
-    console.log('X1a0He留：遇到问题请把脚本内的注释看一遍再来问，谢谢')
-    // await $.wait(500)
-    // if(process.env.JD_TRY && process.env.JD_TRY === 'true'){
+     await $.wait(500)
+    // 如果你要运行京东试用这个脚本，麻烦你把环境变量 JD_TRY 设置为 true
+    if(process.env.JD_TRY && process.env.JD_TRY === 'true'){
         await requireConfig()
         if(!$.cookiesArr[0]){
             $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
@@ -158,12 +195,12 @@ let args_xh = {
                 $.isForbidden = false
                 $.wrong = false
                 size = 1
-                while(trialActivityIdList.length < args_xh.maxLength && $.isForbidden === false && $.wrong === false){
+                while(trialActivityIdList.length < args_xh.maxLength && $.isForbidden === false){
                     if($.nowTabIdIndex === args_xh.tabId.length){
                         console.log(`tabId组已遍历完毕，不在获取商品\n`);
                         break;
                     } else {
-                        await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage++)  //获取对应tabId的试用页面
+                        await try_feedsList(args_xh.tabId[$.nowTabIdIndex], $.nowPage)  //获取对应tabId的试用页面
                     }
                     if(trialActivityIdList.length < args_xh.maxLength){
                         console.log(`间隔等待中，请等待 2 秒\n`)
@@ -193,13 +230,25 @@ let args_xh = {
                     await showMsg()
                 }
             }
+            if($.isNode()){
+                if($.index % args_xh.sendNum === 0){
+                    $.sentNum++;
+                    console.log(`正在进行第 ${$.sentNum} 次发送通知，发送数量：${args_xh.sendNum}`)
+                    await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`)
+                    notifyMsg = "";
+                }
+            }
         }
-        if($.isForbidden === false && $.isLimit === false){
-            await $.notify.sendNotify(`${$.name}`, notifyMsg);
+        if($.isNode()){
+            if(($.cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum){
+                console.log(`正在进行最后一次发送通知，发送数量：${($.cookiesArr.length - ($.sentNum * args_xh.sendNum))}`)
+                await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`)
+                notifyMsg = "";
+            }
         }
-    // } else {
-    //     console.log(`\n您未设置运行【京东试用】脚本，结束运行！\n`)
-    // }
+    } else {
+        console.log(`\n您未设置运行【京东试用】脚本，结束运行！\n`)
+    }
 })().catch((e) => {
     console.error(`❗️ ${$.name} 运行错误！\n${e}`)
 }).finally(() => $.done())
@@ -214,9 +263,7 @@ function requireConfig(){
             //Node.js用户请在jdCookie.js处填写京东ck;
             const jdCookieNode = require('./jdCookie.js');
             Object.keys(jdCookieNode).forEach((item) => {
-                if(jdCookieNode[item]){
-                    $.cookiesArr.push(jdCookieNode[item])
-                }
+                if(jdCookieNode[item]) $.cookiesArr.push(jdCookieNode[item])
             })
             if(process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
         } else {
@@ -229,6 +276,7 @@ function requireConfig(){
         else args_xh.printLog = process.env.JD_TRY_PLOG === 'true';
         if(typeof process.env.JD_TRY_PASSZC === "undefined") args_xh.passZhongCao = true;
         else args_xh.passZhongCao = process.env.JD_TRY_PASSZC === 'true';
+        for(let keyWord of $.innerKeyWords) args_xh.titleFilters.push(keyWord)
         console.log(`共${$.cookiesArr.length}个京东账号\n`)
         console.log('=====环境变量配置如下=====')
         console.log(`jdPrice: ${typeof args_xh.jdPrice}, ${args_xh.jdPrice}`)
@@ -286,14 +334,6 @@ function try_tabList(){
 //获取商品列表并且过滤 By X1a0He
 function try_feedsList(tabId, page){
     return new Promise((resolve, reject) => {
-        if(page > $.totalPages){
-            console.log("请求页数错误")
-            $.wrong = true;
-            return;
-        } else if($.nowTabIdIndex > args_xh.tabId.length){
-            console.log(`不再获取商品，边缘越界，提交试用中...`)
-            return;
-        }
         const body = JSON.stringify({
             "tabId": `${tabId}`,
             "page": page,
@@ -315,11 +355,8 @@ function try_feedsList(tabId, page){
                     let tempKeyword = ``;
                     if(data.success){
                         $.totalPages = data.data.pages
-                        if($.nowTabIdIndex > args_xh.tabId.length){
-                            console.log(`不再获取商品，边缘越界，提交试用中...`)
-                        } else {
-                            console.log(`第 ${size++} 次获取试用商品成功，tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page}/${$.totalPages} 页`)
-                        }
+                        $.nowPage === $.totalPages ? $.nowPage = 1 : $.nowPage++;
+                        console.log(`第 ${size++} 次获取试用商品成功，tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page}/${$.totalPages} 页`)
                         console.log(`获取到商品 ${data.data.feedList.length} 条`)
                         for(let item of data.data.feedList){
                             if(item.applyNum === null){
@@ -354,7 +391,7 @@ function try_feedsList(tabId, page){
                                 args_xh.printLog ? console.log(`检测 tabId:${args_xh.tabId[$.nowTabIdIndex]} 的 第 ${page}/${$.totalPages} 页 第 ${$.nowItem++ + 1} 个商品\n${item.skuTitle}`) : ''
                                 if(args_xh.whiteList){
                                     if(args_xh.whiteListKeywords.some(fileter_word => item.skuTitle.includes(fileter_word))){
-                                        args_xh.printLog ? console.log(`商品通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : ''
+                                        args_xh.printLog ? console.log(`商品白名单通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : ''
                                         trialActivityIdList.push(item.trialActivityId)
                                         trialActivityTitleList.push(item.skuTitle)
                                     }
@@ -439,6 +476,8 @@ function try_apply(title, activityId){
                     } else if(data.code === "-131"){
                         console.log(data.message)   // 申请次数上限。
                         $.isLimit = true;
+                    } else if(data.code === "-113"){
+                        console.log(data.message)   // 操作不要太快哦！
                     } else {
                         console.log("申请失败", data)
                     }
@@ -608,8 +647,6 @@ function jsonParse(str){
     }
 }
 
-// 来自 @chavyleung 大佬
-// https://raw.githubusercontent.com/chavyleung/scripts/master/Env.js
 function Env(name, opts){
     class Http{
         constructor(env){

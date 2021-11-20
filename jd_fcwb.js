@@ -1,13 +1,11 @@
 /*
 发财挖宝: 入口,极速版-我的,发财挖宝
 说明
-1、脚本只执行助力和做1个任务,需要手动进活动进行游戏
-2、第一个账号会助力作者，其他账号助力第CK1
-=================================Quantumultx=========================
-[task_local]
-#发财挖宝
-5 0-23/2 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_fcwb.js, tag=发财挖宝, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-*/
+    1、脚本只执行助力和做1个任务,需要手动进活动进行游戏
+    2、第一个账号会助力作者，其他账号助力第一个CK
+cron 40 12,16 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_fcwb.js
+
+* * */
 const $ = new Env('发财挖宝');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -33,15 +31,18 @@ let fcwbinviteCode = "";
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-    console.log(`\n注意：本脚本暂时只会执行助力，助力后，请手动进活动进行游戏（发财挖宝: 入口,极速版-->我的-->发财挖宝）\n`)
+    console.log(`\n注意：本脚本暂时只会执行助力，助力后，请手动进活动进行游戏（发财挖宝: 入口,极速版-》我的-》发财挖宝）\n`)
     let res = [];
-    try{res = await getAuthorShareCode(); res = res.fcwb;
-        if(res.length > 0){
-            let actCodeInfo = getRandomArrayElements(res,1)[0];
-            fcwbinviter = actCodeInfo.fcwbinviter;
-            fcwbinviteCode = actCodeInfo.fcwbinviteCode;
-        }
-    }catch (e) {}
+    try{res = await getAuthorShareCode('https://raw.githubusercontent.com/11111110/share_code/main/fcwb.json');}catch (e) {}
+    if(!res){
+        try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/11111110/share_code@main/fcwb.json');}catch (e) {}
+        if(!res){res = [];}
+    }
+    if(res.length > 0){
+        let actCodeInfo = getRandomArrayElements(res,1)[0];
+        fcwbinviter = actCodeInfo.fcwbinviter;
+        fcwbinviteCode = actCodeInfo.fcwbinviteCode;
+    }
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -159,14 +160,14 @@ async function takeRequest(functionId,bodyInfo,h5stFlag = false){
                 }
             } catch (e) {
                 console.log(data);
-                $.logErr(e, resp)
+                //$.logErr(e, resp)
             } finally {
                 resolve(data.data || {});
             }
         })
     })
 }
-function getAuthorShareCode(url='https://raw.githubusercontent.com/11111115/params/main/codes.json') {
+function getAuthorShareCode(url) {
     return new Promise(resolve => {
         const options = {
             url: `${url}?${new Date()}`, "timeout": 10000, headers: {

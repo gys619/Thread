@@ -9,8 +9,7 @@ const stream = require('stream');
 const zlib = require('zlib');
 const vm = require('vm');
 const PNG = require('png-js');
-let UA = require('../USER_AGENTS.js').USER_AGENT;
-const validatorCount = process.env.JDJR_validator_Count ? process.env.JDJR_validator_Count : 100
+const UA = require('../USER_AGENTS.js').USER_AGENT;
 
 
 Math.avg = function average() {
@@ -541,52 +540,14 @@ function injectToRequest2(fn, scene = 'cww') {
   };
 }
 
-function injectToRequest3(fn,scene = 'cww', ua = '') {
-  if(ua) UA = ua
-  return (opts, cb) => {
-    fn(opts, async (err, resp, data) => {
-      if (err) {
-        console.error(JSON.stringify(err));
-        return;
-      }
-      if (data.search('验证') > -1) {
-        console.log('JDJR验证中......');
-				let arr = opts.url.split("&")
-				let eid = ''
-				for(let i of arr){
-					if(i.indexOf("eid=")>-1){
-						eid = i.split("=") && i.split("=")[1] || ''
-					}
-				}
-        const res = await new JDJRValidator().run(scene, eid);
-
-        opts.url += `&validate=${res.validate}`;
-        fn(opts, cb);
-      } else {
-        cb(err, resp, data);
-      }
-    });
-  };
-}
-
 async function injectToRequest(scene = 'cww') {
   console.log('JDJR验证中......');
   const res = await new JDJRValidator().run(scene);
   return `&validate=${res.validate}`
 }
 
-// exports.sleep = sleep;
-
-// exports.injectToRequest = injectToRequest;
-
-// exports.injectToRequest2 = injectToRequest2;
-
-// exports.injectToRequest3 = injectToRequest3;
-
 module.exports = {
   sleep,
   injectToRequest,
-  injectToRequest2,
-  injectToRequest3
-
+  injectToRequest2
 }

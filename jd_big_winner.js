@@ -24,6 +24,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '', linkId = 'PFbUR7wtwUcQ860Sn8WRfw', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
+const money = $.isNode() ? (process.env.BIGWINNER_MONEY ? process.env.BIGWINNER_MONEY * 1 : 0.3) : ($.getdata("BIGWINNER_MONEY") ? $.getdata("BIGWINNER_MONEY") * 1 : 0.3)
 const JD_API_HOST = 'https://api.m.jd.com/api';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -57,7 +58,7 @@ const len = cookiesArr.length;
   }
   if (message) {
     $.msg($.name, '', message);
-    //if ($.isNode()) await notify.sendNotify($.name, message);
+    if ($.isNode()) await notify.sendNotify($.name, message);
   }
 })()
     .catch((e) => {
@@ -77,10 +78,12 @@ async function main() {
       console.log(`开始进行翻翻乐拿红包\n`)
       await gambleOpenReward();//打开红包
       if ($.canOpenRed) {
-        while (!$.canApCashWithDraw && $.changeReward) {
+        let num = 0;
+        do {
           await openRedReward();
           await $.wait(500);
-        }
+          num++
+        } while (!$.canApCashWithDraw && $.changeReward && num < 20)
         if ($.canApCashWithDraw) {
           //提现
           await openRedReward('gambleObtainReward', $.rewardData.rewardType);
@@ -217,7 +220,7 @@ function openRedReward(functionId = 'gambleChangeReward', type) {
             if (data['code'] === 0) {
               $.rewardData = data.data;
               if (data.data.rewardState === 1) {
-                if (data.data.rewardValue >= 0.3) {
+                if (data.data.rewardValue >= money) {
                   //已翻倍到0.3元，可以提现了
                   $.canApCashWithDraw = true;
                   $.changeReward = false;

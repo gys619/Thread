@@ -1,7 +1,7 @@
 function mainEval($) {
     return `
 !(async () => {
-    jdcookie = process.env.JD_COOKIE ? process.env.JD_COOKIE.split("&") : require("./utils/jdcookie").cookie;
+    jdcookie = process.env.JD_COOKIE ? process.env.JD_COOKIE.split("&") : require("./function/jdcookie").cookie;
     cookies={
         'all':jdcookie,
         'help': typeof(help) != 'undefined' ? [...jdcookie].splice(0,parseInt(help)):[]
@@ -18,6 +18,7 @@ function mainEval($) {
     console.log(\`======================本次任务共\${taskCookie.length}个京东账户Cookie======================\\n\`)
     try{
         await prepare();
+
         if ($.sharecode.length > 0) {
             $.sharecode = $.sharecode.filter(d=>d && JSON.stringify(d)!='{}')
             console.log('助力码', $.sharecode )
@@ -55,6 +56,8 @@ function mainEval($) {
                         console.log(em.message)
                     }
                 }
+
+
             }
         }catch(em){console.log(em.message)}
         if ($.thread) {
@@ -75,6 +78,7 @@ function mainEval($) {
     }
     $.done();
 });
+
 `
 }
 module.exports = {

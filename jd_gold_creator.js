@@ -7,17 +7,17 @@
 ===================quantumultx================
 [task_local]
 #金榜创造营
-13 1,22 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_gold_creator.js, tag=金榜创造营, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+13 1,22 * * * jd_gold_creator.js, tag=金榜创造营, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =====================Loon================
 [Script]
-cron "13 1,22 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_gold_creator.js, tag=金榜创造营
+cron "13 1,22 * * *" script-path=jd_gold_creator.js, tag=金榜创造营
 
 ====================Surge================
-金榜创造营 = type=cron,cronexp="13 1,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_gold_creator.js
+金榜创造营 = type=cron,cronexp="13 1,22 * * *",wake-system=1,timeout=3600,script-path=jd_gold_creator.js
 
 ============小火箭=========
-金榜创造营 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_gold_creator.js, cronexpr="13 1,22 * * *", timeout=3600, enable=true
+金榜创造营 = type=cron,script-path=jd_gold_creator.js, cronexpr="13 1,22 * * *", timeout=3600, enable=true
  */
 const $ = new Env('金榜创造营');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -48,7 +48,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
       $.index = i + 1;
       $.isLogin = true;
       $.beans = 0
@@ -80,6 +80,7 @@ async function main() {
   try {
     await goldCreatorTab();//获取顶部主题
     await getDetail();
+    await goldCreatorPublish();
     await showMsg();
   } catch (e) {
     $.logErr(e)
@@ -249,6 +250,33 @@ function goldCreatorDoTask(body) {
     })
   })
 }
+function goldCreatorPublish() {
+  return new Promise(resolve => {
+    $.get(taskUrl('goldCreatorPublish'), async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} goldCreatorPublish API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data)
+            if (data.code === '0') {
+              if (data.result.subCode === '0') {
+                console.log(data.result.lotteryResult.lotteryCode === '0' ? `揭榜成功：获得${data.result.lotteryResult.lotteryScore}京豆` : `揭榜成功：获得空气~`)
+              }
+            } else {
+              console.log(`揭榜失败：${JSON.stringify(data)}`)
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
 function taskUrl(function_id, body = {}) {
   return {
     url: `${JD_API_HOST}?functionId=${function_id}&body=${escape(JSON.stringify(body))}&appid=content_ecology&clientVersion=10.0.0&client=wh5&eufv=false&uuid=`,
@@ -269,9 +297,9 @@ function taskUrl(function_id, body = {}) {
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
-      url: "https://me-api.jd.com/user_new/info/GetJDUserInfoUnion",
+      url: "https://wq.jd.com/user_new/info/GetJDUserInfoUnion?sceneval=2",
       headers: {
-        Host: "me-api.jd.com",
+        Host: "wq.jd.com",
         Accept: "*/*",
         Connection: "keep-alive",
         Cookie: cookie,
@@ -288,15 +316,15 @@ function TotalBean() {
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data['retcode'] === "1001") {
+            if (data['retcode'] === 1001) {
               $.isLogin = false; //cookie过期
               return;
             }
-            if (data['retcode'] === "0" && data.data && data.data.hasOwnProperty("userInfo")) {
+            if (data['retcode'] === 0 && data.data && data.data.hasOwnProperty("userInfo")) {
               $.nickName = data.data.userInfo.baseInfo.nickname;
             }
           } else {
-            $.log('京东服务器返回空数据');
+            console.log('京东服务器返回空数据');
           }
         }
       } catch (e) {

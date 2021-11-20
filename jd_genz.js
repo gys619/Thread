@@ -1,9 +1,8 @@
 /**
 芥么赚豪礼
+入口：微信-芥么小程序-赚豪礼
 cron 37 0,11 * * * jd_genz.js
-入口：芥么微信小程序-赚豪礼
-没微信号测试，故没有抓到注册包，请登录一次小程序后方可执行脚本，只做部分任务.可换话费券和e卡
-更新过新手任务，个别任务必须手动进入一次活动页面
+TG频道:https://t.me/sheeplost
 */
 const $ = new Env("芥么赚豪礼");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

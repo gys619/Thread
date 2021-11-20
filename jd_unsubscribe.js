@@ -5,18 +5,7 @@
  * @LastEditors: X1a0He
  * @Description: 批量取关京东店铺和商品
  * @Fixed: 不再支持Qx，仅支持Node.js
-==============Quantumult X===========
-[task_local]
-#取关京东店铺商品
-55 23 * * * jd_unsubscribe.js, tag=取关京东店铺商品, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-===========Loon============
-[Script]
-cron "55 23 * * *" script-path=jd_unsubscribe.js,tag=取关京东店铺商品
-============Surge=============
-取关京东店铺商品 = type=cron,cronexp="55 23 * * *",wake-system=1,timeout=3600,script-path=jd_unsubscribe.js
-===========小火箭========
-取关京东店铺商品 = type=cron,script-path=jd_unsubscribe.js, cronexpr="55 23 * * *", timeout=3600, enable=true
-*/
+ */
 const $ = new Env('批量取关店铺和商品');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

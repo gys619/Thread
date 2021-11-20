@@ -1,6 +1,22 @@
 /*
-京东工业品抽奖
-cron "10 5,10 * * *" jd_industryLottery.js
+工业品抽奖机
+活动地址：https://prodev.m.jd.com/mall/active/ebLz35DwiVumB6pcrGkqmnhCgmC/index.html
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#工业品抽奖机
+10 0 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_industryLottery.js, tag=工业品抽奖机, enabled=true
+
+================Loon==============
+[Script]
+cron "10 0 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_industryLottery.js,tag=工业品抽奖机
+
+===============Surge=================
+工业品抽奖机 = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_industryLottery.js
+
+============小火箭=========
+工业品抽奖机 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_industryLottery.js, cronexpr="10 0 * * *", timeout=3600, enable=true
  */
 const $ = new Env('工业品抽奖机');
 const notify = $.isNode() ? require('./sendNotify') : '';

@@ -1,25 +1,24 @@
 /*
 京东手机狂欢城活动，每日可获得20+以上京豆（其中20京豆是往期奖励，需第一天参加活动后，第二天才能拿到）
-活动时间: 2021-10-23至2021-11-13
+活动时间: 2021-8-9至2021-8-28
 活动入口：暂无 [活动地址](https://carnivalcity.m.jd.com/)
 
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ===================quantumultx================
 [task_local]
 #京东手机狂欢城助力
-6 0,8,13 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_carnivalcity_help.js, tag=京东手机狂欢城助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+10 0,8 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =====================Loon================
 [Script]
-cron "6 0,8,13 * * *" script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_carnivalcity_help.js, tag=京东手机狂欢城助力
+cron "10 0,8 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, tag=京东手机狂欢城助力
 
 ====================Surge================
-京东手机狂欢城助力 = type=cron,cronexp=6 0,8,13 * * *,wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_carnivalcity_help.js
+京东手机狂欢城助力 = type=cron,cronexp=10 0,8 * * *,wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js
 
 ============小火箭=========
-京东手机狂欢城助力 = type=cron,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_carnivalcity_help.js, cronexpr="6 0,8,13 * * *", timeout=3600, enable=true
+京东手机狂欢城助力 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_carnivalcity_help.js, cronexpr="10 0,8 * * *", timeout=3600, enable=true
 */
-
 const $ = new Env('京东手机狂欢城助力');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -44,6 +43,12 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     return;
   }
   $.temp = [];
+  $.updatePkActivityIdRes = await getAuthorShareCode('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_cityShareCodes.json')
+  if (!$.updatePkActivityIdRes) {
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_cityShareCodes.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    await $.wait(1000)
+    $.updatePkActivityIdRes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_cityShareCodes.json')
+  }
   await requireConfig();
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
@@ -91,7 +96,7 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
         }
       }
       if ($.canHelp && ($.newShareCodes && $.newShareCodes.length)) {
-        console.log(`\n\n如果有剩余助力机会，则互助池互助`)
+        console.log(`\n\n如果有剩余助力机会，则给作者助力`)
         for (let j = 0; j < $.newShareCodes.length && $.canHelp; j++) {
           console.log(`\n${$.UserName} 去助力 ${$.newShareCodes[j]}`);
           $.delcode = false;
@@ -218,7 +223,6 @@ function getHelp() {
             console.log(`\n\n${$.name}互助码每天都变化,旧的不可继续使用`);
             $.log(`【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.shareId}\n\n`);
             $.temp.push(data.data.shareId);
-            await submitCode(data.data.shareId);
           } else {
             console.log(`获取邀请码失败：${JSON.stringify(data)}`);
             if (data.code === 1002) $.blockAccount = true;
@@ -233,7 +237,7 @@ function getHelp() {
   })
 }
 
-function getAuthorShareCode(url='https://raw.githubusercontent.com/he1pu/params/main/codes.json') {
+function getAuthorShareCode(url) {
   return new Promise(async resolve => {
     const options = {
       url: `${url}?${new Date()}`, "timeout": 10000, headers: {
@@ -266,68 +270,14 @@ function getAuthorShareCode(url='https://raw.githubusercontent.com/he1pu/params/
   })
 }
 
-
-//格式化助力码
-function shareCodesFormat() {
-  return new Promise(async resolve => {
-    // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
-    let code = await readShareCode();
-    $.updatePkActivityIdRes = code.data;
-    $.newShareCodes = [];
-    if ($.shareCodesArr[$.index - 1]) {
-      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
-    } else {
-      //console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-      const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
-      $.newShareCodes = inviteCodes[tempIndex] && inviteCodes[tempIndex].split('@') || [];
-      if ($.updatePkActivityIdRes && $.updatePkActivityIdRes.length) $.newShareCodes = [...$.updatePkActivityIdRes, ...$.newShareCodes];
-    }
-    // const readShareCodeRes = await readShareCode();
-    // if (readShareCodeRes && readShareCodeRes.code === 200) {
-    //   $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
-    // }
-    // console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
-    resolve();
-  })
-}
-function submitCode(shareCode) {
-    if (!shareCode || shareCode == undefined || shareCode.length<=0 ) {return;}
-    return new Promise(async resolve => {
-    $.get({url: `http://www.helpu.cf/jdcodes/submit.php?code=${shareCode}&type=jd818&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} 提交助力码 API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            //console.log(`随机取个${randomCount}码放到您固定的互助码后面(不影响已有固定互助)`)
-            data = JSON.parse(data);
-            if (data.code === 300) {
-                $.needSubmit = false;
-              console.log("手机狂欢城，互助码已提交");
-            }else if (data.code === 200) {
-                $.needSubmit = false;
-              console.log("手机狂欢城，互助码提交成功");
-            }
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data || {"code":500});
-      }
-    })
-    await $.wait(10000);
-    resolve({"code":500})
-  })
-}
 function readShareCode() {
+  console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `http://www.helpu.cf/jdcodes/getcode.php?type=jd818&num=20`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `http://share.turinglabs.net/api/v3/carnivalcity/query/20/`, 'timeout': 20000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
-          console.log(`助力池 API请求失败，请检查网路重试`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
             data = JSON.parse(data);
@@ -339,8 +289,29 @@ function readShareCode() {
         resolve(data);
       }
     })
-    await $.wait(10000);
+    await $.wait(20000);
     resolve()
+  })
+}
+//格式化助力码
+function shareCodesFormat() {
+  return new Promise(async resolve => {
+    // console.log(`第${$.index}个京东账号的助力码:::${$.shareCodesArr[$.index - 1]}`)
+    $.newShareCodes = [];
+    if ($.shareCodesArr[$.index - 1]) {
+      $.newShareCodes = $.shareCodesArr[$.index - 1].split('@');
+    } else {
+      console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
+      const tempIndex = $.index > inviteCodes.length ? (inviteCodes.length - 1) : ($.index - 1);
+      $.newShareCodes = inviteCodes[tempIndex] && inviteCodes[tempIndex].split('@') || [];
+      if ($.updatePkActivityIdRes && $.updatePkActivityIdRes.length) $.newShareCodes = [...$.updatePkActivityIdRes, ...$.newShareCodes];
+    }
+    // const readShareCodeRes = await readShareCode();
+    // if (readShareCodeRes && readShareCodeRes.code === 200) {
+    //   $.newShareCodes = [...new Set([...$.newShareCodes, ...(readShareCodeRes.data || [])])];
+    // }
+    // console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify($.newShareCodes)}`)
+    resolve();
   })
 }
 function requireConfig() {
@@ -365,7 +336,7 @@ function requireConfig() {
         }
       })
     }
-    //console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
+    console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
     resolve()
   })
 }

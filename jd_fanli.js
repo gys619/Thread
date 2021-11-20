@@ -69,28 +69,27 @@ if ($.isNode()) {
                 await $.wait(2000)
                 if($.count.finishCount<$.count.maxTaskCount){
                     let range = $.count.maxTaskCount-$.count.finishCount
-                    for (let j = 0; j < range; j++) {
-                        console.log(`开始第${$.count.finishCount+j+1}次`)
+                    for(let i=0;i<range;i++){
+                        console.log(`开始第${$.count.finishCount+i+1}次`)
                         await getTaskList(cookie)
                         await $.wait(2000)
-                        for (let k in $.taskList) {
-                            if ($.taskList[k].taskId !== null && $.taskList[k].status == 1) {
-                                console.log(`开始尝试活动:` + $.taskList[k].taskName);
-                                await saveTaskRecord(cookie, $.taskList[k].taskId, $.taskList[k].businessId, $.taskList[k].taskType)
-                                if ($.sendBody) {
-                                    await $.wait(Number($.taskList[k].watchTime) * 1300)
-                                    await saveTaskRecord1(cookie, $.taskList[k].taskId, $.taskList[k].businessId, $.taskList[k].taskType, $.sendBody.uid, $.sendBody.tt)
-                                } else {
+                        for (let i in $.taskList){
+                            // console.log($.taskList[i])
+                            if($.taskList[i].taskId!==null){
+                                await saveTaskRecord(cookie,$.taskList[i].taskId,$.taskList[i].businessId,$.taskList[i].taskType)
+                                if($.sendBody){
+                                    await $.wait(Number($.taskList[i].watchTime)*1000 + Math.floor(Math.random()*1000))
+                                    await saveTaskRecord1(cookie,$.taskList[i].taskId,$.taskList[i].businessId,$.taskList[i].taskType,$.sendBody.uid,$.sendBody.tt)
+                                }
+                                else{
                                     continue;
                                 }
-                                if ($.count.finishCount = $.count.maxTaskCount) {
-                                    console.log(`任务全部完成!`);
-								}
-							}
-						}
+                                break;
+                           }
+                        }
+                    }
                     
-					}
-				}
+                }
                 else{
                     console.log("任务已做完")
                 }
@@ -186,14 +185,11 @@ function saveTaskRecord1(ck,taskId,businessId,taskType,uid,tt) {
                 if (err) {
                     $.log(err)
                 } else {
+                    // console.log(data)
                     if (data) {
                         data = JSON.parse(data);
-                        if (data.content) {
-                            if (data.content.status = 1)
-                                $.count.finishCount += 1;
-                            console.log("浏览结果", data.content.msg);
-                        } else
-                            console.log("结果", data);
+                        // console.log("结果",data)
+                        console.log("浏览结果",data.content.msg)
                     } else {
                         $.log("京东返回了空数据")
                     }

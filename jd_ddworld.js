@@ -1,22 +1,22 @@
 /*
-东东世界 做任务&&兑换 
+东东世界
 
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #东东世界
-10 3,9 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_ddworld.js, tag=东东世界, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+15 3,9 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_ddworld.js, tag=东东世界, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 3,9 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_ddworld.js,tag=东东世界
+cron "15 3,9 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_ddworld.js,tag=东东世界
 
 ===============Surge=================
-东东世界 = type=cron,cronexp="10 3,9 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_ddworld.js
+东东世界 = type=cron,cronexp="15 3,9 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_ddworld.js
 
 ============小火箭=========
-东东世界 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_ddworld.js, cronexpr="10 3,9 * * *", timeout=3600, enable=true
+东东世界 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_ddworld.js, cronexpr="15 3,9 * * *", timeout=3600, enable=true
 */
 const $ = new Env('东东世界');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -50,7 +50,6 @@ let tokenInfo = {}, hotInfo = {}
       $.isLogin = true;
       $.nickName = '';
       message = '';
-      $.hotFlag = false;
       await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
@@ -68,8 +67,18 @@ let tokenInfo = {}, hotInfo = {}
       hotInfo[$.UserName] = $.hot
     }
   }
-  let res = await getParams()
-  $.shareCodes = [...$.shareCodes, ...(res || [])]
+  let res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/ddworld.json')
+  if (!res) {
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/ddworld.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    await $.wait(1000)
+    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/ddworld.json')
+  }
+  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/888888/updateTeam/main/shareCodes/ddworld.json')
+  if (!res2) {
+    await $.wait(1000)
+    res2 = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/ddworld.json')
+  }
+  $.shareCodes = [...$.shareCodes, ...[...(res || []), ...(res2 || [])].sort(() => 0.5 - Math.random())]
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -97,13 +106,6 @@ let tokenInfo = {}, hotInfo = {}
       }
     }
   }
-  await $.wait(2500);
-  for (let i = 0; i < cookiesArr.length; i++) {
-    $.UserName = decodeURIComponent(cookiesArr[i].match(/pt_pin=([^; ]+)(?=;?)/) && cookiesArr[i].match(/pt_pin=([^; ]+)(?=;?)/)[1])
-    console.log(`\n\n**********账号${$.UserName}开始兑换**********`)
-    await exchange();
-    await $.wait(2000);
-  }
 })()
     .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -119,92 +121,6 @@ async function jdWorld() {
   await get_user_info()
   if ($.hot) return
   await get_task()
-}
-//兑换
-async function exchange() {
-    if ($.token2 && $.access_token) {
-        await task('get_exchange');
-        if (!$.hotFlag) {
-            if ($.exchangeList) {
-                for (const vo of $.exchangeList.reverse()) {
-                    $.log(`去兑换：${vo.name}`)
-                    await taskExchangePost('do_exchange', `id=${vo.id}`);
-                }
-            } else {
-                $.log("没有获取到兑换列表！")
-            }
-        } else {
-            $.log("风险用户，快去买买买吧！！！")
-        }
-       
-    } else {
-        $.log('获取Token失败')
-    }
-}
-
-async function task(function_id, body) {
-    return new Promise(async resolve => {
-        $.get(taskUrl(function_id, body), async (err, resp, data) => {
-            try {
-                if (data) {
-                    data = JSON.parse(data);
-                    switch (function_id) {
-                        case 'get_exchange':
-                            $.exchangeList = data;
-                            if (data.status_code === 403) {
-                                $.hotFlag = true;
-                            }
-                            break;
-                        default:
-                            $.log(JSON.stringify(data))
-                            break;
-                    }
-                } else {
-                    $.log(JSON.stringify(data))
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve();
-            }
-        })
-    })
-}
-
-function taskExchangePost(function_id, body) {
-    return new Promise(async resolve => {
-        $.post(taskPostUrl(function_id, body), async (err, resp, data) => {
-            try {
-                if (data) {
-                    data = JSON.parse(data);
-                    if (data) {
-                        switch (function_id) {
-                            case 'jd-user-info':
-                                $.accessToken = data.access_token;
-                                $.tokenType = data.token_type;
-                                break;
-                            case 'do_exchange':
-                                if (data.prize) {
-                                    console.log(`兑换成功：数量${data.prize.setting.beans_count}`)
-                                } else {
-                                    console.log(JSON.stringify(data))
-                                }
-                                break;
-                            default:
-                                $.log(JSON.stringify(data))
-                                break;
-                        }
-                    } else {
-                        $.log(JSON.stringify(data))
-                    }
-                }
-            } catch (error) {
-                $.log(error)
-            } finally {
-                resolve();
-            }
-        })
-    })
 }
 
 // 获得IsvToken
@@ -455,7 +371,7 @@ function taskPostUrl(functionId, body = '', IsvToken = '') {
   }
 }
 
-function getParams(url='https://raw.githubusercontent.com/11111115/params/main/ddworld.json') {
+function getAuthorShareCode(url) {
   return new Promise(async resolve => {
     const options = {
       url: `${url}?${new Date()}`, "timeout": 10000, headers: {

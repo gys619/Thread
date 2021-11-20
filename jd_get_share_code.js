@@ -656,7 +656,7 @@ async function getShareCode() {
   await getJdZZ()
   await getJoy()
   await getSgmh()
-  await getCFD()
+  //await getCFD()
   await getJdCash()
   console.log(`======账号${$.index}结束======\n`)
 }

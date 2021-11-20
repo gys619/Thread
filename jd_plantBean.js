@@ -1,6 +1,6 @@
 /*
-种豆得豆
-更新时间：2021-08-19
+种豆得豆 脚本更新地址：https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_plantBean.js
+更新时间：2021-04-9
 活动入口：京东APP我的-更多工具-种豆得豆
 已支持IOS京东多账号,云端多京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
@@ -9,17 +9,17 @@
 每个京东账号每天只能帮助3个人。多出的助力码将会助力失败。
 =====================================Quantumult X=================================
 [task_local]
-1 7-21/1 * * * jd_plantBean.js, tag=种豆得豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzd.png, enabled=true
+1 7-21/2 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_plantBean.js, tag=种豆得豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzd.png, enabled=true
 
 =====================================Loon================================
 [Script]
-cron "1 7-21/1 * * *" script-path=jd_plantBean.js,tag=京东种豆得豆
+cron "1 7-21/2 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_plantBean.js,tag=京东种豆得豆
 
 ======================================Surge==========================
-京东种豆得豆 = type=cron,cronexp="1 7-21/1 * * *",wake-system=1,timeout=3600,script-path=jd_plantBean.js
+京东种豆得豆 = type=cron,cronexp="1 7-21/2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_plantBean.js
 
 ====================================小火箭=============================
-京东种豆得豆 = type=cron,script-path=jd_plantBean.js, cronexpr="1 7-21/1 * * *", timeout=3600, enable=true
+京东种豆得豆 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_plantBean.js, cronexpr="1 7-21/2 * * *", timeout=3600, enable=true
 
 */
 const $ = new Env('京东种豆得豆');
@@ -32,7 +32,12 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 //助力好友分享码(最多3个,否则后面的助力失败)
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一京东账号的好友互助码请使用@符号隔开。
 //下面给出两个账号的填写示例（iOS只支持2个京东账号）
-let shareCodes = ['']
+let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好友的shareCode
+  //账号一的好友shareCode,不同好友的shareCode中间用@符号隔开
+  '',
+  //账号二的好友shareCode,不同好友的shareCode中间用@符号隔开
+  '',
+]
 let allMessage = ``;
 let currentRoundId = null;//本期活动id
 let lastRoundId = null;//上期id
@@ -84,6 +89,10 @@ async function jdPlantBean() {
   try {
     console.log(`获取任务及基本信息`)
     await plantBeanIndex();
+    if ($.plantBeanIndexResult.errorCode === 'PB101') {
+      console.log(`\n活动太火爆了，还是去买买买吧！\n`)
+      return
+    }
     for (let i = 0; i < $.plantBeanIndexResult.data.roundList.length; i++) {
       if ($.plantBeanIndexResult.data.roundList[i].roundState === "2") {
         num = i
@@ -95,12 +104,6 @@ async function jdPlantBean() {
       const shareUrl = $.plantBeanIndexResult.data.jwordShareInfo.shareUrl
       $.myPlantUuid = getParam(shareUrl, 'plantUuid')
       console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.myPlantUuid}\n`);
-      const submitCodeRes = await submitCode();
-      if (submitCodeRes && submitCodeRes.code === 200) {
-         console.log(`🥑种豆得豆-互助码提交成功！🥑`);
-      }else if (submitCodeRes.code === 300) {
-         console.log(`🥑种豆得豆-互助码已提交！🥑`);
-      }
       roundList = $.plantBeanIndexResult.data.roundList;
       currentRoundId = roundList[num].roundId;//本期的roundId
       lastRoundId = roundList[num - 1].roundId;//上期的roundId
@@ -112,7 +115,7 @@ async function jdPlantBean() {
       await receiveNutrients();//定时领取营养液
       await doHelp();//助力
       await doTask();//做日常任务
-      await doEgg();
+      // await doEgg();
       await stealFriendWater();
       await doCultureBean();
       await doGetReward();
@@ -396,8 +399,8 @@ function showTaskProcess() {
 //助力好友
 async function doHelp() {
   for (let plantUuid of newShareCodes) {
-    if (!plantUuid || plantUuid.length == 0) continue;
     console.log(`开始助力京东账号${$.index} - ${$.nickName}的好友: ${plantUuid}`);
+    if (!plantUuid) continue;
     if (plantUuid === $.myPlantUuid) {
       console.log(`\n跳过自己的plantUuid\n`)
       continue
@@ -536,13 +539,12 @@ async function helpShare(plantUuid) {
 async function plantBeanIndex() {
   $.plantBeanIndexResult = await request('plantBeanIndex');//plantBeanIndexBody
 }
-
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: `http://www.11111114/jdcodes/getcode.php?type=bean&num=${randomCount}`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `http://111111/bean`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
+          console.log(JSON.stringify(err))
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
@@ -553,35 +555,11 @@ function readShareCode() {
       } catch (e) {
         $.logErr(e, resp)
       } finally {
-        resolve(data || {"code":500});
+        resolve(data);
       }
     })
-    await $.wait(10000);
-    resolve({"code":500})
-  })
-}
-//提交互助码
-function submitCode() {
-    return new Promise(async resolve => {
-    $.get({url: `http://www.11111114/jdcodes/submit.php?code=${$.myPlantUuid}&type=bean`, timeout: 10000}, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            //console.log(`随机取个${randomCount}码放到您固定的互助码后面(不影响已有固定互助)`)
-            data = JSON.parse(data);
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data || {"code":500});
-      }
-    })
-    await $.wait(10000);
-    resolve({"code":500})
+    await $.wait(15000);
+    resolve()
   })
 }
 //格式化助力码
