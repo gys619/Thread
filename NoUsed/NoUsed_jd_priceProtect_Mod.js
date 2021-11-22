@@ -2,7 +2,7 @@
 cron "41 11 7,14,21,28 * *" jd_priceProtect_Mod.js, tag:京东价保一对一推送版
  */
  //程序员复制粘贴了小小的代码一顿骚操作后加了一对一推送
- //原地址: https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_price.js
+ //原地址: https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_price.js
  
 const $ = new Env('京东价保一对一推送版');
 const notify = $.isNode() ? require('./sendNotify') : '';
