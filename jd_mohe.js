@@ -7,11 +7,11 @@
 =================================Quantumultx=========================
 [task_local]
 #5G超级盲盒
-5 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+0 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "5 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
+cron "0 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
 
 ===================================Surge================================
 5G超级盲盒 = type=cron,cronexp="0 0,1-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js
@@ -50,6 +50,8 @@ $.shareId = [];
   $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_shareCodes.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
   await $.wait(1000)
   await updateShareCodesCDN('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_shareCodes.json')
+  await $.wait(1000)
+  await getShareCode()
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -81,7 +83,7 @@ $.shareId = [];
     if ($.isNode()) await notify.sendNotify($.name, allMessage);
     $.msg($.name, '', allMessage, {"open-url": "https://blindbox5g.jd.com"})
   }
-  $.shareId = [...($.shareId || []), ...($.updatePkActivityIdRes || [])];
+  $.shareId = [...($.shareId || []), ...($.updatePkActivityIdRes || []), ...($.888888Code || [])];
   for (let v = 0; v < cookiesArr.length; v++) {
     cookie = cookiesArr[v];
     $.index = v + 1;
@@ -443,6 +445,29 @@ function updateShareCodesCDN(url) {
     })
   })
 }
+
+function getShareCode() {
+  return new Promise(resolve => {
+    $.get({
+      url: "https://raw.fastgit.org/888888/updateTeam/main/shareCodes/jd_mohe.json",
+      headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    }, async (err, resp, data) => {
+      try {
+        if (err) {
+        } else {
+          $.888888Code = JSON.parse(data) || []
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {

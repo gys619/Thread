@@ -3,8 +3,7 @@
  * /
  * 基于温某人大佬的脚本修改
  * 助力逻辑：优先助力互助码环境变量，中午10点之后再给我助力
- * TG交流群：https://t.me/jd_555555
- * TG通知频道：https://t.me/jd_555555_tz
+
  * /
 https://raw.githubusercontent.com/Wenmoux/scripts/master/jd/jd_fcdyj.js
 已支持IOS双京东账号, Node.js支持N个京东账号
@@ -49,14 +48,14 @@ const JD_API_HOST = `https://api.m.jd.com`;
     }
     console.log(`\n发财大赢家助力逻辑：优先助力填写的互助码环境变量，中午10点之后再给我助力\n`)
     message = ''
-    $.helptype = 1
-    $.needhelp = true
-    $.canDraw = false
-    $.canHelp = true;
     $.linkid = "PFbUR7wtwUcQ860Sn8WRfw"
     //开红包查询
-    for (let i = 0; i < cookiesArr.length && $.needhelp; i++) {
+    for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i];
+        $.helptype = 1
+        $.canDraw = false
+        $.canWx = true
+        $.rewardType = 2
         $.hotFlag = false;
         if (cookie) {
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -85,42 +84,27 @@ const JD_API_HOST = `https://api.m.jd.com`;
                 await help($.rid, $.inviter, 2)
             }
         }
-    }
-    if (new Date().getHours() >= 10) {
-        await getAuthorShareCode()
-        if ($.authorCode && $.authorCode.length) {
-            for (let i = 0; i < cookiesArr.length; i++) {
-                cookie = cookiesArr[i];
-                $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-                $.canRun = true
-                console.log(`\n${$.UserName} 去助力 \n`)
+        if (new Date().getHours() >= 10) {
+            await getAuthorShareCode()
+            if ($.authorCode && $.authorCode.length) {
+                console.log(`\n${$.UserName} 去助力\n`)
                 for (let j = 0; j < $.authorCode.length; j++) {
                     let item = $.authorCode[j];
                     await help(item.redEnvelopeId, item.inviter, 1)
-                    if (!$.canRun) {
-                        break;
-                    }
                     await $.wait(1000)
                     await help(item.redEnvelopeId, item.inviter, 2)
                 }
+
             }
         }
-    }
-    for (let i = 0; i < cookiesArr.length; i++) {
-        cookie = cookiesArr[i];
-        $.canWx = true
-        $.rewardType = 2
-        if (cookie) {
-            $.index = i + 1;
-            console.log(`\n******查询【京东账号${$.index}】红包情况******\n`);
-            await getinfo()
-            if ($.canDraw) {
-                await getrewardIndex()
-                if ($.canWx) {
-                    await exchange()
-                }
-                await $.wait(1000)
+        console.log(`\n******查询【京东账号${$.index}】${$.nickName || $.UserName}红包情况******\n`);
+        await getinfo()
+        if ($.canDraw) {
+            await getrewardIndex()
+            if ($.canWx) {
+                await exchange()
             }
+            await $.wait(1000)
         }
     }
 })()
@@ -197,8 +181,7 @@ function getid() {
                     // console.log(data.data.state)
                     if (data.data.state !== 0) {
                         if (data.success && data.data) {
-                            console.log(`\n【您的redEnvelopeId】：${data.data.redEnvelopeId}`)
-                            console.log(`\n【您的markPin】：${data.data.markedPin}`)
+                            console.log(`\n【京东账号${$.index}（${$.nickName || $.UserName}）的助力码】${data.data.redEnvelopeId}@${data.data.markedPin}`)
                         } else {
                             console.log(data)
                         }
@@ -225,20 +208,17 @@ function getinfo() {
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     data = JSON.parse(data);
-                    console.log(data.data.state)
                     if (data.data.state !== 0) {
                         if (data.success && data.data) {
                             if (data.data.state === 3) {
                                 console.log("今日已成功兑换")
-                                $.needhelp = false
+                                $.canDraw = false
+                            } else if (data.data.state === 6 || data.data.state === 4) {
+                                $.canDraw = true
+                            } else {
+                                console.log(`当前余额：${data.data.amount} 元，还需 ${data.data.needAmount} 元`)
                                 $.canDraw = false
                             }
-                            if (data.data.state === 6 || data.data.state === 4) {
-                                $.needhelp = false
-                                $.canDraw = true
-                            }
-                        } else {
-                            console.log(`当前余额：${data.data.amount} 还需 ${data.data.needAmount} `)
                         }
                     } else {
                         $.canDraw = false
@@ -263,6 +243,7 @@ function getrewardIndex() {
                     console.log(`${JSON.stringify(err)}`);
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
+                    console.log(data)
                     data = JSON.parse(data);
                     if (data.success && data.data) {
                         if (data.data.haveHelpNum === 10) {
