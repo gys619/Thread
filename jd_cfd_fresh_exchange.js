@@ -1,6 +1,6 @@
 /*
 京喜财富岛合成生鲜兑换
-cron 0 0,12 * * * jd_cfd_fresh_exchange.js   整点好像不放库存  默认0点12点   整点有毛自己改
+cron 0 12 * * * jd_cfd_fresh_exchange.js   整点好像不放库存  默认0点12点   整点有毛自己改
 更新时间：2021-11-19
 活动入口：微信京喜-我的-京喜财富岛
 变量  可选值  5 10 20 30 50 100 (默认100)
@@ -10,17 +10,17 @@ export JD_CFD_FRESH_DDW_VIRHB="100"
 ============Quantumultx===============
 [task_local]
 #京喜财富岛合成生鲜兑换
-0 0,12 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js, tag=京喜财富岛合成生鲜兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+0 12 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh_exchange.js, tag=京喜财富岛合成生鲜兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 0,12 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js,tag=京喜财富岛合成生鲜兑换
+cron "0 12 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh_exchange.js,tag=京喜财富岛合成生鲜兑换
 
 ===============Surge=================
-京喜财富岛合成生鲜兑换 = type=cron,cronexp="0 0,12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js
+京喜财富岛合成生鲜兑换 = type=cron,cronexp="0 12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh_exchange.js
 
 ============小火箭=========
-京喜财富岛合成生鲜兑换 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js, cronexpr="0 0,12 * * *", timeout=3600, enable=true
+京喜财富岛合成生鲜兑换 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh_exchange.js, cronexpr="0 12 * * *", timeout=3600, enable=true
  */
 const $ = new Env("京喜财富岛合成生鲜兑换");
 const JD_API_HOST = "https://m.jingxi.com/";
@@ -33,26 +33,7 @@ $.shareCodes = [];
 let cookiesArr = [], cookie = '', token = '';
 let UA, UAInfo = {};
 let ddwVirHb;
-let conditionList = [
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV82OTM2XzE=","ddwVirHb":"100",
-    },
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV83OTAwXzE=","ddwVirHb":"50",
-    },
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV83OTAwXzE=","ddwVirHb":"30",
-    },
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV83ODkyXzE=","ddwVirHb":"20",
-    },
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV84MTY4XzE=","ddwVirHb":"10",
-    },
-    {
-        "strPool":"anhjZmRfY3ViZV9wcF9qeHBwSnhiZmRfanhwcEp4YmZkXzYxNDU4YjY0ZmQ2MThlMGQ4NTVjOWMxOV8xNjA4XzE=","ddwVirHb":"5",
-    }
-]
+let conditionList = []
 $.appId = 10032;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -77,6 +58,7 @@ if ($.isNode()) {
     $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
     await requestAlgo();
     await $.wait(500)
+    console.log(`变量JD_CFD_FRESH_DDW_VIRHB  可选值  5 10 20 30 50 100 (默认100)\n`)
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -100,13 +82,25 @@ if ($.isNode()) {
             $.allTask = []
             $.info = {}
             token = await getJxToken()
+            conditionList = []
+            console.log(`尝试获取兑换参数`)
+            await exchangePinPinPearlState()
+            if (conditionList.length===0){
+                console.log(`未获取到兑换参数 下个`)
+                continue
+            }
             console.log(`获取变量对应参数 : `,ddwVirHb)
             let condition = conditionList.filter(e => e.ddwVirHb == ddwVirHb)[0];
             if (condition){
                 await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }else {
-                console.log(`瞎填锤你  重填\n`)
-                console.log(`变量JD_CFD_FRESH_DDW_VIRHB  可选值  5 10 20 30 50 100 (默认100)\n`)
+                console.log(`未获取到指定变量对应参数  默认提现最大兑换额度\n`)
+                let number = Math.max.apply(Math,conditionList.map(item => {
+                    return item.ddwVirHb;
+                }));
+
+                let condition = conditionList.filter(e => e.ddwVirHb == number)[0];
+                await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }
             // await $.wait(500);
         }
@@ -130,6 +124,42 @@ async function exchangePinPinPearl(ddwVirHb,strPoolName) {
                         data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                         if (data.iRet === 0) {
                             console.log(`京东账号${$.index} ${$.UserName} 兑换喜豆成功  金额:【`+ddwVirHb+'】\n');
+                        }else {
+                            console.log("兑换失败 ",data)
+                        }
+                    } else {
+                        $.log('京东服务器返回空数据');
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve(data);
+            }
+        })
+    })
+}
+// 获取兑换
+async function exchangePinPinPearlState() {
+    return new Promise(async (resolve) => {
+        $.get(taskUrl(`user/ExchangePinPinPearlState`, `__t=${Date.now()}&dwIsPP=1&strZone=jxbfd&dwLvl=1&dwIsRandHb=0`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} ComposePearlState API请求失败，请检查网路重试`)
+                } else {
+                    if (data) {
+                        data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
+                        if (data.iRet === 0) {
+                            console.log(`获取兑换参数成功`);
+                            let filterData = data.exchangeInfo.prizeInfo.filter(e => e.dwState === 0);
+                            for (var o in filterData) {
+                                let prizeInfoElement = filterData[o];
+                                conditionList.push({
+                                        "strPool": prizeInfoElement.strPool,
+                                        "ddwVirHb":prizeInfoElement.ddwVirHb
+                                })
+                            }
                         }else {
                             console.log("兑换失败 ",data)
                         }
