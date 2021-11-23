@@ -33,6 +33,7 @@ let goodsUrl = '', taskInfoKey = [];
 let notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let newShareCodes = [];
+let NoNeedCodes = [];
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         if (jdCookieNode[item]) {
@@ -81,6 +82,8 @@ console.log(`共${cookiesArr.length}个京东账号\n`);
             await GetShareCode();
         }
     }
+	
+	console.log('\n互助码收集完毕，开始执行日常任务...\n');
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -165,7 +168,7 @@ async function jdPet() {
                 return
             }
             $.taskInfo = $.taskInit.result;
-
+			
             await petSport(); //遛弯
             await slaveHelp(); //助力好友
             await masterHelpInit(); //获取助力的信息
@@ -173,7 +176,7 @@ async function jdPet() {
             await feedPetsAgain(); //再次投食
             await energyCollect(); //收集好感度
             await showMsg();
-            console.log('全部任务完成, 如果帮助到您可以点下🌟STAR鼓励我一下, 明天见~');
+            
         } else if (initPetTownRes.code === '0') {
             console.log(`初始化萌宠失败:  ${initPetTownRes.message}`);
         }
@@ -197,7 +200,7 @@ async function GetShareCode() {
                 return;
             }
             console.log(`【京东账号${$.index}（${$.UserName}）的互助码】\n${$.petInfo.shareCode}`);
-            newShareCodes.push($.petInfo.shareCode);
+            newShareCodes.push($.petInfo.shareCode);			
         }
     } catch (e) {
         $.logErr(e)
@@ -347,6 +350,19 @@ async function masterHelpInit() {
 async function slaveHelp() {
     let helpPeoples = '';
     for (let code of newShareCodes) {
+		if(NoNeedCodes){
+			var llnoneed=false;
+			for (let NoNeedCode of NoNeedCodes) {
+				if (code==NoNeedCode){
+					llnoneed=true;
+					break;
+				}
+			}
+			if(llnoneed){
+				console.log(`${code}助力已满，跳过...`);
+				continue;
+			}
+		}
         console.log(`开始助力京东账号${$.index} - ${$.nickName || $.UserName}的好友: ${code}`);
         if (!code)
             continue;
@@ -362,12 +378,13 @@ async function slaveHelp() {
                 console.log(`助力好友${response.result.masterNickName}失败，您今日已无助力机会`);
                 break;
             } else if (response.result.helpStatus === 2) {
-                //该好友已满5人助力，无需您再次助力
+                //该好友已满5人助力，无需您再次助力				
+				NoNeedCodes.push(code);
                 console.log(`该好友${response.result.masterNickName}已满5人助力，无需您再次助力`);
             } else {
                 console.log(`助力其他情况：${JSON.stringify(response)}`);
             }
-        } else {            
+        } else {
 			if(response.message=="已经助过力"){
 				console.log(`此账号今天已经跑过助力了，跳出....`);
 				break;
