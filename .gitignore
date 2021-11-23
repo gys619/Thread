@@ -4,6 +4,10 @@ model
 /icon
 /sample
 /shareCodes
+/ModScripts
+/NoUsed
+
+
 shell
 README.MD
 sign
@@ -129,7 +133,7 @@ jd_syj_Mod.js
 jd_nnfl.js
 jd_fanli_Mod.js
 jd_get_share_code.js
-
+jd_work_price.js
 
 m_*.js
 jd_hbCount.py
