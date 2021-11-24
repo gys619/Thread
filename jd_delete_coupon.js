@@ -76,7 +76,8 @@ $.logic = async function () {
     list = await queryjdcouponlistwithfinance();
     $.log('删除后优惠券个数', list.length);
 };
-$.run({wait: [2000, 3000], random: true}).catch(reason => $.log(reason));
+$.run({filename: __filename, wait: [2000, 3000], random: true}).catch(
+    reason => $.log(reason));
 
 async function deletecoupon(ele, tip) {
     if (ele.couponTitle !== '首购礼金') {

@@ -33,7 +33,7 @@ $.logic = async function () {
         }
     }
 };
-$.run({filename: __filename, wait: [2000, 3000]}).catch(
+$.run({filename: __filename, wait: [2000, 3000], random: true}).catch(
     reason => console.log(reason));
 
 async function GetPropCardCenterInfo() {

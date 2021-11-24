@@ -61,7 +61,7 @@ $.logic = async function () {
         $.log(`${record.msg}\n`)
     }
 }
-$.run({wait: [1000, 1500]}).catch(
+$.run({filename: __filename, wait: [1000, 1500]}).catch(
     reason => $.log(reason));
 
 //

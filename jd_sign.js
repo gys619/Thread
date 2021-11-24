@@ -6,7 +6,7 @@ $.logic = async function () {
     await $.wait(3000, 5000)
     await cgame();
 }
-$.run({wait: [1000, 2000], random: true})
+$.run({filename: __filename, wait: [1000, 2000], random: true})
 .catch(reason => console.log(reason))
 
 async function signBeanIndex() {

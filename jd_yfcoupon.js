@@ -20,7 +20,8 @@ $.logic = async function () {
         }
     }
 };
-$.run({wait: [2000, 3000], random: true}).catch(reason => $.log(reason));
+$.run({filename: __filename, wait: [2000, 3000], random: true}).catch(
+    reason => $.log(reason));
 
 // noinspection DuplicatedCode
 async function queryjdcouponlistwithfinance() {
