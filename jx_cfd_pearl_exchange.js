@@ -39,7 +39,7 @@ $.logic = async function () {
         }
     }
 }
-$.run({filename: 'm_jx_cfd_pearl_exchange', wait: [3000, 5000]}).catch(
+$.run({filename: __filename, wait: [3000, 5000]}).catch(
     reason => console.log(reason));
 
 /**

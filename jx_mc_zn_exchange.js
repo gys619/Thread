@@ -17,7 +17,7 @@ $.logic = async function () {
         await $.wait(1000)
     }
 }
-$.run({appId: 10028}).catch(
+$.run({filename: __filename}).catch(
     reason => console.log(reason));
 
 /**
