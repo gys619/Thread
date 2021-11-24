@@ -59,6 +59,7 @@ let llShowMonth = false;
 let Today = new Date();
 let strAllNotify="";
 let llPetError=false;
+let strGuoqi="";
 let RemainMessage = '\n';
 RemainMessage += "⭕提醒:⭕" + '\n';
 RemainMessage += '【极速金币】京东极速版->我的->金币(极速版使用)\n';
@@ -178,11 +179,11 @@ if ($.isNode()) {
 			$.jdCash = 0;
 			$.isPlusVip = 0;
 			$.JingXiang = "";
-
 			$.allincomeBean = 0; //月收入
 			$.allexpenseBean = 0; //月支出
 			$.joylevel = 0;
 			TempBaipiao = "";
+			strGuoqi="";
 			console.log(`******开始查询【京东账号${$.index}】${$.nickName || $.UserName}*********`);
 
 			await TotalBean();
@@ -517,7 +518,8 @@ async function showMsg() {
 	if ($.expenseBean != 0) {
 		ReturnMessage += `,支${$.expenseBean}豆`;
 	}
-	ReturnMessage += `\n`;
+	ReturnMessage += `\n`;	
+	
 	if ($.levelName || $.JingXiang){
 		ReturnMessage += `【当前京豆】${$.beanCount}豆(≈${($.beanCount / 100).toFixed(2)}元)\n`;
 	} else {
@@ -718,9 +720,14 @@ async function showMsg() {
 			}
 		}
 	}
+	if(strGuoqi){		
+		ReturnMessage += `💸💸💸临期京豆明细💸💸💸\n`;
+		ReturnMessage += `${strGuoqi}`;
+	}
 	ReturnMessage += `🧧🧧🧧红包明细🧧🧧🧧\n`;
 	ReturnMessage += `${$.message}`;
-
+	
+	
 	if (userIndex2 != -1) {
 		allMessageGp2 += ReturnMessageTitle+ReturnMessage + `\n`;
 	}
@@ -815,11 +822,8 @@ async function bean() {
 	}
 	$.todayOutcomeBean = -$.todayOutcomeBean;
 	$.expenseBean = -$.expenseBean;
-	//await queryexpirejingdou();//过期京豆
-	//$.todayOutcomeBean=$.todayOutcomeBean+$.expirejingdou;
-	await redPacket(); //过期红包
-	// console.log(`昨日收入：${$.incomeBean}个京豆 🐶`);
-	// console.log(`昨日支出：${$.expenseBean}个京豆 🐶`)
+	await queryexpirejingdou();//过期京豆
+	await redPacket(); 
 }
 
 async function Monthbean() {
@@ -1171,7 +1175,6 @@ function queryexpirejingdou() {
 				"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.1 Mobile/15E148 Safari/604.1"
 			}
 		}
-		$.expirejingdou = 0;
 		$.get(options, (err, resp, data) => {
 			try {
 				if (err) {
@@ -1181,15 +1184,12 @@ function queryexpirejingdou() {
 					if (data) {
 						// console.log(data)
 						data = JSON.parse(data.slice(23, -13));
-						// console.log(data)
 						if (data.ret === 0) {
 							data['expirejingdou'].map(item => {
-								//console.log(`${timeFormat(item['time'] * 1000)}日过期京豆：${item['expireamount']}\n`);
+								if(item['expireamount']!=0){																	
+									strGuoqi+=`【${timeFormat(item['time'] * 1000)}】过期${item['expireamount']}豆\n`;
+								}
 							})
-							$.expirejingdou = data['expirejingdou'][0]['expireamount'];
-							// if ($.expirejingdou > 0) {
-							//   $.message += `\n今日将过期：${$.expirejingdou}京豆 🐶`;
-							// }
 						}
 					} else {
 						console.log(`京东服务器返回空数据`)
