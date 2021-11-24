@@ -38,8 +38,7 @@ $.logic = async function () {
 $.run({
     filename: __filename,
     bot: true,
-    delimiter: '\n',
-    once: [1]
+    delimiter: '\n'
 }).catch(
     reason => console.log(reason));
 
