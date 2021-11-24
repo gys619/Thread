@@ -9,7 +9,7 @@ export kois=" 第1个cookie的pin & 第2个cookie的pin "
 脚本内或环境变量填写，优先环境变量
 地址：https://raw.githubusercontent.com/wuye999/myScripts/main/jd/jd_angryKoi.py
 更新：
-17/24 22:00 使用随机log,增加开红包
+17/11 22:00 只开指定账号的红包
 '''
 
 import os,json,random,time,re,string,functools
@@ -23,8 +23,7 @@ except Exception as e:
 requests.packages.urllib3.disable_warnings()
 
 
-run_send='no'              # yes或no, yes则启用通知推送服务
-sceneid='JLHBhPageh5'
+run_send='yes'              # yes或no, yes则启用通知推送服务
 
 
 # 获取pin
@@ -150,9 +149,6 @@ class Msg(object):
                 print('获取通知服务失败，请检查网络连接...')
 Msg().main()   # 初始化通知服务 
 
-def log():
-    log_str=string.ascii_lowercase+string.digits
-    return ''.join(random.sample(log_str,8))+'~8,~'+''.join(random.sample(log_str,7))   
 
 def taskPostUrl(functionId, body, cookie):
     url=f'https://api.m.jd.com/api?appid=jinlihongbao&functionId={functionId}&loginType=2&client=jinlihongbao&t={gettimestamp()}&clientVersion=10.1.4&osVersion=-1'
@@ -179,7 +175,7 @@ def taskPostUrl(functionId, body, cookie):
 # 开启助力
 code_findall=re.compile(r'"code":(.*?),')
 def h5launch(cookie):
-    body={"followShop":1,"random":''.join(random.sample(string.digits, 6)),"log":log(),"sceneid":sceneid}
+    body={"followShop":1,"random":''.join(random.sample(string.digits, 6)),"log":"4817e3a2~8,~1wsv3ig","sceneid":"JLHBhPageh5"}
     res=taskPostUrl("h5launch", body, cookie)
     if not res:
         return
@@ -211,7 +207,7 @@ def h5activityIndex(cookie):
 # 助力
 statusDesc_findall=re.compile(r',"statusDesc":"(.+?)"')
 def jinli_h5assist(cookie,redPacketId):
-    body={"redPacketId":redPacketId,"followShop":0,"random":''.join(random.sample(string.digits, 6)),"log":log(),"sceneid":sceneid}
+    body={"redPacketId":redPacketId,"followShop":0,"random":''.join(random.sample(string.digits, 6)),"log":"42588613~8,~0iuxyee","sceneid":"JLHBhPageh5"}
     res=taskPostUrl("jinli_h5assist", body, cookie)
     msg(f'账号 {get_pin(cookie)} 去助力{redPacketId}')
     if not res:
@@ -226,7 +222,7 @@ def jinli_h5assist(cookie,redPacketId):
 biz_msg_findall=re.compile(r'"biz_msg":"(.*?)"')
 discount_findall=re.compile(r'"discount":"(.*?)"')
 def h5receiveRedpacketAll(cookie):
-    body={"random":''.join(random.sample(string.digits, 6)),"log":log(),"sceneid":sceneid}
+    body={"random":''.join(random.sample(string.digits, 6)),"log":"f88c05a0~8,~1iqo16j","sceneid":"JLHBhPageh5"}
     res=taskPostUrl("h5receiveRedpacketAll", body, cookie)
     msg(f'账号 {get_pin(cookie)} 开红包')
     if not res:
