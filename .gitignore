@@ -135,6 +135,10 @@ jd_nnfl.js
 jd_fanli_Mod.js
 jd_get_share_code.js
 jd_work_price.js
+jd_ddly.js
+jd_danli.py
+jd_checkCk.js
+
 
 m_*.js
 jd_hbCount.py
