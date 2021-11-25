@@ -8,6 +8,8 @@ model
 /NoUsed
 
 
+jd_checkCK.js
+
 shell
 README.MD
 sign
@@ -136,8 +138,9 @@ jd_fanli_Mod.js
 jd_get_share_code.js
 jd_work_price.js
 jd_ddly.js
-jd_danli.py
+jd_fanli.py
 jd_checkCk.js
+jd_work_cookie.js
 
 
 m_*.js
