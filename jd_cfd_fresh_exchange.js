@@ -34,6 +34,7 @@ let cookiesArr = [], cookie = '', token = '';
 let UA, UAInfo = {};
 let ddwVirHb;
 let conditionList = []
+let conditionAllList = []
 $.appId = 10032;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -83,24 +84,20 @@ if ($.isNode()) {
             $.info = {}
             token = await getJxToken()
             conditionList = []
-            console.log(`尝试获取兑换参数`)
+            $.exchange = true;
+            console.log(`尝试获取兑换参数\n`)
             await exchangePinPinPearlState()
-            if (conditionList.length===0){
-                console.log(`未获取到兑换参数 下个`)
+            if (!$.exchange){
+                console.log(`无活动权限 下个\n`)
                 continue
             }
-            console.log(`获取变量对应参数 : `,ddwVirHb)
-            let condition = conditionList.filter(e => e.ddwVirHb == ddwVirHb)[0];
+            console.log(`获取变量对应参数 : `,ddwVirHb,"\n")
+            let condition = conditionAllList.filter(e => e.ddwVirHb == ddwVirHb)[0];
             if (condition){
                 await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }else {
                 console.log(`未获取到指定变量对应参数  默认提现最大兑换额度\n`)
-                let number = Math.max.apply(Math,conditionList.map(item => {
-                    return item.ddwVirHb;
-                }));
-
-                let condition = conditionList.filter(e => e.ddwVirHb == number)[0];
-                await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
+               await exchangePinPinPearlStateByMax();
             }
             // await $.wait(500);
         }
@@ -109,7 +106,19 @@ if ($.isNode()) {
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
 
+async function exchangePinPinPearlStateByMax(){
+    console.log(`尝试提现最大兑换额度\n`)
+    if (conditionList.length===0){
+        console.log(`未获取到兑换参数 下个\n`)
+        return;
+    }
+    let number = Math.max.apply(Math,conditionList.map(item => {
+        return item.ddwVirHb;
+    }));
 
+    let condition = conditionList.filter(e => e.ddwVirHb == number)[0];
+    await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
+}
 
 // 兑换喜豆
 async function exchangePinPinPearl(ddwVirHb,strPoolName) {
@@ -124,8 +133,11 @@ async function exchangePinPinPearl(ddwVirHb,strPoolName) {
                         data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                         if (data.iRet === 0) {
                             console.log(`京东账号${$.index} ${$.UserName} 兑换喜豆成功  金额:【`+ddwVirHb+'】\n');
+                        }else if (data.iRet === 2046){
+                            console.log("余额不足哦 \n")
+                            await exchangePinPinPearlStateByMax();
                         }else {
-                            console.log("兑换失败 ",data)
+                            console.log("兑换失败 ",data,"\n")
                         }
                     } else {
                         $.log('京东服务器返回空数据');
@@ -152,6 +164,9 @@ async function exchangePinPinPearlState() {
                         data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                         if (data.iRet === 0) {
                             console.log(`获取兑换参数成功`);
+                            if (conditionAllList.length ===0){
+                                conditionAllList = data.exchangeInfo.prizeInfo
+                            }
                             let filterData = data.exchangeInfo.prizeInfo.filter(e => e.dwState === 0);
                             for (var o in filterData) {
                                 let prizeInfoElement = filterData[o];
@@ -161,7 +176,8 @@ async function exchangePinPinPearlState() {
                                 })
                             }
                         }else {
-                            console.log("兑换失败 ",data)
+                            $.exchange= false
+                            console.log("获取兑换参数失败 ",data)
                         }
                     } else {
                         $.log('京东服务器返回空数据');
