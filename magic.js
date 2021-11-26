@@ -2,7 +2,8 @@
 
 const axios = require('axios');
 const fs = require("fs");
-const moment = require("moment");
+// const moment = require("moment");
+const {format} = require("date-fns");
 const notify = require('./sendNotify');
 const jdCookieNode = require('./jdCookie.js');
 const CryptoJS = require("crypto-js");
@@ -263,7 +264,7 @@ class Env {
         let stk = decodeURIComponent(this.getQueryString(url, '_stk') || '');
         if (stk) {
             let ens, hash, st = '',
-                ts = this.now('yyyyMMDDHHmmssSSS').toString(),
+                ts = this.now('yyyyMMddHHmmssSSS').toString(),
                 tk = this.algo.tk, fp = this.algo.fp, em = this.algo.em;
             if (tk && fp && em) {
                 hash = em(tk, fp, ts, this.appId, CryptoJS).toString(
@@ -403,6 +404,20 @@ class Env {
         }
     }
 
+    readFileSync(path) {
+        try {
+            return fs.readFileSync(path).toString();
+        } catch (e) {
+            console.log(path, '文件不存在进行创建')
+            this.writeFileSync(path, '');
+            return '';
+        }
+    }
+
+    writeFileSync(path, data) {
+        fs.writeFileSync(path, data)
+    }
+
     random(min, max) {
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -496,13 +511,13 @@ class Env {
     }
 
     now(fmt) {
-        return moment().format(fmt || 'yyyy-MM-DD HH:mm:ss.SSS')
+        return format(new Date(), fmt || 'yyyy-MM-dd HH:mm:ss.SSS')
     }
 
-    format(date, fmt) {
-        return moment(typeof date === 'string' ? date * 1 : date).format(
-            fmt || 'yyyy-MM-DD HH:mm:ss')
-    }
+    // format(date, fmt) {
+    //     return moment(typeof date === 'string' ? date * 1 : date).format(
+    //         fmt || 'yyyy-MM-DD HH:mm:ss')
+    // }
 
     timestamp() {
         return new Date().getTime()
@@ -583,4 +598,4 @@ class Env {
     }
 }
 
-module.exports = {Env, CryptoJS, moment};
+module.exports = {Env, CryptoJS};
