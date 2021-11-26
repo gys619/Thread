@@ -355,7 +355,7 @@ async function startItem(activeId, activeType) {
                 await $.wait(videoBrowsing * 1000)
 				await $.wait(3000);
                 await endItem(data.data.uuid, activeType, activeId, activeType === 3 ? videoBrowsing : "")
-				await $.wait(4000);
+				await $.wait(1000);
               } else {
                 console.log(`${$.taskName}任务已达上限`)
                 $.canStartNewItem = false
