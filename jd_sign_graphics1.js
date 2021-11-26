@@ -1,23 +1,9 @@
 /* 
-京东签到翻牌
-by:小手冰凉 tg:@chianPLA
+cron 10 8 * * * jd_sign_graphics1.js
 只支持nodejs环境
 需要安装依赖 
 npm i png-js 或者 npm i png-js -S
-============Quantumultx===============
-[task_local]
-#京东签到翻牌
-10 8 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_sign_graphics1.js, tag=京东签到翻牌, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
-================Loon==============
-[Script]
-cron "10 8 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_sign_graphics1.js,tag=京东签到翻牌
-
-===============Surge=================
-京东签到翻牌 = type=cron,cronexp="10 8 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_sign_graphics1.js
-
-============小火箭=========
-京东签到翻牌 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_sign_graphics1.js, cronexpr="10 8 * * *", timeout=3600, enable=true
 */
 
 const Faker = require('./sign_graphics_validate.js')

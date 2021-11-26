@@ -27,7 +27,7 @@ const MISSION_BASE_API = `https://ms.jr.jd.com/gw/generic/mission/h5/m`;
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-let shareId = ["t_7LVGP8mopofh8AG0Q7E8AdoUJQ3Dik", "0IzWPVQGlmepafqlqgOSXw", "zExA7lNc3HrJrbVuG3xRVMAdoUJQ3Dik", "cvwWiz9o2evNHFdNk0oNbMAdoUJQ3Dik"][Math.floor((Math.random() * 4))];
+let shareId = ["t_7LVGP8mopofh8AG0Q7E8AdoUJQ3Dik", "0IzWPVQGlmepafqlqgOSXw", "zExA7lNc3HrJrbVuG3xRVMAdoUJQ3Dik", "HlPKVsixbaNAw4-ekiAHwA"][Math.floor((Math.random() * 4))];
 $.shareCodes = [];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -44,7 +44,7 @@ if ($.isNode()) {
     return;
   }
   await getShareCode();
-  console.log(`\n【原作者：LXK大佬】\n\nBy：888888\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\n`);
+  console.log(`\n【原作者：LXK大佬】\n\nBy：888888\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\nTodo：领取成就奖励\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -693,8 +693,6 @@ function pigPetDoMission(mid) {
                 if (data.resultData.resultData) {
                   if (data.resultData.resultData.award) {
                     console.log(`奖励${data.resultData.resultData.award.name},数量:${data.resultData.resultData.award.count}`)
-                  } if (data.resultData.resultData.status === 3) {
-                    console.log('此任务需手动完成')
                   }
                 }
               } else {
