@@ -2,6 +2,7 @@ var allShareCodes = [];
 var removedShareCodes = [];
 var chetou_number = process.env.CHETOU_NUMBER ? process.env.CHETOU_NUMBER : 0
 var fair_mode = process.env.FAIR_MODE ? true : false
+var precode_mode = process.env.PRECODE_MODE ? false : true
 
 exports.ModCK = function(cks) {
     console.log(`您${fair_mode ? "有" : "没有"}设置雨露均沾模式。`)
@@ -24,6 +25,23 @@ exports.ModCK = function(cks) {
     console.log(`已对${eck.length}个ck做了随机处理。`)
     for (var i = 0; i < eck.length; i++) {
         sck.push(eck[i])
+    }
+    if (!precode_mode) {
+        if (sck.length >= 2) {
+            sck.push(sck[0])
+        }
+        if (sck.length >= 3) {
+            sck.push(sck[1])
+        }
+        if (sck.length >= 4) {
+            sck.push(sck[2])
+        }
+        if (sck.length >= 5) {
+            sck.push(sck[3])
+        }
+        if (sck.length >= 6) {
+            sck.push(sck[4])
+        }
     }
     return sck
 }
