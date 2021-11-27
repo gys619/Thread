@@ -6,14 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #天天提鹅
-10 * * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_daily_egg.js, tag=天天提鹅, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdte.png, enabled=true
+10 * * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_daily_egg.js, tag=天天提鹅, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdte.png, enabled=true
+
 ================Loon==============
 [Script]
-cron "10 * * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_daily_egg.js,tag=天天提鹅
+cron "10 * * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_daily_egg.js,tag=天天提鹅
+
 ===============Surge=================
-天天提鹅 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_daily_egg.js
+天天提鹅 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_daily_egg.js
+
 ============小火箭=========
-天天提鹅 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_daily_egg.js, cronexpr="10 * * * *", timeout=3600, enable=true
+天天提鹅 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_daily_egg.js, cronexpr="10 * * * *", timeout=3600, enable=true
  */
 const $ = new Env('天天提鹅');
 let cookiesArr = [], cookie = '';
@@ -24,7 +27,7 @@ const dailyEggUrl = "https://active.jd.com/forever/btgoose/?channelLv=yxjh&jrcon
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const { JSDOM } = $.isNode() ? require('jsdom') : '';
 const { window } = new JSDOM(``, { url: dailyEggUrl, runScripts: "outside-only", pretentToBeVisual: true, resources: "usable" })
-const Faker = require('./JDSignValidator.js')
+const Faker = require('./utils/JDSignValidator.js')
 function oc(fn, defaultVal) {//optioanl chaining
   try {
     return fn()
@@ -152,7 +155,7 @@ function toWithdraw() {
 }
 function toDailyHome() {
   return new Promise(async resolve => {
-    const body = getBody(false)
+    const body = getBody()
     $.get(taskUrl('toDailyHome', body), (err, resp, data) => {
       try {
         if (err) {
