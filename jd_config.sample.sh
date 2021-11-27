@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build20211009-001
+## Mod: Build20211125-002
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -201,40 +201,31 @@ esac
 ## Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
 # RandomMode=""
 ## 从原 Cookie 中随机提取指定数量的 Cookie 参加活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求："空值"、"非数字"、"小于2或大于 Cookie 总数的数值"，均自动调整为全部 Cookie 按随机顺序参加活动；
-###           "大于或等于2，且小于或等于 Cookie 总数的数值"，抽取指定数值的 Cookie 按随机顺序参数活动。
-# ran_num=""
-## 如果想指定活动进行随机模式，可以参考下面 case 这个命令的例子来控制
-## case $1 in
-##     *jd_fruit*)                            # 东东农场活动脚本关键词
-##         RandomMode="1"                     # 东东农场开启随机模式
-##         ran_num=""                         # 东东农场全部 Cookie 按随机顺序参加活动
-##         ;;
-##     *jd_dreamFactory* | *jd_jdfactory*)    # 京喜工厂和东东工厂的活动脚本关键词
-##         RandomMode="1"                     # 京喜工厂和东东工厂开启随机模式
-##         ran_num="5"                        # 京喜工厂和东东工厂抽取指定 5 个 Cookie 按随机顺序参数活动。
-##         ;;
-##    *)                                      # 必选项。其他活动
-##         RandomMode=""                      # 必选项。默认为空值，表示其他帐号均不开启随机模式。
-##         ran_num=""                         # 必选项。默认为空值。若 RandomMode="1" 且此处赋值，表示其他活动均抽取指定数值的 Cookie 按随机顺序参数活动。
-##        ;;
-## esac
-case $1 in
-*jd_fruit*)
-    RandomMode=""
-    ran_num=""
-    ;;
-*jd_dreamFactory* | *jd_jdfactory*)
-    RandomMode=""
-    ran_num=""
-    ;;
-*)
-    RandomMode=""
-    ran_num=""
-    ;;
-esac
+### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为全部 Cookie 按随机顺序参加活动；
+###           2、"空值"，全部 Cookie 按顺序参加活动；
+###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，抽取指定数值的 Cookie 按随机顺序参数活动。
+# ran_num=""   # 针对全局脚本生效
+## 以活动脚本文件名称关键词为基础，从所有 Cookie 中随机抽取指定数量的的 Cookie 参加指定的活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：以 random_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
+###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动从原 Cookie 中随机提取指定数量的 Cookie 参加活动。各活动用 & 分隔。
+###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动。
+# random_envs="jd_fruit@3&jd_pigPet@5&bean_change"   # 针对自定义局部脚本生效
 
-## 12. 组队环境变量
+## 12. 优先Cookie
+## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
+# PriorityMode="1"
+## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为正常顺序参加活动；
+###           2、"空值"，全部 Cookie 按顺序参加活动；
+###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。
+# pri_num="5"   # 针对全局脚本生效
+## 以活动脚本文件名称关键词为基础，从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：以 priority_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
+###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3个以后 Cookie 按随机顺序参加活动。各活动用 & 分隔。
+###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动。
+# priority_envs="jd_cookieCheck@2&jd_islogin_xh@4&jd_jxlhb&jd_88hb&bean_change"   # 针对自定义局部脚本生效
+
+## 13. 组队环境变量
 ### 环境变量填写要求较高，建议群组内确认填写结果
 scr_name="$1" ## 不可删除
 case $1 in
@@ -444,6 +435,16 @@ export guaopencard_draw="true"
 export guaunknownTask_addSku_All="true"
 export guaunknownTask_card_All="true"
 export gua_carnivalcity_draw="true"
+export guaopenwait_All="true"
+export guaopencard_draw45="3"
+for ((s = 0; s <= 100; s++)); do
+    export guaopencard"$s"="3"
+    export guaopencard_draw"$s"="3"
+    export guaopencard_addSku"$s"="true"
+done
+## 6、城城领现金自动抽奖
+export jdJxdExchange="true"
+export JD_CITY_HELPSHARE="false" # false 优先内部助力 | true 优先助力池
 
 # cdle 环境变量
 ## 1、签到领现金兑换
@@ -633,3 +634,13 @@ export JD_UNSUB_PLOG="true"
 # jiulan 环境变量
 export JOYPARK_JOY_START="120" # 只做前几个CK
 export JOY_COIN_MAXIMIZE="1"   # 最大化硬币收益，如果合成后全部挖土后还有空位，则开启此模式（默认关闭） 0关闭 1开启
+
+# ddo
+export JD_CITY_HELPPOOL="true"
+
+# Aaron-lv
+## 1、京东金融签到
+### 添加京东签到 金融签到body兼容，body抓包获取 不同账号不通用
+### 变量名： JD_BEAN_SIGN_BODY
+### 格式： 演示为两个账号，多账号以此类推
+### export JD_BEAN_SIGN_BODY="{\"pin\":\"ck1的pt_pin\",\"body\":\"reqData=xxxx一大串字符\"}&{\"pin\":\"ck2的pt_pin\",\"body\":\"reqData=xxx一大串字符\"}"
