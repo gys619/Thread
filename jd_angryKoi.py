@@ -113,13 +113,13 @@ class Msg(object):
     def getsendNotify(self, a=1):
         try:
             url = 'https://mirror.ghproxy.com/https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py'
-            response = requests.get(url,timeout=3)
-            with open('sendNotify.py', "w+", encoding="utf-8") as f:
+            response = requests.get(url,timeout=10)
+            with open(SCF_path+'sendNotify.py', "w+", encoding="utf-8") as f:
                 f.write(response.text)
             return
         except:
             pass
-        if a < 5:
+        if a < 3:
             a += 1
             return self.getsendNotify(a)
 
@@ -132,7 +132,7 @@ class Msg(object):
                 break
             except:
                 self.getsendNotify()
-        l=['BARK','SCKEY','TG_BOT_TOKEN','TG_USER_ID','TG_API_HOST','TG_PROXY_HOST','TG_PROXY_PORT','DD_BOT_TOKEN','DD_BOT_SECRET','Q_SKEY','QQ_MODE','QYWX_AM','PUSH_PLUS_TOKEN','PUSH_PLUS_USER']
+        l=['BARK','SCKEY','TG_BOT_TOKEN','TG_USER_ID','TG_API_HOST','TG_PROXY_HOST','TG_PROXY_PORT','DD_BOT_TOKEN','DD_BOT_SECRET','Q_SKEY','QQ_MODE','QYWX_AM','PUSH_PLUS_TOKEN','PUSH_PLUS_USER','FSKEY','GOBOT_URL','GOBOT_QQ','GOBOT_TOKEN']
         d={}
         for a in l:
             try:
@@ -143,12 +143,13 @@ class Msg(object):
             initialize(d)
         except:
             self.getsendNotify()
-            if f < 5:
+            if f < 3:
                 f += 1
                 return self.main(f)
             else:
                 print('获取通知服务失败，请检查网络连接...')
-Msg().main()   # 初始化通知服务 
+Msg().main()   # 初始化通知服务   
+
 
 def log():
     log_str=string.ascii_lowercase+string.digits
