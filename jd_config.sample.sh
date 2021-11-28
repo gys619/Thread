@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build20211125-002
+## Mod: Build20211126-001
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -197,35 +197,65 @@ case $1 in
     ;;
 esac
 
-## 11. 随机Cookie
+## 11.1. 随机Cookie(与优先Cookie、轮换Cookie三者只能选其一)
 ## Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
 # RandomMode=""
 ## 从原 Cookie 中随机提取指定数量的 Cookie 参加活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
 ### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为全部 Cookie 按随机顺序参加活动；
-###           2、"空值"，全部 Cookie 按顺序参加活动；
+###           2、"空值"，全部 Cookie 按正常顺序参加活动；
 ###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，抽取指定数值的 Cookie 按随机顺序参数活动。
 # ran_num=""   # 针对全局脚本生效
 ## 以活动脚本文件名称关键词为基础，从所有 Cookie 中随机抽取指定数量的的 Cookie 参加指定的活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
 ### 赋值要求：以 random_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
-###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动从原 Cookie 中随机提取指定数量的 Cookie 参加活动。各活动用 & 分隔。
-###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动。
+###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动从原 Cookie 中随机提取 3 个 Cookie 参加活动。各活动用 & 分隔。
+###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
 # random_envs="jd_fruit@3&jd_pigPet@5&bean_change"   # 针对自定义局部脚本生效
 
-## 12. 优先Cookie
+## 11.2. 优先Cookie(与随机Cookie、轮换Cookie三者只能选其一)
 ## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
 # PriorityMode="1"
 ## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
 ### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为正常顺序参加活动；
-###           2、"空值"，全部 Cookie 按顺序参加活动；
+###           2、"空值"，全部 Cookie 按正常顺序参加活动；
 ###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。
-# pri_num="5"   # 针对全局脚本生效
+pri_fixed_num="5" # 针对全局脚本生效
 ## 以活动脚本文件名称关键词为基础，从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
 ### 赋值要求：以 priority_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
-###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3个以后 Cookie 按随机顺序参加活动。各活动用 & 分隔。
-###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动。
-# priority_envs="jd_cookieCheck@2&jd_islogin_xh@4&jd_jxlhb&jd_88hb&bean_change"   # 针对自定义局部脚本生效
+###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3 个以后 Cookie 按随机顺序参加活动。各活动用 & 分隔。
+###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
+# priority_envs="jd_fruit&jd_pet&jd_plantBean&jd_dreamFactory&jd_jdfactory&jd_crazy_joy&jd_jdzz&jd_jxnc&jd_bookshop&jd_cash&jd_sgmh&jd_cfd&jd_health&jd_carnivalcity&jd_city&jd_moneyTree_heip&Check&jd_islogin_xh&jd_jxlhb&jd_88hb&bean_change"   # 针对自定义局部脚本生效
 
-## 13. 组队环境变量
+## 11.3. 轮换Cookie(与随机Cookie、优先Cookie三者只能选其一)
+## 注释：
+##  1、例如，总共有 100 个 CK，自定义优先 CK 的数量，比如 5 个，这 5 个始终按顺序最先提交活动，其余 95 个 CK 参与轮换；
+##  2、剩余 CK 数量除以当月总天数，得到 CK 轮换数量 N 。本月一共 30 天，则轮换数量为 95/30 下取整为 3 个。轮换数量支持自定义；
+##  3、每月第 1 天当天，所有 CK 均按正常顺序跑脚本；
+##  4、从每月第 2 天起，前一天轮换 CK 中的前 3 个 CK 移到末位；
+##  第1天：1 2 3 4 5 6 7 8 ... 100
+##  第2天：1 2 3 4 5 9 10 11 ... 100 6 7 8
+##  第3天：1 2 3 4 5 12 13 14 ... 100 6 7 8 ... 11
+##  ...
+##  第30天：1 2 3 4 5 93 94 95 ... 100 6 7 8 ... 92
+## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动。取消 # 注释后，填 1 表示开启功能。
+# RotationMode="1"
+## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动，当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为正常顺序参加活动；
+###           2、"空值"，全部 Cookie 按正常顺序参加活动；
+###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动。
+# rot_fixed_num="5"   # 针对全局脚本生效。表示前 N 个固定的正常顺序 Cookie
+## 每次轮换的 Cookie 数量。当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：1、"空值"、"非数字"、"小于 1 或大于 Cookie 总数的数值"、大于轮换 Cookie 总数，自动调整为轮换 Cookie 总数除以当月总天数向下取整数；
+###           2、"大于或等于1，且小于或等于轮换 Cookie 总数的数值"，轮换 Cookie 每天将前一天的前指定数量的 Cookie 移动到末尾。
+# rot_num="2"         # 针对全局脚本生效。表示每天参加轮换的 Cookie 数量
+## 以活动脚本文件名称关键词为基础，从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动，当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
+### 赋值要求：以 rotation_envs="jd_fruit@3@6&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
+###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3 个以后 Cookie 按轮换模式参加活动。
+###           2、再与指定参数 6 用 @ 连接，表示自定义该活动的轮换 Cookie 数量是6。各活动用 & 分隔。
+###           3、jd_pigPet 为金融养猪的活动脚本关键词，与指定参数 5 用 @ 连接，表示该活动前 5 个 Cookie 按正常顺序参加活动，5 个以后 Cookie 按轮换模式参加活动。
+###           3、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
+# rotation_envs="jd_islogin_xh@3@6"   # 针对自定义局部脚本生效
+
+## 12. 组队环境变量
 ### 环境变量填写要求较高，建议群组内确认填写结果
 scr_name="$1" ## 不可删除
 case $1 in
