@@ -110,25 +110,23 @@ cookie_list=Judge_env().main_run()
 
 ## 获取通知服务
 class Msg(object):
-    def getsendNotify(self):
-        url_list = [
-            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py',
-            'https://cdn.jsdelivr.net/gh/wuye999/myScripts@main/sendNotify.py',
-            'https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py',
-        ]
-        for e,url in enumerate(url_list):
-            try:
-                response = requests.get(url,timeout=10)
-                with open('sendNotify.py', "w+", encoding="utf-8") as f:
-                    f.write(response.text)
-                return
-            except:
-                if e >= (len(url_list)-1):
-                    print('获取通知服务失败，请检查网络连接...')               
-    def main(self,f=0):
+    def getsendNotify(self, a=1):
+        try:
+            url = 'https://mirror.ghproxy.com/https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py'
+            response = requests.get(url,timeout=10)
+            with open(SCF_path+'sendNotify.py', "w+", encoding="utf-8") as f:
+                f.write(response.text)
+            return
+        except:
+            pass
+        if a < 3:
+            a += 1
+            return self.getsendNotify(a)
+
+    def main(self,f=1):
         global send,msg,initialize
         sys.path.append(os.path.abspath('.'))
-        for _ in range(2):
+        for n in range(3):
             try:
                 from sendNotify import send,msg,initialize
                 break
@@ -144,11 +142,13 @@ class Msg(object):
         try:
             initialize(d)
         except:
-            if f < 2:
+            self.getsendNotify()
+            if f < 3:
                 f += 1
-                self.getsendNotify()
                 return self.main(f)
-Msg().main()   # 初始化通知服务  
+            else:
+                print('获取通知服务失败，请检查网络连接...')
+Msg().main()   # 初始化通知服务   
 
 
 def log():
