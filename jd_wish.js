@@ -78,12 +78,7 @@ if ($.isNode()) {
     await $.wait(1000)
     res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/wish.json')
   }
-  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/888888/updateTeam/main/shareCodes/wish.json')
-  if (!res2) {
-    await $.wait(1000)
-    res2 = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/wish.json')
-  }
-  $.shareCode = [...$.shareCode, ...(res || []), ...(res2 || [])]
+  $.shareCode = [...$.shareCode, ...(res || [])]
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
