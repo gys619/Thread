@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build20211126-001
+## Mod: Build20211128-002
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -197,104 +197,66 @@ case $1 in
     ;;
 esac
 
-## 11.1. 随机Cookie(与优先Cookie、轮换Cookie三者只能选其一)
-## Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
-# RandomMode=""
-## 从原 Cookie 中随机提取指定数量的 Cookie 参加活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为全部 Cookie 按随机顺序参加活动；
-###           2、"空值"，全部 Cookie 按正常顺序参加活动；
-###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，抽取指定数值的 Cookie 按随机顺序参数活动。
-# ran_num=""   # 针对全局脚本生效
-## 以活动脚本文件名称关键词为基础，从所有 Cookie 中随机抽取指定数量的的 Cookie 参加指定的活动，当 RandomMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：以 random_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
-###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动从原 Cookie 中随机提取 3 个 Cookie 参加活动。各活动用 & 分隔。
-###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
-# random_envs="jd_fruit@3&jd_pigPet@5&bean_change"   # 针对自定义局部脚本生效
+## 11 重组Cookie
+### 分为 随机、优先、轮换、组队和分段 5 种模式：
+### 1、随机模式：支持自定义从所有 Cookie 中随机抽取若干数量的账号按随机顺序参加活动；
+### 2、优先模式：支持自定义前若干数量的账号固定按照正常顺序参加活动，其余账号按随机顺序参加活动；
+### 3、轮换模式：支持自定义前若干数量的账号固定按照正常顺序参加活动，其余账号按轮换模式参加活动。所谓轮换就是指若干数量的账号每过一天挪动到 Cookie 队伍末尾；
+### 4、组队模式：只支持 js 脚本。根据游戏规则每支队伍的成员数量、每个账号能发起的组队次数上限自动按顺序参加活动。
+### 5、分段模式：只支持 js 脚本。支持自定义按若干数量拆分账号，按分段顺序参加活动。支持各段启动活动脚本的延迟时间。
+### 其他说明：①全局模式和局部模式可同时生效；
+###           ②支持黑名单模式(即不使用该模式，详见 局部模式环境变量 recombin_ck_envs 说明)；
 
-## 11.2. 优先Cookie(与随机Cookie、轮换Cookie三者只能选其一)
-## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。取消 # 注释后，填 1 表示开启功能。
-# PriorityMode="1"
-## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为正常顺序参加活动；
-###           2、"空值"，全部 Cookie 按正常顺序参加活动；
-###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动。
-pri_fixed_num="5" # 针对全局脚本生效
-## 以活动脚本文件名称关键词为基础，从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按随机顺序参加活动，当 PriorityMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：以 priority_envs="jd_fruit@3&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
-###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3 个以后 Cookie 按随机顺序参加活动。各活动用 & 分隔。
-###           2、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
-# priority_envs="jd_fruit&jd_pet&jd_plantBean&jd_dreamFactory&jd_jdfactory&jd_crazy_joy&jd_jdzz&jd_jxnc&jd_bookshop&jd_cash&jd_sgmh&jd_cfd&jd_health&jd_carnivalcity&jd_city&jd_moneyTree_heip&Check&jd_islogin_xh&jd_jxlhb&jd_88hb&bean_change"   # 针对自定义局部脚本生效
+## 11.1 全局模式选项
+### 赋值要求：①只能填 1 2 3 4 ，分别表示随机、优先、轮换、组队四种模式，对全部脚本有效(除非 recombin_ck_envs 另有设定)；
+###           ②若填写为其他内容，则全部账号按正常顺序参加活动(除非 recombin_ck_envs 另有设定)；
+Recombin_CK_Mode=""
 
-## 11.3. 轮换Cookie(与随机Cookie、优先Cookie三者只能选其一)
-## 注释：
-##  1、例如，总共有 100 个 CK，自定义优先 CK 的数量，比如 5 个，这 5 个始终按顺序最先提交活动，其余 95 个 CK 参与轮换；
-##  2、剩余 CK 数量除以当月总天数，得到 CK 轮换数量 N 。本月一共 30 天，则轮换数量为 95/30 下取整为 3 个。轮换数量支持自定义；
-##  3、每月第 1 天当天，所有 CK 均按正常顺序跑脚本；
-##  4、从每月第 2 天起，前一天轮换 CK 中的前 3 个 CK 移到末位；
-##  第1天：1 2 3 4 5 6 7 8 ... 100
-##  第2天：1 2 3 4 5 9 10 11 ... 100 6 7 8
-##  第3天：1 2 3 4 5 12 13 14 ... 100 6 7 8 ... 11
-##  ...
-##  第30天：1 2 3 4 5 93 94 95 ... 100 6 7 8 ... 92
-## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动。取消 # 注释后，填 1 表示开启功能。
-# RotationMode="1"
-## 从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动，当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：1、"非数字"、"小于 1 或大于 Cookie 总数的数值"，均自动调整为正常顺序参加活动；
-###           2、"空值"，全部 Cookie 按正常顺序参加活动；
-###           3、"大于或等于1，且小于或等于 Cookie 总数的数值"，前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动。
-# rot_fixed_num="5"   # 针对全局脚本生效。表示前 N 个固定的正常顺序 Cookie
-## 每次轮换的 Cookie 数量。当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：1、"空值"、"非数字"、"小于 1 或大于 Cookie 总数的数值"、大于轮换 Cookie 总数，自动调整为轮换 Cookie 总数除以当月总天数向下取整数；
-###           2、"大于或等于1，且小于或等于轮换 Cookie 总数的数值"，轮换 Cookie 每天将前一天的前指定数量的 Cookie 移动到末尾。
-# rot_num="2"         # 针对全局脚本生效。表示每天参加轮换的 Cookie 数量
-## 以活动脚本文件名称关键词为基础，从原 Cookie 指定前 N 个 Cookie 按顺序参加活动，N 个以后 Cookie 按轮换模式参加活动，当 RotationMode="1" 时生效。取消 # 注释后，赋值后生效。
-### 赋值要求：以 rotation_envs="jd_fruit@3@6&jd_pigPet@5&jd_jxlhb&jd_88hb" 为例
-###           1、jd_fruit 为东东农场的活动脚本关键词，与指定参数 3 用 @ 连接，表示该活动前 3 个 Cookie 按正常顺序参加活动，3 个以后 Cookie 按轮换模式参加活动。
-###           2、再与指定参数 6 用 @ 连接，表示自定义该活动的轮换 Cookie 数量是6。各活动用 & 分隔。
-###           3、jd_pigPet 为金融养猪的活动脚本关键词，与指定参数 5 用 @ 连接，表示该活动前 5 个 Cookie 按正常顺序参加活动，5 个以后 Cookie 按轮换模式参加活动。
-###           3、jd_jxlhb 和 jd_88hb (领88元红包)后面没有赋值，表示这两个活动的全部 Cookie 按正常顺序参加活动(即当前模式的黑名单)。
-# rotation_envs="jd_islogin_xh@3@6"   # 针对自定义局部脚本生效
+### 模式参数 1
+### 释义：①在随机模式下：表示随意抽取 N 个账号随机顺序参加活动；
+###       ②在优先模式和轮换模式下：表示前 N 个账号固定按正常顺序参加活动；
+###       ③在组队模式下：表示每支队伍的成员数量；
+###       ④在分段模式下：表示每个分段的账号数量；
+### 赋值要求：①只能填不大于 Cookie 总数的正整数，对全部脚本有效(除非 recombin_ck_envs 另有设定)；
+###           ②随机模式和分段模式下：若填写数值大于或等于 Cookie 总数，则全部账号随机顺序参加活动(除非 recombin_ck_envs 另有设定)；
+###           ③若填写为其他内容，则全部账号按正常顺序参加活动(除非 recombin_ck_envs 另有设定)；
+Recombin_CK_ARG1=""
 
-## 12. 组队环境变量
-### 环境变量填写要求较高，建议群组内确认填写结果
-scr_name="$1" ## 不可删除
-case $1 in
-*jd_teamAnjia*)    ## 安佳组队瓜分京豆
-    teamer_num="5" ## 单个队伍中的总账号数为 80 个
-    team_num="20"  ## 每个账号发起组队的最大队伍数为 3 个
-    ;;
-*jd_jxlhb*)         ## 京喜领88元红包
-    teamer_num="80" ## 单个队伍中的总账号数为 80 个
-    team_num="3"    ## 每个账号发起组队的最大队伍数为 3 个
-    ;;
-*jd_sendBean* | *jd_sddd*) ## 送豆得豆活动脚本关键词
-    teamer_num="11"        ## 单个队伍中的总账号数为 11 个
-    team_num="1"           ## 每个账号发起组队的最大队伍数为 1 个
-    ;;
-*xmGame*)           ## 小米-星空大冒险活动脚本关键词
-    teamer_num="11" ## 单个队伍中的总账号数为 11 个
-    team_num="1"    ## 每个账号发起组队的最大队伍数为 1 个
-    ;;
-*jd_zdjr*)               ## 组队瓜分京豆活动脚本关键词
-    teamer_num="5 5 5 5" ## 对应各个活动中单个队伍中的总账号数分别为 5 5 5 5 个
-    team_num="2 3 3 5"   ## 对应各个活动中每个账号发起组队的最大队伍数为 2 3 3 5 个
-    activityId=(## 活动 activityId；需手动抓包。按数组分行填写至括号内
-        54f071f4eb794092a872392696be7d8d
-        0582063f78434ed599becfc8f812c2ee
-        bbda11ba7a9644148d65c8b0b78f0bd2
-        92c03af2ce744f6f94de181ccee15e4f
-    )
-    activityUrl=(## 活动 activityUrl；需手动抓包。按数组分行填写至括号内
-        https://cjhydz-isv.isvjcloud.com
-        https://lzkjdz-isv.isvjcloud.com
-        https://lzkjdz-isv.isvjcloud.com
-        https://cjhydz-isv.isvjcloud.com
-    )
-    ;;
-*)              ## 不可删除
-    scr_name="" ## 不可删除
-    ;;          ## 不可删除
-esac
+### 模式参数 2
+### 释义：①在随机模式和优先模式下：无意义；
+###       ②轮换模式下：表示自定义 N 个账号/天参加轮换；
+###       ③在组队模式下：表示每个账号发起组队的次数；
+###       ③在组队模式下：表示每个账号发起组队的次数；
+###       ④在分段模式下：表示每个分段启动活动脚本的延迟时间，单位：秒；
+### 赋值要求：①轮换模式下：只能填不大于参与轮换账号数量(即：总Cookie数量-固定Cookie数量)的正整数，对全部脚本有效(除非 recombin_ck_envs 另有设定)；
+###           ②轮换模式下：若填写为其他内容或留空，则自动调整为按天计算轮换账号的数量(即：轮换账号数量÷当月总天数的商值，取下整数)，对全部脚本有效(除非 recombin_ck_envs 另有设定)；
+###           ③组队模式下：若填写为其他内容或留空，则自动退出模式。
+###           ④分段模式下：若填写为其他内容或留空，则自动退出模式。(为了避免多段并发运行脚本造成死机)；
+Recombin_CK_ARG2=""
+
+## 重组Cookie前是否剔除失效Cookie
+### 释义：①如果开启，会在模式参数已设定的情况下，执行任务前进行 Cookie 有效性验证并剔除失效的 Cookie。受 Cookie 总数量影响任务启动的即时性；
+### 赋值要求：①填 1 表示开启，填其他内容或空值表示关闭；
+Remove_Void_CK=""
+
+## 11.2 局部模式环境变量
+### 释义：脚本1文件名关键词@参数1@参数2@参数3@参数4@参数5；
+### 赋值要求：①脚本文件名关键词，例如，东东农场的活动脚本关键词 jd_fruit；
+###           ②脚本文件名关键词与各参数采用 @ 连接。释义附后。如果不设定参数1，表示该脚本按正常账号顺序参加活动(即：黑名单)；
+###           ③参数1。表示 Recombin_CK_Mode；
+###           ④参数2。表示 Recombin_CK_ARG1；
+###           ⑤参数3。表示 Recombin_CK_ARG2；
+###           ⑥参数4。只对 组队瓜分京豆脚本 (jd_zdjr) 有效。表示 activityId；
+###           ⑦参数5。只对 组队瓜分京豆脚本 (jd_zdjr) 有效。表示 activityUrl；
+###           ⑧各个活动设定值之间采用 & 连接，例如：jd_cfd&jd_fruit@1@5&jd_pet@2@6&jd_pigPet@3@5&jd_plantBean@3@7@4&jd_jxlhb@4@80@1&jd_zdjr@4@5@3@4240059acf5c449a1a986fa6107897ce1@https://cjhydz-isv.isvjcloud.com；
+###                                              jd_cfd                 脚本按正常账号顺序参加活动
+###                                              jd_fruit@1@5           使用模式：1随机，抽5个CK顺序随机
+###                                              jd_pet@2@6             使用模式：2优先，前6个CK顺序优先，其余CK顺序随机
+###                                              jd_pigPet@3@5          使用模式：3轮换，前5个CK顺序固定，根据CK总数和当月天数自动计算每天轮换CK数量
+###                                              jd_plantBean@3@7@4     使用模式：3轮换，前7个CK顺序固定，每天轮换4个CK
+###                                              jd_jxlhb@4@80@1        使用模式：4组队，队伍成员数量80，每个账号组队1次
+###                                              jd_islogin_xh@5@10@15  使用模式：5分段，每段成员数量10，每段延迟时间为15秒
+# recombin_ck_envs="jd_fruit@2@5&jd_pet@2@5&jd_plantBean@2@5&jd_dreamFactory@2@5&jd_jdfactory@2@5&jd_crazy_joy@2@5&jd_jdzz@2@5&jd_jxnc@2@5&jd_bookshop@2@5&jd_cash@2@5&jd_sgmh@2@5&jd_cfd@2@5&jd_health@2@5&jd_carnivalcity@2@5&jd_city@2@5&jd_moneyTree_heip@2@5&jd_jxlhb@4@80@1&jd_88hb@4@80@1&Check&jd_islogin_xh&bean_change"
 
 ## 其他需要的变量，脚本中需要的变量使用 export 变量名= 声明即可
 
@@ -401,17 +363,17 @@ export JD_USER_AGENT=""
 ## 1、赚京豆
 ### 助力账号，填写pt_pin或用户名的值，如 zlzh = ['aaaa','xxxx','yyyy'] ，支持ENV
 ### export zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export zlzh="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+export zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
 ## 2、全民抢京豆
 ### export qjd_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export qjd_zlzh="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+export qjd_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
 ## 3、签到领现金助力
 ### export cash_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export cash_zlzh="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+export cash_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
 ## 4、京喜工厂开团助力 for Python
 ### 支持指定账号开团，跑1次脚本默认开3次团，如未指定账号默认给账号一开团。
 ### 变量ENV 指定开团账号。可填用户名 或 pt_pin 的值。示例：export jxgc_kaituan="用户1&用户2"
-export jxgc_kaituan="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\)\S*;/\1/g; s/ /\&/g;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')" ## 支持中文用户名
+export jxgc_kaituan="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\)\S*;/\1/g; s/ /\&/g;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')" ## 支持中文用户名
 ## 5、入会开卡
 ### int，入会送豆满足此值，否则不入会
 export openCardBean="30"
@@ -468,9 +430,9 @@ export gua_carnivalcity_draw="true"
 export guaopenwait_All="true"
 export guaopencard_draw45="3"
 for ((s = 0; s <= 100; s++)); do
-    export guaopencard"$s"="3"
-    export guaopencard_draw"$s"="3"
-    export guaopencard_addSku"$s"="true"
+    export guaopencard$s="3"
+    export guaopencard_draw$s="3"
+    export guaopencard_addSku$s="true"
 done
 ## 6、城城领现金自动抽奖
 export jdJxdExchange="true"
@@ -480,29 +442,29 @@ export JD_CITY_HELPSHARE="false" # false 优先内部助力 | true 优先助力�
 ## 1、签到领现金兑换
 ### 填写 pt_pin@金额，pt_pin为用户名，可以在 COOKIES 中提取；金额为 2 或 10，例如 LiLei@2 或 HanMeimei@10。多值用 & 连接，例如 LiLei@2&HanMeimei@10
 ### export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1@10/g; s/\n/\&/g;")"  ##兑10元现金，比较难兑
-export exchangeAccounts="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1@2/g; s/ /&/g;")" ##兑2元现金
+export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1@2/g; s/ /&/g;")" ##兑2元现金
 ## 2、愤怒的现金
 ### 极速助力，打击黑产盗取现金的犯罪行为。默认向前助力9个账号，若要指定被助力账号，需cashHelpPins环境变量中填入需要助力的pt_pin，有多个请用@符号连接。
-export cashHelpPins="$(echo "$JD_COOKIE" | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
+export cashHelpPins="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
 ## 3、愤怒的锦鲤
 ### 助力账号，填写pt_pin或用户名的值。多个 pt_pin 值用 @ 连接
-export kois="$(echo "$JD_COOKIE" | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
+export kois="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
 ## 4、发财大赢家助力
 ### 需要设置环境变量dyjHelpPins来指定要助力的账号
-export dyjHelpPins="$(echo "$JD_COOKIE" | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
+export dyjHelpPins="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
 ## 5、早起赢现金
 ### 入口：京东汽车-瓜分万元
 ### 备注：支付一元才能参与活动，填写环境变量morningScPins给指定账号打卡
-export morningScPins="$(echo "$JD_COOKIE" | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
+export morningScPins="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
 ## 6、赚30元
 ### 备注：赚30元每日签到红包、天降红包助力，在earn30Pins环境变量中填入需要签到和接受助力的账号。
 ### 技巧：每月可以提现100元，但需要邀请一个新人下首单。可以用已注册手机号重新注册为新人账号，切换ip可以提高成功率。
-export earn30Pins="$(echo "$JD_COOKIE" | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
+export earn30Pins="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
 ## 7、真·抢京豆
 ### 高速并发抢京豆，专治偷助力。设置环境变量angryBeanPins为指定账号助力，默认不助力。
 ### 环境变量angryBeanMode可选值priority或speed或smart，默认smart模式。
 ### 默认推送通知，如要屏蔽通知需将环境变量enableAngryBeanNotify的值设为false。
-export angryBeanPins="$(echo "$JD_COOKIE" | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/ /@/g;")"
+export angryBeanPins="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/ /@/g;")"
 export angryBeanMode="priority"
 export enableAngryBeanNotify="true"
 
@@ -565,6 +527,19 @@ export BEANCHANGE_PERSENT="10" ##10合1
 ### 拆分通知和分组通知的变量都可以兼容.
 ### 标题按照分组分别为 京东月资产变动 京东月资产变动#2 京东月资产变动#3
 ### 开启 :  export BEANCHANGE_ENABLEMONTH="true"
+### 4.BEANCHANGE_ALLNOTIFY
+### 设置推送置顶公告，&表示换行，公告会出现在资产通知中(包括一对一).
+### 	例子 :  export BEANCHANGE_ALLNOTIFY="你好&今天天气不错...&&哥斯拉大战金刚...."
+### 	显示:
+###
+### 	【✨✨✨✨公告✨✨✨✨】
+### 	 你好
+### 	 今天天气不错...
+###
+### 	 哥斯拉大战金刚....
+### 5. BEANCHANGE_ENABLEMONTH
+### 当设定BEANCHANGE_ExJxBeans="true"且时间在17点之后，会自动将临期京豆兑换成喜豆续命.
+export BEANCHANGE_ExJxBeans="true"
 ## [3] sendNotify.js
 ### 1. 通知黑名单
 ### 如果通知标题在此变量里面存在（&隔开），则用屏蔽不发送通知，继承Ninja。例：export NOTIFY_SKIP_LIST="京东CK检测&京东资产变动"
@@ -616,8 +591,26 @@ export PUSH_PLUS_USER_hxtrip=""
 export JOY_GET20WHEN16="true" ##控制16点才触发20京豆兑换.
 ### 13. CK失效时执行脚本
 export NOTIFY_CKTASK="ccwav_QLScript2_jd_CheckCK.js"
-### 14. 开启月结资产推送
-export BEANCHANGE_ENABLEMONTH="true"
+### 14. 用 WxPusher 进行一对一推送
+### 详细教程有人写了，不知道是幸运还是不幸: https://www.kejiwanjia.com/jiaocheng/27909.html
+### 填写变量 WP_APP_TOKEN_ONE,可在管理台查看: https://wxpusher.zjiecode.com/admin/main/app/appToken
+### 手动建立CK_WxPusherUid.json,可以参考CKName_cache.json,只是nickName改成Uid，
+### 每个用户的uid可在管理台查看: https://wxpusher.zjiecode.com/admin/main/wxuser/list
+### 另外: export WP_APP_ONE_TEXTSHOWREMARK="true"，启用一对一推送标题显示备注信息，默认不启用.
+### CK_WxPusherUid.json 内容(pt_pin 如果是汉字需要填写转码后的!):
+### [
+###   {
+### 	"pt_pin": "ccwav",
+### 	"Uid": "UID_AAAAAAAA"
+###   },
+###   {
+### 	"pt_pin": "中文名",
+### 	"Uid": "BBBBBBBBBB"
+###   }
+### ]
+### 15. NOTIFY_SKIP_TEXT
+### 如果此变量(&隔开)的关键字在通知内容里面存在,则屏蔽不发送通知.
+### 例子 :  export NOTIFY_SKIP_TEXT="忘了种植&异常"
 
 # X1a0He 环境变量
 ## 1、简化版京东日资产变动通知
