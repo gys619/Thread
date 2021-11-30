@@ -1,4 +1,5 @@
 //28 19 */3 * * m_jd_delete_coupon.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M优惠券删除');
 //1.支持删除自定义关键词 @符号分割 例如 棉拖@扫把@瓜子

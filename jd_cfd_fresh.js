@@ -78,6 +78,7 @@ if ($.isNode()) {
             await $.wait(2000);
         }
     }
+
 })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done());
@@ -265,11 +266,11 @@ function composePearlAddProcess(strDT, strLT) {
 }
 function getPearlDailyReward() {
     return new Promise((resolve) => {
-        $.get(taskUrl(`user/GetPearlDailyReward`, `__t=${Date.now()}`), (err, resp, data) => {
+        $.get(taskUrl(`user/GetPpPearlDailyReward`, `__t=${Date.now()}`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
-                    console.log(`${$.name} GetPearlDailyReward API请求失败，请检查网路重试`)
+                    console.log(`${$.name} PpPearlDailyDraw API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                 }
@@ -283,7 +284,7 @@ function getPearlDailyReward() {
 }
 function pearlDailyDraw(ddwSeasonStartTm, strToken) {
     return new Promise((resolve) => {
-        $.get(taskUrl(`user/PearlDailyDraw`, `__t=${Date.now()}&ddwSeaonStart=${ddwSeasonStartTm}&strToken=${strToken}`), (err, resp, data) => {
+        $.get(taskUrl(`user/PpPearlDailyDraw`, `__t=${Date.now()}&ddwSeaonStart=${ddwSeasonStartTm}&strToken=${strToken}`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -356,7 +357,7 @@ function pearlHelpDraw(ddwSeasonStartTm, dwUserId) {
 // 助力
 function helpByStage(shareCodes) {
     return new Promise((resolve) => {
-        $.get(taskUrl(`user/PearlHelpByStage`, `__t=${Date.now()}&strShareId=${shareCodes}`), (err, resp, data) => {
+        $.get(taskUrl(`user/PpPearlHelpByStage`, `__t=${Date.now()}&strShareId=${shareCodes}`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -364,7 +365,7 @@ function helpByStage(shareCodes) {
                 } else {
                     data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
                     if (data.iRet === 0 || data.sErrMsg === 'success') {
-                        console.log(`助力成功：获得${data.GuestPrizeInfo.strPrizeName}`)
+                        console.log(`助力成功`)
                     } else if (data.iRet === 2235 || data.sErrMsg === '今日助力次数达到上限，明天再来帮忙吧~') {
                         console.log(`助力失败：${data.sErrMsg}`)
                         $.canHelp = false
@@ -379,8 +380,10 @@ function helpByStage(shareCodes) {
                         $.canHelp = false
                     } else if (data.iRet === 2190 || data.sErrMsg === '达到助力上限') {
                         console.log(`助力失败：${data.sErrMsg}`)
+                        $.canHelp = false
                         $.delcode = true
                     } else {
+                        $.canHelp = false
                         console.log(`助力失败：${data.sErrMsg}`)
                     }
                 }
@@ -551,7 +554,7 @@ function biz(contents){
 function taskUrl(function_path, body = '', dwEnv = 7) {
     let url = `${JD_API_HOST}jxbfd/${function_path}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=${dwEnv}&_cfd_t=${Date.now()}&ptag=7155.9.47${body ? `&${body}` : ''}`;
     url += `&_stk=${getStk(url)}`;
-    url += `&_ste=1&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=0&dwIsPP=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
+    url += `&_ste=1&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&dwIsPP=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
     return {
         url,
         headers: {
@@ -605,9 +608,9 @@ function shareCodesFormat() {
         $.newShareCodes = []
         const readShareCodeRes = await readShareCode();
         if (readShareCodeRes && readShareCodeRes.code === 200) {
-          $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds, ...(readShareCodeRes.data || [])])];
+          $.newShareCodes = [...new Set([...$.shareCodes, ...(readShareCodeRes.data || [])])];
         } else {
-          $.newShareCodes = [...new Set([...$.shareCodes, ...$.strMyShareIds])];
+          $.newShareCodes = [...new Set([...$.shareCodes])];
         }
         console.log(`您将要助力的好友${JSON.stringify($.newShareCodes)}`)
         resolve();

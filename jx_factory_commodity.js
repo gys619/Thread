@@ -1,8 +1,5 @@
-// noinspection DuplicatedCode
-
-/*
-* 1 0,8-18 * * * m_jx_factory_commodity.js
-* */
+//1 0,8-18 * * * m_jx_factory_commodity.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M京喜工厂商品');
 $.logic = async function () {

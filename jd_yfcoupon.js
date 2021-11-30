@@ -1,4 +1,5 @@
 //28 19 * * * m_jd_yfcoupon.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M运费券提醒');
 let yfcoupon_days = process.env.YFCOUPON_DAYS ? process.env.YFCOUPON_DAYS * 1

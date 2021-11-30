@@ -1,8 +1,5 @@
-// noinspection DuplicatedCode
-
-/*
-* 59 19 11-30 11 * m_jx_mc_zn_exchange.js
-* */
+//59 19 11-30 11 * m_jx_mc_zn_exchange.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M牧场助农兑换');
 $.logic = async function () {

@@ -1,4 +1,5 @@
 //48 9,22 * * * m_jd_sign.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M京东签到')
 $.logic = async function () {
