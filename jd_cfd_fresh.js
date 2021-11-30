@@ -9,17 +9,17 @@ cron 45 * * * * jd_cfd_fresh.js
 ============Quantumultx===============
 [task_local]
 #京喜财富岛合成生鲜
-45 * * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh.js, tag=京喜财富岛合成生鲜, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+45 * * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_cfd_fresh.js, tag=京喜财富岛合成生鲜, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "45 * * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh.js,tag=京喜财富岛合成生鲜
+cron "45 * * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_cfd_fresh.js,tag=京喜财富岛合成生鲜
 
 ===============Surge=================
-京喜财富岛合成生鲜 = type=cron,cronexp="45 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh.js
+京喜财富岛合成生鲜 = type=cron,cronexp="45 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_cfd_fresh.js
 
 ============小火箭=========
-京喜财富岛合成生鲜 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_fresh.js, cronexpr="45 * * * *", timeout=3600, enable=true
+京喜财富岛合成生鲜 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_cfd_fresh.js, cronexpr="45 * * * *", timeout=3600, enable=true
  */
 const $ = new Env("京喜财富岛合成生鲜");
 const JD_API_HOST = "https://m.jingxi.com/";
