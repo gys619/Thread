@@ -97,7 +97,7 @@ if ($.isNode()) {
                 await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }else {
                 console.log(`未获取到指定变量对应参数  默认提现最大兑换额度\n`)
-                await exchangePinPinPearlStateByMax();
+               await exchangePinPinPearlStateByMax();
             }
             // await $.wait(500);
         }
@@ -171,8 +171,8 @@ async function exchangePinPinPearlState() {
                             for (var o in filterData) {
                                 let prizeInfoElement = filterData[o];
                                 conditionList.push({
-                                    "strPool": prizeInfoElement.strPool,
-                                    "ddwVirHb":prizeInfoElement.ddwVirHb
+                                        "strPool": prizeInfoElement.strPool,
+                                        "ddwVirHb":prizeInfoElement.ddwVirHb
                                 })
                             }
                         }else {
