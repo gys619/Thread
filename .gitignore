@@ -149,6 +149,9 @@ jd_jx_*.js
 
 m_*.js
 
+# 财富岛珍珠兑换
+jd_cfd_pearl_ex.js
+
 
 jd_anjia.js
 jd_senbeans.js
