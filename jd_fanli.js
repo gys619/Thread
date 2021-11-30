@@ -1,6 +1,5 @@
-/*
-* 38 8,18 * * * m_fanli.js
-* */
+//38 8,18 * * * m_fanli.js
+//问题反馈:https://t.me/Wall_E_Channel
 const {Env} = require('./magic');
 const $ = new Env('M饭粒任务');
 
