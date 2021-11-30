@@ -20,7 +20,7 @@ $.logic = async function () {
     let joins = await dbJoinProgressList(id, token);
     await $.wait(100, 200)
     for (const ele of list) {
-        $.log('参与', ele.actTitle, $.format(ele.endTime));
+        $.log('参与', ele.actTitle);
         if (joins.includes(ele._id)) {
             $.log(ele.actTitle, `你已经参与了夺宝`)
             continue;
@@ -97,7 +97,7 @@ async function joinAwardedList(id, token) {
     // noinspection DuplicatedCode
     headers['User-Agent'] = `jdapp;iPhone;10.2.0;14.4.2;${$.randomString(
         40)};M/5.0;network/wifi;ADID/;model/iPhone8,1;addressid/0;appBuild/167853;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_4_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;`
-    let url = `https://pf.moxigame.cn/jddb/duobao/finishTask`
+    let url = `https://pf.moxigame.cn/jddb/duobao/joinAwardedList`
     let data = await $.post(url, body, headers)
     if (data?.code === 0) {
         return data?.result?.list?.length > 0;
