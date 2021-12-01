@@ -3,13 +3,13 @@ Phone狂制噪吧 [jd_phone.js]
 
 第一个账号助力作者 其他依次助力CK1
 ————————————————
-入口：[ Phone狂制噪吧 (https://lzdz1-isv.isvjd.com/dingzhi/vivo/iqoojieyapa/activity/131545?activityId=dz2110100000406501&shareUuid=)]
+入口：[ Phone狂制噪吧 (https://lzdz1-isv.isvjd.com/dingzhi/vivo/iqoojieyapa/activity/131545?activityId=dz2110100000406501&shareUuid=df6902838eb44de2bffc61dbc7afa610)]
 请求太频繁会被黑ip
 过10分钟再执行
 ============Quantumultx===============
 [task_local]
 #Phone狂制噪吧
-7 0,12 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_phone.js, tag=Phone狂制噪吧, enabled=true
+7 0,12 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_phone.js, tag=Phone狂制噪吧, enabled=true
 */
 const $ = new Env('Phone狂制噪吧');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -30,7 +30,7 @@ $.shareUuid = '';
         return;
     }
     
-    $.shareUuid = '';
+    $.shareUuid = 'df6902838eb44de2bffc61dbc7afa610';
     let activityList = [{'id':'dz2110100000406501','endTime':'1638287999000'},];
     for (let i = 0; i < cookiesArr.length; i++) {
         let index = i + 1;
