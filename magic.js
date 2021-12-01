@@ -514,12 +514,10 @@ class Env {
         return format(new Date(), fmt || 'yyyy-MM-dd HH:mm:ss.SSS')
     }
 
-    formatDate(date, fmt) {
-        // noinspection JSCheckFunctionSignatures
-        return format(typeof date === 'object' ? date : new Date(
-                typeof date === 'string' ? date * 1 : date),
-            fmt || 'yyyy-MM-dd')
-    }
+    // format(date, fmt) {
+    //     return moment(typeof date === 'string' ? date * 1 : date).format(
+    //         fmt || 'yyyy-MM-DD HH:mm:ss')
+    // }
 
     timestamp() {
         return new Date().getTime()
