@@ -3,12 +3,11 @@
 cron: 20 10 */7 * *
 new Env('禁用重复任务');
 """
-
+import traceback
 import json
 import os
 import sys
 import time
-
 import requests
 
 ip = "localhost"
@@ -50,10 +49,14 @@ def getDuplicate(taskList):
     wholeNames = {}
     duplicateID = []
     for task in taskList:
-        if task["name"] in wholeNames.keys():
-            duplicateID.append(task["_id"])
-        else:
-            wholeNames[task["name"]] = 1
+        try:
+            if task['name'] in wholeNames.keys():
+                duplicateID.append(task["_id"])
+            else:
+                wholeNames[task["name"]] = 1
+        except:
+            traceback.print_exc()
+            print("\n\n这条命令出错啦：%s \n请检查定时任务的名称并手动修改\n\n" % task["command"])
     return duplicateID
 
 
@@ -96,7 +99,7 @@ def loadToken():
 
 if __name__ == "__main__":
     print("开始！")
-    loadSend()
+    # loadSend()
     # 直接从 /ql/config/auth.json中读取当前token
     token = loadToken()
     # send("成功获取token!","")
@@ -114,5 +117,5 @@ if __name__ == "__main__":
         print("没有重复任务")
     else:
         disableDuplicateTasks(duplicateID)
-    send("禁用成功", "\n%s\n%s" % (before, after))
+    # send("禁用成功", "\n%s\n%s" % (before, after))
     # print("禁用结束！")
