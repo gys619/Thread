@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build20211129-001
+## Mod: Build 20211202-001
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -125,77 +125,32 @@ export GOBOT_URL=""
 export GOBOT_TOKEN=""
 export GOBOT_QQ=""
 
-## 10. 临时屏蔽某个Cookie
-## 10.1 按 Cookie 序号屏蔽
-## 如果某些 Cookie 已经失效了，但暂时还没法更新，可以使用此功能在不删除该Cookie和重新修改Cookie编号的前提下，临时屏蔽掉某些编号的Cookie
-## 多个Cookie编号以半角的空格分隔，两侧一对半角双引号，使用此功能后，在运行js脚本时账户编号将发生变化
-## 举例1：TempBlockCookie="2"    临时屏蔽掉 Cookie2
-## 举例2：TempBlockCookie="2 4"  临时屏蔽掉 Cookie2 和 Cookie4
+## 10 临时禁止Cookie
+### 分为 按 Cookie 序号、按 pt_pin(用户名) 2 种模式禁止将 Cookie 提交活动脚本：
+### 其他说明：①全局模式和局部模式可同时生效；
+###           ②支持黑名单模式(即不使用该模式，详见 局部模式环境变量 recombin_ck_envs 说明)；
 
-## 如果只是想要屏蔽某个 Cookie 不参加某些活动，可以参考下面 case 这个命令的例子来控制
-## case $1 in
-##     *jd_fruit*)                            # 东东农场活动脚本关键词
-##         TempBlockCookie="5"                # Cookie5 不玩东东农场
-##         ;;
-##     *jd_dreamFactory* | *jd_jdfactory*)    # 京喜工厂和东东工厂的活动脚本关键词
-##         TempBlockCookie="2"                # Cookie2 不玩京喜工厂和东东工厂
-##         ;;
-##     *jd_jdzz* | *jd_joy*)                  # 京喜赚赚和宠汪汪的活动脚本关键词
-##         TempBlockCookie="3 7_8 9-10 12~13" # Cookie3 、Cookie7至8、Cookie9至10、Cookie12至13 不玩京东赚赚和宠汪汪
-##         ;;
-##     *)                                     # 必选项。其他活动
-##         TempBlockCookie=""                 # 必选项。默认为空值，表示其他帐号参加全部活动。填写帐号序号表示指定的 Cookie 只能参加之前 case 选项的活动
-##         ;;
-## esac
-case $1 in
-*jd_fruit*)
-    TempBlockCookie=""
-    ;;
-*jd_dreamFactory* | *jd_jdfactory*)
-    TempBlockCookie=""
-    ;;
-*jd_jdzz* | *jd_joy*)
-    TempBlockCookie=""
-    ;;
-*)
-    TempBlockCookie=""
-    ;;
-esac
+## 10.1 全局模式选项
+### 赋值要求：①TempBlockCookie 只能填数字或者区间，表示按 Cookie 序号禁止账号；
+###           ②TempBlockPin 只能填写 pt_pin 值 或者 用户名(支持中文)，表示按 pt_pin 或者 用户名(支持中文) 禁止账号。
+###           ③对全部脚本有效(除非 recombin_ck_envs 另有设定)；
+###           ⑧例如：TempBlockCookie="1,2,5_8,12~19 20"，表示第 1、2、5至8、12至19、20位账号均被禁止参加活动。数字与数字，数字与区间之间可用 ~、_、空格隔开； ；
+###           ⑧例如：TempBlockPin="张三 jd_13134567890,%E7%95%AA%E8%8C%84%E5%8A%A0%E4%B8%AA%E8%9B%8B"，表示 张三、jd_13134567890、番茄加个蛋、这几个账号均被禁止参加活动。各账号间可用 , 或空格隔开；
+TempBlockCookie=""
+TempBlockPin=""
 
-## 10.2 按用户名(pt_pin)屏蔽
-## 如果某些 Cookie 已经失效了，但暂时还没法更新，可以使用此功能在不删除该Cookie和重新修改Cookie编号的前提下，临时屏蔽掉某些编号的Cookie
-## 举例1：TempBlockPin="张三"                    临时屏蔽掉用户名(pt_pin)为 "张三" 的 Cookie
-## 举例2：TempBlockCookie="张三 jd_13134567890"  临时屏蔽掉用户名(pt_pin)为 "张三" 和 "jd_13134567890" 的 Cookie
-
-## 如果只是想要屏蔽某个 Cookie 不参加某些活动，可以参考下面 case 这个命令的例子来控制
-## case $1 in
-##     *jd_fruit*)                               # 东东农场活动脚本关键词
-##         TempBlockPin="张三"                   # 用户名(pt_pin)为 "张三" 的 Cookie 不玩东东农场
-##         ;;
-##     *jd_dreamFactory* | *jd_jdfactory*)       # 京喜工厂和东东工厂的活动脚本关键词
-##         TempBlockPin="张三 jd_13134567890"    # 用户名(pt_pin)为 "张三" 和 "jd_13134567890" 的 Cookie 不玩京喜工厂和东东工厂
-##         ;;
-##     *jd_jdzz* | *jd_joy*)                     # 京喜赚赚和宠汪汪的活动脚本关键词
-##         TempBlockPin="张三 67890 jd"          # 用户名(pt_pin)包含 "张三" 、"67890"、"jd" 的 Cookie 不玩京东赚赚和宠汪汪
-##         ;;
-##     *)                                        # 必选项。其他活动
-##         TempBlockPin=""                       # 必选项。默认为空值，表示其他帐号参加全部活动。填写帐号序号表示指定的用户名(pt_pin)只能参加之前 case 选项的活动
-##         ;;
-## esac
-case $1 in
-*jd_fruit*)
-    TempBlockPin=""
-    ;;
-*jd_dreamFactory* | *jd_jdfactory*)
-    TempBlockPin=""
-    ;;
-*jd_jdzz* | *jd_joy*)
-    TempBlockPin=""
-    ;;
-*)
-    TempBlockPin=""
-    ;;
-esac
+## 10.2 局部模式环境变量
+### 释义：脚本1文件名关键词@参数1@参数2；
+### 赋值要求：①脚本文件名关键词，例如，东东农场的活动脚本关键词 jd_fruit；多个脚本关键词采用 | 符号分隔。例如：jd_fruit|jd_dreamFactory；
+###           ②脚本文件名关键词与各参数采用 @ 连接。释义附后。如果不设定参数1，表示该脚本全部账号参加活动(即：黑名单)；
+###           ③参数1。表示 TempBlockCookie。不能有空格，建议序号与序号、序号与区间采用 , 分隔；
+###           ④参数2。表示 TempBlockPin。不能有空格，建议各pt_pin(或用户名)采用 , 分隔；
+###           ⑤各个活动设定值之间采用 & 连接，例如：jd_fruit|jd_dreamFactory@1,3-4,7~9&jd_plantBean@2,4-6,8@张三&jd_pigPet@-@张三&jd_plantBean；
+###                                                 jd_fruit|jd_dreamFactory@1,3-5,7~9   使用模式：按序号，1、3至5、7至9不参加活动
+###                                                 jd_plantBean@2,4-6,8@张三            使用模式：按序号，2、4至6、8不参加活动，且张三也不参加活动
+###                                                 jd_pigPet@-@张三                     使用模式：按pt_pin或用户名，张三不参加活动。注意，参数1位置需要加一个 - 作为占位符
+###                                                 jd_plantBean                         使用模式：全部账号参加活动
+# tempblock_ck_envs="jd_fruit@1,3-4,7~9&jd_plantBean@2,4-6,8@张三&jd_pigPet@-@张三&jd_plantBean"
 
 ## 11 重组Cookie
 ### 分为 随机、优先、轮换、组队和分段 5 种模式：
@@ -203,7 +158,7 @@ esac
 ### 2、优先模式：支持自定义前若干数量的账号固定按照正常顺序参加活动，其余账号按随机顺序参加活动；
 ### 3、轮换模式：支持自定义前若干数量的账号固定按照正常顺序参加活动，其余账号按轮换模式参加活动。所谓轮换就是指若干数量的账号每过一天挪动到 Cookie 队伍末尾；
 ### 4、组队模式：只支持 js 脚本。根据游戏规则每支队伍的成员数量、每个账号能发起的组队次数上限自动按顺序参加活动。
-### 5、分段模式：只支持 js 脚本。支持自定义按若干数量拆分账号，按分段顺序参加活动。支持各段启动活动脚本的延迟时间。
+### 5、分段模式：只支持 js 脚本。支持自定义按若干数量拆分账号，按分段顺序参加活动。支持各段启动活动脚本的延隔时间。
 ### 其他说明：①全局模式和局部模式可同时生效；
 ###           ②支持黑名单模式(即不使用该模式，详见 局部模式环境变量 recombin_ck_envs 说明)；
 
@@ -242,24 +197,27 @@ Recombin_CK_ARG2=""
 Remove_Void_CK=""
 
 ## 11.2 局部模式环境变量
-### 释义：脚本1文件名关键词@参数1@参数2@参数3@参数4@参数5；
-### 赋值要求：①脚本文件名关键词，例如，东东农场的活动脚本关键词 jd_fruit；
+### 释义：脚本1文件名关键词@模式@参数1@参数2@参数3@参数4；
+### 赋值要求：①脚本文件名关键词，例如，东东农场的活动脚本关键词 jd_fruit。多个脚本关键词采用 | 符号分隔。例如：jd_fruit|jd_dreamFactory；
 ###           ②脚本文件名关键词与各参数采用 @ 连接。释义附后。如果不设定参数1，表示该脚本按正常账号顺序参加活动(即：黑名单)；
-###           ③参数1。表示 Recombin_CK_Mode；
-###           ④参数2。表示 Recombin_CK_ARG1；
-###           ⑤参数3。表示 Recombin_CK_ARG2；
-###           ⑥参数4。只对 组队瓜分京豆脚本 (jd_zdjr) 有效。表示 activityId；
-###           ⑦参数5。只对 组队瓜分京豆脚本 (jd_zdjr) 有效。表示 activityUrl；
-###           ⑧各个活动设定值之间采用 & 连接，例如：jd_cfd&jd_fruit@1@5&jd_pet@2@6&jd_pigPet@3@5&jd_plantBean@3@7@4&jd_jxlhb@4@80@1&jd_zdjr@4@5@3@4240059acf5c449a1a986fa6107897ce1@https://cjhydz-isv.isvjcloud.com；
-###                                              jd_cfd                 脚本按正常账号顺序参加活动
-###                                              jd_fruit@1@5           使用模式：1随机，抽5个CK顺序随机
-###                                              jd_pet@2@6             使用模式：2优先，前6个CK顺序优先，其余CK顺序随机
-###                                              jd_pigPet@3@5          使用模式：3轮换，前5个CK顺序固定，根据CK总数和当月天数自动计算每天轮换CK数量
-###                                              jd_plantBean@3@7@4     使用模式：3轮换，前7个CK顺序固定，每天轮换4个CK
-###                                              jd_jxlhb@4@80@1        使用模式：4组队，队伍成员数量80，每个账号组队1次
-###                                              jd_islogin_xh@5@4@8    使用模式：5分段，前4个CK顺序固定，每段成员数量8，各分段并发执行启动脚本
-###                                              jd_islogin_xh@5@4@8@15 使用模式：5分段，前4个CK顺序固定，每段成员数量8，每段启动脚本的延迟时间为15秒。第四个表示每个分段启动活动脚本的延迟时间，单位：秒；
-# recombin_ck_envs="jd_fruit@2@5&jd_pet@2@5&jd_plantBean@2@5&jd_dreamFactory@2@5&jd_jdfactory@2@5&jd_crazy_joy@2@5&jd_jdzz@2@5&jd_jxnc@2@5&jd_bookshop@2@5&jd_cash@2@5&jd_sgmh@2@5&jd_cfd@2@5&jd_health@2@5&jd_carnivalcity@2@5&jd_city@2@5&jd_moneyTree_heip@2@5&jd_jxlhb@3@5&jd_88hb@3@5&Check&jd_islogin_xh&bean_change&wskey&code"
+###           ③模式。表示 Recombin_CK_Mode；
+###           ④参数1。表示 Recombin_CK_ARG1；
+###           ⑤参数2。表示 Recombin_CK_ARG2；
+###           ⑥参数3。表示 Recombin_CK_ARG3。组队模式、分段模式：表示各分段启动活动脚本的延隔时间，支持 d(天)、h(小时)、m（分钟）、s(秒可略写)。如 1d2h3m4s 表示 1天2小时3分钟4秒；
+###           ⑦参数4。表示 Recombin_CK_ARG4。组队模式、分段模式：表示各分段启动活动脚本的间隔时间。需参数3为 - 占位符时生效；
+###           ⑧参数5。表示 Recombin_CK_ARG5。组队瓜分京豆脚本 (jd_zdjr) ：表示 activityId。需参数3、参数4已赋值或为 - 占位符时生效；
+###           ⑨参数6。表示 Recombin_CK_ARG6。组队瓜分京豆脚本 (jd_zdjr) ：表示 activityUrl。需参数3、参数4已赋值或为 - 占位符且参数5已赋值时生效；
+###           ⑩各个活动设定值之间采用 & 连接，例如：jd_cfd&jd_fruit|jd_dreamFactory@1@5&jd_pet@2@6&jd_pigPet@3@5&jd_plantBean@3@7@4&jd_jxlhb@4@80@1&jd_islogin_xh@5@4@8&jd_islogin_xh@5@4@8@15&ccwav*speed_sign@5@0@20@-@5400&jd_zdjr@4@5@3@0@-@4240059acf5c449a1a986fa6107897ce1@https://cjhydz-isv.isvjcloud.com；
+###                                              jd_cfd                           脚本按正常账号顺序参加活动
+###                                              jd_fruit|jd_dreamFactory@1@5     共用模式：1随机，抽5个CK顺序随机
+###                                              jd_pet@2@6                       使用模式：2优先，前6个CK顺序优先，其余CK顺序随机
+###                                              jd_pigPet@3@5                    使用模式：3轮换，前5个CK顺序固定，根据CK总数和当月天数自动计算每天轮换CK数量
+###                                              jd_plantBean@3@7@4               使用模式：3轮换，前7个CK顺序固定，每天轮换4个CK
+###                                              jd_jxlhb@4@80@1                  使用模式：4组队，队伍成员数量80，每个账号组队1次
+###                                              jd_islogin_xh@5@4@8              使用模式：5分段，前4个CK顺序固定，每段成员数量8，各分段并发执行启动脚本
+###                                              jd_islogin_xh@5@4@8@15           使用模式：5分段，前4个CK顺序固定，每段成员数量8，每段启动脚本的延隔时间为15秒，即本段开始启动脚本后 15 秒，下一段启动脚本。第 4 个参数表示每个分段启动活动脚本的延隔时间，单位：秒；
+###                                              ccwav*speed_sign@5@0@20@-@5400   ccwav 的 speed_sign 脚本。使用模式：5分段，全部账号参与分段，每段成员数量20，每段启动脚本的间隔时间为 5400 秒即本段脚本执行完成后，等待 5400 秒，下一段启动脚本。当第 4 个参数使用 - 占位符时，第 5 个参数表示每个分段启动活动脚本的间隔时间，单位：秒。
+# recombin_ck_envs="jd_fruit|jd_pet|jd_plantBean|jd_dreamFactory|jd_jdfactory|jd_crazy_joy|jd_jdzz|jd_jxnc|jd_bookshop|jd_cash|jd_sgmh|jd_cfd|jd_health|jd_carnivalcity|jd_city|jd_moneyTree_heip@3@5&jd_jxlhb|jd_88hb@4@5@80@1&Check&jd_islogin_xh&bean_change&wskey&code&ccwav*speed_sign@5@0@20@-@1h"
 
 ## 其他需要的变量，脚本中需要的变量使用 export 变量名= 声明即可
 
