@@ -7,7 +7,7 @@ const $ = new Env('M京豆转喜豆');
 $.logic = async function () {
     let headers = {
         'content-type': 'application/json',
-        'user-agent': `jdapp;iPhone;9.4.6;14.2;${$.randomString(
+        'user-agent': `jdapp;iPhone;9.4.6;14.2;${$.uuid(
             40)};network/wifi;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone8,4;addressid/;supportBestPay/0;appBuild/167618;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
         'referer': 'https://happy.m.jd.com/babelDiy/Zeus/3ugedFa7yA6NhxLN5gw2L3PF9sQC/index.html'
     }
