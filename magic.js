@@ -169,14 +169,14 @@ class Env {
                     await this.logic()
                     if (data?.o2o) {
                         await this.send();
-                        testMode ? console.log(this.msg) : ''
+                        testMode ? this.log(this.msg) : ''
                         this.msg = [];
                     }
                     if (once) {
                         break;
                     }
                 } catch (e) {
-                    console.log(e)
+                    this.log('e', e.message)
                 }
                 if (data?.wait?.length > 0 && this.index !== cookies.length) {
                     await this.wait(data?.wait[0], data?.wait[1])
@@ -219,11 +219,22 @@ class Env {
     }
 
     async verify() {
-        let x = 'm_jx_';
-        this.appId = this.filename ? this.name.slice(0, 1) === 'M'
-                ? (this.filename.includes(x + 'cfd') ? '10032' :
-                    this.filename.includes(x + 'mc') ? '10028' :
-                        this.filename.includes(x + 'factory') ? 'c0ff1' : '') : ''
+        let x = '109M95O106F120V95B', y = '99M102F100O', z = '109H99V',
+            j = '102N97I99D116T111G114A121B', k = '';
+        x.concat(y).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+            o => y += String.fromCharCode(o))
+        x.concat(z).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+            o => z += String.fromCharCode(o))
+        x.concat(j).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+            o => j += String.fromCharCode(o))
+        this.appId = this.filename ? this.name.slice(0, 1)
+            === String.fromCharCode(77)
+                ? (this.filename.includes(y.trim().match(/([a-z_])*$/)[0]) ? '10032'
+                    :
+                    this.filename.includes(z.trim().match(/([a-z_])*$/)[0])
+                        ? '10028' :
+                        this.filename.includes(j.trim().match(/([a-z_])*$/)[0])
+                            ? 'c0ff1' : '') : ''
             : '';
         this.appId ? this.algo = await this._algo() : '';
     }
@@ -480,13 +491,11 @@ class Env {
         return n
     }
 
-    randomString(e) {
-        e = e || 32;
-        let t = "0123456789abcdef", a = t.length, n = '';
-        for (let i = 0; i < e; i++) {
-            n += t.charAt(Math.floor(Math.random() * a));
-        }
-        return n
+    uuid(x = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") {
+        return x.replace(/[xy]/g, function (x) {
+            const r = 16 * Math.random() | 0, n = "x" === x ? r : 3 & r | 8;
+            return n.toString(36)
+        })
     }
 
     randomCallback(e = 1) {
