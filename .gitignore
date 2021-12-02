@@ -151,7 +151,8 @@ m_*.js
 
 # 财富岛珍珠兑换
 jd_cfd_pearl_ex.js
-
+# he1pu的内置互助
+zcodes.json
 
 jd_anjia.js
 jd_senbeans.js
