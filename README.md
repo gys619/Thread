@@ -9,7 +9,7 @@
 ### [TG频道](https://t.me/jddfruit)
 ## 青龙拉取链接
 ``` 
-ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_Pure|sign_graphics_validate|jddj_cookie|function|ql"
+ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_Pure|sign_graphics_validate|jddj_cookie|function|ql|magic"
 ```
 ```
 推荐定时 0 */4 * * *
