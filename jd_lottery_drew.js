@@ -10,7 +10,7 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 # 一分钱抽奖
-10 0 * * * jd_lottery_drew.js, tag=一分钱抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
+10 0,12 * * * jd_lottery_drew.js, tag=一分钱抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
 
  */
 const $ = new Env('京东赚京豆一分钱抽奖');
@@ -58,8 +58,9 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
         continue
       }
 
-      await vvipscdp_raffle_auto_send_bean('scdp_system_id'); //京东端
-      await vvipscdp_raffle_auto_send_bean('swat_system_id'); //微信端
+        await vvipscdp_raffle_auto_send_bean('lingjingdoupindao_system_id'); //京东端
+      // await vvipscdp_raffle_auto_send_bean('scdp_system_id'); //京东端
+      // await vvipscdp_raffle_auto_send_bean('swat_system_id'); //微信端
     }
   }
   if (allMessage) {
