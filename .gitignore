@@ -160,6 +160,8 @@ jd_flp.js
 jd_mengniu.js
 #不能跑的
 jd_task_*.js
+creat.sh
+*.conf
 
 
 
