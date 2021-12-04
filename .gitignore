@@ -153,6 +153,13 @@ m_*.js
 jd_cfd_pearl_ex.js
 # he1pu的内置互助
 zcodes.json
+# 飞利浦重复
+jd_FLP.js
+jd_flp.js
+# 蒙牛开卡重复
+jd_mengniu.js
+
+
 
 jd_anjia.js
 jd_senbeans.js
