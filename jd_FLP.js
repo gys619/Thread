@@ -1,22 +1,22 @@
 /*
-组队分豆-安佳 [jd_teamAnJia.js]
+组队分豆-飞利浦 [jd_teamFLP.js]
 
 ————————————————
-入口：[组队分豆-安佳 (https://lzkjdz-isv.isvjcloud.com/pool/captain/12318?activityId=e7c37c2548284d1eb7920079fbf6be68&shareUuid=7682590dc51143a3a8240beb0f875938)]
+入口：[组队分豆-飞利浦 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7208ffe82f644228b145888dbf39a9ae)]
 IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
-#组队分豆-安佳
-1 0,22 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js, tag=组队分豆-安佳, enabled=true
+#组队分豆-飞利浦
+18 2,15 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js, tag=组队分豆-飞利浦, enabled=true
 ================Loon==============
 [Script]
-cron "1 0,22 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js,tag=组队分豆-安佳
+cron "18 2,15 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js,tag=组队分豆-飞利浦
 ===============Surge=================
-组队分豆-安佳 = type=cron,cronexp="1 0,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js
+组队分豆-飞利浦 = type=cron,cronexp="18 2,15 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js
 ============小火箭=========
-组队分豆-安佳 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js, cronexpr="1 0,22 * * *", timeout=3600, enable=true
+组队分豆-飞利浦 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js, cronexpr="18 2,15 * * *", timeout=3600, enable=true
 */
-const $ = new Env("组队分豆-安佳");
+const $ = new Env("组队分豆-飞利浦");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
@@ -40,7 +40,7 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/12318?activityId=e7c37c2548284d1eb7920079fbf6be68&shareUuid=7682590dc51143a3a8240beb0f875938`)
+    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7208ffe82f644228b145888dbf39a9ae`)
     
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -60,15 +60,15 @@ if ($.isNode()) {
                 }
                 continue
             }
-            authorCodeList = ['']
+            authorCodeList = ['63dda38005e344e4bd89eba5b85c46a4','7208ffe82f644228b145888dbf39a9ae']
             $.bean = 0;
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
-            $.activityId = 'e7c37c2548284d1eb7920079fbf6be68'
-            $.activityShopId = '1000014486'
+            $.activityId = '52c0712263f342308da1287a66702009'
+            $.activityShopId = '1000003691'
             $.randomNum = random(1000000, 9999999)
             $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.randomNum}?activityId=${$.activityId}&signUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
             $.returnUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.randomNum}?activityId=${$.activityId}`;
-            await anjia();
+            await flp();
             await $.wait(3000)
             if ($.bean > 0) {
                 message += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n       └ 获得 ${$.bean} 京豆。`
@@ -91,7 +91,7 @@ if ($.isNode()) {
     })
 
 
-async function anjia() {
+async function flp() {
     $.token = null;
     $.secretPin = null;
     $.openCardActivityId = null
@@ -115,8 +115,8 @@ async function anjia() {
                     if (!$.activityContent.openCard) {
                         $.log("加入会员")
                         await $.wait(2000)
-                        await getShopOpenCardInfo({ "venderId": "1000014486", "channel": 7005 }, 1000014486)
-                        await bindWithVender({ "venderId": "1000014486", "shopId": "1000010410", "bindByVerifyCodeFlag": 1, "registerExtend": {}, "writeChildFlag": 0, "activityId": 2006823, "channel": 7005 }, $.activityShopId)
+                        await getShopOpenCardInfo({ "venderId": "100000000000085", "channel": 7014 }, 1000003691)
+                        await bindWithVender({ "venderId": "100000000000085", "shopId": "1000003691", "bindByVerifyCodeFlag": 1, "registerExtend": {}, "writeChildFlag": 0, "channel": 7014}, $.activityShopId)
                     }
                     await $.wait(2000)
                     await task('activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&signUuid=${encodeURIComponent($.authorCode)}`, 0, 1)

@@ -1,22 +1,20 @@
 /*
-组队分豆-安佳 [jd_teamAnJia.js]
-
-————————————————
-入口：[组队分豆-安佳 (https://lzkjdz-isv.isvjcloud.com/pool/captain/12318?activityId=e7c37c2548284d1eb7920079fbf6be68&shareUuid=7682590dc51143a3a8240beb0f875938)]
-IOS等用户直接用NobyDa的jd cookie
+欢迎关注
+https://t.me/aaron_scriptsG
+https://t.me/jdscrip
 ============Quantumultx===============
 [task_local]
-#组队分豆-安佳
-1 0,22 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js, tag=组队分豆-安佳, enabled=true
+# 京东蒙牛
+7 7,17 * * * https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js, tag=京东蒙牛, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
 ================Loon==============
 [Script]
-cron "1 0,22 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js,tag=组队分豆-安佳
+cron "7 7,17 * * *" script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js,tag=京东蒙牛
 ===============Surge=================
-组队分豆-安佳 = type=cron,cronexp="1 0,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js
+京东蒙牛 = type=cron,cronexp="7 7,17 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js
 ============小火箭=========
-组队分豆-安佳 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_teamAnJia.js, cronexpr="1 0,22 * * *", timeout=3600, enable=true
+京东蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js, cronexpr="7 7,17 * * *", timeout=3600, enable=true
 */
-const $ = new Env("组队分豆-安佳");
+const $ = new Env("蒙牛");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
@@ -40,8 +38,6 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/12318?activityId=e7c37c2548284d1eb7920079fbf6be68&shareUuid=7682590dc51143a3a8240beb0f875938`)
-    
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i]
@@ -62,12 +58,14 @@ if ($.isNode()) {
             }
             authorCodeList = ['']
             $.bean = 0;
+            $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);
+            $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+            // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
-            $.activityId = 'e7c37c2548284d1eb7920079fbf6be68'
-            $.activityShopId = '1000014486'
-            $.randomNum = random(1000000, 9999999)
-            $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.randomNum}?activityId=${$.activityId}&signUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
-            $.returnUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.randomNum}?activityId=${$.activityId}`;
+            $.authorNum = `${random(1000000, 9999999)}`
+            $.activityId = 'e319ac3cef964226a29eac2559f1cf57'
+            $.activityShopId = '1000014803'
+            $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.authorNum}?activityId=${$.activityId}&signUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
             await anjia();
             await $.wait(3000)
             if ($.bean > 0) {
@@ -79,7 +77,7 @@ if ($.isNode()) {
         if ($.isNode()) {
             await notify.sendNotify($.name, message, '', `\n`);
         } else {
-            $.msg($.name, '', message);
+            $.msg($.name, '有点儿收获', message);
         }
     }
 })()
@@ -102,8 +100,8 @@ async function anjia() {
     if ($.token) {
         await getMyPing();
         if ($.secretPin) {
-            console.log('加入队伍 -> ' + $.authorCode);
-            await task('common/accessLogWithAD', `venderId=${$.activityShopId}&code=46&pin=${encodeURIComponent($.secretPin)}&activityId=${$.activityId}&pageUrl=${$.activityUrl}&subType=app&adSource=null`, 1);
+            console.log('去助力 -> ' + $.authorCode);
+            await task('common/accessLogWithAD', `venderId=${$.activityShopId}&code=99&pin=${encodeURIComponent($.secretPin)}&activityId=${$.activityId}&pageUrl=${$.activityUrl}&subType=app&adSource=null`, 1);
             await $.wait(2000)
             await task('activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&signUuid=${encodeURIComponent($.authorCode)}`)
             if ($.activityContent) {
@@ -115,8 +113,8 @@ async function anjia() {
                     if (!$.activityContent.openCard) {
                         $.log("加入会员")
                         await $.wait(2000)
-                        await getShopOpenCardInfo({ "venderId": "1000014486", "channel": 7005 }, 1000014486)
-                        await bindWithVender({ "venderId": "1000014486", "shopId": "1000010410", "bindByVerifyCodeFlag": 1, "registerExtend": {}, "writeChildFlag": 0, "activityId": 2006823, "channel": 7005 }, $.activityShopId)
+                        await getShopOpenCardInfo({ "venderId": "1000014803", "channel": 401 }, 1000014803)
+                        await bindWithVender({ "venderId": "1000014803", "shopId": "1000014803", "bindByVerifyCodeFlag": 1, "registerExtend": {}, "writeChildFlag": 0, "activityId": 3282318, "channel": 401 }, 100000000000085)
                     }
                     await $.wait(2000)
                     await task('activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&signUuid=${encodeURIComponent($.authorCode)}`, 0, 1)
@@ -168,7 +166,7 @@ function task(function_id, body, isCommon = 0) {
                                 case 'saveCaptain':
                                     if (data.data.signUuid) {
                                         $.log("创建队伍成功")
-                                        if($.index === 1){
+                                        if ($.index === 1) {
                                             ownCode = data.data.signUuid;
                                         }
                                     }
@@ -184,10 +182,11 @@ function task(function_id, body, isCommon = 0) {
                                 case 'activityContent':
                                     // console.log(data.data)
                                     $.activityContent = data.data;
-                                    if($.index === 1){
+                                    if ($.index === 1) {
                                         ownCode = data.data.signUuid;
                                     }
                                     // $.actorUuid = data.data.signUuid;
+                                    // console.log($.actorUuid);
                                     // console.log(data.data.successRetList)
                                     // for (const vo of data.data.successRetList) {
                                     //     if (!vo.sendStatus && vo.canSend) {
@@ -228,9 +227,9 @@ function getShopOpenCardInfo(body, venderId) {
             Accept: '*/*',
             Connection: 'keep-alive',
             Cookie: cookie,
-            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')};network/wifi;ADID/${getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1)};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
             'Accept-Language': 'zh-cn',
-            Referer: `https://shopmember.m.jd.com/shopcard/?venderId=${venderId}}&channel=7005&returnUrl=${encodeURIComponent($.returnUrl)}`,
+            Referer: `https://shopmember.m.jd.com/shopcard/?venderId=${venderId}}&channel=7014&returnUrl=${encodeURIComponent($.activityUrl)}`,
             'Accept-Encoding': 'gzip, deflate, br'
         }
     }
@@ -264,9 +263,9 @@ function bindWithVender(body, venderId) {
             Accept: '*/*',
             Connection: 'keep-alive',
             Cookie: cookie,
-            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')};network/wifi;ADID/${getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1)};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
             'Accept-Language': 'zh-cn',
-            Referer: `https://shopmember.m.jd.com/shopcard/?venderId=${venderId}}&channel=7005&returnUrl=${encodeURIComponent($.returnUrl)}`,
+            Referer: `https://shopmember.m.jd.com/shopcard/?venderId=${venderId}}&channel=7014&returnUrl=${encodeURIComponent($.activityUrl)}`,
             'Accept-Encoding': 'gzip, deflate, br'
         }
     }
@@ -308,7 +307,7 @@ function taskUrl(function_id, body, isCommon) {
             'Accept-Encoding': 'gzip, deflate, br',
             'Content-Type': 'application/x-www-form-urlencoded',
             Origin: 'https://lzkjdz-isv.isvjcloud.comm',
-            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')};network/wifi;ADID/${getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1)};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
             Connection: 'keep-alive',
             Referer: $.activityUrl,
             Cookie: cookie
@@ -329,7 +328,7 @@ function getMyPing() {
             'Accept-Encoding': 'gzip, deflate, br',
             'Content-Type': 'application/x-www-form-urlencoded',
             Origin: 'https://lzkjdz-isv.isvjcloud.com',
-            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')};network/wifi;ADID/${getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1)};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+            'User-Agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
             Connection: 'keep-alive',
             Referer: $.activityUrl,
             Cookie: cookie,
@@ -369,7 +368,7 @@ function getMyPing() {
                     if (data) {
                         data = JSON.parse(data)
                         if (data.result) {
-                            //$.log(`你好：${data.data.nickname}`)
+                            $.log(`你好：${data.data.nickname}`)
                             $.pin = data.data.nickname;
                             $.secretPin = data.data.secretPin;
                             cookie = `${cookie};AUTH_C_USER=${data.data.secretPin}`
