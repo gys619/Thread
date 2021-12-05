@@ -157,7 +157,7 @@ zcodes.json
 jd_FLP.js
 jd_flp.js
 # 蒙牛开卡重复
-jd_mengniu.js
+jd_mn.js
 #不能跑的
 jd_task_*.js
 creat.sh
