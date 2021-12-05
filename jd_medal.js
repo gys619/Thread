@@ -1,23 +1,8 @@
-/*
-农场集勋章
-活动入口：东东农场->东东乐园(点大风车
-已支持IOS双京东账号, Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
-============Quantumultx===============
-[task_local]
-#东东乐园
-30 7,16 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_ddnc_farmpark.js, tag=东东乐园, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-
-================Loon==============
-[Script]
-cron "30 7,16 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_ddnc_farmpark.js tag=东东乐园
-
-===============Surge=================
-东东乐园 = type=cron,cronexp="30 7,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_ddnc_farmpark.js
-
-============小火箭=========
-东东乐园 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_ddnc_farmpark.js, cronexpr="30 7,16 * * *", timeout=3600, enable=true
-*/
+/**
+ 农场集勋章
+ cron 16 7,16 * * * jd_medal.js
+ TG频道：https://t.me/sheeplost
+ */
 const $ = new Env('农场集勋章');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -71,7 +56,7 @@ if ($.isNode()) {
 
 async function main() {
     mainInfo = await task('collect_Init', { "channel": 1 });
-    if (mainInfo && mainInfo.code != 3) {
+    if (mainInfo) {
         if (mainInfo.result.activityStatus === 2) {
             popWindow = mainInfo.result.popWindow;
             if (popWindow.windowType === 2 && popWindow.windowStatus === 1) {
@@ -104,19 +89,7 @@ async function main() {
             }
         } else if (mainInfo.result.activityStatus === 3) {
             console.log("您已经集齐所有勋章了，快去领取奖品吧！")
-            getAwardInfo = await task('collect_getAwardInfo', {})
-            if (!getAwardInfo.result.awardList[0].risk) {
-                collect_exchangeAward = await task('collect_exchangeAward', { "type": 3 })
-                if (collect_exchangeAward.code == 0) {
-                    console.log(`已兑换${collect_exchangeAward.result.awardValue}京豆`);
-                    message += `\n【京东账号${$.index}】${$.nickName || $.UserName}\n兑换${collect_exchangeAward.result.awardValue}京豆`
-                }
-            } else {
-                collect_exchangeAward = await task('collect_exchangeAward', { "type": 2 })
-                if (collect_exchangeAward.code == 0) {
-                    console.log(`已兑换${collect_exchangeAward.result.awardValue}水滴`);
-                }
-            }
+            message += `\n【京东账号${$.index}】${$.nickName || $.UserName}\n您已经集齐所有勋章了，快去领取奖品吧！`
         } else if (mainInfo.result.activityStatus === 4) {
             console.log("您已经集齐所有勋章并领取奖品了,等待下一次活动开启!")
         }
