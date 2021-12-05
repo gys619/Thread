@@ -1,7 +1,7 @@
 /*
 京东电器盲盒
 活动入口：微信小程序-京东电器-首页抽盲盒
-0 8 1-20 * * jd_dqmh.js
+0 8 1-20 * *
  */
 const $ = new Env('电器盲盒抽京豆');
 const notify = $.isNode() ? require('./sendNotify') : '';
