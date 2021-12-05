@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 '''
 cron: 5 15 * * *
-new Env('冬香节送福利');
-入口: 京东极速版》首页》领红包
-说明：每天3次抽奖机会，抽奖，提现
-青龙拉取命令：
-ql raw https://raw.githubusercontent.com/wuye999/myScripts/main/jd/jd_dongxiang_benefits.py
+new Env('东东农场-集勋章合成兑换奖励');
+入口: 京东》我的>东东农场>集勋章合成兑换奖励
+变量: JD_COOKIE，awardType
+export awardType="3"   1或2或3 -->  1是2500水滴 2是5元无门槛红包(仅限京东使用) 3是500京豆 ，不使用该环境变量默认500豆
+export JD_COOKIE="第1个cookie&第2个cookie"
+地址：https://raw.githubusercontent.com/wuye999/myScripts/main/jd/jd_fruit_medalExchange.py
 '''
 import os,json,random,time,re,string,functools
 import sys
@@ -19,8 +20,8 @@ except Exception as e:
 requests.packages.urllib3.disable_warnings()
 
 
-run_send='no'              # yes或no, yes则启用通知推送服务
-linkId='7ya6o83WSbNhrbYJqsMfFA'
+run_send='yes'              # yes或no, yes则启用通知推送服务
+awardType="3"
 
 
 # 获取pin
@@ -102,7 +103,6 @@ class Judge_env(object):
         return a
 cookie_list=Judge_env().main_run()
 
-
 ## 获取通知服务
 class Msg(object):
     def getsendNotify(self):
@@ -144,142 +144,85 @@ class Msg(object):
                 f += 1
                 self.getsendNotify()
                 return self.main(f)
-Msg().main()   # 初始化通知服务    
+Msg().main()   # 初始化通知服务   
 
 
-def taskGetUrl(functionId,body,cookie):
-    url=f'https://api.m.jd.com/?functionId={functionId}&body={json.dumps(body)}&_t={gettimestamp()}&appid=activities_platform'
+def taskPostUrl(functionId, body, cookie):
+    url=f'https://api.m.jd.com/client.action'
     headers={
+        'cookie': cookie,
         'accept': 'application/json, text/plain, */*',
-        'origin': 'https://prodev.m.jd.com',
-        'user-agent': ua(),
-        'sec-fetch-mode': 'cors',
-        'x-requested-with': 'com.jd.jdlite',
-        'sec-fetch-site': 'same-site',
-        'referer': 'https://prodev.m.jd.com/jdlite/active/31U4T6S4PbcK83HyLPioeCWrD63j/index.html?lng=107.64926&lat=30.282091&sid=f0f0c723bde6965c5f6e1979f36c146w&un_area=4_134_19915_0',
+        'content-type': 'application/x-www-form-urlencoded',
+        'x-requested-with': 'com.jingdong.app.mall',
+        'sec-fetch-site': 'same-site', 
+        'sec-fetch-mode': 'cors',       
+        'origin': 'https://h5.m.jd.com',
+        'referer': 'https://h5.m.jd.com/babelDiy/Zeus/m6Gntdu86ypN4ehW9oFsChdMtPG/index.html?babelChannel=ttt5&sid=8ebbce4a93eaa3d4962ee2e1bf58848w&un_area=4_134_19915_0',
+        "user-agent": ua(),
         'accept-encoding': 'gzip, deflate, br',
         'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-        'cookie' :cookie,
     }
-    for n in range(3):
-        try:
-            res=requests.get(url,headers=headers).json()
-            return res
-        except:
-            if n==2:
-                msg('API请求失败，请检查网路重试❗\n')  
-
-
-def taskGetUrl_2(cookie):
-    url='https://api.m.jd.com/?functionId=spring_reward_receive&body={%22inviter%22:%22%22,%22linkId%22:%22'+linkId+'%22}&_t=1638374691838&appid=activities_platform'
-    headers={
-        'accept': 'application/json, text/plain, */*',
-        'origin': 'https://prodev.m.jd.com',
-        'user-agent': ua(),
-        'sec-fetch-mode': 'cors',
-        'x-requested-with': 'com.jd.jdlite',
-        'sec-fetch-site': 'same-site',
-        'referer': 'https://prodev.m.jd.com/jdlite/active/31U4T6S4PbcK83HyLPioeCWrD63j/index.html?lng=107.649257&lat=30.282082&sid=e0296d84862c705f9d23dfb70165cfaw&un_area=4_134_19915_0',
-        'accept-encoding': 'gzip, deflate, br',
-        'accept-language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
-        'cookie' :cookie,
-    }
-    for n in range(3):
-        try:
-            res=requests.get(url,headers=headers).json()
-            return res
-        except:
-            if n==2:
-                msg('API请求失败，请检查网路重试❗\n')  
-
-# 抽奖
-def spring_reward_receive(cookie):
-    res=taskGetUrl_2(cookie)
-    if not res:
-        return
-    try:              
-        if res['code']==0:
-            # remainChance=res['data']['remainChance']        # 剩余抽奖次数
-            received=res['data']['received']
-            prizeDesc=received['prizeDesc']      # 奖品名称
-            amount=received['amount']       # 奖品数量
-            msg(f"抽到 {prizeDesc} {amount}")
-            return spring_reward_receive(cookie)
-        else:
-            msg(f"{res['errMsg']}\n")
-    except:
-        msg(f"错误\n{res}")
-
-# 微信现金id
-def spring_reward_list(cookie):
-    
-    body={"linkId":linkId,"pageNum":1,"pageSize":10}
-    res=taskGetUrl("spring_reward_list", body, cookie)
-    
-    if res['code']==0:
-        if res['success']:
-            items=res['data']['items']
-            for _items in items:
-                amount=_items['amount']         # 金额
-                prizeDesc=_items['prizeDesc']   # 金额备注
-                amountid=_items['id']           # 金额id
-                prizeType=_items['prizeType']   # 类型，4代表微信红包
-                poolBaseId=_items['poolBaseId']
-                prizeGroupId=_items['prizeGroupId']
-                prizeBaseId=_items['prizeBaseId']
-                if prizeType == 4:
-                    msg('尝试微信提现')
-                    time.sleep(1.2)
-                    wecat(cookie,amountid,poolBaseId,prizeGroupId,prizeBaseId)
-        else:
-            msg(f'获取数据失败\n{res}\n')
-    else:
-        msg(f'获取数据失败\n{res}\n')                     
-
-# 微信提现
-def wecat(cookie,amountid,poolBaseId,prizeGroupId,prizeBaseId):
-    url='https://api.m.jd.com'
-    headers={
-        'Cookie': cookie,
-        'Host': 'api.m.jd.com',
-        'Connection': 'keep-alive',
-        'origin': 'https://bnzf.jd.com',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        "User-Agent": ua(),
-        'Accept-Language': 'zh-cn',
-        'Accept-Encoding': 'gzip, deflate, br',
-    }
-    body={"businessSource":"happyDiggerH5Cash","base":{"id":amountid,"business":"happyDigger","poolBaseId":poolBaseId,"prizeGroupId":prizeGroupId,"prizeBaseId":prizeBaseId,"prizeType":4},"linkId":linkId}
-    data=f"functionId=apCashWithDraw&body={json.dumps(body)}&t={gettimestamp()}&appid=activities_platform&client=H5&clientVersion=1.0.0"
+    data=body
     for n in range(3):
         try:
             res=requests.post(url,headers=headers,data=data).json()
-            break
+            return res
         except:
             if n==2:
-                msg('API请求失败，请检查网路重试❗\n') 
-    try:
-        if res['code']==0:
-            if res['success']:
-                msg(res['data']['message']+'\n')
-    except:
-        msg(res)
-        msg('')
+                msg('API请求失败，请检查网路重试❗\n')  
 
+# type映射
+type_name_s={
+    3:'500京豆',
+    2:'5元无门槛红包(仅限京东使用)',
+    1:'2500水滴'
+}
+
+# 合成
+def collect_getAwardInfo(cookie):
+    body='functionId=collect_getAwardInfo&body={}&client=wh5&clientVersion=1.0.0'
+    res=taskPostUrl('', body, cookie)
+    if not res:
+        return
+    try:              
+        if res['code']=='0':
+            awardList=res['result']['awardList']
+            if len(awardList)==1:
+                awardType=awardList[0]['awardType']
+                msg(f'您已兑换过 {type_name_s[awardType]}\n')
+            else:
+                # msg('合成成功')
+                return True
+    except:
+        msg(f"错误\n{res}")
+
+# 兑换
+def collect_exchangeAward(cookie):
+    body='functionId=collect_exchangeAward&body={"type":'+get_env('awardType')+'}&client=wh5&clientVersion=1.0.0'
+    res=taskPostUrl('', body, cookie)
+    if not res:
+        return
+    try:              
+        if res['code']=='0':
+            awardType=res['result']['awardType']
+            msg(f'兑换成功 {type_name_s[awardType]} \n')
+        else:
+            msg(f'兑换失败，还没有收集到所有勋章哦~ \n')
+    except:
+        msg(f"错误\n{res}")    
 
 def main():
-    msg('🔔冬香节送福利，开始！\n')
+    msg('🔔东东农场-集勋章合成兑换奖励，开始！\n')
     msg(f'====================共{len(cookie_list)}京东个账号Cookie=========\n')
 
     for e,cookie in enumerate(cookie_list):
         msg(f'******开始【账号 {e+1}】 {get_pin(cookie)} *********\n')
-        msg('开始领红包')
-        spring_reward_receive(cookie)
-        spring_reward_list(cookie)
-
+        ffff=collect_getAwardInfo(cookie)
+        if ffff:
+            collect_exchangeAward(cookie)
     
     if run_send=='yes':
-        send('冬香节送福利')   # 通知服务
+        send('东东农场-集勋章合成兑换奖励')   # 通知服务
 
 
 if __name__ == '__main__':
