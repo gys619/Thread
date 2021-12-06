@@ -53,6 +53,7 @@ if ($.isNode()) {
             $.activityShopId = '707261'
             $.activityUrl = `https://lzdz-isv.isvjcloud.com/unify/common/activity/${$.authorNum}?activityId=${$.activityId}&shareUuid=${$.authorCode}&setType=21&shareuserid4minipg=${$.secretPin}shopid=undefined&lng=00.000000&lat=00.000000&sid=&un_area=`
             await unify();
+            await $.wait(5000)
         }
     }
     if (message !== '') {
@@ -87,16 +88,22 @@ async function unify() {
             await task('unify/cardTaskDraw/activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&pinImg=${encodeURIComponent($.pinImg)}&nick=${encodeURIComponent($.pinNick)}&shareUuid=${encodeURIComponent($.authorCode)}`)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=20&pin=${encodeURIComponent($.secretPin)}&shareUuid=6e495e84d96940618b6040717c95208e}`)
+            await $.wait(2000)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=21&pin=${encodeURIComponent($.secretPin)}&shareUuid=${encodeURIComponent($.authorCode)}`)
+            await $.wait(2000)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=2&pin=${encodeURIComponent($.secretPin)}&shareUuid=${encodeURIComponent($.authorCode)}`)
+            await $.wait(2000)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=1&pin=${encodeURIComponent($.secretPin)}&shareUuid=${encodeURIComponent($.authorCode)}`)
+            await $.wait(2000)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=3&pin=${encodeURIComponent($.secretPin)}&shareUuid=${encodeURIComponent($.authorCode)}`)
+            await $.wait(2000)
             $.log("任务1")
             await task('unify/cardTaskDraw/doTask', `activityId=${$.activityId}&actorUuid=${encodeURIComponent($.actorUuid)}&param=null&taskType=40&pin=${encodeURIComponent($.secretPin)}&shareUuid=${encodeURIComponent($.authorCode)}`)
+            await $.wait(2000)
             $.log("抽奖")
             await task('unify/cardTaskDraw/lottery', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`)
         }
