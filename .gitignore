@@ -86,7 +86,8 @@ jxgc_tuan.js
 jd_SplitRedPacket.js
 jd_try_xh.js
 jd_star_shop.js
-jd_dpqd.js
+#店铺签到
+#jd_dpqd.js
 jd_SendBean.js
 jx_cashback.js
 jd_jddj_*.js
