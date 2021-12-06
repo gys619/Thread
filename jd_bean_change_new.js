@@ -8,6 +8,14 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const JXUserAgent =  $.isNode() ? (process.env.JX_USER_AGENT ? process.env.JX_USER_AGENT : ``):``;
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+$.sentNum = 0;
+let args_xh = {
+    /*
+     * 每多少个账号发送一次通知，默认为2
+     * 可通过环境变量控制 JD_BEAN_CHANGE_SENDNUM
+     * */
+    sendNum: process.env.JD_BEAN_CHANGE_SENDNUM * 1 || 2,
+}
 let allMessage = '';
 let ReturnMessage = '';
 //IOS等用户直接用NobyDa的jd cookie
@@ -75,11 +83,23 @@ if ($.isNode()) {
             await getJxFactory();   //惊喜工厂
             await getDdFactoryInfo(); // 京东工厂
             await showMsg();
+            if ($.isNode() && allMessage != '') {
+                if ($.index % args_xh.sendNum === 0) {
+                    $.sentNum++;
+                    console.log(`正在进行第 ${$.sentNum} 次发送通知，发送数量：${args_xh.sendNum}`)
+                    await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+                    allMessage = "";
+                }
+            }
         }
     }
 
-    if ($.isNode() && allMessage) {
-        await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+    if ($.isNode() && allMessage != '') {
+        if (($.cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum) {
+            console.log(`正在进行最后一次发送通知，发送数量：${($.cookiesArr.length - ($.sentNum * args_xh.sendNum))}`)
+            await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+            allMessage = "";
+        }
     }
 })()
     .catch((e) => {
