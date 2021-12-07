@@ -63,7 +63,6 @@ const turnTableId = [
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
-  $.appId = '9a4de';
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -78,7 +77,6 @@ const turnTableId = [
       subTitle = '';
       lkt = new Date().getTime()
       await getUA()
-      await requestAlgo();
       await signRun()
       const UTC8 = new Date().getTime() + new Date().getTimezoneOffset()*60000 + 28800000;
       $.beanSignTime = new Date(UTC8).toLocaleString('zh', {hour12: false}).replace(' 24:',' 00:');
@@ -246,8 +244,7 @@ function getEid(arr) {
 
 function taskUrl(turnTableId) {
   let body = {"turnTableId":`${turnTableId}`,"invokeKey":$.invokeKey}
-  let h5st = geth5st(body) || 'undefined'
-  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelDetail&body=${escape(JSON.stringify(body))}&h5st=${h5st}`
+  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelDetail&body=${escape(JSON.stringify(body))}&h5st=undefined`
   return {
     url,
     headers: {
@@ -264,8 +261,7 @@ function taskUrl(turnTableId) {
 }
 function tasPostkUrl(turnTableId) {
   let body = {"turnTableId":`${turnTableId}`,"fp":fp,"lks":$.CryptoJS.MD5(""+$.invokeKey+lkt).toString(),"lkt":lkt,"invokeKey":$.invokeKey}
-  let h5st = geth5st(body) || 'undefined'
-  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelSign&body=${JSON.stringify(body)}&h5st=${h5st}&turnTableId=${turnTableId}&fp=${fp}&eid=${eid}&lks=${$.CryptoJS.MD5(""+$.invokeKey+lkt).toString()}&lkt=${lkt}&invokeKey=${$.invokeKey}`
+  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelSign&body=${JSON.stringify(body)}&h5st=undefined&turnTableId=${turnTableId}&fp=${fp}&eid=${eid}&lks=${$.CryptoJS.MD5(""+$.invokeKey+lkt).toString()}&lkt=${lkt}&invokeKey=${$.invokeKey}`
   return {
     url,
     headers: {
@@ -280,119 +276,6 @@ function tasPostkUrl(turnTableId) {
       "User-Agent": $.UA,
     }
   }
-}
-
-async function requestAlgo() {
-  $.fp = (getRandomIDPro({ size: 13 }) + Date.now()).slice(0, 16);
-  let opts = {
-    "url": `https://cactus.jd.com/request_algo?g_ty=ajax`,
-    headers: {
-      'Authority': 'cactus.jd.com',
-      'Pragma': 'no-cache',
-      'Cache-Control': 'no-cache',
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'Origin': 'https://prodev.m.jd.com',
-      'Sec-Fetch-Site': 'cross-site',
-      'User-Agent': $.UA,
-      'Sec-Fetch-Mode': 'cors',
-      'Sec-Fetch-Dest': 'empty',
-      'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
-    },
-    'body': JSON.stringify({
-      "version": "3.0",
-      "fp": $.fp,
-      "appId": $.appId,
-      "timestamp": Date.now(),
-      "platform": "web",
-      "expandParams": ""
-    })
-  }
-  return new Promise(async resolve => {
-    $.post(opts, (err, resp, data) => {
-      try {
-        const { ret, msg, data: { result } = {} } = JSON.parse(data);
-        $.token = result.tk;
-        $.genKey = new Function(`return ${result.algo}`)();
-      } catch (e) {
-        $.logErr(e, resp);
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-
-function getRandomIDPro() {
-  var e,
-    t,
-    a = void 0 === (n = (t = 0 < arguments.length && void 0 !== arguments[0] ? arguments[0] : {}).size) ? 10 : n,
-    n = void 0 === (n = t.dictType) ? 'number' : n,
-    i = '';
-  if ((t = t.customDict) && 'string' == typeof t) e = t;
-  else
-    switch (n) {
-      case 'alphabet':
-        e = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        break;
-      case 'max':
-        e = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
-        break;
-      case 'number':
-      default:
-        e = '0123456789';
-    }
-
-  for (; a--;) i += e[(Math.random() * e.length) | 0];
-  return i;
-}
-function geth5st(body){
-  let key = $.CryptoJS.SHA256(body).toString()
-  let time = Date.now()
-  const timestamp = format("yyyyMMddhhmmssSSS", time);
-  const hash1 = $.genKey($.token, $.fp.toString(), timestamp.toString(), $.appId.toString(), $.CryptoJS).toString($.CryptoJS.enc.Hex);
-  let t = [{"key":"appid","value":"u"},{"key":"body","value":key},{"key":"client","value":"apple"},{"key":"clientVersion","value":"8.3.6"},{"key":"functionId","value":"getCoupons"}]
-  let a = t.map(function(e) {
-  return e["key"] + ":" + e["value"]
-  })["join"]("&")
-  // s = $.CryptoJS.HmacSHA256(a,e).toString()
-  const hash2 = $.CryptoJS.HmacSHA256(a, hash1.toString()).toString($.CryptoJS.enc.Hex);
-  // h5st = `${ts};${fp};${ai};${tk};${s};3.0;${time}`
-  h5st = ["".concat(timestamp.toString()), "".concat($.fp.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2),"3.0","".concat(time)].join(";")
-  return encodeURIComponent(h5st)
-}
-function format(a, time) {
-  if (!a) a = 'yyyy-MM-dd';
-  var t;
-  if (!time) {
-    t = Date.now();
-  } else {
-    t = new Date(time);
-  }
-  var e,
-    n = new Date(t),
-    d = a,
-    l = {
-      'M+': n.getMonth() + 1,
-      'd+': n.getDate(),
-      'D+': n.getDate(),
-      'h+': n.getHours(),
-      'H+': n.getHours(),
-      'm+': n.getMinutes(),
-      's+': n.getSeconds(),
-      'w+': n.getDay(),
-      'q+': Math.floor((n.getMonth() + 3) / 3),
-      'S+': n.getMilliseconds(),
-    };
-  /(y+)/i.test(d) && (d = d.replace(RegExp.$1, ''.concat(n.getFullYear()).substr(4 - RegExp.$1.length)));
-  Object.keys(l).forEach(e => {
-    if (new RegExp('('.concat(e, ')')).test(d)) {
-      var t,
-        a = 'S+' === e ? '000' : '00';
-      d = d.replace(RegExp.$1, 1 == RegExp.$1.length ? l[e] : ''.concat(a).concat(l[e]).substr(''.concat(l[e]).length));
-    }
-  });
-  return d;
 }
 function jsonParse(str) {
   if (typeof str == "string") {
