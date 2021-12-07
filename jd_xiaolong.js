@@ -144,7 +144,7 @@ function takePostRequest(type) {
             let aa = ['f4ea5fc2df914528a60719bfef0e6248'];
             let code = getRandomArrayElements(aa,1)[0]
             url = 'https://lzdz-isv.isvjcloud.com/unify/cardTaskDraw/doTask';
-            body = `activityId=${activityID}&actorUuid=${actorUuid}&param=${$.param}&taskType=20&pin=${encodeURIComponent(pin)}&shareUuid=7de39c0bc2e448c69a4075912e673f4e`;
+            body = `activityId=${activityID}&actorUuid=${actorUuid}&param=${$.param}&taskType=20&pin=${encodeURIComponent(pin)}&shareUuid=8253735cff5a4512811b48e434c09b75`;
             break;
         case 'getTaskList':
             url = 'https://lzdz-isv.isvjcloud.com/unify/common/getTaskList';
