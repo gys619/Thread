@@ -25,8 +25,8 @@ let message = '', allMessage = '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let appIdArr = ['1E1NXxq0', '1FFVQyqw'];
-let appNameArr = ['众筹许愿池', '1111点心动'];
+let appIdArr = ['1E1NXxq0', '1FFVQyqw','1F11Vx64'];
+let appNameArr = ['众筹许愿池', '1111点心动','冰雪闪耀季'];
 let appId, appName;
 $.shareCode = [];
 if ($.isNode()) {
@@ -78,7 +78,12 @@ if ($.isNode()) {
     await $.wait(1000)
     res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/wish.json')
   }
-  $.shareCode = [...$.shareCode, ...(res || [])]
+  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/888888/updateTeam/main/shareCodes/wish.json')
+  if (!res2) {
+    await $.wait(1000)
+    res2 = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/wish.json')
+  }
+  $.shareCode = [...$.shareCode, ...(res || []), ...(res2 || [])]
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
