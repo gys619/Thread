@@ -71,7 +71,11 @@ $.shareCodes = [];
     await $.wait(1000)
     res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/split.json')
   }
-  $.newShareCodes = [...new Set([...$.shareCodes, ...(res || [])])]
+  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/555555/updateTeam/main/shareCodes/split.json')
+  if (!res2) {
+    res2 = await getAuthorShareCode('https://raw.fastgit.org/555555/updateTeam/main/shareCodes/split.json')
+  }
+  $.newShareCodes = [...new Set([...$.shareCodes, ...(res || []), ...(res2 || [])])]
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])

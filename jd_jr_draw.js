@@ -10,17 +10,8 @@ by:小手冰凉 tg:@chianPLA
 ============Node===============
 [task_local]
 #每周领取权益活动
-45 7,18 7 * * https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js, tag=每周领取权益活动, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
-
-================Loon==============
-[Script]
-cron "45 7,18 7 * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js,tag=每周领取权益活动
-
-===============Surge=================
-每周领取权益活动 = type=cron,cronexp="45 7,18 7 * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js
-
-============小火箭=========
-每周领取权益活动 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js, cronexpr="45 7,18 7 * *", timeout=3600, enable=true
+10 17 6 12 * jd jd_draw.js, tag=每周领取权益活动, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_jr_draw.png, enabled=true
+ 
 */
 
 const $ = new Env('京东金融每周领取权益活动');
@@ -129,7 +120,7 @@ function drawNewMemberRights1(rightsId) {
       try {
         if (err) {
           console.log(`${$.toStr(err)}`)
-          console.log(`queryNewRightsDetail API请求失败，请检查网路重试`)
+          console.log(`drawNewMemberRights1 API请求失败，请检查网路重试`)
         } else {
           data = JSON.parse(data);
           console.log(data);
