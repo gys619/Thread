@@ -3,19 +3,19 @@
 * 修改温某的脚本，由于温某不干活，只能自己动手修改了
 * 注意：脚本会加购，脚本会加购，脚本会加购
 * 若发现脚本里没有的粉丝互动活动。欢迎反馈给我
-cron  "4 0 * * *" jd_wxFans.js
+cron  "34 5,17 * * *" jd_wxFans.js
 * */
 const $ = new Env('粉丝互动');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [];
 const activityList = [
-    {"actid": "e49fe34c09e3447083992f4867588dd9", "endTime": 1633190398000},
-    {"actid": "5bb3f94bdbca4165ae2af0d85c8e66b2", "endTime": 1632931199000},
-    {"actid": "5dbc609b32bd4edf981a844079a467a9", "endTime": 1632931200000},
-    {"actid": "de0f54a0769a45e0a369f8c6de9a0192", "endTime": 1633622361000},
-    {"actid": "c475acc1f3214c038881abeff5cd6442", "endTime": 1633795200000}
-]
+     {"actid": "e49fe34c09e3447083992f4867588dd9", "endTime": 1633190398000},
+     {"actid": "5bb3f94bdbca4165ae2af0d85c8e66b2", "endTime": 1632931199000},
+     {"actid": "5dbc609b32bd4edf981a844079a467a9", "endTime": 1632931200000},
+     {"actid": "de0f54a0769a45e0a369f8c6de9a0192", "endTime": 1633622361000},
+     {"actid": "c475acc1f3214c038881abeff5cd6442", "endTime": 1633795200000}
+ ];
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -39,8 +39,8 @@ if ($.isNode()) {
         $.oldcookie = cookiesArr[i];
         $.isLogin = true;
         $.nickName = '';
-        $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
         await TotalBean();
+        $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
         console.log(`\n*****开始【京东账号${$.index}】${$.nickName || $.UserName}*****\n`);
         if (!$.isLogin) {
             $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -105,11 +105,11 @@ async function main() {
     let gitList = [];
     let gitTypeList = ['One','Two','Three'];
     for (let i = 0; i < gitTypeList.length; i++) {
-        let gitInfo = $.activityData.actInfo['giftLevel'+ gitTypeList[i]] || '';
-        if(gitInfo){
-            gitInfo = JSON.parse(gitInfo);
-            gitList.push(gitInfo[0].name);
-        }
+      let gitInfo = $.activityData.actInfo['giftLevel'+ gitTypeList[i]] || '';
+      if(gitInfo){
+        gitInfo = JSON.parse(gitInfo);
+        gitList.push(gitInfo[0].name);
+      }
     }
     console.log(`奖品列表：` + gitList.toString());
     if($.actorInfo.prizeOneStatus && $.actorInfo.prizeTwoStatus && $.actorInfo.prizeThreeStatus){
