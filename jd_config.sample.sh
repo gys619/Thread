@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build 20211204-002
+## Mod: Build 20211207-002-test
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -199,8 +199,8 @@ Recombin_CK_ARG1=""
 ###       ④在分段模式下：表示每个分段的账号数量；
 ### 赋值要求：①轮换模式下：只能填不大于参与轮换账号数量(即：总Cookie数量-固定Cookie数量)的正整数；
 ###           ②轮换模式下：若填写为其他内容或留空，则自动调整为按天计算单次轮换量(即：参与轮换账号数量÷当月总天数的商值，取上整数)；
-###           ③组队模式下：若填写为其他内容或留空，则全部账号切换回正常顺序参加活动。
-###           ④分段模式下：只能填大于固定账号数量且不大于 Cookie 总数的数值。若填写为其他内容或留空，则全部账号切换回正常顺序参加活动。
+###           ③组队模式下：若填写为其他内容或留空，则所有账号切换回正常顺序参加活动。
+###           ④分段模式下：只能填大于固定账号数量且不大于 Cookie 总数的数值。若填写为其他内容或留空，则所有账号切换回正常顺序参加活动。
 Recombin_CK_ARG2=""
 
 ## 重组Cookie前是否剔除失效Cookie
@@ -250,11 +250,18 @@ recombin_ck_envs3=""
 ### 释义：用于自定义多组 activityId 和 activityUrl；
 ### 赋值要求：详见示例：
 activity_env=(
-  48a4106275f24bb7871e396fcf39d767@https://lzkjdz-isv.isvjcloud.com # 第 1 组环境变量
-  activityId2@activityUrl2                                          # 第 2 组环境变量
-  activityId3@activityUrl3                                          # 第 3 组环境变量
-  activityId4@activityUrl4                                          # 第 4 组环境变量
+    48a4106275f24bb7871e396fcf39d767@https://lzkjdz-isv.isvjcloud.com # 第 1 组环境变量
+    a64e40b100b44e2d9213712fa3fdcd67@https://cjhydz-isv.isvjcloud.com # 第 2 组环境变量
+    activityId3@activityUrl3                                          # 第 3 组环境变量
+    activityId4@activityUrl4                                          # 第 4 组环境变量
 )
+
+## 12 基础 js 依赖文件的预先替换
+### 释义：目前仅支持将 /ql/config 路径下的 jdCookie、ql.js、sendNotify.js、JD_DailyBonus.js 四个文件，在 task 命令启动时会自动替换到当前运行的脚本所在的文件夹。
+### 赋值要求：例如：jdCookie|ql|JD_DailyBonus&sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2
+###                jdCookie|ql|JD_DailyBonus                             三个脚本均不屏蔽仓库文件夹复制替换
+###                sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2    不复制到 JDHelloWorld 和 ccwav 的仓库文件夹。文件夹名称必须精确完整写出，不支持模糊匹配
+js_deps_replace_envs="jdCookie|ql|JD_DailyBonus&sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2"
 
 ## 其他需要的变量，脚本中需要的变量使用 export 变量名= 声明即可
 
@@ -428,9 +435,9 @@ export gua_carnivalcity_draw="true"
 export guaopenwait_All="true"
 export guaopencard_draw45="3"
 for ((s = 0; s <= 100; s++)); do
-  export guaopencard$s="3"
-  export guaopencard_draw$s="3"
-  export guaopencard_addSku$s="true"
+    export guaopencard$s="3"
+    export guaopencard_draw$s="3"
+    export guaopencard_addSku$s="true"
 done
 ## 6、城城领现金自动抽奖
 export jdJxdExchange="true"
