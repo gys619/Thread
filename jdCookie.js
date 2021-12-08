@@ -41,11 +41,11 @@ for (let i = 0; i < CookieJDs.length; i++) {
 }
 
 // 以下为注入互助码环境变量（仅nodejs内起效）的代码
-function SetShareCodesEnv(nameConfig = "", envName = "") {
+function SetShareCodesEnv(nameChinese = "", nameConfig = "", envName = "") {
     let rawCodeConfig = {}
 
     // 读取互助码
-    shareCodeLogPath = `${process.env.QL_DIR}/log/.ShareCode/${nameConfig}.log`
+    let shareCodeLogPath = `${process.env.QL_DIR}/log/.ShareCode/${nameConfig}.log`
     let fs = require('fs')
     if (fs.existsSync(shareCodeLogPath)) {
         // 因为faker2目前没有自带ini，改用已有的dotenv来解析
@@ -59,7 +59,7 @@ function SetShareCodesEnv(nameConfig = "", envName = "") {
     }
 
     // 解析每个用户的互助码
-    codes = {}
+    let codes = {}
     Object.keys(rawCodeConfig).forEach(function (key) {
         if (key.startsWith(`My${nameConfig}`)) {
             codes[key] = rawCodeConfig[key]
@@ -70,7 +70,7 @@ function SetShareCodesEnv(nameConfig = "", envName = "") {
     let helpOtherCodes = {}
     Object.keys(rawCodeConfig).forEach(function (key) {
         if (key.startsWith(`ForOther${nameConfig}`)) {
-            helpCode = rawCodeConfig[key]
+            let helpCode = rawCodeConfig[key]
             for (const [codeEnv, codeVal] of Object.entries(codes)) {
                 helpCode = helpCode.replace("${" + codeEnv + "}", codeVal)
             }
@@ -81,21 +81,61 @@ function SetShareCodesEnv(nameConfig = "", envName = "") {
 
     // 按顺序用&拼凑到一起，并放入环境变量，供目标脚本使用
     let shareCodes = []
-    let totalCodeCount = Object.keys(helpOtherCodes).length
-    for (let idx = 1; idx <= totalCodeCount; idx++) {
+    let leftIndex = 1, rightIndex = Object.keys(helpOtherCodes).length
+
+    // 判断是否是ptask并行触发，若是，则修改实际需要设置的互助码范围
+    let ptaskLeft = process.env.PTASK_LEFT
+    let ptaskRight = process.env.PTASK_RIGHT
+    if (ptaskLeft && ptaskRight) {
+        leftIndex = Number(ptaskLeft)
+        rightIndex = Number(ptaskRight)
+    }
+
+    for (let idx = leftIndex; idx <= rightIndex; idx++) {
         shareCodes.push(helpOtherCodes[`ForOther${nameConfig}${idx}`])
     }
     let shareCodesStr = shareCodes.join('&')
     process.env[envName] = shareCodesStr
 
-    console.info(`【风之凌殇】 友情提示：为避免ck超过45以上时，互助码环境变量过大而导致调用一些系统命令（如date/cat）时报 Argument list too long，改为在nodejs中设置 ${nameConfig} 的 互助码环境变量 ${envName}，共计 ${totalCodeCount} 组互助码，总大小为 ${shareCodesStr.length}`)
+    let totalCodeCount = rightIndex - leftIndex + 1
+    console.info(`${nameChinese}的 互助码环境变量 ${envName}，共计 ${totalCodeCount} 组互助码，总大小为 ${shareCodesStr.length} 字节`)
+}
+
+// 判断当前活动脚本是否在互助脚本列表中
+function IsShareJsFile() {
+    // 尝试获取在task_before.sh中设置的 互助活动的脚本文件名的关键部分 列表
+    let rawJsNameList = process.env.ShareCodeJSNameList
+    if (!rawJsNameList) {
+        return false
+    }
+
+    // 转换为list
+    let jsNameList = process.env.ShareCodeJSNameList.split(" ")
+
+    // 判断当前
+    let currentActivityScriptFileName = GetCurrentActivityScriptFileName()
+
+    let isShareJsFile = false
+    for (let idx = 0; idx < jsNameList.length; idx++) {
+        if (currentActivityScriptFileName.includes(jsNameList[idx])) {
+            isShareJsFile = true
+            break
+        }
+    }
+
+    return isShareJsFile
+}
+
+// 获取当前活动脚本的文件名
+function GetCurrentActivityScriptFileName() {
+    const path = require('path')
+    return path.basename(process.argv[1])
 }
 
 // 若在task_before.sh 中设置了要设置互助码环境变量的活动名称和环境变量名称信息，则在nodejs中处理，供活动使用
+let nameChinese = process.env.ShareCodeConfigChineseName
 let nameConfig = process.env.ShareCodeConfigName
 let envName = process.env.ShareCodeEnvName
-if (nameConfig && envName) {
-    SetShareCodesEnv(nameConfig, envName)
-} else {
-    console.debug(`【风之凌殇】 友情提示：当前未设置 ShareCodeConfigName 或 ShareCodeEnvName 环境变量，将不会尝试在nodejs中生成互助码的环境变量。ps: 两个值目前分别为 ${nameConfig} ${envName}`)
-}
+if (nameChinese && nameConfig && envName) {
+    SetShareCodesEnv(nameChinese, nameConfig, envName)
+} 
