@@ -9,7 +9,7 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东生鲜每日抽奖
-10 7 * * * jd jd_sxLottery.js, tag=京东生鲜每日抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_sxLottery.png, enabled=true
+10 7 17-18 8 * jd jd_sxLottery.js, tag=京东生鲜每日抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_sxLottery.png, enabled=true
 
  */
 const $ = new Env('京东生鲜每日抽奖');
@@ -17,7 +17,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-let configCode = "8041d3890db747c89ebf9442c78ec165";
+let configCode = "f0a3329c402641b78a1f9e77d4eb30c7";
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -57,12 +57,12 @@ if ($.isNode()) {
         }
     }
 })()
-    .catch((e) => {
-        $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-        $.done();
-    })
+.catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+})
+.finally(() => {
+    $.done();
+})
 
 function showMsg() {
     return new Promise(resolve => {
@@ -73,6 +73,7 @@ function showMsg() {
 
 
 async function jdmodule() {
+    await getCode(); //获取任务
     let runTime = 0;
     do {
         await getinfo(); //获取任务
@@ -113,9 +114,41 @@ async function run() {
 
 
 // 获取任务
+function getCode() {
+    return new Promise(resolve => {
+            $.get({
+            url: `https://prodev.m.jd.com/mall/active/2Rkjx8aT5eKaQnUzn8dwcR6jNanj/index.html`,
+            headers:{
+                "Connection": "keep-alive",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                'User-Agent': 'JD4iPhone/167874 (iPhone; iOS 14.2; Scale/3.00)',
+                'Cookie': $.cookie,
+                "Host": "prodev.m.jd.com",
+                "Referer": "",
+                "Accept-Language": "zh-Hans-CN;q=1, en-CN;q=0.9",
+                "Accept": "*/*"
+            },
+        }, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} getinfo请求失败，请检查网路重试`)
+                } else {
+                    configCode = resp.body.match(/"activityCode":"(.*?)"/)[1]
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve();
+            }
+        })
+    })
+}
+// 获取任务
 function getinfo() {
     return new Promise(resolve => {
-        $.get({
+            $.get({
             url: `https://jdjoy.jd.com/module/task/draw/get?configCode=${configCode}&unionCardCode=`,
             headers: {
                 'Host': 'jdjoy.jd.com',
@@ -175,7 +208,6 @@ function join() {
                 } else {
                     data = JSON.parse(data);
                     if (data.success == true) {
-                        // console.log(data);
                         console.log(`抽奖结果:${data.data.rewardName}`);
                     }
                     else {
