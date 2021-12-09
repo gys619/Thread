@@ -32,7 +32,7 @@ $.notifyTime = $.getdata("cfd_notifyTime");
 $.result = [];
 $.shareCodes = [];
 let cookiesArr = [], cookie = '', token = '', UA, UAInfo = {};
-
+$.appId = 10032;
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -42,7 +42,6 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-$.appId = 10028;
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -65,16 +64,16 @@ $.appId = 10028;
         $.isLogin = true;
         console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
         $.info = {}
-        if (UAInfo[$.UserName]) {
-          UA = UAInfo[$.UserName]
+        if (count === 1) {
+          UA = `jdpingou;iPhone;4.13.0;14.4.2;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100609;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
+          UAInfo[$.UserName] = UA
         } else {
-          UA = `jdpingou;iPhone;4.13.0;14.4.2;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100609;ADID/00000000-0000-0000-0000-000000000000;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
+          UA = UAInfo[$.UserName]
         }
-        token = await getJxToken()
+        // token = await getJxToken()
         await cfd();
         let time = process.env.CFD_LOOP_SLEEPTIME ? (process.env.CFD_LOOP_SLEEPTIME * 1 > 1000 ? process.env.CFD_LOOP_SLEEPTIME : process.env.CFD_LOOP_SLEEPTIME * 1000) : 5000
         await $.wait(time)
-        UAInfo[$.UserName] = UA
       }
     }
   } while (count < 25)
@@ -84,18 +83,6 @@ $.appId = 10028;
 
 async function cfd() {
   try {
-    const beginInfo = await getUserInfo();
-    if (beginInfo.LeadInfo.dwLeadType === 2) {
-      console.log(`还未开通活动，请先开通\n`)
-      return
-    }
-    if ($.info.buildInfo.dwTodaySpeedPeople !== 500) {
-      await $.wait(3000)
-      await speedUp()
-    } else {
-      console.log(`热气球接客已达上限，跳过执行\n`)
-    }
-    await $.wait(3000)
     await queryshell()
   } catch (e) {
     $.logErr(e)
@@ -111,7 +98,7 @@ async function querystorageroom() {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} querystorageroom API请求失败，请检查网路重试`)
         } else {
-          data = JSON.parse(data);
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
           console.log(`\n卖贝壳`)
           let bags = []
           for (let key of Object.keys(data.Data.Office)) {
@@ -150,7 +137,7 @@ function sellgoods(body) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} sellgoods API请求失败，请检查网路重试`)
         } else {
-          data = JSON.parse(data);
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
           if (data.iRet === 0) {
             console.log(`贝壳出售成功：获得${data.Data.ddwCoin}金币 ${data.Data.ddwMoney}财富\n`)
           } else {
@@ -175,13 +162,15 @@ async function queryshell() {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} queryshell API请求失败，请检查网路重试`)
         } else {
-          data = JSON.parse(data);
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
+          $.canpick = true;
           for (let key of Object.keys(data.Data.NormShell)) {
             let vo = data.Data.NormShell[key]
-            for (let j = 0; j < vo.dwNum; j++) {
-              await $.wait(3000)
+            for (let j = 0; j < vo.dwNum && $.canpick; j++) {
               await pickshell(`dwType=${vo.dwType}`)
+              await $.wait(3000)
             }
+            if (!$.canpick) break
           }
           console.log('')
         }
@@ -201,7 +190,7 @@ async function pickshell(body) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} pickshell API请求失败，请检查网路重试`)
         } else {
-          data = JSON.parse(data);
+          data = JSON.parse(data.replace(/\n/g, "").match(new RegExp(/jsonpCBK.?\((.*);*\)/))[1]);
           let dwName
           switch (data.Data.strFirstDesc) {
             case '亲爱的岛主~♥七夕快乐鸭♥':
@@ -235,6 +224,7 @@ async function pickshell(body) {
             await $.wait(3000)
             await querystorageroom()
           } else {
+            $.canpick = false;
             console.log(`捡贝壳失败：${data.sErrMsg}`)
           }
         }
@@ -247,85 +237,26 @@ async function pickshell(body) {
   })
 }
 
-// 热气球接客
-async function speedUp() {
-  let strBuildIndexArr = ['food', 'sea', 'shop', 'fun']
-  let strBuildIndex = strBuildIndexArr[Math.floor((Math.random() * strBuildIndexArr.length))]
-  return new Promise(async (resolve) => {
-    $.get(taskUrl(`user/SpeedUp`, `strBuildIndex=${strBuildIndex}`), async (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} SpeedUp API请求失败，请检查网路重试`)
-        } else {
-          data = JSON.parse(data);
-          if (data.iRet === 0) {
-            console.log(`热气球接客成功：已接待 ${data.dwTodaySpeedPeople} 人\n`)
-          } else if (data.iRet === 2027 || data.sErrMsg === '今天接待人数已达上限啦~') {
-            console.log(`热气球接客失败：${data.sErrMsg}\n`)
-          } else {
-            console.log(`热气球接客失败：${data.sErrMsg}\n`)
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp);
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-
-// 获取用户信息
-function getUserInfo() {
-  return new Promise(async (resolve) => {
-    $.get(taskUrl(`user/QueryUserInfo`, `strPgUUNum=${token['farm_jstoken']}&strPgtimestamp=${token['timestamp']}&strPhoneID=${token['phoneid']}`), (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} QueryUserInfo API请求失败，请检查网路重试`)
-        } else {
-          data = JSON.parse(data);
-          const {
-            buildInfo = {},
-            LeadInfo = {}
-          } = data;
-          $.info = {
-            ...$.info,
-            buildInfo,
-            LeadInfo
-          };
-          resolve({
-            buildInfo,
-            LeadInfo
-          });
-        }
-      } catch (e) {
-        $.logErr(e, resp);
-      } finally {
-        resolve();
-      }
-    });
-  });
-}
-
-function taskUrl(function_path, body) {
-  let url = `${JD_API_HOST}jxbfd/${function_path}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=7&_cfd_t=${Date.now()}&ptag=138631.26.55&${body}&_stk=_cfd_t%2CbizCode%2CddwTaskId%2CdwEnv%2Cptag%2Csource%2CstrShareId%2CstrZone&_ste=1`;
-  url += `&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&g_ty=ls`;
+function taskUrl(function_path, body = '', dwEnv = 7) {
+  let url = `${JD_API_HOST}jxbfd/${function_path}?strZone=jxbfd&bizCode=jxbfd&source=jxbfd&dwEnv=${dwEnv}&_cfd_t=${Date.now()}&ptag=7155.9.47${body ? `&${body}` : ''}`;
+  url += `&_stk=${getStk(url)}`;
+  url += `&_ste=1&h5st=${decrypt(Date.now(), '', '', url)}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
   return {
     url,
     headers: {
-      Cookie: cookie,
-      Accept: "*/*",
-      Connection: "keep-alive",
-      Referer:"https://st.jingxi.com/fortune_island/index.html?ptag=138631.26.55",
+      "Host": "m.jingxi.com",
+      "Accept": "*/*",
       "Accept-Encoding": "gzip, deflate, br",
-      Host: "m.jingxi.com",
       "User-Agent": UA,
-      "Accept-Language": "zh-cn",
-    },
-    timeout: 10000
+      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+      "Referer": "https://st.jingxi.com/",
+      "Cookie": cookie
+    }
   };
+}
+function getStk(url) {
+  let arr = url.split('&').map(x => x.replace(/.*\?/, "").replace(/=.*/, ""))
+  return encodeURIComponent(arr.filter(x => x).sort().join(','))
 }
 function randomString(e) {
   e = e || 32;
