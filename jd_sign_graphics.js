@@ -109,7 +109,7 @@ async function signRun() {
     }else{
       errorNum++;
     }
-    await $.wait(1000)
+    await $.wait(parseInt(Math.random() * 5000 + 10000, 10))
   }
 }
 
