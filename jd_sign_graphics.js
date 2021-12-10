@@ -178,26 +178,25 @@ function Sign(i) {
           console.log(`\n${turnTableId[i].name} 签到: API查询请求失败 ‼️‼️`)
           throw new Error(err);
         } else {
-          if (data) {
-            // console.log(data)
-            data = JSON.parse(data);
-            if (data.success && data.data) {
-              data = data.data
-              if (Number(data.jdBeanQuantity) > 0) beanNum += Number(data.jdBeanQuantity)
+          let res = $.toObj(data,data)
+          if (typeof res === 'object') {
+            if (res.success && res.data) {
+              let resData = res.data
+              if (Number(resData.jdBeanQuantity) > 0) beanNum += Number(resData.jdBeanQuantity)
               signFlag = true;
-              console.log(`${turnTableId[i].name} 签到成功:获得 ${Number(data.jdBeanQuantity)}京豆`)
+              console.log(`${turnTableId[i].name} 签到成功:获得 ${Number(resData.jdBeanQuantity)}京豆`)
             } else {
-              if (data.errorMessage) {
-                if(data.errorMessage.indexOf('已签到') > -1 || data.errorMessage.indexOf('今天已经签到') > -1){
+              if (res.errorMessage) {
+                if(res.errorMessage.indexOf('已签到') > -1 || res.errorMessage.indexOf('今天已经签到') > -1){
                   signFlag = true;
                 }
-                console.log(`${turnTableId[i].name} ${data.errorMessage}`)
+                console.log(`${turnTableId[i].name} ${res.errorMessage}`)
               } else {
-                console.log(`${turnTableId[i].name} ${JSON.stringify(data)}`)
+                console.log(`${turnTableId[i].name} ${data}`)
               }
             }
           } else {
-            console.log(`京豆api返回数据为空，请检查自身原因`)
+            console.log(`${turnTableId[i].name} ${data}`)
           }
         }
       } catch (e) {
