@@ -169,7 +169,8 @@ jd_dyj_help_wx.js
 # 店铺签到shy
 jd_shy_dpqd.js
 jd_shy_dpqd?.js
-
+# 通用脚本
+*common_enc.js
 jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js
