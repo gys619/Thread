@@ -6,7 +6,7 @@
 const $ = new Env("京东领红包");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
 const notify = $.isNode() ? require('./sendNotify') : '';
-let cookiesArr = [];
+let cookiesArr = [], cookie;
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item]);
@@ -16,8 +16,6 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata("CookieJD"), $.getdata("CookieJD2"), ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
-let codeLsit = ['nd5q7cl','nwhtDMI','nKmhVTA']
-$.code = codeLsit[random(0, codeLsit.length)];
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/bean/signIndex.action", { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -55,6 +53,8 @@ async function main() {
   $.UA = `jdapp;iPhone;10.2.0;13.1.2;${randomString(40)};M/5.0;network/wifi;ADID/;model/iPhone8,1;addressid/2308460622;appBuild/167853;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_1_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1;`;
   $.max = false;
   $.hotFlag = false;
+let codeLsit = ['nd5q7cl','nwhtDMI','nKmhVTA']
+$.code = codeLsit[random(0, codeLsit.length)];
   for (let i = 0; i < 1 && !$.max; i++) {
     $.newCookie = "";
     $.url1 = "";
