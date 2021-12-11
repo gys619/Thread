@@ -78,8 +78,8 @@ if ($.isNode()) {
     }
   } while (count < 25)
 })()
-  .catch((e) => $.logErr(e))
-  .finally(() => $.done());
+    .catch((e) => $.logErr(e))
+    .finally(() => $.done());
 
 async function cfd() {
   try {
