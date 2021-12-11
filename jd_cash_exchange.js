@@ -1,22 +1,22 @@
 /*
 *************************
 [task_local]
-0 0 * * * https://raw.githubusercontent.com/ddgksf2013/Cuttlefish/master/Jd/jd_cash_exchange.js, tag=领现金兑换红包
+0 0 * * * jd_cash_exchange.js, tag=领现金兑换红包
 *************************
 【Loon】 :
 *************************
 [Script]
-cron "0 0 * * *" script-path=https://raw.githubusercontent.com/ddgksf2013/Cuttlefish/master/Jd/jd_cash_exchange.js,tag=领现金兑换红包
+cron "0 0 * * *" script-path=jd_cash_exchange.js,tag=领现金兑换红包
 *************************
 【Surge】 :
 *************************
 [Script]
-领现金兑换红包 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=120,script-path=https://raw.githubusercontent.com/ddgksf2013/Cuttlefish/master/Jd/jd_cash_exchange.js
+领现金兑换红包 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=120,script-path=jd_cash_exchange.js
 *************************
 【小火箭】 :
 *************************
 [Script]
-领现金兑换红包 = type=cron,script-path=https://raw.githubusercontent.com/ddgksf2013/Cuttlefish/master/Jd/jd_cash_exchange.js, cronexpr="0 0 * * *", timeout=500, enable=true
+领现金兑换红包 = type=cron,script-path=jd_cash_exchange.js, cronexpr="0 0 * * *", timeout=500, enable=true
 *************************
 [mitm]
 hostname = api.m.jd.com

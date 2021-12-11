@@ -5,22 +5,22 @@
 ============Quantumultx===============
 [task_local]
 #5魔方兑换
-0 0 * * * https://raw.githubusercontent.com/yuannian1112/jd_scripts/main/jd_mofang_exchange.js, tag=5魔方兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+0 7 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_exchange.js, tag=5魔方兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 0 * * *" script-path=https://raw.githubusercontent.com/yuannian1112/jd_scripts/main/jd_mofang_exchange.js,tag=5魔方兑换
+cron "0 7 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_exchange.js,tag=5魔方兑换
 
 ===============Surge=================
-5魔方兑换 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/yuannian1112/jd_scripts/main/jd_mofang_exchange.js
+5魔方兑换 = type=cron,cronexp="0 7 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_exchange.js
 
 ============小火箭=========
-5魔方兑换 = type=cron,script-path=https://raw.githubusercontent.com/yuannian1112/jd_scripts/main/jd_mofang_exchange.js, cronexpr="0 0 * * *", timeout=3600, enable=true
+5魔方兑换 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_exchange.js, cronexpr="0 7 * * *", timeout=3600, enable=true
  */
 const $ = new Env('5魔方兑换');
 const printDetail = false;
 //Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let cookiesArr = [], cookie = '';
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
