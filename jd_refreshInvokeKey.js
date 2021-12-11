@@ -46,13 +46,13 @@ function getJS(html) {
 
 function refreshKey(jsStr) {
     if (!jsStr.length) {return}
-    let indexUrl = `https:${match(/src="([^\"]+)"/, jsStr)}`
+    let indexUrl = `https:${match(/type=\"text\/javascript\" src="([^\"]+)"/, jsStr)}`
     return new Promise(resolve => {
         $.get(getOptions(indexUrl), (err, resp, data) => {
             if (err) {
                 $.logErr(err)
             }else {
-                let invokeKey = match(/\w+\s*=\s*\w+\(\d+\)\s*,\s*\w+\s*=\s*"(\w{16})"/, data)
+                let invokeKey = match(/invokeKey: '([^\']+)'/, data)
                 if (invokeKey) {
                     let config = {"invokeKey":invokeKey}
                     try {

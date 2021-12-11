@@ -2,7 +2,6 @@
 *
 京东摇钱树助力
 活动入口：京东APP我的-更多工具-摇钱树，[活动链接](https://uua.jr.jd.com/uc-fe-wxgrowing/moneytree/index/?channel=yxhd)
-脚本更新地址：https://github.com/888888/JD_tencent_scf
 助力逻辑：优先账号内互助，再给我助力
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
