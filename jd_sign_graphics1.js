@@ -29,9 +29,18 @@ let successNum = 0
 let errorNum = 0
 let JD_API_HOST = 'https://sendbeans.jd.com'
 const turnTableId = [
- //  { "name": "美妆-1", "id": 293, "shopid": 30284, "url": "https://sendbeans.jd.com/jump/index/" },
+   { "name": "美妆-1", "id": 293, "shopid": 30284, "url": "https://sendbeans.jd.com/jump/index/" },
  // { "name": "美妆-2", "id": 1162, "shopid": 56178, "url": "https://sendbeans.jd.com/jump/index/" },
    { "name": "美妆-3", "id": 1082, "shopid": 1000004123, "url": "https://sendbeans.jd.com/jump/index/" },
+   { "name": "PLUS会员定制", "id": 1265, "url": "https://prodev.m.jd.com/mall/active/3bhgbFe5HZcFCjEZf2jzp3umx4ZR/index.html" },
+  { "name": "京东商城-内衣", "id": 1071, "url": "https://prodev.m.jd.com/mall/active/4PgpL1xqPSW1sVXCJ3xopDbB1f69/index.html" },
+  { "name": "京东商城-健康", "id": 527, "url": "https://prodev.m.jd.com/mall/active/w2oeK5yLdHqHvwef7SMMy4PL8LF/index.html" },
+  { "name": "京东商城-清洁", "id": 446, "url": "https://prodev.m.jd.com/mall/active/2Tjm6ay1ZbZ3v7UbriTj6kHy9dn6/index.html" },
+  { "name": "京东商城-个护", "id": 336, "url": "https://prodev.m.jd.com/mall/active/2tZssTgnQsiUqhmg5ooLSHY9XSeN/index.html" },
+  { "name": "京东商城-童装", "id": 511, "url": "https://prodev.m.jd.com/mall/active/3Af6mZNcf5m795T8dtDVfDwWVNhJ/index.html" },
+  { "name": "京东商城-母婴", "id": 458, "url": "https://prodev.m.jd.com/mall/active/3BbAVGQPDd6vTyHYjmAutXrKAos6/index.html" },
+  { "name": "京东商城-数码", "id": 347, "url": "https://prodev.m.jd.com/mall/active/4SWjnZSCTHPYjE5T7j35rxxuMTb6/index.html" },
+  { "name": "京东超市", "id": 1204, "url": "https://pro.m.jd.com/mall/active/QPwDgLSops2bcsYqQ57hENGrjgj/index.html" },
 ]
 
 !(async () => {

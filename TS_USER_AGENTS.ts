@@ -4,9 +4,9 @@ import * as dotenv from "dotenv";
 import {Md5} from "ts-md5";
 
 const CryptoJS = require('crypto-js')
+const util = require('util')
 dotenv.config()
-
-let fingerprint: string | number, token: string = '', enCryptMethodJD: any;
+let appId: number = 10028, fingerprint: string | number, token: string = '', enCryptMethodJD: any;
 
 const USER_AGENTS: Array<string> = [
   "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
@@ -46,6 +46,8 @@ const USER_AGENTS: Array<string> = [
   "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; MI 8 Build/QKQ1.190828.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36",
   "jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
 ]
+
+const jd_joy_invokeKey = "value1"
 
 function TotalBean(cookie: string) {
   return {
@@ -112,14 +114,10 @@ function requireConfig() {
   })
 }
 
-function wait(timeout: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, timeout)
-  })
-}
+const wait = util.promisify(setTimeout)
 
-async function requestAlgo(appId = 10032) {
-  fingerprint = generateFp();
+async function requestAlgo() {
+  fingerprint = await generateFp();
   return new Promise<void>(async resolve => {
     let {data} = await axios.post('https://cactus.jd.com/request_algo?g_ty=ajax', {
       "version": "1.0",
@@ -173,7 +171,7 @@ function getQueryString(url: string, name: string) {
   return '';
 }
 
-function decrypt(stk: string, url: string, appId: number) {
+function decrypt(stk: string, url: string) {
   const timestamp = (format(new Date(), 'yyyyMMddhhmmssSSS'))
   let hash1: string;
   if (fingerprint && token && enCryptMethodJD) {
@@ -193,11 +191,11 @@ function decrypt(stk: string, url: string, appId: number) {
   return encodeURIComponent(["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat(appId.toString()), "".concat(token), "".concat(hash2)].join(";"))
 }
 
-function h5st(url: string, stk: string, params: object, appId: number = 10032) {
+function h5st(url: string, stk: string, params: object) {
   for (const [key, val] of Object.entries(params)) {
     url += `&${key}=${val}`
   }
-  url += '&h5st=' + decrypt(stk, url, appId)
+  url += '&h5st=' + decrypt(stk, url)
   return url
 }
 
@@ -230,6 +228,7 @@ export {
   requireConfig,
   wait,
   getRandomNumberByRange,
+  jd_joy_invokeKey,
   requestAlgo,
   decrypt,
   getJxToken,

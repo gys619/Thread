@@ -9,7 +9,17 @@ date:2021-12-1 12:59:00
 ============Quantumultx===============
 [task_local]
 # 京东赚赚
-10 0 * * * jd_jdzz.js, tag=京东赚赚, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
+10 1,19 * * * jd_jdzz.js, tag=京东赚赚, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
+
+================Loon==============
+[Script]
+cron "10 1,19 * * *" script-path=jd_jdzz.js,tag=京东赚赚
+
+===============Surge=================
+京东赚赚 = type=cron,cronexp="10 1,19 * * *",wake-system=1,timeout=3600,script-path=jd_jdzz.js
+
+============小火箭=========
+京东赚赚 = type=cron,script-path=jd_jdzz.js, cronexpr="10 1,19 * * *", timeout=3600, enable=true
  */
 const $ = new Env('京东赚赚修复版');
 const notify = $.isNode() ? require('./sendNotify') : '';

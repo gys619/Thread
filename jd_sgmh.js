@@ -4,20 +4,24 @@
 修改自 @yangtingxiao 抽奖机脚本
 活动入口：京东APP首页-闪购-闪购盲盒
 网页地址：https://h5.m.jd.com/babelDiy/Zeus/3vzA7uGuWL2QeJ5UeecbbAVKXftQ/index.html
-更新地址：https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_sgmh.js
+更新地址：jd_sgmh.js
 已支持IOS双京东账号, Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #闪购盲盒
-20 8 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_sgmh.js, tag=闪购盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+20 8 * * * jd_sgmh.js, tag=闪购盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
 ================Loon==============
 [Script]
-cron "20 8 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_sgmh.js, tag=闪购盲盒
+cron "20 8 * * *" script-path=jd_sgmh.js, tag=闪购盲盒
+
 ===============Surge=================
-闪购盲盒 = type=cron,cronexp="20 8 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_sgmh.js
+闪购盲盒 = type=cron,cronexp="20 8 * * *",wake-system=1,timeout=3600,script-path=jd_sgmh.js
+
 ============小火箭=========
-闪购盲盒 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_sgmh.js, cronexpr="20 8 * * *", timeout=3600, enable=true
+闪购盲盒 = type=cron,script-path=jd_sgmh.js, cronexpr="20 8 * * *", timeout=3600, enable=true
+
  */
 const $ = new Env('闪购盲盒');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -25,12 +29,13 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let appId = '1EFRXxg' , homeDataFunPrefix = 'interact_template', collectScoreFunPrefix = 'harmony', message = ''
 let lotteryResultFunPrefix = homeDataFunPrefix, browseTime = 6
 const inviteCodes = [
-  '',
-  '',
+  'T014__p2RBYe_FXUIwCjVQmoaT5kRrbA@T0225KkcRRsZpwHWdEmilvUIIACjVQmoaT5kRrbA',
+  'T014__p2RBYe_FXUIwCjVQmoaT5kRrbA@T0225KkcRRsZpwHWdEmilvUIIACjVQmoaT5kRrbA',
 ];
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
+let myInviteCode;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
 if ($.isNode()) {
@@ -41,6 +46,7 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
+
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 !(async () => {
   if (!cookiesArr[0]) {
@@ -69,7 +75,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
         continue
       }
       await interact_template_getHomeData()
-      await showMsg();
+      //await showMsg();
     }
   }
 })()
@@ -93,11 +99,14 @@ function interact_template_getHomeData(timeout = 0) {
         },
         body : `functionId=${homeDataFunPrefix}_getHomeData&body={"appId":"${appId}","taskToken":""}&client=wh5&clientVersion=1.0.0`
       }
+
       $.post(url, async (err, resp, data) => {
         try {
           data = JSON.parse(data);
           if (data.data.bizCode !== 0) {
             console.log(data.data.bizMsg);
+            // merge.jdBeans.fail++;
+            // merge.jdBeans.notify = `${data.data.bizMsg}`;
             return
           }
           scorePerLottery = data.data.result.userInfo.scorePerLottery||data.data.result.userInfo.lotteryMinusScore
@@ -108,10 +117,12 @@ function interact_template_getHomeData(timeout = 0) {
             //签到
             if (data.data.result.taskVos[i].taskName === '邀请好友助力') {
               console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${data.data.result.taskVos[i].assistTaskDetailVo.taskToken}\n`);
+              myInviteCode = data.data.result.taskVos[i].assistTaskDetailVo.taskToken;
               for (let code of $.newShareCodes) {
                 if (!code) continue
-                await harmony_collectScore(code, data.data.result.taskVos[i].taskId);
+                const c =  await harmony_collectScore(code, data.data.result.taskVos[i].taskId);
                 await $.wait(2000)
+                if (c === 108) break
               }
             }
             else if (data.data.result.taskVos[i].status === 3) {
@@ -184,16 +195,18 @@ function harmony_collectScore(taskToken,taskId,itemId = "",actionType = 0,timeou
       //if (appId === "1EFRTxQ") url.body += "&appid=golden-egg"
       $.post(url, async (err, resp, data) => {
         try {
+        
           data = JSON.parse(data);
           if (data.data.bizMsg === "任务领取成功") {
             await harmony_collectScore(taskToken,taskId,itemId,0,parseInt(browseTime) * 1000);
           } else{
             console.log(data.data.bizMsg)
           }
+          data = data.data.bizCode
         } catch (e) {
           $.logErr(e, resp);
         } finally {
-          resolve()
+          resolve(data)
         }
       })
     },timeout)
@@ -274,6 +287,9 @@ function requireConfig() {
           $.shareCodesArr.push(shareCodes[item])
         }
       })
+    } else {
+      if ($.getdata('JDSGMH_SHARECODES')) $.shareCodesArr = $.getdata('JDSGMH_SHARECODES').split('\n').filter(item => !!item);
+      console.log(`\nBoxJs设置的闪购盲盒邀请码:${$.getdata('JDSGMH_SHARECODES')}\n`);
     }
     console.log(`您提供了${$.shareCodesArr.length}个账号的${$.name}助力码\n`);
     resolve()
@@ -305,14 +321,17 @@ function shareCodesFormat() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `http://111111/sgmh`, timeout: 10000}, (err, resp, data) => {
+    $.get({
+      url: `/`,
+      'timeout': 10000
+    }, (err, resp, data) => {
       try {
         if (err) {
-          console.log(JSON.stringify(err))
-          console.log(`${$.name} API请求失败，请检查网路重试`)
+          //console.log(`${JSON.stringify(err)}`)
+          //console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
-            console.log(`随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
+            //console.log(`随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
             data = JSON.parse(data);
           }
         }

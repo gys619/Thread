@@ -1,5 +1,5 @@
 /*
-京东天天加速链接：https://gitee.com/lxk0301/jd_scripts/raw/master/jd_speed.js
+京东天天加速链接：jd_speed.js
 更新时间：2020-12-25
 活动入口：京东APP我的-更多工具-天天加速
 活动地址：https://h5.m.jd.com/babelDiy/Zeus/6yCQo2eDJPbyPXrC3eMCtMWZ9ey/index.html
@@ -11,17 +11,17 @@
 =================QuantumultX==============
 [task_local]
 #天天加速
-8 0-23/3 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_speed.js, tag=京东天天加速, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdjs.png, enabled=true
+8 0-23/3 * * * jd_speed.js, tag=京东天天加速, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdjs.png, enabled=true
 
 ============Loon================
 [Script]
-cron "8 0-23/3 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_speed.js,tag=京东天天加速
+cron "8 0-23/3 * * *" script-path=jd_speed.js,tag=京东天天加速
 
 ===========Surge============
-天天加速 = type=cron,cronexp="8 0-23/3 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_speed.js
+天天加速 = type=cron,cronexp="8 0-23/3 * * *",wake-system=1,timeout=3600,script-path=jd_speed.js
 
 ==============小火箭=============
-天天加速 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_speed.js, cronexpr="11 0-23/3 * * *", timeout=3600, enable=true
+天天加速 = type=cron,script-path=jd_speed.js, cronexpr="11 0-23/3 * * *", timeout=3600, enable=true
 */
 
 const $ = new Env('✈️天天加速');

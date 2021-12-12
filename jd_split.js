@@ -1,6 +1,5 @@
 /*
 金榜年终奖
-脚本会给内置的码进行助力
 活动时间：2021-12-12日结束
 活动入口：京东APP首页右边浮动飘窗
 已支持IOS双京东账号,Node.js支持N个京东账号
@@ -8,17 +7,17 @@
 ============Quantumultx===============
 [task_local]
 #金榜年终奖
-10 0,2 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_split.js, tag=年终奖, enabled=true
+39 0,9 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_split.js, tag=年终奖, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 0,2 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_split.js,tag=年终奖
+cron "39 0,9 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_split.js,tag=年终奖
 
 ===============Surge=================
-金榜年终奖 = type=cron,cronexp="10 0,2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_split.js
+金榜年终奖 = type=cron,cronexp="39 0,9 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_split.js
 
 ============小火箭=========
-金榜年终奖 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_split.js, cronexpr="10 0,2 * * *", timeout=3600, enable=true
+金榜年终奖 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_split.js, cronexpr="39 0,9 * * *", timeout=3600, enable=true
  */
 const $ = new Env('金榜年终奖');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -65,17 +64,8 @@ $.shareCodes = [];
       await jdSplit()
     }
   }
-  let res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/split.json')
-  if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/split.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
-    await $.wait(1000)
-    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/split.json')
-  }
-  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/555555/updateTeam/main/shareCodes/split.json')
-  if (!res2) {
-    res2 = await getAuthorShareCode('https://raw.fastgit.org/555555/updateTeam/main/shareCodes/split.json')
-  }
-  $.newShareCodes = [...new Set([...$.shareCodes, ...(res || []), ...(res2 || [])])]
+  let res = await getAuthorShareCode('')
+  $.newShareCodes = [...new Set([...$.shareCodes, ...(res || [])])]
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
