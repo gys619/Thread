@@ -1,17 +1,13 @@
 /*
-
 [task_local]
 入口 极速版 赚金币 种水果
-#极速版我是大老板农场
+#柠檬我是大老板农场
 export dlbtz="true" //通知打开
-
-export dlbtz="false" //通知关闭
-
-5 0-23/6 * * * jd_wsdlb.js, tag=极速版我是大老板农场, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0-23/6 * * * http://nm66.top/jd_wsdlb.js, tag=柠檬我是大老板农场, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 
 
-const $ = new Env('极速版我是大老板农场');
+const $ = new Env('柠檬我是大老板农场');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -19,7 +15,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 let allMessage = '';
-let dlbtz = false; //通知开关
+let dlbtz = true; //通知开关
 if (process.env.dlbtz) {
   dlbtz = process.env.dlbtz;
 }
@@ -42,7 +38,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
-      ck2 = cookiesArr[Math.round(Math.random()*5)];
+      ck2 = cookiesArr[Math.round(Math.random()*i)];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
       $.isLogin = true;

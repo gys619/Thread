@@ -1,10 +1,10 @@
 /**
  星推官
- cron 22 3,4 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xtg.js
+ cron 22 3,19 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xtg.js
  * */
 const $ = new Env('星推官');
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const notify = $.isNode() ? require('./sendNotify') : '';
+const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const notify = $.isNode() ? require('../sendNotify') : '';
 let cookiesArr = [];
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -131,7 +131,7 @@ async function main(cookie,index) {
                 continue;
             }
             console.log(`${userName},任务：${oneTask.taskName},去执行`);
-            if(oneTask.type === 'JOIN_SHOPPING_CART' && ["card","car"].includes(process.env.FS_LEVEL)){
+            if(oneTask.type === 'JOIN_SHOPPING_CART'){
                 let getReward = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","apiMapping":"/api/task/getReward"}`);
                 console.log(`${userName},执行结果：${JSON.stringify(getReward)}`);
                 await $.wait(2000);
@@ -218,7 +218,7 @@ async function takeRequest(cookie,body){
         'Accept' : `application/json, text/plain, */*`,
         'Referer' : `https://starintroducer.jd.com/`,
         'Host' : `api.m.jd.com`,
-        'user-agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+        'user-agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
         'Accept-Language' : `zh-cn`,
         'Accept-Encoding' : `gzip, deflate, br`
     };
@@ -256,7 +256,7 @@ function TotalBean() {
                 "Connection": "keep-alive",
                 "Cookie": $.cookie,
                 "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
+                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
             }
         }
         $.post(options, (err, resp, data) => {

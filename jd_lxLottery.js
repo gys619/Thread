@@ -9,17 +9,7 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东我的理想家
-10 8 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_lxLottery.js, tag=京东我的理想家, enabled=true
-
-================Loon==============
-[Script]
-cron "10 8 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_lxLottery.js,tag=京东我的理想家
-
-===============Surge=================
-京东我的理想家 = type=cron,cronexp="10 8 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_lxLottery.js
-
-============小火箭=========
-京东我的理想家 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_lxLottery.js, cronexpr="10 8 * * *", timeout=3600, enable=true
+10 7 * * * jd jd_lxLottery.js, tag=京东我的理想家, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
 
  */
 const $ = new Env('京东我的理想家');

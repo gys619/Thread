@@ -1,23 +1,12 @@
 /*
-脚本：取关京东店铺和商品(批量版) from @X1a0He大佬
-因种豆得豆和宠汪汪以及NobyDa大佬的京东签到脚本会关注店铺和商品，故此脚本用来取消已关注的店铺和商品
-默认：每运行一次脚本全部已关注的店铺与商品
-建议此脚本运行时间在 种豆得豆和宠汪汪脚本运行之后 再执行
-现有功能: 1、取关商品。2、取关店铺。3、匹配到boxjs输入的过滤关键词后，不再进行此商品/店铺后面(包含输入的关键词商品/店铺)的取关
-脚本兼容: Quantumult X, Surge, Loon, JSBox, Node.js, 小火箭
-==============Quantumult X===========
-[task_local]
-#取关京东店铺商品
-55 23 * * * jd_unsubscribe.js, tag=取关京东店铺商品, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-===========Loon============
-[Script]
-cron "55 23 * * *" script-path=jd_unsubscribe.js,tag=取关京东店铺商品
-============Surge=============
-取关京东店铺商品 = type=cron,cronexp="55 23 * * *",wake-system=1,timeout=3600,script-path=jd_unsubscribe.js
-===========小火箭========
-取关京东店铺商品 = type=cron,script-path=jd_unsubscribe.js, cronexpr="55 23 * * *", timeout=3600, enable=true
+ * @Author: X1a0He
+ * @Date: 2021-09-04 11:50:47
+ * @LastEditTime: 2021-11-10 22:30:00
+ * @LastEditors: X1a0He
+ * @Description: 批量取关京东店铺和商品
+ * @Fixed: 不再支持Qx，仅支持Node.js
  */
-const $ = new Env('取关京东店铺和商品');
+const $ = new Env('批量取关店铺和商品');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -160,7 +149,7 @@ let args_xh = {
                     }
                     if($.failTimes >= args_xh.failTimes){
                         console.log('失败次数到达设定值，触发防死循环机制，该帐号已跳过');
-                        break;
+                        break
                     }
                 } while(true)
                 await showMsg_xh();

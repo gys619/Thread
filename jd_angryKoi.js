@@ -21,6 +21,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
 let fair_mode = process.env.KOI_FAIR_MODE == "true" ? true : false
 let chetou_number = process.env.KOI_CHETOU_NUMBER ? Number(process.env.KOI_CHETOU_NUMBER) : 0
+var kois = process.env.kois ?? ""
 let cookiesArr = []
 var tools = []
 
@@ -54,10 +55,18 @@ let notify, allMessage = '';
         shuffle(otherIndexes)
         cookieIndexOrder = cookieIndexOrder.concat(otherIndexes)
     } else {
+        let otherIndexes = []
         // 未开启公平模式，则按照顺序互助，前面的先互助满
         for (let idx = 0; idx < cookiesArr.length; idx++) {
-            cookieIndexOrder.push(idx)
+            var cookie = cookiesArr[idx];
+
+            if (kois.indexOf(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]) != -1) {
+                otherIndexes.push(idx)
+            } else {
+                cookieIndexOrder.push(idx)
+            }
         }
+        cookieIndexOrder = otherIndexes.concat(cookieIndexOrder)
     }
     console.log(`最终互助顺序如下（优先互助满前面的）：\n${cookieIndexOrder}`)
     allMessage += `本次互助顺序(车头优先，其余等概率随机，每次运行都不一样): ${cookieIndexOrder}\n\n`
@@ -161,28 +170,20 @@ async function getHelpInfoForCk(cookieIndex, cookie) {
     console.log(`开始请求第 ${cookieIndex} 个账号的信息`)
 
     let data;
-    let MAX_TRY = 3
 
-    // 尝试开启今日的红包活动
-    for (let tryIdex = 1; tryIdex <= MAX_TRY; tryIdex++) {
+    // 开启红包
+    data = await with_retry("开启红包活动", async () => {
         var num = "";
         for (var g = 0; g < 6; g++) {
             num += Math.floor(Math.random() * 10);
         }
-        data = await requestApi('h5launch', cookie, {
+        return await requestApi('h5launch', cookie, {
             "followShop": 0,
             "random": num,
             "log": "42588613~8,~0iuxyee",
             "sceneid": "JLHBhPageh5"
         });
-
-        if (data) {
-            break
-        }
-
-        console.error(`[${tryIdex}/${MAX_TRY}] h5launch 请求时似乎出错了，有可能是网络波动，将最多试三次`)
-        await $.wait(5000)
-    }
+    })
 
     switch (data?.data?.result?.status) {
         case 1://火爆
@@ -204,19 +205,11 @@ async function getHelpInfoForCk(cookieIndex, cookie) {
     }
 
     // 已开启活动，尝试查询具体信息
-    for (let tryIdex = 1; tryIdex <= MAX_TRY; tryIdex++) {
-        data = await requestApi('h5activityIndex', cookie, {
+    data = await with_retry("查询红包信息", async () => {
+        return await requestApi('h5activityIndex', cookie, {
             "isjdapp": 1
         });
-
-        if (data) {
-            break
-        }
-
-        console.error(`[${tryIdex}/${MAX_TRY}] h5activityIndex 请求时似乎出错了，有可能是网络波动，将最多试三次`)
-        await $.wait(5000)
-    }
-
+    })
 
     if (data?.data?.result?.redpacketConfigFillRewardInfo) {
         // 打印今日红包概览
@@ -242,7 +235,7 @@ async function getHelpInfoForCk(cookieIndex, cookie) {
 
     switch (data?.data?.code) {
         case 20002://已达拆红包数量限制
-            console.debug("已领取今天全部红包")
+            console.debug("已领取今天全部红包，将跳过")
             break;
         case 10002://活动正在进行，火爆号
             console.debug(`h5activityIndex 被风控，变成黑号了, data=${JSON.stringify(data)}`)
@@ -262,9 +255,11 @@ async function getHelpInfoForCk(cookieIndex, cookie) {
 }
 
 async function appendRewardInfoToNotify(cookieIndex, cookie) {
-    let data = await requestApi('h5activityIndex', cookie, {
-        "isjdapp": 1
-    });
+    let data = await with_retry("查询红包信息", async () => {
+        return await requestApi('h5activityIndex', cookie, {
+            "isjdapp": 1
+        });
+    })
 
     // 判断是否有红包可以领
     if (calcCanTakeRedpacketCount(data?.data?.result) > 0) {
@@ -285,9 +280,11 @@ async function appendRewardInfoToNotify(cookieIndex, cookie) {
         }
 
         console.info(`领取完毕，重新查询最新锦鲤红包信息`)
-        data = await requestApi('h5activityIndex', cookie, {
-            "isjdapp": 1
-        });
+        data = await with_retry("查询红包信息", async () => {
+            return await requestApi('h5activityIndex', cookie, {
+                "isjdapp": 1
+            });
+        })
     }
 
     // 打印今日红包概览
@@ -338,6 +335,27 @@ function calcCanTakeRedpacketCount(info) {
     }
 
     return count
+}
+
+async function with_retry(ctx = "", callback_func, max_retry_times = 3, retry_interval = 5000) {
+    let data;
+
+    // 尝试开启今日的红包活动
+    for (let tryIdex = 1; tryIdex <= max_retry_times; tryIdex++) {
+        if (tryIdex > 1) {
+            console.debug(`[${tryIdex}/${max_retry_times}] 重新尝试 ${ctx}`)
+        }
+
+        data = await callback_func()
+        if (data) {
+            break
+        }
+
+        console.error(`[${tryIdex}/${max_retry_times}] ${ctx} 请求时似乎出错了，有可能是网络波动，将等待 ${retry_interval / 1000} 秒，最多试 ${max_retry_times} 次\n`)
+        await wait(retry_interval)
+    }
+
+    return data
 }
 
 async function openRedPacket(cookie) {
@@ -412,7 +430,7 @@ async function requestApi(functionId, cookie, body = {}) {
                 data = JSON.parse(data)
             } catch (e) {
                 $.logErr('Error: ', e, resp)
-                console.warn(`请求${functionId}失败，resp=${JSON.stringify(resp)}，data=${JSON.stringify(data)}, e=${JSON.stringify(e)}`)
+                console.warn(`请求${functionId}失败，data=${JSON.stringify(data)}, e=${JSON.stringify(e)}`)
             } finally {
                 resolve(data)
             }
