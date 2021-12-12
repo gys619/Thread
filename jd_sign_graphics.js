@@ -31,7 +31,6 @@ if ($.isNode()) {
 let message = '', subTitle = '', beanNum = 0;
 let fp = ''
 let eid = ''
-let UA = ""
 let signFlag = false
 let successNum = 0
 let errorNum = 0
@@ -47,14 +46,14 @@ $.get = validator.injectToRequest($.get.bind($), 'channelSign', $.UA)
 $.post = validator.injectToRequest($.post.bind($), 'channelSign', $.UA)
 
 const turnTableId = [
-  { "name": "PLUS会员定制", "id": 1265, "url": "https://prodev.m.jd.com/mall/active/N9MpLQdxZgiczZaMx2SzmSfZSvF/index.html" },
-  { "name": "京东商城-内衣", "id": 1071, "url": "https://prodev.m.jd.com/mall/active/4PgpL1xqPSW1sVXCJ3xopDbB1f69/index.html" },
   { "name": "京东商城-健康", "id": 527, "url": "https://prodev.m.jd.com/mall/active/w2oeK5yLdHqHvwef7SMMy4PL8LF/index.html" },
   { "name": "京东商城-清洁", "id": 446, "url": "https://prodev.m.jd.com/mall/active/2Tjm6ay1ZbZ3v7UbriTj6kHy9dn6/index.html" },
   { "name": "京东商城-个护", "id": 336, "url": "https://prodev.m.jd.com/mall/active/2tZssTgnQsiUqhmg5ooLSHY9XSeN/index.html" },
-  { "name": "京东商城-童装", "id": 511, "url": "https://prodev.m.jd.com/mall/active/3Af6mZNcf5m795T8dtDVfDwWVNhJ/index.html" },
   { "name": "京东商城-母婴", "id": 458, "url": "https://prodev.m.jd.com/mall/active/3BbAVGQPDd6vTyHYjmAutXrKAos6/index.html" },
   { "name": "京东商城-数码", "id": 347, "url": "https://prodev.m.jd.com/mall/active/4SWjnZSCTHPYjE5T7j35rxxuMTb6/index.html" },
+  { "name": "PLUS会员定制", "id": 1265, "url": "https://prodev.m.jd.com/mall/active/N9MpLQdxZgiczZaMx2SzmSfZSvF/index.html" },
+  { "name": "京东商城-童装", "id": 511, "url": "https://prodev.m.jd.com/mall/active/3Af6mZNcf5m795T8dtDVfDwWVNhJ/index.html" },
+  { "name": "京东商城-内衣", "id": 1071, "url": "https://prodev.m.jd.com/mall/active/4PgpL1xqPSW1sVXCJ3xopDbB1f69/index.html" },
   { "name": "京东超市", "id": 1204, "url": "https://pro.m.jd.com/mall/active/QPwDgLSops2bcsYqQ57hENGrjgj/index.html" },
 ]
 
@@ -109,12 +108,16 @@ async function signRun() {
     }else{
       errorNum++;
     }
-    await $.wait(parseInt(Math.random() * 5000 + 10000, 10))
+    let time = Math.random() * 5000 + 10000
+    console.log(`等待${(time/1000).toFixed(3)}秒`)
+    await $.wait(parseInt(time, 10))
   }
 }
 
 function Login(i) {
-  return new Promise(resolve => {
+  return new Promise(async resolve => {
+    $.appId = '9a4de';
+    await requestAlgo();
     $.get(taskUrl(turnTableId[i].id), async (err, resp, data) => {
       try {
         if (err) {
@@ -127,10 +130,15 @@ function Login(i) {
             if (data.success && data.data) {
               data = data.data
               if (data.hasSign === false) {
-                let arr = await Faker.getBody(UA,turnTableId[i].url)
+                let arr = await Faker.getBody($.UA,turnTableId[i].url)
                 fp = arr.fp
                 await getEid(arr)
-                await Sign(i)
+                $.appId = 'b342e';
+                await requestAlgo();
+                await Sign(i,1)
+                let time = Math.random() * 5000 + 10000
+                console.log(`等待${(time/1000).toFixed(3)}秒`)
+                await $.wait(parseInt(time, 10))
               } else if (data.hasSign === true) {
                 if(data.records && data.records[0]){
                   for(let i in data.records){
@@ -170,9 +178,10 @@ function Login(i) {
     })
   })
 }
-function Sign(i) {
+function Sign(i,t) {
   return new Promise(resolve => {
-    $.post(tasPostkUrl(turnTableId[i].id), (err, resp, data) => {
+    let options = tasPostkUrl(turnTableId[i].id)
+    $.post(options, async (err, resp, data) => {
       try {
         if (err) {
           console.log(`\n${turnTableId[i].name} 签到: API查询请求失败 ‼️‼️`)
@@ -190,7 +199,11 @@ function Sign(i) {
                 if(res.errorMessage.indexOf('已签到') > -1 || res.errorMessage.indexOf('今天已经签到') > -1){
                   signFlag = true;
                 }
-                console.log(`${turnTableId[i].name} ${res.errorMessage}`)
+                if(res.errorMessage.indexOf('火爆') > -1 && t == 1){
+                  await Sign(i,2)
+                }else{
+                  console.log(`${turnTableId[i].name} ${res.errorMessage}`)
+                }
               } else {
                 console.log(`${turnTableId[i].name} ${data}`)
               }
@@ -242,8 +255,10 @@ function getEid(arr) {
 }
 
 function taskUrl(turnTableId) {
-  let body = {"turnTableId":`${turnTableId}`,"invokeKey":$.invokeKey}
-  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelDetail&body=${escape(JSON.stringify(body))}&h5st=undefined`
+  let body = {"turnTableId":`${turnTableId}`}
+  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelDetail"},{"key":"t","value":Date.now()}]
+  let h5st = geth5st(t) || 'undefined'
+  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelDetail&body=${JSON.stringify(body)}&h5st=${h5st}`
   return {
     url,
     headers: {
@@ -259,22 +274,129 @@ function taskUrl(turnTableId) {
   }
 }
 function tasPostkUrl(turnTableId) {
-  let body = {"turnTableId":`${turnTableId}`,"fp":fp,"lks":$.CryptoJS.MD5(""+$.invokeKey+lkt).toString(),"lkt":lkt,"invokeKey":$.invokeKey}
-  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelSign&body=${JSON.stringify(body)}&h5st=undefined&turnTableId=${turnTableId}&fp=${fp}&eid=${eid}&lks=${$.CryptoJS.MD5(""+$.invokeKey+lkt).toString()}&lkt=${lkt}&invokeKey=${$.invokeKey}`
+  let time = Date.now()
+  let body = {"turnTableId":`${turnTableId}`,"fp":'',"eid":''}
+  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelSign"},{"key":"t","value":Date.now()}]
+  let h5st = geth5st(t) || 'undefined'
+  let url = `https://api.m.jd.com/api?client=&clientVersion=&appid=jdchoujiang_h5&t=${time}&functionId=turncardChannelSign&body=${escape(JSON.stringify(body))}&h5st=${h5st}`
   return {
     url,
     headers: {
       "Accept": "application/json, text/plain, */*",
       "Accept-Encoding": "gzip, deflate, br",
       "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
-      "Connection": "keep-alive",
-      "Content-Type": "application/x-www-form-urlencoded",
       'Cookie': cookie,
       "Origin": "https://prodev.m.jd.com",
       "Referer": "https://prodev.m.jd.com/",
       "User-Agent": $.UA,
     }
   }
+}
+
+async function requestAlgo() {
+  $.fp = (getRandomIDPro({ size: 13 }) + Date.now()).slice(0, 16);
+  let opts = {
+    "url": `https://cactus.jd.com/request_algo?g_ty=ajax`,
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      "Accept-Encoding": "gzip, deflate, br",
+      'Origin': 'https://prodev.m.jd.com',
+      'Referer': 'https://prodev.m.jd.com/',
+      'User-Agent': $.UA,
+      'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
+    },
+    'body': JSON.stringify({
+      "version": "3.0",
+      "fp": $.fp,
+      "appId": $.appId,
+      "timestamp": Date.now(),
+      "platform": "web",
+      "expandParams": ""
+    })
+  }
+  return new Promise(async resolve => {
+    $.post(opts, (err, resp, data) => {
+      try {
+        const { ret, msg, data: { result } = {} } = JSON.parse(data);
+        $.token = result.tk;
+        $.genKey = new Function(`return ${result.algo}`)();
+      } catch (e) {
+        $.logErr(e, resp);
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
+function getRandomIDPro() {
+  var e,
+    t,
+    a = void 0 === (n = (t = 0 < arguments.length && void 0 !== arguments[0] ? arguments[0] : {}).size) ? 10 : n,
+    n = void 0 === (n = t.dictType) ? 'number' : n,
+    i = '';
+  if ((t = t.customDict) && 'string' == typeof t) e = t;
+  else
+    switch (n) {
+      case 'alphabet':
+        e = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        break;
+      case 'max':
+        e = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-';
+        break;
+      case 'number':
+      default:
+        e = '0123456789';
+    }
+
+  for (; a--;) i += e[(Math.random() * e.length) | 0];
+  return i;
+}
+function geth5st(t){
+  // return ''
+  let a = t.map(function(e) {
+  return e["key"] + ":" + e["value"]
+  })["join"]("&")
+  let time = Date.now()
+  const timestamp = format("yyyyMMddhhmmssSSS", time);
+  const hash1 = $.genKey($.token, $.fp.toString(), timestamp.toString(), $.appId.toString(), $.CryptoJS).toString($.CryptoJS.enc.Hex);
+  const hash2 = $.CryptoJS.HmacSHA256(a, hash1.toString()).toString($.CryptoJS.enc.Hex);
+  h5st = ["".concat(timestamp.toString()), "".concat($.fp.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2),"3.0","".concat(time)].join(";")
+  return encodeURIComponent(h5st)
+}
+function format(a, time) {
+  if (!a) a = 'yyyy-MM-dd';
+  var t;
+  if (!time) {
+    t = Date.now();
+  } else {
+    t = new Date(time);
+  }
+  var e,
+    n = new Date(t),
+    d = a,
+    l = {
+      'M+': n.getMonth() + 1,
+      'd+': n.getDate(),
+      'D+': n.getDate(),
+      'h+': n.getHours(),
+      'H+': n.getHours(),
+      'm+': n.getMinutes(),
+      's+': n.getSeconds(),
+      'w+': n.getDay(),
+      'q+': Math.floor((n.getMonth() + 3) / 3),
+      'S+': n.getMilliseconds(),
+    };
+  /(y+)/i.test(d) && (d = d.replace(RegExp.$1, ''.concat(n.getFullYear()).substr(4 - RegExp.$1.length)));
+  Object.keys(l).forEach(e => {
+    if (new RegExp('('.concat(e, ')')).test(d)) {
+      var t,
+        a = 'S+' === e ? '000' : '00';
+      d = d.replace(RegExp.$1, 1 == RegExp.$1.length ? l[e] : ''.concat(a).concat(l[e]).substr(''.concat(l[e]).length));
+    }
+  });
+  return d;
 }
 function jsonParse(str) {
   if (typeof str == "string") {
@@ -289,7 +411,7 @@ function jsonParse(str) {
 }
 
 function getUA(){
-  $.UA = `jdapp;iPhone;10.1.0;14.3;${randomString(40)};network/wifi;model/iPhone12,1;addressid/4199175193;appBuild/167774;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`
+  $.UA = `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36`
 }
 function randomString(e) {
   e = e || 32;
