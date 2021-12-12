@@ -9,8 +9,17 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东工业品
-10 7 * 12 * jd jd_gyp.js, tag=京东工业品, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
+50 7 * 12 * https://raw.githubusercontent.com/444444/JDJB/main/jd_gyp.js, tag=京东工业品, enabled=true
 
+================Loon==============
+[Script]
+cron "50 7 * 12 *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_gyp.js,tag=京东工业品
+
+===============Surge=================
+京东工业品 = type=cron,cronexp="50 7 * 12 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_gyp.js
+
+============小火箭=========
+京东工业品 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_gyp.js, cronexpr="50 7 * 12 *", timeout=3600, enable=true
  */
 const $ = new Env('京东工业品');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
