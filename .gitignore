@@ -171,6 +171,13 @@ jd_shy_dpqd.js
 jd_shy_dpqd?.js
 # 通用脚本
 *common_enc.js
+# ck顺序调试工具
+jd_CkSeq.js
+
+
+
+
+
 jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js
