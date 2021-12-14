@@ -163,6 +163,7 @@ jd_mn.js
 jd_task_*.js
 creat.sh
 *.conf
+jd_help_sendBean.js
 jx_help_*.js
 #大赢家助力
 jd_dyj_help_wx.js
