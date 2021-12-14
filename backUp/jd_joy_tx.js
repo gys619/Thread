@@ -125,10 +125,10 @@ function TotalBean() {
  */
 function signPrizeDetailList() {
     return new Promise(async resolve => {
-        let body = {"linkId":linkId,"pageNum":1,"pageSize":10};
+        let body = {"linkId":linkId};
 
         const options = {
-            url: `https://api.m.jd.com/?functionId=gameMyCashPrize&body=${escape(JSON.stringify(body))}&_t=${+new Date()}&appid=activities_platform&clientVersion=3.5.0`,
+            url: `https://api.m.jd.com/?functionId=gameMyPrize&body=${escape(JSON.stringify(body))}&_t=${+new Date()}&appid=activities_platform&clientVersion=3.5.0`,
             headers: {
                 'Origin': 'https://joypark.jd.com',
                 'Cookie': $.cookie,
@@ -153,14 +153,14 @@ function signPrizeDetailList() {
                     if (safeGet(data)) {
                         data = $.toObj(data);
                         if (data.code === 0) {
-                            for(let item of data.data.items.filter(vo => vo.prizeType===4)){
-                                if(item.prizeStatus===0 && item.state===0){
+                            for(let item of data.data.gamePrizeItemVos.filter(vo => vo.prizeType===4)){
+                                if(item.prizeStatus===0 && item.state===1){
                                     console.log(`提现${item.prizeValue}微信现金`)
-                                    await apCashWithDraw(item.id,item.poolBaseId,item.prizeGroupId,item.prizeBaseId)
+                                    await apCashWithDraw(item.prizeTypeVO.id,item.prizeTypeVO.poolBaseId,item.prizeTypeVO.prizeGroupId,item.prizeTypeVO.prizeBaseId)
                                 }
                             }
                         } else {
-                            console.log(`提现异常:${JSON.stringify(data)}\n`);
+                            console.log(`获取奖励列表异常:${JSON.stringify(data)}\n`);
                         }
                     }
                 }

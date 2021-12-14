@@ -1,22 +1,22 @@
 /*
 见缝插针
 活动地址: 京东极速版-百元生活费-玩游戏现金可提现
-活动时间：
+作者by：jiulan
 更新时间：2021-11-30
 脚本兼容: QuantumultX, Surge,Loon, JSBox, Node.js
 =================================Quantumultx=========================
 [task_local]
 #见缝插针
-15 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, tag=见缝插针, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+15 10 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_jfcz.js, tag=见缝插针, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "15 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js,tag=见缝插针
+cron "15 10 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jfcz.js,tag=见缝插针
 ===================================Surge================================
-见缝插针 = type=cron,cronexp="15 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js
+见缝插针 = type=cron,cronexp="15 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jfcz.js
 ====================================小火箭=============================
-见缝插针 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, cronexpr="15 10 * * *", timeout=3600, enable=true
+见缝插针 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jfcz.js, cronexpr="15 10 * * *", timeout=3600, enable=true
  */
-const $ = new Env('见缝插针');
+const $ = new Env('极速版-见缝插针');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
@@ -76,9 +76,6 @@ if ($.isNode()) {
             }
             await needleMyPrize()
         }
-    }
-    if ($.isNode() && allMessage) {
-        await notify.sendNotify(`${$.name}`, `${allMessage}`,{ url: 'https://t.me/joinchat/DrHGFt-CvcE2ZmU1' })
     }
 })()
     .catch((e) => {
@@ -166,7 +163,7 @@ function needleMyPrize() {
                         if (data.code === 0) {
                             for(let item of data.data.items.filter(vo => vo.needleMyPrizeItemVO.prizeType===4)){
                                 if(item.needleMyPrizeItemVO.prizeStatus===0 && item.status===1){
-                                    await $.wait(500);
+                                    await $.wait(3000);
                                     console.log(`提现${item.needleMyPrizeItemVO.prizeValue}微信现金`)
                                     await apCashWithDraw(item.needleMyPrizeItemVO.id,item.needleMyPrizeItemVO.poolBaseId,item.needleMyPrizeItemVO.prizeGroupId,item.needleMyPrizeItemVO.prizeBaseId)
                                 }
