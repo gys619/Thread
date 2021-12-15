@@ -86,11 +86,9 @@ function goldCenterHead() {
           if (safeGet(data)) {
             data = JSON.parse(data)
             if (data.code === '0') {
-              // console.log(data);
+               await goldCreatorDoTask({ "type": 1 })
               if (data.result.medalNum === 5) {
                 await goldCreatorDoTask({ "type": 2 })
-              } else {
-                await goldCreatorDoTask({ "type": 1 })
               }
             } else {
               console.log(`失败：${JSON.stringify(data)}\n`);

@@ -1,9 +1,9 @@
 /*
 逛京东会场
 自定义环境变量 ACT_URL 为json地址，格式参考默认
-0 0 * * * jd_mall_active.js
+0 0 * * * jd_mall.js
 */
-const $ = new Env("逛京东会场");
+const $ = new Env("逛会场任务");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
 let cookiesArr = [], cookie;
 let actURL = ''
@@ -51,7 +51,7 @@ if ($.isNode()) {
       }
     }
   } else {
-    console.log('请正确配置自定义环境变量 ACT_URL 为json地址，格式参考默认')
+    console.log('当前不在任务时间，请在活动时间内运行脚本')
   }
 
 })()
