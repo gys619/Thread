@@ -153,9 +153,10 @@ function signPrizeDetailList() {
                     if (safeGet(data)) {
                         data = $.toObj(data);
                         if (data.code === 0) {
-                            for(let item of data.data.gamePrizeItemVos.filter(vo => vo.prizeType===4)){
-                                if(item.prizeStatus===0 && item.state===1){
-                                    console.log(`提现${item.prizeValue}微信现金`)
+                            console.log(`获取奖励列表成功\n`);
+                            for(let item of data.data.gamePrizeItemVos.filter(vo => vo.prizeType===4 && vo.status===1)){
+                                if(item.prizeTypeVO.prizeUsed===0){
+                                    console.log(`提现${item.prizeTypeVO.prizeValue}微信现金`)
                                     await apCashWithDraw(item.prizeTypeVO.id,item.prizeTypeVO.poolBaseId,item.prizeTypeVO.prizeGroupId,item.prizeTypeVO.prizeBaseId)
                                 }
                             }
