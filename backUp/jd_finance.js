@@ -10,17 +10,17 @@ by:小手冰凉 tg:@chianPLA
 ============Node===============
 [task_local]
 #每周领取权益活动
-45 7,18 * * 3 https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js, tag=每周领取权益活动, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+45 7,18 * * 3 https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jr_draw.js, tag=每周领取权益活动, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "45 7,18 * * 3" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js,tag=每周领取权益活动
+cron "45 7,18 * * 3" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jr_draw.js,tag=每周领取权益活动
 
 ===============Surge=================
-每周领取权益活动 = type=cron,cronexp="45 7,18 * * 3",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js
+每周领取权益活动 = type=cron,cronexp="45 7,18 * * 3",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jr_draw.js
 
 ============小火箭=========
-每周领取权益活动 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jr_draw.js, cronexpr="45 7,18 * * 3", timeout=3600, enable=true
+每周领取权益活动 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jr_draw.js, cronexpr="45 7,18 * * 3", timeout=3600, enable=true
 */
 
 const $ = new Env('京东金融每周领取权益活动');
