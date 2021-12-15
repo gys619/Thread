@@ -166,7 +166,7 @@ function needleMyPrize() {
                         if (data.code === 0) {
                             for(let item of data.data.items.filter(vo => vo.needleMyPrizeItemVO.prizeType===4)){
                                 if(item.needleMyPrizeItemVO.prizeStatus===0 && item.status===1){
-                                    await $.wait(5000);
+                                    await $.wait(500);
                                     console.log(`提现${item.needleMyPrizeItemVO.prizeValue}微信现金`)
                                     await apCashWithDraw(item.needleMyPrizeItemVO.id,item.needleMyPrizeItemVO.poolBaseId,item.needleMyPrizeItemVO.prizeGroupId,item.needleMyPrizeItemVO.prizeBaseId)
                                 }
