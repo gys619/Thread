@@ -79,15 +79,23 @@ if ($.isNode() && process.env.WP_APP_TOKEN_ONE) {
 
 let doExJxBeans ="false";
 let time = new Date().getHours();
-if ($.isNode() && process.env.BEANCHANGE_ExJxBeans=="true") {
-	if (time >= 17){ 
-		console.log(`检测到设定了临期京豆转换喜豆...`);
-		doExJxBeans = process.env.BEANCHANGE_ExJxBeans;
-	} else{
-		console.log(`检测到设定了临期京豆转换喜豆,但时间未到17点后，暂不执行转换...`);
+if ($.isNode()) {
+	if(process.env.BEANCHANGE_ExJxBeans=="true"){
+		if (time >= 17){ 
+			console.log(`检测到设定了临期京豆转换喜豆...`);
+			doExJxBeans = process.env.BEANCHANGE_ExJxBeans;
+		} else{
+			console.log(`检测到设定了临期京豆转换喜豆,但时间未到17点后，暂不执行转换...`);
+		}
 	}
 }
-
+let doCheckJxBeans ="false";
+if ($.isNode()) {
+	if(process.env.BEANCHANGE_CheckJxBeans=="true"){
+		console.log(`检测到设定了查询喜豆信息...`);
+		doCheckJxBeans = process.env.BEANCHANGE_ExJxBeans;	
+	}
+}
 if ($.isNode() && process.env.BEANCHANGE_PERSENT) {
 	intPerSent = parseInt(process.env.BEANCHANGE_PERSENT);
 	console.log(`检测到设定了分段通知:` + intPerSent);
@@ -202,7 +210,12 @@ if ($.isNode()) {
 			$.allincomeBean = 0; //月收入
 			$.allexpenseBean = 0; //月支出
 			$.joylevel = 0;	
-			$.beanChangeXi=0;		
+			$.beanChangeXi=0;
+			$.inJxBean=0;
+			$.OutJxBean=0;
+			$.todayinJxBean=0;
+			$.todayOutJxBean=0;	
+			$.xibeanCount = 0;
 			TempBaipiao = "";
 			strGuoqi="";
 			console.log(`******开始查询【京东账号${$.index}】${$.nickName || $.UserName}*********`);
@@ -249,7 +262,10 @@ if ($.isNode()) {
 			if (DisableCash == "false") {
 				await jdCash();
 			}
-
+			if(doCheckJxBeans=="true"){
+				await GetJxBeanInfo();
+				await jxbean();
+			}
 			await showMsg();
 			if (intPerSent > 0) {
 				if ((i + 1) % intPerSent == 0) {
@@ -540,16 +556,38 @@ async function showMsg() {
 		ReturnMessage += `,支${$.expenseBean}豆`;
 	}
 	ReturnMessage += `\n`;	
-	
-	if ($.levelName || $.JingXiang){		
+
+	if ($.beanCount){		
 		ReturnMessage += `【当前京豆】${$.beanCount}豆(≈${(($.beanCount-$.beanChangeXi)/ 100).toFixed(2)}元)\n`;		
 	} else {
-		ReturnMessage += `【当前京豆】获取失败,接口返回空数据\n`;
+		if($.levelName || $.JingXiang)
+			ReturnMessage += `【当前京豆】获取失败,接口返回空数据\n`;
+		else
+			ReturnMessage += `【当前京豆】${$.beanCount}豆(≈${(($.beanCount-$.beanChangeXi)/ 100).toFixed(2)}元)\n`;	
 	}
+	
+	if (doCheckJxBeans == "true") {
+		ReturnMessage += `【今日喜豆】收${$.todayinJxBean}豆`;
+
+		if ($.todayOutJxBean != 0) {
+			ReturnMessage += `,支${$.todayOutJxBean}豆`;
+		}
+		ReturnMessage += `\n`;
+
+		ReturnMessage += `【昨日喜豆】收${$.inJxBean}豆`;
+
+		if ($.OutJxBean != 0) {
+			ReturnMessage += `,支${$.OutJxBean}豆`;
+		}
+		ReturnMessage += `\n`;
+
+		ReturnMessage += `【当前喜豆】${$.xibeanCount}喜豆(≈${($.xibeanCount/ 100).toFixed(2)}元)\n`;
+	}
+
 
 	if (typeof $.JDEggcnt !== "undefined") {
 		if ($.JDEggcnt == 0) {
-			ReturnMessage += `【京喜牧场】未开通或提示火爆.\n`;
+			//ReturnMessage += `【京喜牧场】未开通或提示火爆.\n`;
 		} else {
 			ReturnMessage += `【京喜牧场】${$.JDEggcnt}枚鸡蛋\n`;
 		}
@@ -1944,6 +1982,126 @@ function taskPostClientActionUrl(body) {
 		}
 	}
 }
+
+function taskJxUrl(functionId, body = '') {
+    let url = ``;
+    var UA = `jdpingou;iPhone;4.13.0;14.4.2;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100609;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`;
+
+    if (body) {
+        url = `https://m.jingxi.com/activeapi/${functionId}?${body}`;
+        url += `&_=${Date.now() + 2}&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
+    } else {
+        url = `https://m.jingxi.com/activeapi/${functionId}?_=${Date.now() + 2}&sceneval=2&g_login_type=1&callback=jsonpCBK${String.fromCharCode(Math.floor(Math.random() * 26) + "A".charCodeAt(0))}&g_ty=ls`;
+    }
+    return {
+        url,
+        headers: {
+            "Host": "m.jingxi.com",
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "User-Agent": UA,
+            "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+            "Referer": "https://st.jingxi.com/",
+            "Cookie": cookie
+        }
+    }
+}
+
+
+function GetJxBeanDetailData() {
+  return new Promise((resolve) => {
+    $.get(taskJxUrl("queryuserjingdoudetail","pagesize=10&type=16"), async (err, resp, data) => {
+        try {
+          if (err) {
+            console.log(JSON.stringify(err));
+            console.log(`GetJxBeanDetailData请求失败，请检查网路重试`);
+          } else {
+            data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);      
+            
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
+        }
+      });
+  });
+}
+function GetJxBeanInfo() {
+  return new Promise((resolve) => {
+    $.get(taskJxUrl("querybeanamount"), async (err, resp, data) => {
+        try {
+          if (err) {
+            console.log(JSON.stringify(err));
+            console.log(`GetJxBeanInfo请求失败，请检查网路重试`);
+          } else {
+            data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);      
+            if(data){
+				if(data.errcode==0){
+					$.xibeanCount=data.data.xibean;
+					if(!$.beanCount){
+						$.beanCount=data.data.jingbean;
+					}
+				}
+			}
+          }
+        } catch (e) {
+          $.logErr(e, resp);
+        } finally {
+          resolve(data);
+        }
+      });
+  });
+}
+async function jxbean() {
+    //前一天的0:0:0时间戳
+    const tm = parseInt((Date.now() + 28800000) / 86400000) * 86400000 - 28800000 - (24 * 60 * 60 * 1000);
+    // 今天0:0:0时间戳
+    const tm1 = parseInt((Date.now() + 28800000) / 86400000) * 86400000 - 28800000;
+    var JxYesterdayArr = [],
+    JxTodayArr = [];
+    var JxResponse = await GetJxBeanDetailData();
+    if (JxResponse && JxResponse.ret == "0") {
+        var Jxdetail = JxResponse.detail;
+        if (Jxdetail && Jxdetail.length > 0) {
+            for (let item of Jxdetail) {
+                const date = item.createdate.replace(/-/g, '/') + "+08:00";
+                if (new Date(date).getTime() >= tm1 && (!item['visibleinfo'].includes("退还") && !item['visibleinfo'].includes('扣赠'))) {
+                    JxTodayArr.push(item);
+                } else if (tm <= new Date(date).getTime() && new Date(date).getTime() < tm1 && (!item['visibleinfo'].includes("退还") && !item['visibleinfo'].includes('扣赠'))) {
+                    //昨日的
+                    JxYesterdayArr.push(item);
+                } else if (tm > new Date(date).getTime()) {
+                    break;
+                }
+            }
+        } else {
+            $.errorMsg = `数据异常`;
+            $.msg($.name, ``, `账号${$.index}：${$.nickName}\n${$.errorMsg}`);
+        }
+
+        for (let item of JxYesterdayArr) {
+            if (Number(item.amount) > 0) {
+                $.inJxBean += Number(item.amount);
+            } else if (Number(item.amount) < 0) {
+                $.OutJxBean += Number(item.amount);
+            }
+        }
+        for (let item of JxTodayArr) {
+            if (Number(item.amount) > 0) {
+                $.todayinJxBean += Number(item.amount);
+            } else if (Number(item.amount) < 0) {
+                $.todayOutJxBean += Number(item.amount);
+            }
+        }
+		$.todayOutJxBean = -$.todayOutJxBean;
+		$.OutJxBean = -$.OutJxBean;
+    }
+
+}
+
+
+	
 function randomString(e) {
 	e = e || 32;
 	let t = "0123456789abcdef",
