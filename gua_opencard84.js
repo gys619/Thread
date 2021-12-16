@@ -362,7 +362,7 @@ async function takePostRequest(type) {
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
       case '抽奖':
-        url = `${domain}/play/monopoly/draw`;
+        url = `${domain}/play/monopoly/activeDraw`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}&drawType=2`
         break;
       default:
