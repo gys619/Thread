@@ -1,25 +1,7 @@
 /*
 写情书抽京豆
-更新时间：2021-12.12
-活动入口：写情书抽京豆
-
-已支持IOS双京东账号,Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-============Quantumultx===============
-[task_local]
-#写情书抽京豆
-1 1,14 12-25 12 * https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js, tag=写情书抽京豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
-
-================Loon==============
-[Script]
-cron "1 1,14 12-25 12 *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js,tag=写情书抽京豆
-
-===============Surge=================
-写情书抽京豆 = type=cron,cronexp="1 1,14 12-25 12 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js
-
-============小火箭=========
-写情书抽京豆 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js, cronexpr="1 1,14 12-25 12 *", timeout=3600, enable=true
-
+13 1,14 12-25 12 * jd_xqscjd.js
+未知出处
 */
 const $ = new Env('写情书抽京豆');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -36,6 +18,7 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
+let receiveBean = 0
 
 const JD_API_HOST = `https://xinrui2-isv.isvjcloud.com`;
 !(async () => {
@@ -64,7 +47,7 @@ const JD_API_HOST = `https://xinrui2-isv.isvjcloud.com`;
       $.canDo = true
       $.user_id = ""
       $.letterList.length = 0 ;
-      let receiveBean = 0;
+      receiveBean = 0;
       await getMyToken(`user/token`,`&client=m&url=pengyougou.m.jd.com`);
       $.token = $.tokenList.data
       console.log(`Token:${$.token}\n`)
@@ -201,13 +184,18 @@ async function main() {
             } 
         };
         $.canDo = true
-        for (let doit of $.prodcuts){
-            if ($.prodcutsNum < $.prodcuts.length && $.canDo === true){
-                console.log(`去加购${doit.name}`)
-                await getRewardList(`product_view?product_id=${doit.id}`)
-                await $.wait(500)
-            } 
-        };
+        if (["card","car"].includes(process.env.FS_LEVEL)) {
+            for (let doit of $.prodcuts){
+                if ($.prodcutsNum < $.prodcuts.length && $.canDo === true){
+                    console.log(`去加购${doit.name}`)
+                    await getRewardList(`product_view?product_id=${doit.id}`)
+                    await $.wait(500)
+                } 
+            };
+        }else{
+            console.log("不加购,请设置通用加购/开卡环境变量FS_LEVEL为\"car\"(或\"card\"开卡+加购)")
+        }
+        
         await getUserInfo()
         await $.wait(500)
         console.log(`可抽奖${$.lottery_number}次`)
@@ -408,7 +396,7 @@ function lottery(body) {
             data = JSON.parse(data);
             if (data.prize.type === 1){
                 console.log(`获得${data.prize.setting.beans_num}京豆\n`)
-                receiveBean += data.prize.setting.beans_num
+                receiveBean += parseInt(data.prize.setting.beans_num)
             }else if (data.prize.type === 5){
                 console.log(`获得${data.prize.setting.entity_description}\n`)
             }else if (data.prize.type === 0){

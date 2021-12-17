@@ -43,7 +43,7 @@ let commentImgList = [
     '//img30.360buyimg.com/shaidan/jfs/t1/143995/15/24443/5327/61860ba4Ecba97817/d7faafa606f76b1f.jpg'];
 if ($.isNode()) {
   console.log('配置文件中添加下方变量自定义评价图片：')
-  console.log('export EVAL_IMGS="//img30.360buyimg.com/shaidan/jfs/t1/169124/31/25110/42459/61a586c7Ec6b49656/1549ee98784f868d.jpg"')
+  console.log('export EVAL_IMGS='//img30.360buyimg.com/shaidan/jfs/t1/220117/4/6009/64307/61a586d6E0d3462c9/2d49512023e40761.jpg')
   console.log('多个图片请用&隔开，请自行替换图片！')
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -105,7 +105,7 @@ let goodsList = []
             await getOrderList(3,1,10)
             if(goodsList && goodsList.length){
                 for(let item of goodsList){
-                    await $.wait(1000)
+                    await $.wait(5000)
                     let cName = item["cname"];
                     if (cName ==="评价晒单"){
                         console.log(`******开始评价******`);
@@ -156,7 +156,7 @@ function getOrderList(orderType,startPage,pageSize){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);
                         if (data.errCode === '0') {
                             if (data.orderList && data.orderList.length) {
                                 for (let da of data.orderList) {
@@ -175,7 +175,7 @@ function getOrderList(orderType,startPage,pageSize){
                             }
                             if (data.totalDeal <= pageSize + 1 && startPage < 10) {
                                 console.log('查询下一页 startPage ！', startPage + 1);
-                                await $.wait(1000)
+                                await $.wait(2000)
                                 await getOrderList(orderType, startPage + 1, pageSize)
                             }
                         } else {
@@ -242,8 +242,8 @@ function sendEval(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
-                        if (data.errMsg === 'success') {
+                        data = JSON.parse(data);;
+                        if (data.iRet === 0) {
                             console.log('普通评价成功！');
                         } else {
                             console.log('普通评价失败了.....');
@@ -297,7 +297,7 @@ function sendServiceEval(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);;
                         if (data.errMsg === 'success') {
                             console.log('服务评价成功！');
                         } else {
@@ -355,7 +355,7 @@ function appendComment(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = $.toObj(data);
+                        data = JSON.parse(data);;
                         if (data.errMsg === 'success') {
                             console.log('晒单成功！');
                         } else {
@@ -459,7 +459,6 @@ function  generation(pname,usePname,type){
         getRandomArrayElements(data[type]["中间"],1)[0].replace('$',name)+
         getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name)+
         new Date().getTime();
-    console.log(context)
     return context
 }
 function taskUrl(orderType,startPage,pageSize) {
@@ -537,11 +536,15 @@ function TotalBean() {
 }
 function safeGet(data) {
     try {
+        if(data.indexOf('json(') === 0){
+            data = data.replace(/\n/g, "").match(new RegExp(/json.?\((.*);*\)/))[1]
+        }
         if (typeof JSON.parse(data) == "object") {
             return true;
         }
     } catch (e) {
         console.log(e);
+        console.log("data",data);
         console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
         return false;
     }

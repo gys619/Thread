@@ -1,16 +1,10 @@
 /* 
 cron 14 10 * * * https://raw.githubusercontent.com/11111120/scripts/master/jd_sign_graphics.js
-只支持nodejs环境
-需要安装依赖 
-npm i png-js 或者 npm i png-js -S
 
-如果 read ECONNRESET 错误 可以试试
-环境变量 JOY_HOST
-修改域名 https://jdjoy.jd.com 可以改成ip https://49.7.27.236
 */
 
-const validator = require('./JDJRValidator_Pure.js');
-const Faker=require('./sign_graphics_validate.js') 
+// const validator = require('./JDJRValidator_Pure.js');
+// const Faker=require('./sign_graphics_validate.js');
 
 const $ = new Env('京东签到图形验证');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -20,14 +14,6 @@ CryptoScripts()
 $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
 let cookiesArr = [], cookie = '';
 
-if ($.isNode()) {
-  Object.keys(jdCookieNode).forEach((item) => {
-    cookiesArr.push(jdCookieNode[item])
-  })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
-} else {
-  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
-}
 let message = '', subTitle = '', beanNum = 0;
 let fp = ''
 let eid = ''
@@ -38,12 +24,21 @@ let JD_API_HOST = 'https://jdjoy.jd.com'
 $.invokeKey = "q8DNJdpcfRQ69gIx"
 $.invokeKey = $.isNode() ? (process.env.JD_invokeKey ? process.env.JD_invokeKey : `${$.invokeKey}`) : ($.getdata('JD_invokeKey') ? $.getdata('JD_invokeKey') : `${$.invokeKey}`);
 let lkt = 0
-if(process.env.JOY_HOST){
-  JD_API_HOST = process.env.JOY_HOST
+
+if ($.isNode()) {
+  if(process.env.JOY_HOST){
+    JD_API_HOST = process.env.JOY_HOST
+  }
+  Object.keys(jdCookieNode).forEach((item) => {
+    cookiesArr.push(jdCookieNode[item])
+  })
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
+} else {
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-getUA()
-$.get = validator.injectToRequest($.get.bind($), 'channelSign', $.UA)
-$.post = validator.injectToRequest($.post.bind($), 'channelSign', $.UA)
+// getUA()
+// $.get = validator.injectToRequest($.get.bind($), 'channelSign', $.UA)
+// $.post = validator.injectToRequest($.post.bind($), 'channelSign', $.UA)
 
 const turnTableId = [
   { "name": "京东商城-健康", "id": 527, "url": "https://prodev.m.jd.com/mall/active/w2oeK5yLdHqHvwef7SMMy4PL8LF/index.html" },
@@ -81,7 +76,7 @@ const turnTableId = [
       $.beanSignTime = new Date(UTC8).toLocaleString('zh', {hour12: false}).replace(' 24:',' 00:');
       let msg = `【京东账号${$.index}】${$.nickName || $.UserName}\n【签到时间】:  ${$.beanSignTime}\n【签到概览】:  成功${successNum}个, 失败${errorNum}个${invalidNum && "，失效"+invalidNum+"个" || ""}\n${beanNum > 0 && "【签到奖励】:  "+beanNum+"京豆" || ""}\n`
       message += msg + '\n'
-      $.msg($.name, msg);
+      if($.isNode()) $.msg($.name, msg);
     }
   }
   await showMsg();
@@ -108,7 +103,7 @@ async function signRun() {
     }else{
       errorNum++;
     }
-    let time = Math.random() * 5000 + 10000
+    let time = Math.random() * 4000 + 16000
     console.log(`等待${(time/1000).toFixed(3)}秒`)
     await $.wait(parseInt(time, 10))
   }
@@ -130,13 +125,13 @@ function Login(i) {
             if (data.success && data.data) {
               data = data.data
               if (data.hasSign === false) {
-                let arr = await Faker.getBody($.UA,turnTableId[i].url)
-                fp = arr.fp
-                await getEid(arr)
+                // let arr = await Faker.getBody($.UA,turnTableId[i].url)
+                // fp = arr.fp
+                // await getEid(arr)
                 $.appId = 'b342e';
                 await requestAlgo();
                 await Sign(i,1)
-                let time = Math.random() * 5000 + 15000
+                let time = Math.random() * 4000 + 16000
                 console.log(`等待${(time/1000).toFixed(3)}秒`)
                 await $.wait(parseInt(time, 10))
               } else if (data.hasSign === true) {
@@ -255,10 +250,11 @@ function getEid(arr) {
 }
 
 function taskUrl(turnTableId) {
+  let time = Date.now()
   let body = {"turnTableId":`${turnTableId}`}
-  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelDetail"},{"key":"t","value":Date.now()}]
+  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelDetail"},{"key":"t","value":time}]
   let h5st = geth5st(t) || 'undefined'
-  const url = `https://api.m.jd.com/api?clientVersion=1.2.5&client=jxh5&appid=jdchoujiang_h5&t=${Date.now()}&functionId=turncardChannelDetail&body=${JSON.stringify(body)}&h5st=${h5st}`
+  let url = `https://api.m.jd.com/api?client=&clientVersion=&appid=jdchoujiang_h5&t=${time}&functionId=turncardChannelDetail&body=${escape(JSON.stringify(body))}&h5st=${h5st}`
   return {
     url,
     headers: {
@@ -276,9 +272,9 @@ function taskUrl(turnTableId) {
 function tasPostkUrl(turnTableId) {
   let time = Date.now()
   let body = {"turnTableId":`${turnTableId}`,"fp":'',"eid":''}
-  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelSign"},{"key":"t","value":Date.now()}]
+  let t = [{"key":"appid","value":"jdchoujiang_h5"},{"key":"body","value":$.CryptoJS.SHA256($.toStr(body,body)).toString()},{"key":"client","value":""},{"key":"clientVersion","value":""},{"key":"functionId","value":"turncardChannelSign"},{"key":"t","value":time}]
   let h5st = geth5st(t) || 'undefined'
-  let url = `https://api.m.jd.com/api?client=&clientVersion=&appid=jdchoujiang_h5&t=${time}&functionId=turncardChannelSign&body=${escape(JSON.stringify(body))}&h5st=${h5st}`
+  let url = `https://api.m.jd.com/api?client=&clientVersion=&appid=jdchoujiang_h5&functionId=turncardChannelSign&t=${time}&body=${escape(JSON.stringify(body))}&h5st=${h5st}`
   return {
     url,
     headers: {
@@ -294,26 +290,25 @@ function tasPostkUrl(turnTableId) {
 }
 
 async function requestAlgo() {
-  $.fp = (getRandomIDPro({ size: 13 }) + Date.now()).slice(0, 16);
+  var s = "", a = "0123456789", u = a, c = (Math.random() * 10) | 0;
+  do{
+    ss = getRandomIDPro({ size: 1 ,customDict:a})+""
+    if(s.indexOf(ss) == -1) s += ss
+  }while (s.length < 3)
+  for(let i of s.slice()) u = u.replace(i,'')
+  $.fp = getRandomIDPro({size:c, customDict:u})+""+s+getRandomIDPro({size:(14-(c+3))+1, customDict:u})+c+""
   let opts = {
-    "url": `https://cactus.jd.com/request_algo?g_ty=ajax`,
+    url: `https://cactus.jd.com/request_algo?g_ty=ajax`,
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       "Accept-Encoding": "gzip, deflate, br",
+      "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
       'Origin': 'https://prodev.m.jd.com',
       'Referer': 'https://prodev.m.jd.com/',
       'User-Agent': $.UA,
-      'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
     },
-    'body': JSON.stringify({
-      "version": "3.0",
-      "fp": $.fp,
-      "appId": $.appId,
-      "timestamp": Date.now(),
-      "platform": "web",
-      "expandParams": ""
-    })
+    body: `{"version":"3.0","fp":"${$.fp}","appId":"${$.appId}","timestamp":${Date.now()},"platform":"web","expandParams":""}`
   }
   return new Promise(async resolve => {
     $.post(opts, (err, resp, data) => {
@@ -356,13 +351,14 @@ function getRandomIDPro() {
 function geth5st(t){
   // return ''
   let a = t.map(function(e) {
-  return e["key"] + ":" + e["value"]
+    return e["key"] + ":" + e["value"]
   })["join"]("&")
   let time = Date.now()
-  const timestamp = format("yyyyMMddhhmmssSSS", time);
-  const hash1 = $.genKey($.token, $.fp.toString(), timestamp.toString(), $.appId.toString(), $.CryptoJS).toString($.CryptoJS.enc.Hex);
-  const hash2 = $.CryptoJS.HmacSHA256(a, hash1.toString()).toString($.CryptoJS.enc.Hex);
-  h5st = ["".concat(timestamp.toString()), "".concat($.fp.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2),"3.0","".concat(time)].join(";")
+  let hash1 = ''
+  let timestamp = format("yyyyMMddhhmmssSSS", time);
+  hash1 = $.genKey($.token, $.fp.toString(), timestamp.toString(), $.appId.toString(), $.CryptoJS).toString();
+  const hash2 = $.CryptoJS.HmacSHA256(a, hash1.toString()).toString();
+  let h5st = ["".concat(timestamp.toString()), "".concat($.fp.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2),"3.0","".concat(time)].join(";")
   return encodeURIComponent(h5st)
 }
 function format(a, time) {
