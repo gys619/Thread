@@ -42,8 +42,7 @@ let commentImgList = [
     '//img30.360buyimg.com/shaidan/jfs/t1/156957/9/27398/4391/61bb2a3cEca6a4bab/20005aabe0573a0a.jpg',
     '//img30.360buyimg.com/shaidan/jfs/t1/143995/15/24443/5327/61860ba4Ecba97817/d7faafa606f76b1f.jpg'];
 if ($.isNode()) {
-  console.log('配置文件中添加下方变量自定义评价图片：')
-  console.log('export EVAL_IMGS='//img30.360buyimg.com/shaidan/jfs/t1/220117/4/6009/64307/61a586d6E0d3462c9/2d49512023e40761.jpg')
+  console.log('配置文件中添加变量自定义评价图片')
   console.log('多个图片请用&隔开，请自行替换图片！')
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -297,7 +296,7 @@ function sendServiceEval(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = JSON.parse(data);;
+                        data = JSON.parse(data);
                         if (data.errMsg === 'success') {
                             console.log('服务评价成功！');
                         } else {
@@ -355,7 +354,7 @@ function appendComment(item){
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                 } else {
                     if (safeGet(data)) {
-                        data = JSON.parse(data);;
+                        data = JSON.parse(data);
                         if (data.errMsg === 'success') {
                             console.log('晒单成功！');
                         } else {
@@ -420,7 +419,7 @@ function  generation(pname,usePname,type){
                 "东西很好，孩子很喜欢",
                 "现在睡觉都抱着  $  睡觉，真是太好用了",
                 "令人难玩的一次购物",
-                "五星好评，坑一个是一个",
+                "五星好评，真的很不错",
                 "$赠送的物品非常丰富，厂家很有诚意，物超所值，值得购买！"
             ]
         },
@@ -457,8 +456,8 @@ function  generation(pname,usePname,type){
     }
     let context = getRandomArrayElements(data[type]["开始"],1)[0].replace('$',name)+
         getRandomArrayElements(data[type]["中间"],1)[0].replace('$',name)+
-        getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name)+
-        new Date().getTime();
+        getRandomArrayElements(data[type]["结束"],1)[0].replace('$',name);
+        //+new Date().getTime();
     return context
 }
 function taskUrl(orderType,startPage,pageSize) {
