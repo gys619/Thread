@@ -162,6 +162,8 @@ jd_mn.js
 #不能跑的
 jd_task_*.js
 creat.sh
+jw_*.js
+jr_*.js
 *.conf
 jd_help_sendBean.js
 jx_help_*.js
@@ -174,7 +176,10 @@ jd_shy_dpqd?.js
 *common_enc.js
 # ck顺序调试工具
 #jd_CkSeq.js
-
+# 疑似互助码的json
+starShop.json
+lzdz1_*.json
+*.json
 
 
 
