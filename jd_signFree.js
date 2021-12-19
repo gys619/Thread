@@ -1,8 +1,5 @@
-/*
-  入口>京东极速版>首页>签到免单
-  京东极速版,先下单,第二天开始签到
- cron 18 8,12,20 * * * jd_speed_signfree.js 签到免单
-*/
+// 自行确认是否有效
+
 const $ = new Env('极速免费签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -45,7 +42,7 @@ const JD_API_HOST = 'https://api.m.jd.com/';
         await notify.sendNotify($.name + '错误!!', "无消息可推送!!")
     }
 })()
-    .catch((e) => {
+.catch((e) => {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
         notify.sendNotify($.name + '异常!!', msg.join('\n') + '\n' + e)
     })
