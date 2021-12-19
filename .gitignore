@@ -179,7 +179,10 @@ jd_shy_dpqd?.js
 # 疑似互助码的json
 starShop.json
 lzdz1_*.json
-*.json
+jddj_*.json
+jd_lzdz1.json
+#*.json
+
 
 
 
