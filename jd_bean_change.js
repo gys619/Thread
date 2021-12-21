@@ -803,7 +803,9 @@ async function showMsg() {
 	console.log(`${ReturnMessageTitle+ReturnMessage}`);
 
 	if ($.isNode() && WP_APP_TOKEN_ONE) {
+		var strTitle="京东资产变动";
 		if (TempBaipiao) {
+			strTitle="京东资产变动及活动领取";
 			TempBaipiao = `【⏰商品白嫖活动提醒⏰】\n` + TempBaipiao;
 			ReturnMessage = TempBaipiao + `\n` + ReturnMessage;
 		}
@@ -812,7 +814,7 @@ async function showMsg() {
 		if(strAllNotify)
 			ReturnMessage=strAllNotify+`\n`+ReturnMessage;
 		
-		await notify.sendNotifybyWxPucher(`${$.name}`, `${ReturnMessage}`, `${$.UserName}`);
+		await notify.sendNotifybyWxPucher(strTitle, `${ReturnMessage}`, `${$.UserName}`);
 	}
 
 	//$.msg($.name, '', ReturnMessage , {"open-url": "https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean"});
