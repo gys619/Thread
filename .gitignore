@@ -183,7 +183,8 @@ jddj_*.json
 jd_lzdz1.json
 #*.json
 # 内部互助脚本
-jd_*_help.js
+jd_fruit_help.js
+jd_pet_help.js
 
 
 
