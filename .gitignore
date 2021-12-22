@@ -182,7 +182,8 @@ lzdz1_*.json
 jddj_*.json
 jd_lzdz1.json
 #*.json
-
+# 内部互助脚本
+jd_*_help.js
 
 
 
