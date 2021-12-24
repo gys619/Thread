@@ -64,7 +64,7 @@ if ($.isNode()) {
         continue
       }
       try {
-        await jdMh('https://anmp.jd.com/babelDiy/Zeus/8CbjecdsTdhKfcZnAWMpc5dGUJA/index.html') // 8.1-8.31
+        await jdMh('https://anmp.jd.com/babelDiy/Zeus/42dZY2nTfLGSxPQVYEjeiJuniJBV/index.html?') // 8.1-8.31
       } catch (e) {
         $.logErr(e)
       }
