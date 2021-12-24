@@ -1,6 +1,26 @@
-/**
- * */
-const $ = new Env('任务脚本');
+/*
+JoyJd任务脚本
+活动时间：2021-7-1至2021-7-31
+活动地址：https://h5.m.jd.com/babelDiy/Zeus/3eeruLXVbXge6CexVq8XkBbBvAfy/index.html
+活动入口：京东app-女装馆-赢京豆
+已支持IOS双京东账号,Node.js支持N个京东账号
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
+[task_local]
+#JoyJd任务脚本
+35 7 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js, tag=JoyJd任务脚本, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
+================Loon==============
+[Script]
+cron "35 7 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
+
+===============Surge=================
+JoyJd任务脚本 = type=cron,cronexp="35 7 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js
+
+============小火箭=========
+JoyJd任务脚本 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js, cronexpr="35 7 * * *", timeout=3600, enable=true
+ */
+const $ = new Env('JoyJd任务脚本');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [];

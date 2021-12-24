@@ -1,24 +1,23 @@
 /*
-女装盲盒
-活动时间：2021-7-1至2021-7-31
+直播间盲盒抽京豆
 活动地址：https://h5.m.jd.com/babelDiy/Zeus/3eeruLXVbXge6CexVq8XkBbBvAfy/index.html
 活动入口：京东app-女装馆-赢京豆
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
-#女装盲盒
-35 1,23 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, tag=女装盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+#直播间盲盒抽京豆
+35 1 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, tag=直播间盲盒抽京豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "35 1,23 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js,tag=女装盲盒
+cron "35 1 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js,tag=直播间盲盒抽京豆
 
 ===============Surge=================
-女装盲盒 = type=cron,cronexp="35 1,23 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js
+直播间盲盒抽京豆 = type=cron,cronexp="35 1 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js
 
 ============小火箭=========
-女装盲盒 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, cronexpr="35 1,23 * * *", timeout=3600, enable=true
+直播间盲盒抽京豆 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, cronexpr="35 1 * * *", timeout=3600, enable=true
  */
 
 const $ = new Env('直播间盲盒抽京豆');
@@ -64,7 +63,7 @@ if ($.isNode()) {
         continue
       }
       try {
-        await jdMh('https://anmp.jd.com/babelDiy/Zeus/42dZY2nTfLGSxPQVYEjeiJuniJBV/index.html?') // 8.1-8.31
+        await jdMh('https://anmp.jd.com/babelDiy/Zeus/42dZY2nTfLGSxPQVYEjeiJuniJBV/index.html?')
       } catch (e) {
         $.logErr(e)
       }

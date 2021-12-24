@@ -1,13 +1,11 @@
 /*
 发财挖宝: 入口,极速版-我的,发财挖宝
 说明
-1、脚本只执行助力和做1个任务,需要手动进活动进行游戏
-2、第一个账号会助力作者，其他账号助力第CK1
-=================================Quantumultx=========================
-[task_local]
-#发财挖宝
-5 0-23/2 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_fcwb.js, tag=发财挖宝, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-*/
+    1、脚本只执行助力和做1个任务,需要手动进活动进行游戏
+    2、第一个账号会助力作者，其他账号助力第一个CK
+cron 40 12,16 * * * https://raw.githubusercontent.com/notfound1/jd/main/scripts/jd_fcwb.js
+
+* * */
 const $ = new Env('发财挖宝');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -28,20 +26,28 @@ if ($.isNode()) {
 let cookie = '';
 let fcwbinviter = "";
 let fcwbinviteCode = "";
+$.appId = '8dd95';
+let today_h5st = '20211224155915084%3B1043369648726109%3Bce6c2%3Btk02wa3a41cc518n1xBK1grDZ2JTtFMO5esOGg1zgtMj9HlvgZGw8m0GPjvXQ00sxGbLNcpLpPSQhXdForgkgMmmeDXV%3Be2cee3c044ed8632291aee03126e1025737525c44b0c83211fc41a52a04c2ed1%3B3.0%3B1640332755084';
+let today_t = '1640332755081';
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-    console.log(`\n注意：本脚本暂时只会执行助力，助力后，请手动进活动进行游戏（发财挖宝: 入口,极速版-->我的-->发财挖宝）\n`)
+    $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
+    await requestAlgo();
+    console.log(`\n注意：本脚本暂时只会执行助力，助力后，请手动进活动进行游戏（发财挖宝: 入口,极速版-》我的-》发财挖宝）\n`)
     let res = [];
-    try{res = await getAuthorShareCode(); res = res.fcwb;
-        if(res.length > 0){
-            let actCodeInfo = getRandomArrayElements(res,1)[0];
-            fcwbinviter = actCodeInfo.fcwbinviter;
-            fcwbinviteCode = actCodeInfo.fcwbinviteCode;
-        }
-    }catch (e) {}
+    try{res = await getAuthorShareCode('https://raw.githubusercontent.com//share_code/main/fcwb.json');}catch (e) {}
+    if(!res){
+        try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh//share_code@main/fcwb.json');}catch (e) {}
+        if(!res){res = [];}
+    }
+    if(res.length > 0){
+        let actCodeInfo = getRandomArrayElements(res,1)[0];
+        fcwbinviter = actCodeInfo.fcwbinviter;
+        fcwbinviteCode = actCodeInfo.fcwbinviteCode;
+    }
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -77,13 +83,14 @@ async function main() {
         console.log(`都黑号了，别薅了`);
         return;
     }
+    //console.log(`${homeInfo}`);
     console.log(`获取活动详情成功`);
-    console.log(`fcwbinviteCode='${homeInfo.inviteCode}'`)
-    console.log(`fcwbinviter='${homeInfo.markedPin}'`)
+    console.log(`1_fcwbinviteCode='${homeInfo.inviteCode}'`)
+    console.log(`1_fcwbinviter='${homeInfo.markedPin}'`)
     if(fcwbinviter && fcwbinviteCode){
         console.log(`去助力:${fcwbinviter}`);
-        await takeRequest(`happyDigHelp`,`{"linkId":"${link}","inviter":"${fcwbinviter}","inviteCode":"${fcwbinviteCode}"}`);
-        //console.log(`助力结果：${JSON.stringify(HelpInfo)}`);
+        let HelpInfo = await takeRequest2(`happyDigHelp`,`{"linkId":"${link}","round":1,"inviter":"${fcwbinviter}","inviteCode":"${fcwbinviteCode}"}`,true);
+        console.log(`助力结果：${JSON.stringify(HelpInfo)}`);
     }
     $.freshFlag = false;
     if($.index === 1){
@@ -115,25 +122,51 @@ async function doTask(){
                 $.freshFlag = true;
             }
             if(oneTask.id === 357){
-                // let detail = await takeRequest(`apTaskDetail`,`{"linkId":"${link}","taskType":"${oneTask.taskType}","taskId":${oneTask.id},"channel":4}`);
-                // await $.wait(1000);
-                // let status = detail.status;
-                // let taskItemList =  detail.taskItemList;
-                // for (let j = 0; j < taskItemList.length && j < (status.finishNeed - status.userFinishedTimes); j++) {
-                //     console.log(`浏览：${taskItemList[j].itemName}`);
-                //     let doTask = await takeRequest(`apDoTask`,`{"linkId":"${link}","taskType":"${oneTask.taskType}","taskId":${oneTask.id},"channel":4,"itemId":"${encodeURIComponent(taskItemList[j].itemId)}","checkVersion":false}`);
-                //     console.log(`执行结果：${JSON.stringify(doTask)}`);
-                //     await $.wait(2000);
-                // }
             }
         }
     }
 }
-
+async function takeRequest2(functionId,bodyInfo,h5stFlag = false){
+    let  url = `https://api.m.jd.com/?functionId=${functionId}&body=${encodeURIComponent(bodyInfo)}&appid=activities_platform&client=H5&clientVersion=1.0.0`;
+    url +=`&h5st=${today_h5st}&t=${today_t}`;
+    console.log(`FULL URL :${url}\n`);
+    const headers = {
+        'Host' : `api.m.jd.com`,
+        'Accept' : `application/json, text/plain, */*`,
+        'Origin' : `https://bnzf.jd.com`,
+        'Cookie' : cookie ,
+        'Accept-Encoding' : `gzip, deflate, br`,
+        'user-agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+        'Accept-Language' : `zh-cn`,
+        'Referer' : `https://bnzf.jd.com/?activityId=${link}`
+    };
+    let sentInfo = {url: url, headers: headers};
+    return new Promise(async resolve => {
+        $.get(sentInfo, (err, resp, data) => {
+            try {
+                if(err){
+                    console.log(err);
+                }else{
+                    //console.log(data);
+                    data = JSON.parse(data);
+                    if(data && data.data && JSON.stringify(data.data) === '{}'){
+                        console.log(JSON.stringify(data))
+                    }
+                }
+            } catch (e) {
+                console.log(data);
+                //$.logErr(e, resp)
+            } finally {
+                resolve(data.errMsg || {});
+            }
+        })
+    })
+}
 async function takeRequest(functionId,bodyInfo,h5stFlag = false){
-    let  url = `https://api.m.jd.com/?functionId=${functionId}&body=${encodeURIComponent(bodyInfo)}&t=${Date.now()}&appid=activities_platform&client=H5&clientVersion=1.0.0`;
+    let  url = `https://api.m.jd.com/?functionId=${functionId}&body=${encodeURIComponent(bodyInfo)}&t=1637703988143&appid=activities_platform&client=H5&clientVersion=1.0.0`;
     if(h5stFlag){
-        //url = await getH5stUrl(functionId,bodyInfo);
+        url += `&h5st=${decrypt(Date.now(), '', '', url)}`;
+        console.log(`FULL URL :${url}\n`);
     }
     const headers = {
         'Host' : `api.m.jd.com`,
@@ -152,6 +185,7 @@ async function takeRequest(functionId,bodyInfo,h5stFlag = false){
                 if(err){
                     console.log(err);
                 }else{
+                    // console.log(data);
                     data = JSON.parse(data);
                     if(data && data.data && JSON.stringify(data.data) === '{}'){
                         console.log(JSON.stringify(data))
@@ -159,14 +193,163 @@ async function takeRequest(functionId,bodyInfo,h5stFlag = false){
                 }
             } catch (e) {
                 console.log(data);
-                $.logErr(e, resp)
+                //$.logErr(e, resp)
             } finally {
                 resolve(data.data || {});
             }
         })
     })
 }
-function getAuthorShareCode(url='https://raw.githubusercontent.com/11111115/params/main/codes.json') {
+/*
+修改时间戳转换函数，京喜工厂原版修改
+ */
+Date.prototype.Format = function (fmt) {
+  var e,
+      n = this, d = fmt, l = {
+        "M+": n.getMonth() + 1,
+        "d+": n.getDate(),
+        "D+": n.getDate(),
+        "h+": n.getHours(),
+        "H+": n.getHours(),
+        "m+": n.getMinutes(),
+        "s+": n.getSeconds(),
+        "w+": n.getDay(),
+        "q+": Math.floor((n.getMonth() + 3) / 3),
+        "S+": n.getMilliseconds()
+      };
+  /(y+)/i.test(d) && (d = d.replace(RegExp.$1, "".concat(n.getFullYear()).substr(4 - RegExp.$1.length)));
+  for (var k in l) {
+    if (new RegExp("(".concat(k, ")")).test(d)) {
+      var t, a = "S+" === k ? "000" : "00";
+      d = d.replace(RegExp.$1, 1 == RegExp.$1.length ? l[k] : ("".concat(a) + l[k]).substr("".concat(l[k]).length))
+    }
+  }
+  return d;
+}
+async function requestAlgo() {
+  $.fingerprint = await generateFp();
+  const options = {
+    "url": `https://cactus.jd.com/request_algo?g_ty=ajax`,
+    "headers": {
+      'Authority': 'cactus.jd.com',
+      'Pragma': 'no-cache',
+      'Cache-Control': 'no-cache',
+      'Accept': 'application/json',
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+      'Content-Type': 'application/json',
+      'Origin': 'https://bnzf.jd.com',
+      'Sec-Fetch-Site': 'cross-site',
+      'Sec-Fetch-Mode': 'cors',
+      'Sec-Fetch-Dest': 'empty',
+      'Referer': 'https://bnzf.jd.com/?activityId=pTTvJeSTrpthgk9ASBVGsw&inviterId=pCkTg1bvuRvt0YC8teWs_-c4ZxJ6FtRi6NvLg4SqN7c&inviterCode=0027d59c120e4b82b72810fc2fee0e4b61391637702411786&utm_user=plusmember&ad_od=share&utm_source=androidapp&utm_medium=appshare&utm_campaign=t_335139774&utm_term=QQfriends&sid=7185c07e23cc49d1ab7f049f9e06659w&un_area=1_72_2799_0',
+      'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
+    },
+    'body': JSON.stringify({
+      "version": "3.0",
+      "fp": $.fingerprint,
+      "appId": "8dd95",
+      "timestamp": Date.now(),
+      "platform": "web",
+      "expandParams": ""
+    })
+  }
+  new Promise(async resolve => {
+    $.post(options, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`request_algo 签名参数API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            // console.log(data);
+            data = JSON.parse(data);
+            if (data['status'] === 200) {
+              $.token = data.data.result.tk;
+              let enCryptMethodJDString = data.data.result.algo;
+              if (enCryptMethodJDString) $.enCryptMethodJD = new Function(`return ${enCryptMethodJDString}`)();
+              console.log(`获取签名参数成功！`)
+              console.log(`fp: ${$.fingerprint}`)
+              console.log(`token: ${$.token}`)
+              console.log(`enCryptMethodJD: ${enCryptMethodJDString}`)
+            } else {
+              console.log(`fp: ${$.fingerprint}`)
+              console.log('request_algo 签名参数API请求失败:')
+            }
+          } else {
+            console.log(`京东服务器返回空数据`)
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+/**
+ * 模拟生成 fingerprint
+ * @returns {string}
+ */
+function generateFp() {
+  let e = "0123456789";
+  let a = 13;
+  let i = '';
+  for (; a--; )
+    i += e[Math.random() * e.length | 0];
+  return (i + Date.now()).slice(0,16)
+}
+
+/**
+ * 获取url参数值
+ * @param url
+ * @param name
+ * @returns {string}
+ */
+function getUrlData(url, name) {
+  if (typeof URL !== "undefined") {
+    let urls = new URL(url);
+    let data = urls.searchParams.get(name);
+    return data ? data : '';
+  } else {
+    const query = url.match(/\?.*/)[0].substring(1)
+    const vars = query.split('&')
+    for (let i = 0; i < vars.length; i++) {
+      const pair = vars[i].split('=')
+      if (pair[0] === name) {
+        // return pair[1];
+        return vars[i].substr(vars[i].indexOf('=') + 1);
+      }
+    }
+    return ''
+  }
+}
+function decrypt(time, stk, type, url) {
+  stk = stk || (url ? getUrlData(url, '_stk') : '1')
+  //stk = 'a1';
+  if (stk) {
+    const timestamp = new Date(time).Format("yyyyMMddhhmmssSSS");
+    let hash1 = '';
+    if ($.fingerprint && $.token && $.enCryptMethodJD) {
+      console.log(`TOKEN:${$.token}`)    
+      hash1 = $.enCryptMethodJD($.token, $.fingerprint.toString(), timestamp.toString(), $.appId.toString(), $.CryptoJS).toString($.CryptoJS.enc.Hex);
+    } else {
+      const random = '5gkjB6SpmC9s';
+      $.token = `tk01wcdf61cb3a8nYUtHcmhSUFFCfddDPRvKvYaMjHkxo6Aj7dhzO+GXGFa9nPXfcgT+mULoF1b1YIS1ghvSlbwhE0Xc`;
+      $.fingerprint = 5287160221454703;
+      const str = `${$.token}${$.fingerprint}${timestamp}${$.appId}${random}`;
+      hash1 = $.CryptoJS.SHA512(str, $.token).toString($.CryptoJS.enc.Hex);
+    }
+    //let st = $.token;
+    let linuxtime = Date.now();
+    //const hash2 = $.CryptoJS.HmacSHA256(st, hash1.toString()).toString($.CryptoJS.enc.Hex);
+    return encodeURIComponent(["".concat(timestamp.toString()), "".concat($.fingerprint.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash1), "".concat("3.0"), "".concat(linuxtime)].join(";"))
+  } else {
+    return encodeURIComponent('20211124054629462;4023671646648651;8dd95;tk02w9a2d1bba18nAfBlypuTFs8DY5NSLakOEvCtqq9Il64F5oUPU9+aoFcdPA8pAeOkcI5g+Jb044ur0vhmxJ60lczd;7464bb3d4a2532e6f824861bf7465d1935ac749273ceaf4a6ab0f99b3085096f;3.0;1637703989462')
+  }
+}
+
+function getAuthorShareCode(url) {
     return new Promise(resolve => {
         const options = {
             url: `${url}?${new Date()}`, "timeout": 10000, headers: {
