@@ -7,7 +7,7 @@ cron:22 0,20 27-31,1 12,1 *
 ============Quantumultx===============
 [task_local]
 #12.27~1.1 集魔方
-22 0,20 27-31,1 12,1 * https://raw.githubusercontent.com/444444/JDJB/main/jd_desire.js, tag=12.20~1.5 双旦寻宝 玩转大富翁, enabled=true
+22 0,20 27-31,1 12,1 * https://raw.githubusercontent.com/444444/JDJB/main/jd_desire.js, tag=12.27~1.1 集魔方, enabled=true
 
  */
 const $ = new Env('12.27~1.1 集魔方');
