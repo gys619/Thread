@@ -8,27 +8,18 @@
  *
  * @Address: https://github.com/X1a0He/jd_scripts_fixed/blob/main/jd_try_xh.js
  * @LastEditors: X1a0He
- 参考环境变量配置如下：
-export JD_TRY="true"
-export JD_TRY_PLOG="true" #是否打印输出到日志
-export JD_TRY_PASSZC="true" #过滤种草官类试用
-export JD_TRY_MAXLENGTH="50" #商品数组的最大长度
-export JD_TRY_APPLYINTERVAL="5000" #商品试用之间和获取商品之间的间隔
-export JD_TRY_APPLYNUMFILTER="100000" #过滤大于设定值的已申请人数
-export JD_TRY_MINSUPPLYNUM="1" #最小提供数量
-export JD_TRY_SENDNUM="10" #每隔多少账号发送一次通知，不需要可以不用设置
-cron "4 1-22/8 * * *" jd_try.js, tag:京东试用
-
  */
-const $ = new Env('京东试用')
+const $ = new Env('京东试用-优化')
 const URL = 'https://api.m.jd.com/client.action'
 let trialActivityIdList = []
 let trialActivityTitleList = []
+let totalTry = []
+let totalSuccess=[]
 let notifyMsg = ''
 let size = 1;
 $.isPush = true;
-$.isLimit = false;
-$.isForbidden = false;
+let isLimit = [];
+let isForbidden = [];
 $.wrong = false;
 $.totalPages = 0;
 $.giveupNum = 0;
@@ -48,7 +39,7 @@ $.innerKeyWords =
         "女用", "神油", "足力健", "老年", "老人",
         "宠物", "饲料", "丝袜", "黑丝", "磨脚",
         "脚皮", "除臭", "性感", "内裤", "跳蛋",
-        "安全套", "龟头", "阴道", "阴部", "手机卡"
+        "安全套", "龟头", "阴道", "阴部"
     ]
 //下面很重要，遇到问题请把下面注释看一遍再来问
 let args_xh = {
@@ -59,11 +50,11 @@ let args_xh = {
      * C商品原价99元，试用价1元，如果下面设置为50，那么C商品将会被加入到待提交的试用组
      * 默认为0
      * */
-    jdPrice: process.env.JD_TRY_PRICE * 1 || 0,
+    jdPrice: process.env.JD_TRY_PRICE * 1 || 20,
     /*
      * 获取试用商品类型，默认为1，原来不是数组形式，我以为就只有几个tab，结果后面还有我服了
      * 1 - 精选
-     * 2 - 闪电试用
+     * 2 - 闪电试
      * 3 - 家用电器(可能会有变化)
      * 4 - 手机数码(可能会有变化)
      * 5 - 电脑办公(可能会有变化)
@@ -73,7 +64,7 @@ let args_xh = {
      * 可设置环境变量：JD_TRY_TABID，用@进行分隔
      * 默认为 1 到 5
      * */
-    tabId: process.env.JD_TRY_TABID && process.env.JD_TRY_TABID.split('@').map(Number) || [1,2,3,4,5,6,7,8,9,10],
+    tabId: process.env.JD_TRY_TABID && process.env.JD_TRY_TABID.split('@').map(Number) || [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
     /*
      * 试用商品标题过滤，黑名单，当标题存在关键词时，则不加入试用组
      * 当白名单和黑名单共存时，黑名单会自动失效，优先匹配白名单，匹配完白名单后不会再匹配黑名单，望周知
@@ -107,14 +98,14 @@ let args_xh = {
      * 可设置环境变量：JD_TRY_APPLYINTERVAL
      * 默认为3000，也就是3秒
      * */
-    applyInterval: process.env.JD_TRY_APPLYINTERVAL * 1 || 5000,
+    applyInterval: process.env.JD_TRY_APPLYINTERVAL * 1 || 3000,//每个账号提交间隔调大，防止黑IP
     /*
      * 商品数组的最大长度，通俗来说就是即将申请的商品队列长度
      * 例如设置为20，当第一次获取后获得12件，过滤后剩下5件，将会进行第二次获取，过滤后加上第一次剩余件数
      * 例如是18件，将会进行第三次获取，直到过滤完毕后为20件才会停止，不建议设置太大
      * 可设置环境变量：JD_TRY_MAXLENGTH
      * */
-    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 100,
+    maxLength: process.env.JD_TRY_MAXLENGTH * 1 || 3,
     /*
      * 过滤种草官类试用，某些试用商品是专属官专属，考虑到部分账号不是种草官账号
      * 例如A商品是种草官专属试用商品，下面设置为true，而你又不是种草官账号，那A商品将不会被添加到待提交试用组
@@ -147,14 +138,22 @@ let args_xh = {
      * */
     whiteListKeywords: process.env.JD_TRY_WHITELISTKEYWORDS && process.env.JD_TRY_WHITELISTKEYWORDS.split('@') || [],
     /*
-     * 每多少个账号发送一次通知，默认为4
+     * 每多少个账号发送一次通知，默认为10
      * 可通过环境变量控制 JD_TRY_SENDNUM
      * */
-    sendNum: process.env.JD_TRY_SENDNUM * 1 || 4,
+    sendNum: process.env.JD_TRY_SENDNUM * 1 || 10,
+    
+    /*
+    * 商品申请剩余时间，默认为1天	
+    * 商品离结束时间的天数，0为今天结束，1为明天结束，如此类推
+    * 可通过环境变量控制 JD_TRY_REMAININGDAY
+    */
+	remainingDay:process.env.JD_TRY_REMAININGDAY * 1||1
 }
 //上面很重要，遇到问题请把上面注释看一遍再来问
 !(async() => {
-    await $.wait(500)
+    console.log('X1a0He留：遇到问题请把脚本内的注释看一遍再来问，谢谢')
+    console.log('二次优化 by Ginvie')
     // 如果你要运行京东试用这个脚本，麻烦你把环境变量 JD_TRY 设置为 true
     if(process.env.JD_TRY && process.env.JD_TRY === 'true'){
         await requireConfig()
@@ -164,15 +163,25 @@ let args_xh = {
             })
             return
         }
-        for(let i = 0; i < $.cookiesArr.length; i++){
-            if($.cookiesArr[i]){
-                $.cookie = $.cookiesArr[i];
+        //初始化参数
+        for(let i = 0;i<$.cookiesArr.length;i++)
+        {
+        	totalTry[i]=0
+			totalSuccess[i]=0
+			isLimit[i]=false
+			isForbidden[i]=false
+        }
+        console.log(`参数初始化成功\n`);
+        //获取试用列表
+        for(let i = $.cookiesArr.length -1; i >-1 ; i--){
+        	if($.cookiesArr[i]){
+                $.cookie = $.cookiesArr[0];
                 $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
                 $.index = i + 1;
-                $.isLogin = true;
+                $.isLogin = true;                
                 $.nickName = '';
                 await totalBean();
-                console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+               
                 if(!$.isLogin){
                     $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {
                         "open-url": "https://bean.m.jd.com/bean/signIndex.action"
@@ -180,21 +189,13 @@ let args_xh = {
                     await $.notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
                     continue
                 }
-                $.totalTry = 0
-                $.totalSuccess = 0
+                await try_tabList();
+                console.log(`\n获取账号${$.index}的试用列表\n`);
                 $.nowTabIdIndex = 0;
-                $.nowPage = 1;
                 $.nowItem = 1;
-                trialActivityIdList = []
-                trialActivityTitleList = []
-                $.isLimit = false;
-                // 获取tabList的，不知道有哪些的把这里的注释解开跑一遍就行了
-                // await try_tabList();
-                // return;
-                $.isForbidden = false
-                $.wrong = false
-                size = 1
-                while(trialActivityIdList.length < args_xh.maxLength && $.isForbidden === false){
+                $.nowPage = 1;
+                size = 1  
+                while(trialActivityIdList.length < args_xh.maxLength){
                     if($.nowTabIdIndex === args_xh.tabId.length){
                         console.log(`tabId组已遍历完毕，不在获取商品\n`);
                         break;
@@ -206,31 +207,62 @@ let args_xh = {
                         await $.wait(2000);
                     }
                 }
-                if($.isForbidden === false && $.isLimit === false){
-                    console.log(`稍后将执行试用申请，请等待 2 秒\n`)
-                    await $.wait(2000);
-                    for(let i = 0; i < trialActivityIdList.length && $.isLimit === false; i++){
-                        if($.isLimit){
-                            console.log("试用上限")
-                            break
-                        }
-                        await try_apply(trialActivityTitleList[i], trialActivityIdList[i])
-                        console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
-                        await $.wait(args_xh.applyInterval);
-                    }
-                    console.log("试用申请执行完毕...")
-                    // await try_MyTrials(1, 1)    //申请中的商品
-                    $.giveupNum = 0;
-                    $.successNum = 0;
-                    $.getNum = 0;
-                    $.completeNum = 0;
-                    await try_MyTrials(1, 2)    //申请成功的商品
-                    // await try_MyTrials(1, 3)    //申请失败的商品
-                    await showMsg()
+                break;
                 }
+        	}
+        	//申请试用
+			console.log(`稍后将执行试用申请，请等待 2 秒\n`)
+			await $.wait(2000);			
+			for(let n = 0; n < trialActivityIdList.length; n++){				
+				for(let i = 0; i < $.cookiesArr.length; i++){
+				if(isLimit[i]){
+					console.log("试用上限")
+					continue
+				}
+				if(isForbidden[i]){
+					console.log("京东风控跳过")
+					continue
+				}
+				if($.cookiesArr[i]){
+					$.cookie = $.cookiesArr[i];
+					$.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
+					$.isLogin = true;
+					$.index = i + 1;
+					$.nickName = '';					
+					await totalBean();
+					if(!$.isLogin){
+						continue
+					}
+					console.log(`\n进度${n+1}/${trialActivityIdList.length}【${$.index} ${$.nickName || $.UserName}】开始申请 ${trialActivityTitleList[n]}\n`);
+					await try_apply(trialActivityTitleList[n], trialActivityIdList[n])										
+					}	                        
+				}
+				console.log(`间隔等待中，请等待 ${args_xh.applyInterval/1000} s\n`)
+				await $.wait(args_xh.applyInterval);	
+			}			
+			console.log("试用申请执行完毕...")
+        for(let i = 0; i < $.cookiesArr.length; i++){
+            if($.cookiesArr[i]){
+                $.cookie = $.cookiesArr[i];
+                $.UserName = decodeURIComponent($.cookie.match(/pt_pin=(.+?);/) && $.cookie.match(/pt_pin=(.+?);/)[1])
+                $.index = i + 1;
+                $.isLogin = true;
+                $.nickName = '';
+                await totalBean();
+                
+                if(!$.isLogin){
+                    continue
+                }
+                console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+                $.giveupNum = 0;
+                $.successNum = 0;
+                $.getNum = 0;
+                $.completeNum = 0;
+                await try_MyTrials(1, 2)    //申请成功的商品
+                await showMsg()
             }
             if($.isNode()){
-                if($.index % args_xh.sendNum === 0){
+                if($.index % args_xh.sendNum === 0 && notifyMsg){
                     $.sentNum++;
                     console.log(`正在进行第 ${$.sentNum} 次发送通知，发送数量：${args_xh.sendNum}`)
                     await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`)
@@ -239,7 +271,7 @@ let args_xh = {
             }
         }
         if($.isNode()){
-            if(($.cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum){
+            if(($.cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum && notifyMsg){
                 console.log(`正在进行最后一次发送通知，发送数量：${($.cookiesArr.length - ($.sentNum * args_xh.sendNum))}`)
                 await $.notify.sendNotify(`${$.name}`, `${notifyMsg}`)
                 notifyMsg = "";
@@ -278,18 +310,19 @@ function requireConfig(){
         for(let keyWord of $.innerKeyWords) args_xh.titleFilters.push(keyWord)
         console.log(`共${$.cookiesArr.length}个京东账号\n`)
         console.log('=====环境变量配置如下=====')
-        console.log(`jdPrice: ${typeof args_xh.jdPrice}, ${args_xh.jdPrice}`)
-        console.log(`tabId: ${typeof args_xh.tabId}, ${args_xh.tabId}`)
-        console.log(`titleFilters: ${typeof args_xh.titleFilters}, ${args_xh.titleFilters}`)
-        console.log(`trialPrice: ${typeof args_xh.trialPrice}, ${args_xh.trialPrice}`)
-        console.log(`minSupplyNum: ${typeof args_xh.minSupplyNum}, ${args_xh.minSupplyNum}`)
-        console.log(`applyNumFilter: ${typeof args_xh.applyNumFilter}, ${args_xh.applyNumFilter}`)
-        console.log(`applyInterval: ${typeof args_xh.applyInterval}, ${args_xh.applyInterval}`)
-        console.log(`maxLength: ${typeof args_xh.maxLength}, ${args_xh.maxLength}`)
-        console.log(`passZhongCao: ${typeof args_xh.passZhongCao}, ${args_xh.passZhongCao}`)
-        console.log(`printLog: ${typeof args_xh.printLog}, ${args_xh.printLog}`)
-        console.log(`whiteList: ${typeof args_xh.whiteList}, ${args_xh.whiteList}`)
-        console.log(`whiteListKeywords: ${typeof args_xh.whiteListKeywords}, ${args_xh.whiteListKeywords}`)
+        console.log(`商品原价: ${typeof args_xh.jdPrice}, ${args_xh.jdPrice}`)
+        console.log(`商品类型: ${typeof args_xh.tabId}, ${args_xh.tabId}`)
+        console.log(`黑名单: ${typeof args_xh.titleFilters}, ${args_xh.titleFilters}`)
+        console.log(`试用价格: ${typeof args_xh.trialPrice}, ${args_xh.trialPrice}`)
+        console.log(`最小提供数量: ${typeof args_xh.minSupplyNum}, ${args_xh.minSupplyNum}`)
+        console.log(`已申请人数: ${typeof args_xh.applyNumFilter}, ${args_xh.applyNumFilter}`)
+        console.log(`商品申请间隔时间: ${typeof args_xh.applyInterval}, ${args_xh.applyInterval}`)
+        console.log(`商品最大长度: ${typeof args_xh.maxLength}, ${args_xh.maxLength}`)
+        console.log(`过滤种草官: ${typeof args_xh.passZhongCao}, ${args_xh.passZhongCao}`)
+        console.log(`打印详细日志: ${typeof args_xh.printLog}, ${args_xh.printLog}`)
+        console.log(`白名单: ${typeof args_xh.whiteList}, ${args_xh.whiteList}`)
+        console.log(`白名单关键词: ${typeof args_xh.whiteListKeywords}, ${args_xh.whiteListKeywords}`)
+		console.log(`商品申请剩余时间: ${typeof args_xh.remainingDay}, ${args_xh.remainingDay}`)		
         console.log('=======================')
         resolve()
     })
@@ -307,7 +340,7 @@ function try_tabList(){
             try{
                 if(err){
                     if(JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`){
-                        $.isForbidden = true
+                        isForbidden[$.index-1] = true
                         console.log('账号被京东服务器风控，不再请求该帐号')
                     } else {
                         console.log(JSON.stringify(err))
@@ -339,11 +372,11 @@ function try_feedsList(tabId, page){
             "previewTime": ""
         });
         let option = taskurl_xh('newtry', 'try_feedsList', body)
-        $.get(option, (err, resp, data) => {
+        $.get(option, async(err, resp, data) => {
             try{
                 if(err){
                     if(JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`){
-                        $.isForbidden = true
+                        isForbidden[$.index-1] = true
                         console.log('账号被京东服务器风控，不再请求该帐号')
                     } else {
                         console.log(JSON.stringify(err))
@@ -396,8 +429,8 @@ function try_feedsList(tabId, page){
                                     }
                                 } else {
                                     tempKeyword = ``;
-                                    if(parseFloat(item.jdPrice) <= args_xh.jdPrice){
-                                        args_xh.printLog ? console.log(`商品被过滤，${item.jdPrice} < ${args_xh.jdPrice} \n`) : ''
+                                    if(args_xh.trialPrice < parseFloat(item.trialPrice)){
+                                        args_xh.printLog ? console.log(`商品被过滤，试用价格大于预设价格\n`) : ''
                                     } else if(parseFloat(item.supplyNum) < args_xh.minSupplyNum && item.supplyNum !== null){
                                         args_xh.printLog ? console.log(`商品被过滤，提供申请的份数小于预设申请的份数 \n`) : ''
                                     } else if(parseFloat(item.applyNum) > args_xh.applyNumFilter && item.applyNum !== null){
@@ -407,9 +440,20 @@ function try_feedsList(tabId, page){
                                     } else if(args_xh.titleFilters.some(fileter_word => item.skuTitle.includes(fileter_word) ? tempKeyword = fileter_word : '')){
                                         args_xh.printLog ? console.log(`商品被过滤，含有关键词 ${tempKeyword}\n`) : ''
                                     } else {
-                                        args_xh.printLog ? console.log(`商品通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : ''
-                                        trialActivityIdList.push(item.trialActivityId)
-                                        trialActivityTitleList.push(item.skuTitle)
+                                        
+                                        $.day = -1
+                                        await try_detail(item.skuTitle,item.trialActivityId)
+                                        if($.day!= -1 && $.day <= args_xh.remainingDay)
+                                        {
+                                            args_xh.printLog ? console.log(`商品通过，将加入试用组，trialActivityId为${item.trialActivityId}\n`) : ''
+                                            trialActivityIdList.push(item.trialActivityId)
+                                            trialActivityTitleList.push(item.skuTitle)
+                                        }
+                                        else
+                                        {
+                                            args_xh.printLog ? console.log(`剩余时间 ${$.day} 设定时间 ${args_xh.remainingDay}\n`) : ''
+                                        }
+                                        
                                     }
                                 }
                             } else if($.isPush !== false){
@@ -438,6 +482,63 @@ function try_feedsList(tabId, page){
     })
 }
 
+function try_detail(title, activityId){
+    return new Promise((resolve, reject) => {
+        args_xh.printLog ? console.log(`获取申请试用商品详情`) : ''
+        args_xh.printLog ? console.log(`商品：${title}`) : ''
+        args_xh.printLog ? console.log(`id为：${activityId}`) : ''
+        const body = JSON.stringify({
+            "activityId": activityId,
+            "previewTime": ""
+        });
+        let option = taskurl_xh('newtry', 'try_detail', body)
+        $.get(option, (err, resp, data) => {
+            try{
+                if(err){
+                    if(JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`){
+                        isForbidden[$.index-1] = true
+                        console.log('账号被京东服务器风控，不再请求该帐号')
+                    } else {
+                        console.log(JSON.stringify(err))
+                        console.log(`${$.name} API请求失败，请检查网路重试`)
+                    }
+                } else {
+                    data = JSON.parse(data)
+                    if(data.success)
+                    {
+                        var StartTime = new Date(parseInt(data.data.activityStartTime));
+                        var EndTime = new Date(parseInt(data.data.activityEndTime));
+                        var nowTime = new Date(parseInt(data.data.nowTime));
+                        //console.log(`开始时间戳`,data.data.activityStartTime)
+                        args_xh.printLog ? console.log(`开始时间`,StartTime.toLocaleString()) : ''
+                        //console.log(`结束时间戳`,data.data.activityEndTime)
+                        args_xh.printLog ? console.log(`结束时间`,EndTime.toLocaleString()) : ''
+                        //console.log(`现在时间戳`,data.data.nowTime)
+                        args_xh.printLog ? console.log(`现在时间`,nowTime.toLocaleString()) : ''
+                        //console.log(`剩余时间戳`,data.data.activityEndTime-data.data.nowTime)
+						if(data.data.activityEndTime-data.data.nowTime > 0)
+						{
+							$.day = parseInt((data.data.activityEndTime-data.data.nowTime)/ (1000 * 60 * 60 * 24));
+							args_xh.printLog ? console.log(`剩余时间`,$.day) : ''
+						}
+						else
+						{
+							$.day = -1
+							args_xh.printLog ? console.log(`当前商品已结束申请`) : ''
+						}	
+                        
+                    }
+                }
+            } catch(e){
+                reject(`⚠️ ${arguments.callee.name.toString()} API返回结果解析出错\n${e}\n${JSON.stringify(data)}`)
+            } finally{
+                resolve()
+            }
+        })
+    })
+}
+    
+
 function try_apply(title, activityId){
     return new Promise((resolve, reject) => {
         console.log(`申请试用商品提交中...`)
@@ -452,18 +553,18 @@ function try_apply(title, activityId){
             try{
                 if(err){
                     if(JSON.stringify(err) === `\"Response code 403 (Forbidden)\"`){
-                        $.isForbidden = true
+                        isForbidden[$.index-1] = true
                         console.log('账号被京东服务器风控，不再请求该帐号')
                     } else {
                         console.log(JSON.stringify(err))
                         console.log(`${$.name} API请求失败，请检查网路重试`)
                     }
                 } else {
-                    $.totalTry++
+                    totalTry[$.index-1]++
                     data = JSON.parse(data)
                     if(data.success && data.code === "1"){  // 申请成功
                         console.log("申请提交成功")
-                        $.totalSuccess++
+                        totalSuccess[$.index-1]++
                     } else if(data.code === "-106"){
                         console.log(data.message)   // 未在申请时间内！
                     } else if(data.code === "-110"){
@@ -474,11 +575,11 @@ function try_apply(title, activityId){
                         console.log(data.message)   // 抱歉，此试用需为种草官才能申请。查看下方详情了解更多。
                     } else if(data.code === "-131"){
                         console.log(data.message)   // 申请次数上限。
-                        $.isLimit = true;
+                        isLimit[$.index-1] = true;
                     } else if(data.code === "-113"){
                         console.log(data.message)   // 操作不要太快哦！
                     } else {
-                        console.log("申请失败", data)
+                        console.log("申请失败", data.message)
                     }
                 }
             } catch(e){
@@ -563,25 +664,26 @@ function taskurl_xh(appid, functionId, body = JSON.stringify({})){
 
 async function showMsg(){
     let message = ``;
-    message += `👤 京东账号${$.index} ${$.nickName || $.UserName}\n`;
-    if($.totalSuccess !== 0 && $.totalTry !== 0){
-        message += `🎉 本次提交申请：${$.totalSuccess}/${$.totalTry}个商品🛒\n`;
+    message += `🆔账号${$.index} ${$.nickName || $.UserName}\n`;
+    if(totalSuccess[$.index-1] !== 0){
+        /*message += `🎉 本次提交申请：${totalSuccess[$.index-1]}/${totalTry[$.index-1]}个商品🛒\n`;
         message += `🎉 ${$.successNum}个商品待领取\n`;
         message += `🎉 ${$.getNum}个商品已领取\n`;
         message += `🎉 ${$.completeNum}个商品已完成\n`;
-        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
+        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;*/
+        message += `申请 ${totalSuccess[$.index-1]}/${totalTry[$.index-1]}\t待领 ${$.successNum}\t 已领 ${$.getNum}\t完成 ${$.completeNum}\t放弃 ${$.giveupNum}\n\n`
     } else {
         message += `⚠️ 本次执行没有申请试用商品\n`;
         message += `🎉 ${$.successNum}个商品待领取\n`;
         message += `🎉 ${$.getNum}个商品已领取\n`;
         message += `🎉 ${$.completeNum}个商品已完成\n`;
-        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
+        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;        
     }
     if(!args_xh.jdNotify || args_xh.jdNotify === 'false'){
         $.msg($.name, ``, message, {
             "open-url": 'https://try.m.jd.com/user'
         })
-        if($.isNode())
+        if($.isNode() && totalSuccess[$.index-1] !== 0)
             notifyMsg += `${message}`
     } else {
         console.log(message)

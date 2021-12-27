@@ -1,24 +1,5 @@
 /*
-
 JoyJd任务脚本
-已支持IOS双京东账号,Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-============Quantumultx===============
-[task_local]
-#JoyJd任务脚本
-5 2,18 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js, tag=JoyJd任务脚本, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-
-================Loon==============
-[Script]
-cron "5 2,18 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js,tag=JoyJd任务脚本
-
-===============Surge=================
-JoyJd任务脚本 = type=cron,cronexp="5 2,18 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js
-
-============小火箭=========
-JoyJd任务脚本 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_joyjd_open.js, cronexpr="5 2,18 * * *", timeout=3600, enable=true
-
-
 */
 const $ = new Env('JoyJd任务脚本');
 const Faker=require('./sign_graphics_validate.js') 
@@ -43,7 +24,7 @@ message = ""
     });
     return;
   }
-  console.log(`入口:\nhttps://prodev.m.jd.com/mall/active/3q7yrbh3qCJvHsu3LhojdgxNuWQT/index.html`)
+  // console.log(`入口:\nhttps://prodev.m.jd.com/mall/active/3q7yrbh3qCJvHsu3LhojdgxNuWQT/index.html`)
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     if (cookie) {
@@ -77,7 +58,7 @@ async function run() {
       return
     }
     let config = [
-      {configCode:'ca4a6c5491d54b0abcc9eca5b05ae06e',configName:'我爱520-1'},
+      // {configCode:'ca4a6c5491d54b0abcc9eca5b05ae06e',configName:'我爱520-1'},
           {configCode:'761d289b16d74713bf6cee8462ca0e76',configName:'我爱520-2'},
       //      {configCode:'b3cc4f6e5e924c3d82b10404f91740ce',configName:'我爱520-3'},
       //{configCode:'ce04c87546ea40cc8f601e85f2dda2a9',configName:'秋新资任务组件 组1'},
