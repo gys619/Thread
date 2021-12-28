@@ -102,7 +102,7 @@ if ($.isNode()) {
       $.index = j + 1;
 	  console.log(`【京东账号${$.index}】${$.nickName || $.UserName}:\n`);
       await helpFriends();
-	  await $.wait(3000);
+	  await $.wait(4000);
     }
   }
   if ($.isNode() && allMessage) {

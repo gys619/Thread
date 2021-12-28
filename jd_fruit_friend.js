@@ -117,7 +117,7 @@ async function jdFruit() {
     if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
     $.msg($.name, '', `${errMsg}`)
   }
-  await showMsg();
+  //await showMsg();
 }
 //
 async function getAwardInviteFriend() {
