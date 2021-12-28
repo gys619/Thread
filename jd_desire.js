@@ -99,7 +99,7 @@ async function getInteractionInfo(type = true) {
                 let vo = data.result.taskPoolInfo.taskList[key]
                 if (vo.taskStatus === 0) {
                   if (vo.taskId === 2004) {
-                    await queryPanamaFloor(vo.groupId)
+                    await queryPanamaFloor()
                     for (let id of $.sku2) {
                       $.complete = false
                       await executeNewInteractionTask(vo.taskId, id)
@@ -158,38 +158,16 @@ async function getInteractionInfo(type = true) {
 }
 function queryPanamaFloor() {
   return new Promise((resolve) => {
-    let options = {
-      url: 'https://api.m.jd.com/client.action?functionId=queryPanamaFloor',
-      headers: {
-        'Host': 'api.m.jd.com',
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Origin': 'https://prodev.m.jd.com',
-        'Accept-Language': 'zh-cn',
-        'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-        'Referer': 'https://prodev.m.jd.com/mall/active/TqTRGRrp9HZTfeyRTL2UGmX4mHG/index.html?babelChannel=ttt30',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Cookie': cookie
-      },
-      body: `body=%7B%22activityId%22%3A%22TqTRGRrp9HZTfeyRTL2UGmX4mHG%22%2C%22pageId%22%3A%223195530%22%2C%22transParam%22%3A%22%7B%5C%22bsessionId%5C%22%3A%5C%22927e63e4-908d-4475-a7c3-3fd45244d448%5C%22%2C%5C%22babelChannel%5C%22%3A%5C%22ttt30%5C%22%2C%5C%22actId%5C%22%3A%5C%2201128912%5C%22%2C%5C%22enActId%5C%22%3A%5C%22TqTRGRrp9HZTfeyRTL2UGmX4mHG%5C%22%2C%5C%22pageId%5C%22%3A%5C%223195530%5C%22%2C%5C%22encryptCouponFlag%5C%22%3A%5C%221%5C%22%2C%5C%22sc%5C%22%3A%5C%22android%5C%22%2C%5C%22scv%5C%22%3A%5C%2210.3.0%5C%22%2C%5C%22requestChannel%5C%22%3A%5C%22h5%5C%22%2C%5C%22jdAtHomePage%5C%22%3A%5C%220%5C%22%2C%5C%22utmFlag%5C%22%3A%5C%220%5C%22%7D%22%2C%22floorList%22%3A%5B%7B%22alias%22%3A70061421%7D%2C%7B%22alias%22%3A70061428%7D%5D%2C%22siteClient%22%3A%22android%22%2C%22mitemAddrId%22%3A%22%22%2C%22geo%22%3A%7B%22lng%22%3A%22%22%2C%22lat%22%3A%22%22%7D%2C%22addressId%22%3A%22%22%2C%22posLng%22%3A%22%22%2C%22posLat%22%3A%22%22%2C%22un_area%22%3A%2222_1930_49322_49433%22%2C%22gps_area%22%3A%220_0_0_0%22%2C%22homeLng%22%3A%22103.856529%22%2C%22homeLat%22%3A%2230.810341%22%2C%22focus%22%3A%22%22%2C%22innerAnchor%22%3A%22%22%2C%22cv%22%3A%222.0%22%7D&screen=1080*2007&client=wh5&clientVersion=1.0.0&sid=c6f86d00233b0d0fb0e8d952be52d0aw&uuid=&area=22_1930_49322_49433&appid=babelh5&ext=%7B%22prstate%22%3A%220%22%7D`
-    }
-    $.post(options, (err, resp, data) => {
+    $.post(taskPostUrl("qryCompositeMaterials", { "geo": null, "mcChannel": 0, "activityId": "01128912", "pageId": "3279508", "qryParam": "[{\"type\":\"advertGroup\",\"id\":\"06066757\",\"mapTo\":\"advData\",\"next\":[{\"type\":\"productGroup\",\"mapKey\":\"desc\",\"mapTo\":\"productGroup\",\"attributes\":13}]}]", "applyKey": "21new_products_h" }), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} queryPanamaPage API请求失败，请检查网路重试`)
+          console.log(`queryPanamaFloor API请求失败，请检查网路重试`)
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data)
-            for (let key of Object.keys(data.floorList)) {
-              let vo = data.floorList[key]
-              if (vo.data && vo.data.goodsInfo_0) {
-                for (let key of Object.keys(vo.data.goodsInfo_0.list)) {
-                  let skuVo = vo.data.goodsInfo_0.list[key]
-                  $.sku2.push(skuVo.skuId)
-                }
-                break
-              }
+            for (let skuVo of data.data.advData.list) {
+                $.sku2.push(skuVo.advertId)
             }
           }
         }
@@ -212,7 +190,6 @@ function qryCompositeMaterials() {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data)
-            // console.log(data);
             for (let key of Object.keys(data.data.advData.list)) {
               let vo = data.data.advData.list[key]
               if (vo.next && vo.next.productGroup) {
