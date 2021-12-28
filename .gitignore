@@ -173,7 +173,7 @@ jd_dyj_help_wx.js
 jd_shy_dpqd.js
 jd_shy_dpqd?.js
 # 通用脚本
-#*common_enc.js
+*common_enc.js
 # ck顺序调试工具
 #jd_CkSeq.js
 # 疑似互助码的json
