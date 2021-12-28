@@ -14,7 +14,7 @@ try:
 except Exception as e:
     print(str(e) + "\n缺少requests模块, 请执行命令：pip3 install requests\n")
 requests.packages.urllib3.disable_warnings()
-
+    
 
 JD_API_HOST = 'https://api.m.jd.com'
 run_send='yes'     # yes或no, yes则启用通知推送服务
