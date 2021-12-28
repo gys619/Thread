@@ -221,9 +221,9 @@ jd_lzdz1_*.js
 jd_jinggengjcq_*.js
 jd_rush_*.js
 
-jd_card_collecting_common_enc.js
-jd_look_video_common_enc.js
-jd_share_common_enc.js
+#jd_card_collecting_common_enc.js
+#jd_look_video_common_enc.js
+#jd_share_common_enc.js
 
 
 jd_jx_cfd_pearl_exchange.js
