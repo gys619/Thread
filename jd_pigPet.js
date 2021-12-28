@@ -28,7 +28,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let UA = $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
-let shareId = 'rohkqz_wjIofADgLCXtjIw'
+let shareId = 'KMnydTyM9ezAduo1QsTZZsAdoUJQ3Dik'
 $.shareCodes = [];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -47,15 +47,15 @@ if ($.isNode()) {
   if (process.env.PIGPETSHARECODE) {
     shareId = process.env.PIGPETSHARECODE
   } else{
-    let res = await getAuthorShareCode('https://raw.githubusercontent.com/555555/updateTeam/main/shareCodes/pigPet.json')
+    let res = await getAuthorShareCode('https://raw.githubusercontent.com/888888/updateTeam/main/shareCodes/pigPet.json')
     if (!res) {
-      res = await getAuthorShareCode('https://raw.fastgit.org/555555/updateTeam/main/shareCodes/pigPet.json')
+      res = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/pigPet.json')
     }
     if (res){
       shareId = res[Math.floor((Math.random() * res.length))];
     }
   }
-  console.log(`\n【原作者：LXK大佬】\n\nBy：555555\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\nTodo：领取成就奖励\n`);
+  console.log(`\n【原作者：LXK大佬】\n\nBy：888888\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\nTodo：领取成就奖励\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -77,12 +77,12 @@ if ($.isNode()) {
     }
   }
   console.log(`\n======开始大转盘助力======\n`);
-  $.helpId = await getAuthorShareCode('https://raw.fastgit.org/555555/updateTeam/main/shareCodes/pig.json');
+  $.helpId = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/pig.json');
   $.shareCodes = [...$.shareCodes, ...($.helpId || [])]
   for (let j = 0; j < cookiesArr.length; j++) {
     cookie = cookiesArr[j];
     if ($.shareCodes && $.shareCodes.length) {
-      console.log(`\n自己账号内部循环互助\n`);
+      console.log(`\n自己账号内部循环互助，有剩余次数再帮【888888】助力\n`);
       for (let item of $.shareCodes) {
         await pigPetLotteryHelpFriend(item)
         await $.wait(1000)
@@ -424,7 +424,7 @@ function pigPetRank() {
                   if ($.friends[i].status === 1) {
                     $.friendId = $.friends[i].uid
                     $.name = $.friends[i].nickName
-                    if (!['555555', 'xfa05'].includes($.name)) { //放过孩子吧TT
+                    if (!['888888', 'xfa05'].includes($.name)) { //放过孩子吧TT
                       console.log(`去抢夺【${$.friends[i].nickName}】的食物`)
                       await $.wait(2000)
                       await pigPetFriendIndex($.friendId)
@@ -881,18 +881,6 @@ function getAuthorShareCode(url) {
         "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
       }
     };
-    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
-      const tunnel = require("tunnel");
-      const agent = {
-        https: tunnel.httpsOverHttp({
-          proxy: {
-            host: process.env.TG_PROXY_HOST,
-            port: process.env.TG_PROXY_PORT * 1
-          }
-        })
-      }
-      Object.assign(options, { agent })
-    }
     $.get(options, async (err, resp, data) => {
       try {
         resolve(JSON.parse(data))
