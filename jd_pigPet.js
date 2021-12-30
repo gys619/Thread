@@ -2,21 +2,21 @@
 *
 京东金融养猪猪
 活动入口：京东金融养猪猪，
-脚本更新地址：https://github.com/888888/JD_tencent_scf
+脚本更新地址：https://github.com/zero205/JD_tencent_scf
 加了个邀新助力，不过应该没啥用。邀请码变量：PIGPETSHARECODE，变量仅支持单账号邀请码
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 京东金融养猪猪
-12 0-23/6 * * * https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_pigPet.js, tag=京东金融养猪猪, enabled=true
+12 0-23/6 * * * https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_pigPet.js, tag=京东金融养猪猪, enabled=true
 ================Loon==============
 [Script]
-cron "12 0-23/6 * * *" script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_pigPet.js,tag=摇钱树助力
+cron "12 0-23/6 * * *" script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_pigPet.js,tag=摇钱树助力
 ===============Surge=================
-京东金融养猪猪 = type=cron,cronexp="12 0-23/6 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_pigPet.js
+京东金融养猪猪 = type=cron,cronexp="12 0-23/6 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_pigPet.js
 ============小火箭=========
-京东金融养猪猪 = type=cron,script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_pigPet.js, cronexpr="12 0-23/6 * * *", timeout=3600, enable=true
+京东金融养猪猪 = type=cron,script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_pigPet.js, cronexpr="12 0-23/6 * * *", timeout=3600, enable=true
 *
 */
 const $ = new Env('金融养猪');
@@ -47,15 +47,15 @@ if ($.isNode()) {
   if (process.env.PIGPETSHARECODE) {
     shareId = process.env.PIGPETSHARECODE
   } else{
-    let res = await getAuthorShareCode('https://raw.githubusercontent.com/888888/updateTeam/main/shareCodes/pigPet.json')
+    let res = await getAuthorShareCode('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/pigPet.json')
     if (!res) {
-      res = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/pigPet.json')
+      res = await getAuthorShareCode('https://raw.fastgit.org/zero205/updateTeam/main/shareCodes/pigPet.json')
     }
     if (res){
       shareId = res[Math.floor((Math.random() * res.length))];
     }
   }
-  console.log(`\n【原作者：LXK大佬】\n\nBy：888888\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\nTodo：领取成就奖励\n`);
+  console.log(`\n【原作者：LXK大佬】\n\nBy：zero205\n添加：邀请新用户，大转盘助力，抢粮食\n修改：优化日志输出，自动喂食\n\n默认不抢粮食（成功机率小），需要的请添加变量JD_PIGPET_PK，值填true\nTodo：领取成就奖励\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -77,12 +77,12 @@ if ($.isNode()) {
     }
   }
   console.log(`\n======开始大转盘助力======\n`);
-  $.helpId = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/pig.json');
+  $.helpId = await getAuthorShareCode('https://raw.fastgit.org/zero205/updateTeam/main/shareCodes/pig.json');
   $.shareCodes = [...$.shareCodes, ...($.helpId || [])]
   for (let j = 0; j < cookiesArr.length; j++) {
     cookie = cookiesArr[j];
     if ($.shareCodes && $.shareCodes.length) {
-      console.log(`\n自己账号内部循环互助，有剩余次数再帮【888888】助力\n`);
+      console.log(`\n自己账号内部循环互助，有剩余次数再帮【zero205】助力\n`);
       for (let item of $.shareCodes) {
         await pigPetLotteryHelpFriend(item)
         await $.wait(1000)
@@ -424,7 +424,7 @@ function pigPetRank() {
                   if ($.friends[i].status === 1) {
                     $.friendId = $.friends[i].uid
                     $.name = $.friends[i].nickName
-                    if (!['888888', 'xfa05'].includes($.name)) { //放过孩子吧TT
+                    if (!['zero205', 'xfa05'].includes($.name)) { //放过孩子吧TT
                       console.log(`去抢夺【${$.friends[i].nickName}】的食物`)
                       await $.wait(2000)
                       await pigPetFriendIndex($.friendId)

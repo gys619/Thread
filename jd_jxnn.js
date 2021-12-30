@@ -6,17 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #惊喜牛牛
-1 1,9,19 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_jxnn.js, tag=惊喜牛牛, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
+1 1,9,19 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jxnn.js, tag=惊喜牛牛, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "1 1,9,19 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jxnn.js,tag=惊喜牛牛
+cron "1 1,9,19 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jxnn.js,tag=惊喜牛牛
 
 ===============Surge=================
-惊喜牛牛 = type=cron,cronexp="1 1,9,19 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jxnn.js
+惊喜牛牛 = type=cron,cronexp="1 1,9,19 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jxnn.js
 
 ============小火箭=========
-惊喜牛牛 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jxnn.js, cronexpr="1 1,9,19 * * *", timeout=3600, enable=true
+惊喜牛牛 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_jxnn.js, cronexpr="1 1,9,19 * * *", timeout=3600, enable=true
  */
 const $ = new Env('牛牛福利');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -63,7 +63,7 @@ if ($.isNode()) {
         // await drawUserTask();
     }
     shareCodes = shareCodes.filter(code => code)
-    const author = Math.random() > 0.5 ? '444444521' : '444444521'
+    const author = Math.random() > 0.5 ? 'KingRan521' : 'KingRan521'
     await getShareCode('nnfls.json', author, 3, true)
     shareCodes = [...new Set([...shareCodes, ...($.shareCode || [])])];
     if (shareCodes.length > 0) {
@@ -100,7 +100,7 @@ if ($.isNode()) {
 
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
 
-function getShareCode(name, author = '444444521', num = -1, shuffle = false) {
+function getShareCode(name, author = 'KingRan521', num = -1, shuffle = false) {
     return new Promise(resolve => {
         $.get({
             url: `https://gitee.com/${author}/JD-Scripts/raw/master/shareCodes/${name}`,

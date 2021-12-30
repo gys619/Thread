@@ -36,7 +36,7 @@ cron:30 3 26-30/2,2 12,1 *
 ============Quantumultx===============
 [task_local]
 #12.23~1.2 联合开卡
-30 3 26-30/2,2 12,1 * https://raw.githubusercontent.com/11111120/scripts/master/gua_opencard90.js, tag=12.23~1.2 联合开卡, enabled=true
+30 3 26-30/2,2 12,1 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_opencard90.js, tag=12.23~1.2 联合开卡, enabled=true
 
 */
 let guaopencard_addSku = "false"
@@ -199,12 +199,12 @@ async function run() {
       $.missionType = 'uniteAddCart'
       let goodsArr = []
       if(cleanCart){
-        goodsArr = await cleanCart.clean(cookie,'https://jd.11111118/jdcleancatr_21102717','')
+        goodsArr = await cleanCart.clean(cookie,'https://jd.smiek.tk/jdcleancatr_21102717','')
         await takePostRequest('mission');
         await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
         if(cleanCart && goodsArr !== false){
           await $.wait(parseInt(Math.random() * 1000 + 7000, 10))
-          await cleanCart.clean(cookie,'https://jd.11111118/jdcleancatr_21102717',goodsArr || [ ])
+          await cleanCart.clean(cookie,'https://jd.smiek.tk/jdcleancatr_21102717',goodsArr || [ ])
         }
       }
     }else{

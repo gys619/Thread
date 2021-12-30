@@ -1,6 +1,6 @@
 /**
  惊喜牧场
- cron 23 0-23/3 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_jxmc.js
+ cron 23 0-23/3 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_jxmc.js
  */
 // prettier-ignore
 !function (t, r) { "object" == typeof exports ? module.exports = exports = r() : "function" == typeof define && define.amd ? define([], r) : t.CryptoJS = r() }(this, function () {

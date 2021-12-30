@@ -7,14 +7,14 @@
 ==============Quantumult X==============
 [task_local]
 #京喜领88元红包
-14 0,2,11 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jxlhb.js, tag=京喜领88元红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+14 0,2,11 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_jxlhb.js, tag=京喜领88元红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 ==============Loon==============
 [Script]
-cron "14 0,2,11 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jxlhb.js,tag=京喜领88元红包
+cron "14 0,2,11 * * *" script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_jxlhb.js,tag=京喜领88元红包
 ================Surge===============
-京喜领88元红包 = type=cron,cronexp="14 0,2,11 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jxlhb.js
+京喜领88元红包 = type=cron,cronexp="14 0,2,11 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_jxlhb.js
 ===============小火箭==========
-京喜领88元红包 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jxlhb.js, cronexpr="14 0,2,11 * * *", timeout=3600, enable=true
+京喜领88元红包 = type=cron,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_jxlhb.js, cronexpr="14 0,2,11 * * *", timeout=3600, enable=true
  */
 const $ = new Env('京喜领88元红包');
 const notify = $.isNode() ? require('./sendNotify') : {};
@@ -277,7 +277,7 @@ function openRedPack(strPin, grade) {
 function submitCode(shareCode) {
     if (!shareCode || shareCode == undefined || shareCode.length<=0 ) {return;}
     return new Promise(async resolve => {
-    $.get({url: `http://www.11111114/jdcodes/submit.php?code=${shareCode}&type=jxlhb&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `http://www.helpu.cf/jdcodes/submit.php?code=${shareCode}&type=jxlhb&user=${$.UserName}`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

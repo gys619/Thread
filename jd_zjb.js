@@ -3,7 +3,7 @@
 ##入口为极速版 百元生活费 赚金币 邀请好友
 ##第一次运行可不填写邀请码 运行一次查看自己的邀请码
 ##export InviterPin="dS%2Bp85VyjydPuAOOnFP%2Faw%3D%3D"
-##助力逻辑：填写你的邀请码变量之后会助力你填写的邀请码，未填写则会默认给【888888】助力，介意请勿运行
+##助力逻辑：填写你的邀请码变量之后会助力你填写的邀请码，未填写则会默认给【zero205】助力，介意请勿运行
 
 
 [task_local]
@@ -23,7 +23,7 @@ if ($.isNode() && process.env.InviterPin) {
   InviterPin = process.env.InviterPin;
 }
 if (InviterPin.length == 0) {
-  console.log(`\n您未填写邀请码变量，默认帮【888888】助力\n`);
+  console.log(`\n您未填写邀请码变量，默认帮【zero205】助力\n`);
 }
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -63,7 +63,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
       if (InviterPin.length != 0) {
         await help()
       } else {
-        await help2("888888",Math.random() > 0.5 ? "%2FeNHdfn6fP%2BTFwVda3ipjWwvTFqeKBZaRG38adWABKk%3D" : "Sev6JWjut6GyaEHJIWpSQQ%3D%3D")        
+        await help2("zero205",Math.random() > 0.5 ? "%2FeNHdfn6fP%2BTFwVda3ipjWwvTFqeKBZaRG38adWABKk%3D" : "Sev6JWjut6GyaEHJIWpSQQ%3D%3D")        
       }
     }
   }

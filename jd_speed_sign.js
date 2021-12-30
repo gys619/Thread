@@ -10,17 +10,17 @@
 ============Quantumultx===============
 [task_local]
 #京东极速版
-0 1,7 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js, tag=京东极速版, img-url=https://raw.githubusercontent.com/Orz-3/task/master/jd.png, enabled=true
+0 1,7 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_speed_sign.js, tag=京东极速版, img-url=https://raw.githubusercontent.com/Orz-3/task/master/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 1,7 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js,tag=京东极速版
+cron "0 1,7 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_speed_sign.js,tag=京东极速版
 
 ===============Surge=================
-京东极速版 = type=cron,cronexp="0 1,7 * * *",wake-system=1,timeout=33600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js
+京东极速版 = type=cron,cronexp="0 1,7 * * *",wake-system=1,timeout=33600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_speed_sign.js
 
 ============小火箭=========
-京东极速版 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js, cronexpr="0 1,7 * * *", timeout=33600, enable=true
+京东极速版 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_speed_sign.js, cronexpr="0 1,7 * * *", timeout=33600, enable=true
 */
 const $ = new Env('京东极速版');
 const notify = $.isNode() ? require('./sendNotify') : '';

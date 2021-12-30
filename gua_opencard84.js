@@ -31,7 +31,7 @@ cron:30 1 18-31/2,1-3/2 12,1 *
 ============Quantumultx===============
 [task_local]
 #12.17~1.3 双旦寻宝 玩转大富翁
-30 1 18-31/2,1-3/2 12,1 * https://raw.githubusercontent.com/11111120/scripts/master/gua_opencard84.js, tag=12.17~1.3 双旦寻宝 玩转大富翁, enabled=true
+30 1 18-31/2,1-3/2 12,1 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_opencard84.js, tag=12.17~1.3 双旦寻宝 玩转大富翁, enabled=true
 
 */
 let guaopencard_addSku = "false"

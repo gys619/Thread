@@ -1,6 +1,6 @@
 /*
   https://st.jingxi.com/fortune_island/index2.html
-  18 0,1,9,14,18 * * * https://raw.githubusercontent.com/11111120/scripts/master/gua_wealth_island_help.js 财富大陆互助
+  18 0,1,9,14,18 * * * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_wealth_island_help.js 财富大陆互助
 
   默认按账号顺序提交
   如需自定义请在环境变量[gua_wealth_island_codeId](只提交前3个)例:
@@ -80,10 +80,10 @@ $.appId = 10032;
   let getShareNum = 10
   let getShareNums = 0
   if (HelpAuthorFlag) {
-    $.innerInviteList = await getAuthorShareCode('https://raw.githubusercontent.com/11111120/updateTeam/master/shareCodes/wealth_island_code_one.json');
-    if(!$.innerInviteList[0]) $.innerInviteList = await getAuthorShareCode('https://gitee.com/11111120/updateTeam/raw/master/shareCodes/wealth_island_code_one.json');
-    res2 = await getAuthorShareCode('https://raw.githubusercontent.com/11111120/updateTeam/master/shareCodes/wealth_island_code.json');
-    if(!res2[0]) res2 = await getAuthorShareCode('https://gitee.com/11111120/updateTeam/raw/master/shareCodes/wealth_island_code.json');
+    $.innerInviteList = await getAuthorShareCode('https://raw.githubusercontent.com/smiek2121/updateTeam/master/shareCodes/wealth_island_code_one.json');
+    if(!$.innerInviteList[0]) $.innerInviteList = await getAuthorShareCode('https://gitee.com/smiek2121/updateTeam/raw/master/shareCodes/wealth_island_code_one.json');
+    res2 = await getAuthorShareCode('https://raw.githubusercontent.com/smiek2121/updateTeam/master/shareCodes/wealth_island_code.json');
+    if(!res2[0]) res2 = await getAuthorShareCode('https://gitee.com/smiek2121/updateTeam/raw/master/shareCodes/wealth_island_code.json');
     getShareNums = [...res, ...res2].length >= getShareNum ? getShareNum : [...res, ...res2].length
     $.innerInviteLists = getRandomArrayElements([...res, ...res2], [...res, ...res2].length >= getShareNum ? getShareNum : [...res, ...res2].length );
     $.InviteLists.push(...$.InviteList,...$.innerInviteList,...$.innerInviteLists);

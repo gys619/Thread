@@ -2,7 +2,7 @@
 * 粉丝互动
 * 注意：请不要搬运，加密原因之一也是为了不想被搬运。愿意跑的跑。不愿意跑的就不要跑。
 * 脚本会有加购，介意的也请不要执行
-cron 10 2,20 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_fan.js
+cron 10 2,20 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_fan.js
 * */
 const $ = new Env('粉丝互动');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

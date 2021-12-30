@@ -13,7 +13,7 @@ cron:22 0,20 27-31,1 12,1 *
 ============Quantumultx===============
 [task_local]
 #12.27~1.1 集魔方
-22 0,20 27-31,1 12,1 * https://raw.githubusercontent.com/444444/JDJB/main/jd_desire.js, tag=12.27~1.1 集魔方, enabled=true
+22 0,20 27-31,1 12,1 * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_desire.js, tag=12.27~1.1 集魔方, enabled=true
  */
 
 const $ = new Env('京东集魔方');
@@ -348,10 +348,10 @@ function getSign(functionid, body, uuid) {
       "client": "apple",
       "clientVersion": "10.1.0"
     }
-    let HostArr = ['jdsign.cf', 'signer.11111112']
+    let HostArr = ['jdsign.cf', 'signer.nz.lu']
     let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-      url: `https://cdn.11111112/ddo`,
+      url: `https://cdn.nz.lu/ddo`,
       body: JSON.stringify(data),
       headers: {
         Host,
