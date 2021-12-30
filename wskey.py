@@ -28,7 +28,7 @@ try:
 except:
     logger.info("无推送文件")
 
-ver = 1118
+ver = 1230
 
 
 # 登录青龙 返回值 token
@@ -232,12 +232,11 @@ def appjmp(wskey, tokenKey):
 
 # 返回值 svv, stt, suid, jign
 def get_sign():
-    url = str(base64.b64decode('aHR0cDovLzQzLjEzNS45MC4yMy93c2tleQ==').decode())
+    url = str(base64.b64decode(url_t).decode()) + 'wskey'
     for i in range(3):
         try:
             headers = {
-                "User-Agent": ua,
-                "Connection": "close"
+                "User-Agent": ua
             }
             res = requests.get(url=url, headers=headers, verify=False, timeout=20)
         except requests.exceptions.ConnectTimeout:
@@ -386,18 +385,21 @@ def ql_insert(i_ck):
 
 
 def cloud_info():
-    url = str(base64.b64decode('aHR0cDovLzQzLjEzNS45MC4yMy9jaGVja19hcGk=').decode())
+    url = str(base64.b64decode(url_t).decode()) + 'check_api'
     for i in range(3):
         try:
             headers = {
-                "authorization": "Bearer Shizuku",
-                "Connection": "close"
+                "authorization": "Bearer Shizuku"
             }
             res = requests.get(url=url, verify=False, headers=headers, timeout=20).text
         except requests.exceptions.ConnectTimeout:
             logger.info("\n获取云端参数超时, 正在重试!" + str(i))
+            time.sleep(1)
+            continue
         except requests.exceptions.ReadTimeout:
             logger.info("\n获取云端参数超时, 正在重试!" + str(i))
+            time.sleep(1)
+            continue
         except Exception as err:
             logger.info(str(err) + "\n未知错误云端, 退出脚本!")
             sys.exit(1)
@@ -409,6 +411,26 @@ def cloud_info():
                 sys.exit(1)
             else:
                 return c_info
+
+
+def check_cloud():
+    url_list = ['aHR0cDovLzQzLjEzNS45MC4yMy8=', 'aHR0cHM6Ly9zaGl6dWt1Lm1sLw==', 'aHR0cHM6Ly9jZi5zaGl6dWt1Lm1sLw==']
+    for i in url_list:
+        url = str(base64.b64decode(i).decode())
+        try:
+            res = requests.get(url=url, verify=False, timeout=10)
+        except:
+            continue
+        else:
+            info = ['Default', 'HTTPS', 'CloudFlare']
+            logger.info(str(info[url_list.index(i)]) + " Server Check OK\n")
+            return i
+    logger.info("\n云端地址全部失效, 请检查网络!")
+    try:
+        send('WSKEY转换', '云端地址失效. 请检查网络.')
+    except:
+        logger.info("通知发送失败")
+    sys.exit(1)
 
 
 if __name__ == '__main__':
@@ -432,6 +454,7 @@ if __name__ == '__main__':
     s = requests.session()
     s.headers.update({"authorization": "Bearer " + str(token)})
     s.headers.update({"Content-Type": "application/json;charset=UTF-8"})
+    url_t = check_cloud()
     cloud_arg = cloud_info()
     update()
     boom()
