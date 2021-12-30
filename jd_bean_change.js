@@ -131,15 +131,17 @@ if ($.isNode() && process.env.BEANCHANGE_DISABLECASH) {
 
 if ($.isNode() && process.env.BEANCHANGE_ALLNOTIFY) {
 	
-	var strTempNotify=process.env.BEANCHANGE_ALLNOTIFY ? process.env.BEANCHANGE_ALLNOTIFY.split('&') : [];
+/* 	var strTempNotify=process.env.BEANCHANGE_ALLNOTIFY ? process.env.BEANCHANGE_ALLNOTIFY.split('&') : [];
 	if (strTempNotify.length > 0) {
 		for (var TempNotifyl in strTempNotify) {					
 			strAllNotify+=strTempNotify[TempNotifyl]+'\n';
 		}
-	}
+	} */
+	strAllNotify=process.env.BEANCHANGE_ALLNOTIFY;
 	console.log(`检测到设定了公告,将在推送信息中置顶显示...`);
 	strAllNotify = `【✨✨✨✨公告✨✨✨✨】\n`+strAllNotify;
 	console.log(strAllNotify);
+	strAllNotify +=`\n🎏🎏🎏🎏🎏🎏🎏🎏🎏🎏🎏🎏🎏`
 }
 
 if (EnableMonth == "true" && Today.getDate() == 1 && Today.getHours() > 17)
