@@ -1,6 +1,6 @@
 /*
 星系牧场
-活动入口：QQ星儿童牛奶京东自营旗舰店->星系牧场
+活动入口：QQ星儿童牛奶京东自营旗舰店->品牌会员->星系牧场
 每次都要手动打开才能跑 不知道啥问题
 号1默认给我助力,后续接龙 2给1 3给2
  19.0复制整段话 http:/J7ldD7ToqMhRJI星系牧场养牛牛，可获得DHA专属奶！%VAjYb8me2b!→去猄倲←
@@ -19,6 +19,13 @@ Exchange = true;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [],
     cookie = '';
+function oc(fn, defaultVal) {//optioanl chaining
+  try {
+    return fn()
+  } catch (e) {
+    return undefined
+  }
+}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -85,7 +92,7 @@ $.shareuuid = "5e81094ee1d640b2996883b48d0c410a"
                             await getproduct()
                             await writePersonInfo($.vid)
                             await dotask(task.taskid, $.pparam)
-                        } else {
+                        } else if (task.taskid !== "add2cart") {
                             await dotask(task.taskid, task.params)
                             await $.wait(10000)
                         }
@@ -94,26 +101,27 @@ $.shareuuid = "5e81094ee1d640b2996883b48d0c410a"
                     for (k = 0; k < $.drawchance; k++) {
                         await draw()
                     }
-                    let exchanges =Math.floor($.foodNum/1000)
-                    console.log(`可兑换 ${exchanges} 次 20京🐶`)
-                    for(q = 0;q<exchanges && Exchange;q++){
-                    await exchange(13)   
-                    }
-                    await getinfo()
-                    if(!Exchange){console.log("你 默认 不兑换东西,请自行进去活动兑换")}
-                    message += `【京东账号${$.index}】${$.nickName || $.UserName}\n${$.cow} 兑换京🐶 ${$.exchange}  ${$.drawresult}\n`
+                    // let exchanges = Math.floor($.foodNum / 1000)
+                    // console.log(`可兑换 ${exchanges} 次 20京🐶`)
+                    // if (!Exchange) { console.log("你 默认 不兑换东西,请自行进去活动兑换") } else {
+                    //     for (q = 0; q < exchanges && Exchange; q++) {
+                    //         await exchange(13)
+                    //     }
+                    // }
+                    // await getinfo()
+                    // message += `【京东账号${$.index}】${$.nickName || $.UserName}\n${$.cow} 兑换京🐶 ${$.exchange}  ${$.drawresult}\n`
                 } else {
                   $.msg($.name, "", "跑不起来了~请自己进去一次牧场")
                 }
             }
         }
-        if (message.length != 0) {
-        if ($.isNode()) {
-           await notify.sendNotify("星系牧场", `${message}\n牧场入口：QQ星儿童牛奶京东自营旗舰店->星系牧场\n\n吹水群：https://t.me/wenmouxx`);
-   }  else {
-            $.msg($.name, "", '星系牧场' + message)
-        }
-           }
+//         if (message.length != 0) {
+//         if ($.isNode()) {
+//            await notify.sendNotify("星系牧场", `${message}\n牧场入口：QQ星儿童牛奶京东自营旗舰店->星系牧场\n\n吹水群：https://t.me/wenmouxx`);
+//    }  else {
+//             $.msg($.name, "", '星系牧场' + message)
+//         }
+//            }
     })()
     .catch((e) => $.logErr(e))
     .finally(() => $.done())
@@ -122,7 +130,7 @@ $.shareuuid = "5e81094ee1d640b2996883b48d0c410a"
 // 更新cookie 
 
 function updateCookie (resp) {
-    if (!resp?.headers['set-cookie']){
+    if (!oc(() => resp.headers['set-cookie'])){
         return
     }
     let obj = {}
@@ -222,7 +230,7 @@ function getToken2() {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
-                    console.log(data)
+                    // console.log(data)
                     $.token2 = data['token']
                     //     console.log($.token2)
                 }

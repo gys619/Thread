@@ -1,32 +1,132 @@
 /*
 https://lzkj-isv.isvjcloud.com/wxgame/activity/8530275?activityId=
+
+推送设置 DoPush 推送模式, 设置为 false 每次推送, true 跑完了推送
+
+JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
+JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
+
+
 */
 const $ = new Env('加购物车抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-/*
 const notify = $.isNode() ? require('./sendNotify') : '';
-*/
-let cookiesArr = [], cookie = '', message = '';
+let cookiesArr = [], cookie = '', message = '' ,isPush = false;
 let activityIdList = [
-"7ba6e649d11c4da7a1b4ba78892f6c39",
-"7b093c347b894731abda124b1bba690e",
-"dd977c155d3942caad4dcddf74f7cd26",
-"d04d9c9dab664f32846fdf3a47e237e8",
-"7371d90caf964a46a3de05ce692a828c",
-"26e0f35a564a47d2aeccaa3b1abf64d3",
-"572e968964b94f388cee57e8438b2213",
-"e9d0fcad02004cc1a48919f3b019dcb7",
-"9d68e15fc5504d2fa13d42a57f9400c5",
-"262d5bfd553e445db23b5ba187c5a9f4",
-"0bd8a7289a854087a345fb0ff105ade0",
-"034f5e9e3c7847f6a08ef37aed88fc3d",
-"6ad57bfeffd14eec9188bb9b03bd4050",
-"6c060742c1904ff1af0053818f50af3d",
-"4954a64047ab49fa8b8d5607ed4fc292",
-"c79447263de24413b0576a6dae5e112e",
-"c69b062803854751b8b208975b6405e7",
-"844604f8a7f940ee80a12f7daa1f80ad",
-"531f465727e74b5292ab7e4b84c4b810",
+    "b8713653b084497590c7a333f3a21237",
+    "f23127e2dc9946139737302dc36fe43b",
+    "6f96aa1ce3a74bd1bff3068aaf295b59",
+    "be78234b03294ef4a56df820bb88a554",
+    "a5844f9f81f74a1fbc2806eb69bb8b70",
+    "922ebd6681cf4caa920f540fd44bd18b",
+    "f5f00be720a14c488b808083948f4d75",
+    "52323d7ea631447b9f9d5c062683b5ce",
+    "7f4404e1904245f5b0de3f4d624e46ed",
+    "e17704051f464befabfe05223a889462",
+    "56953039ac8d4956809f4ae9ed2e0e3d",
+    "87956efe2d2e4566b0dd25ae2058934b",
+    "381f47e49c484868868bb72bfff6800c",
+    "17b5932a65e44b5da9cb1357fe2fb6cb",
+    "b9b878a6a7a64a61a7bc5bed2211f9b7",
+    "fdbcb1c895c249ae9f4d0cb08d8b2bd5",
+    "5008afaea01047debe96970cd137d495",
+    "d9cf10c951d344db8e4ee299f7762e18",
+    "01530a1ae8df4bafa28a3f0a68c2bf36",
+    "c8ae3304db0e4277901933c5fe92fb06",
+    "35e50a1c2d674d9c80c8f713be5e623e",
+    "727afeb988a64b11839c156d1a2a0b5a",
+    "c2258c87346e49f0bd3ca8e342ade243",
+    "dae39c0131de4cbf9e3200f0c52d5dfd",
+    "c222914c87ee4315b6d9c6eb243e359d",
+    "0b55bc2b0b8940288ff2da43c3be5be9",
+    "8f8228bedac644e59cc52a69423c2847",
+    "e1cc4be637be4ef0b03c03fe29efd57c",
+    "3d7880e57b7b4c5cb6d12124c1735024",
+    "e3cf7037393a47df9419acd7050da7d2",
+    "8b7c1810ebd24250b85865ccd3bf1431",
+    "7c9d7e38893f437f9850c9203d0f0484",
+    "ed44b113f5a842adaf7941e6279c7f41",
+    "9eeb5c77be6b4432a15e37d1a9eb30cd",
+    "30f51dad041b457baebde0c84fdc0aaf",
+    "937c8b1dc92d491aa38f78976d556a45",
+    "1900f76d7d37467ca2eaf17992e67e57",
+    "f30f3686e32645489311ac985a5b8325",
+    "fb5c7aa50f6a4287b865056792ee7bef",
+    "bdacfcba95964d04b3e1cf0cb0e186dd",
+    "d29bc5b018fa4e23a5272e78373da6f7",
+    "234cd415691c4886a1102faece92f134",
+    "1a46df31011b45a4a4d30814e39bf9b9",
+    "51a8f763495242d185a5161d686c4604",
+    "7371d90caf964a46a3de05ce692a828c",
+    "47edff69a42143afa2921be8e323a53c",
+    "c22f4dd40946446d96fb8a935c40a2ae",
+    "50b5872923cc47a0a3e71666b6e34f4d",
+    "8962b16d49284a699435cf53628c4d8f",
+    "2597c4482b194f7e8b866f21b79df0b7",
+    "678d692e1ea143b89dd042fbde199179",
+    "fe4440d17bbc432ba1a607efec9bf3f5",
+    "75acb94bd50544749860a494f509777b",
+    "7b2b5aa6dd844e7487036c0ca7fdac22",
+    "98be8d71e54f4b27958d807f6fe103dc",
+    "db161413b09045778f08b6d552854666",
+    "a1e30c6579964d72ba81e1b4a2ad52e8",
+    "0baf64adb8684d8ca3450f574c3cba55",
+    "fa6a0c1efddc4715ba297036bf2d20e2",
+    "4b83932e9860452f8d102c3dae21a8ea",
+    "aee657ba89e84cdabee5ccbe86667147",
+    "45b760dfa64c4cedade2755469739588",
+    "5c56a3b4f2d94c2f91a34a4c22942e13",
+    "79611650ab384b6fb4c3a14f4955c992",
+    "2f3c55901805489ab47b7cb657ce7a7f",
+    "0ec872a66bee4b2f8782fc90d4edbd46",
+    "0e50dd42c4bd4419969c7c4e3dbdcbba",
+    "2ba9f8db763842b990f220a0875c989d",
+    "d4daed21a6fd47edb466cc674027b97a",
+    "823d62d5423a437a9800b6bea5c9c2ca",
+    "f182d87db82b4ee786e8549306fd536c",
+    "49bdc3bfff4841fd8873296d83708788",
+    "0a945f5b5c264d85a3b4978d88e1b67e",
+    "0654e19864024a6fba22f3bce119263e",
+    "5c4646e1dfdf4b0d9b02ba499529c518",
+    "7df4a950b8ce47c9a47975fea79fb554",
+    "481ea88bc6d94dfbac9263bef67f729f",
+    "8b5cff69a23f423cb704d3d71b2de4c8",
+    "66f87d0f04f04138a6e64425852e70cd",
+    "ce4f4cea125b41468f71803e73063278",
+    "6712f3eb230846e885bd1fa5ebb45cbd",
+    "d1c7fc3d2cd14317927bd0d2a6dc1a45",
+    "975c9a215af94157bc0cafc8dec02ba1",
+    "7fdbe9979785400f80575f89df58371b",
+    "95a036d4a5d64af8aa25bce946ae8aec",
+    "3a541178cda644849987889842892ddf",
+    "070afdfdabd1465ba006c3d743c4d180",
+    "c40105ba403e4b2cbde742ab11fc38c3",
+    "f9fa10e1eae94174863ca4d37b0b15f6",
+    "e508b2b045c54eb6a53a26d31c0eee77",
+    "f7a697297e2e49ef9f13f82612eb3ad4",
+    "365379d2daab4a26a62e69bddccc2688",
+    "b0fbfdca43f84daa8dd486e34f011cd9",
+    "a696d8f706e84631b5c8d1646e9315f9",
+    "0e0b3c76aa054878ac95a630a7f57ac4",
+    "89558c3f03e84cb8b0fa8adbc14fc5dc",
+    "13f243159f6f46a0858d056f5d35c4c2",
+    "cddba69152894bc586daadaa1c76da49",
+    "5dc741fb8a574d94abf2ed067ecd2bb8",
+    "ea5a8960d99c4a64afb78553b3b0aa29",
+    "bbb8b60281cc491c968e33bebdbfae4b",
+    "499bb8167fec462eb7c48a68c7b309fb",
+    "d11163cf367c42cea5390ba7b0212cd4",
+    "a4785e9854184c5d814488ac06fde84e",
+    "38f5a8c392054817859f8d2266e7310b",
+    "e7ef6d5e49504a039a90db89b7b06064",
+    "dcb260bd492b40319fd85688f3b835ea",
+    "7f10804686de42c2b765cda8badd8381",
+    "ecf679fd851443a88763ea8aed7fc0b8",
+    "cca7cc264a2b496d84414e4101f217a1",
+    "951663e6d7b747b7b002675b08d6e016",
+    "706e0c00f29a4621916b391958537dee",
+    "e8bd56bbc71c4b92a5f945c467492a77",
+    "0641469c786c4b529595a84567b3f892",    
 ]
 let lz_cookie = {}
 
@@ -48,6 +148,7 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
+let doPush = process.env.DoPush || false; // 设置为 false 每次推送, true 跑完了推送
 let removeSize = process.env.JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
 let isRemoveAll = process.env.JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
 $.keywords = process.env.JD_CART_KEYWORDS || []
@@ -57,6 +158,7 @@ $.keywordsNum = 0;
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
+    // activityIdList = await getActivityIdList('https://raw.githubusercontent.com/FKPYW/777777/master/code/wxCollectionActivity.json')
     for(let a in activityIdList){
         activityId = activityIdList[a];
         console.log("开起第 "+ a +" 个活动，活动id："+activityId)
@@ -76,7 +178,7 @@ $.keywordsNum = 0;
                     if ($.isNode()) {
                         await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
                     }
-                    break
+                    continue
                 }
                 authorCodeList = [
                     '',
@@ -91,11 +193,11 @@ $.keywordsNum = 0;
                 $.drawInfoName = false
                 $.getPrize = null;
                 await addCart();
-                if($.drawInfoName === false || $.getPrize === null){
-                    continue
-                } else if($.getPrize != null && !$.getPrize.includes("京豆")){
-                    continue
-                }
+                // if($.drawInfoName === false || $.getPrize === null){
+                //     break
+                // } else if($.getPrize != null && !$.getPrize.includes("京豆")){
+                //     break
+                // }
                 await $.wait(3000)
                 await requireConfig();
                 do {
@@ -202,7 +304,13 @@ function task(function_id, body, isCommon = 0) {
                                 case 'getPrize':
                                     console.log(data.data.name)
                                     $.getPrize = data.data.name;
-                                    await notify.sendNotify($.name, data.data.name, '', `\n`);
+                                    if (doPush === true) {
+                                        if (data.data.name) {
+                                            message += data.data.name + " "
+                                        }
+                                    } else {
+                                        await notify.sendNotify($.name, data.data.name, '', `\n`);
+                                    }
                                     break
                                 default:
                                     $.log(JSON.stringify(data))
@@ -210,7 +318,7 @@ function task(function_id, body, isCommon = 0) {
                             }
                         }
                     } else {
-                        $.log("京东没有返回数据")
+                        // $.log("京东没有返回数据")
                     }
                 }
             } catch (error) {
@@ -478,6 +586,28 @@ function getSubstr(str, leftStr, rightStr){
     let right = str.indexOf(rightStr, left);
     if(left < 0 || right < left) return '';
     return str.substring(left + leftStr.length, right);
+}
+function getActivityIdList(url) {
+    return new Promise(resolve => {
+        const options = {
+            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+            }
+        };
+        $.get(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                    $.log(err)
+                } else {
+                if (data) data = JSON.parse(data)
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data);
+            }
+        })
+    })
 }
 function getUUID(format = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', UpperCase = 0) {
     return format.replace(/[xy]/g, function (c) {

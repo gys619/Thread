@@ -1,20 +1,22 @@
 /*
-欢迎关注
-https://t.me/aaron_scriptsG
-https://t.me/jdscrip
+组队分豆-蒙牛 [jd_mengniu.js]
+
+————————————————
+入口：[组队分豆-蒙牛 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=1fc26ba85abe4d7fa8024c9917163442)]
+IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
-# 京东蒙牛
-7 7,17 * * * https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js, tag=京东蒙牛, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
+#组队分豆-蒙牛
+18 1,16 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
 ================Loon==============
 [Script]
-cron "7 7,17 * * *" script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js,tag=京东蒙牛
+cron "18 1,16 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js,tag=组队分豆-蒙牛
 ===============Surge=================
-京东蒙牛 = type=cron,cronexp="7 7,17 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js
+组队分豆-蒙牛 = type=cron,cronexp="18 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js
 ============小火箭=========
-京东蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/captainz236/goodjob/main/jd_mengniu.js, cronexpr="7 7,17 * * *", timeout=3600, enable=true
+组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, cronexpr="18 1,16 * * *", timeout=3600, enable=true
 */
-const $ = new Env("蒙牛");
+const $ = new Env("组队分豆-蒙牛");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
@@ -38,6 +40,7 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
+    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=1fc26ba85abe4d7fa8024c9917163442`)
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i]
@@ -56,14 +59,14 @@ if ($.isNode()) {
                 }
                 continue
             }
-            authorCodeList = ['']
+            authorCodeList = ['1fc26ba85abe4d7fa8024c9917163442','efa6d50b6d32488ba485f07629ff6c99','8a0d5f341e8440e2aa04a1592cd3f1b3']
             $.bean = 0;
             $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);
             $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
             $.authorNum = `${random(1000000, 9999999)}`
-            $.activityId = 'e319ac3cef964226a29eac2559f1cf57'
+            $.activityId = '4e3b9b6233104c199c0c44ff6edbc85d'
             $.activityShopId = '1000014803'
             $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.authorNum}?activityId=${$.activityId}&signUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
             await anjia();
@@ -166,7 +169,7 @@ function task(function_id, body, isCommon = 0) {
                                 case 'saveCaptain':
                                     if (data.data.signUuid) {
                                         $.log("创建队伍成功")
-                                        if ($.index === 1) {
+                                        if($.index === 1){
                                             ownCode = data.data.signUuid;
                                         }
                                     }
@@ -182,11 +185,10 @@ function task(function_id, body, isCommon = 0) {
                                 case 'activityContent':
                                     // console.log(data.data)
                                     $.activityContent = data.data;
-                                    if ($.index === 1) {
+                                    if($.index === 1){
                                         ownCode = data.data.signUuid;
                                     }
                                     // $.actorUuid = data.data.signUuid;
-                                    // console.log($.actorUuid);
                                     // console.log(data.data.successRetList)
                                     // for (const vo of data.data.successRetList) {
                                     //     if (!vo.sendStatus && vo.canSend) {
