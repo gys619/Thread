@@ -8,7 +8,7 @@ https://3.cn/1-03EUzX1
 ============Quantumultx===============
 [task_local]
 #生活特权～免费领京豆
-26 22 * * 2 https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_week.js, tag=生活特权～免费领京豆, enabled=true
+26 22 * * 2 https://raw.githubusercontent.com/11111115/JDHelp/main/jd_week.js, tag=生活特权～免费领京豆, enabled=true
 */
 
 const $ = new Env('生活特权～免费领京豆');

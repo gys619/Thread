@@ -1,6 +1,6 @@
 /*
 cron 0 0,12 * * *  jd_refreshInvokeKey.js, tag=宠汪汪invokeKey刷新
-转载请注明出处：https://github.com/he1pu/JDHelp
+转载请注明出处：https://github.com/11111115/JDHelp
 */
 
 let $ = new Env('宠汪汪invokeKey刷新');
@@ -13,7 +13,7 @@ let notify = require('./sendNotify.js')
     let jsStr = await getJS(html)
     let result = await refreshKey(jsStr)
     console.log(result)
-    await notify.sendNotify(`${$.name}`, result,`\n\n本通知 By：https://github.com/he1pu/JDHelp`);
+    await notify.sendNotify(`${$.name}`, result,`\n\n本通知 By：https://github.com/11111115/JDHelp`);
 })()
     .catch((e)=>{$.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')})
     .finally(()=>{$.done()})

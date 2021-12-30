@@ -4,7 +4,7 @@
 cron: 5 15 * * *
 new Env('东东农场-天天红包抽奖');
 入口: 京东》我的>东东农场>天天红包
-青龙拉取命令：ql raw https://raw.githubusercontent.com/111111/myScripts/main/jd/jd_fruit_everydayRed.py
+青龙拉取命令：ql raw https://raw.githubusercontent.com/11111121/myScripts/main/jd/jd_fruit_everydayRed.py
 '''
 
 import os,json,random,time,re,string,functools
@@ -105,10 +105,10 @@ cookie_list=Judge_env().main_run()
 class Msg(object):
     def getsendNotify(self):
         url_list = [
-            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/111111/myScripts/main/sendNotify.py',
-            'https://cdn.jsdelivr.net/gh/111111/myScripts@main/sendNotify.py',
-            'https://raw.fastgit.org/111111/myScripts/main/sendNotify.py',
-            'https://raw.githubusercontent.com/111111/myScripts/main/sendNotify.py',
+            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
+            'https://cdn.jsdelivr.net/gh/11111121/myScripts@main/sendNotify.py',
+            'https://raw.fastgit.org/11111121/myScripts/main/sendNotify.py',
+            'https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
         ]
         for e,url in enumerate(url_list):
             try:

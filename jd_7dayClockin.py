@@ -149,7 +149,7 @@ class msg(object):
         if a == 0:
             a += 1
         try:
-            url = 'https://ghproxy.com/https://raw.githubusercontent.com/111111/jd/main/sendNotify.py'
+            url = 'https://ghproxy.com/https://raw.githubusercontent.com/11111121/jd/main/sendNotify.py'
             response = requests.get(url)
             if 'curtinlv' in response.text:
                 with open('sendNotify.py', "w+", encoding="utf-8") as f:

@@ -6,7 +6,7 @@
 =================================Quantumultx=========================
 [task_local]
 #发财挖宝
-5 0-23/2 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_fcwb.js, tag=发财挖宝, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0-23/2 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_fcwb.js, tag=发财挖宝, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('发财挖宝');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -166,7 +166,7 @@ async function takeRequest(functionId,bodyInfo,h5stFlag = false){
         })
     })
 }
-function getAuthorShareCode(url='https://raw.githubusercontent.com/he1pu/params/main/codes.json') {
+function getAuthorShareCode(url='https://raw.githubusercontent.com/11111115/params/main/codes.json') {
     return new Promise(resolve => {
         const options = {
             url: `${url}?${new Date()}`, "timeout": 10000, headers: {

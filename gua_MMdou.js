@@ -3,7 +3,7 @@
 
 入口：APP首页-领京豆-升级赚京豆
 cron:21 9 * * *
-21 9 * * * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_MMdou.js, tag=MM领京豆, enabled=true
+21 9 * * * https://raw.githubusercontent.com/11111120/scripts/master/gua_MMdou.js, tag=MM领京豆, enabled=true
 
 */
 

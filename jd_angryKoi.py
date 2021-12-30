@@ -7,7 +7,7 @@ export JD_COOKIE="第1个cookie&第2个cookie"
 export kois=" 第1个cookie的pin & 第2个cookie的pin "
 环境变量kois中填入需要助力的pt_pin，有多个请用 '@'或'&'或空格 符号连接,不填默认全部账号内部随机助力
 脚本内或环境变量填写，优先环境变量
-地址：https://raw.githubusercontent.com/111111/myScripts/main/jd/jd_angryKoi.py
+地址：https://raw.githubusercontent.com/11111121/myScripts/main/jd/jd_angryKoi.py
 更新：
 17/24 22:00 使用随机log,增加开红包
 '''
@@ -112,10 +112,10 @@ cookie_list=Judge_env().main_run()
 class Msg(object):
     def getsendNotify(self):
         url_list = [
-            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/111111/myScripts/main/sendNotify.py',
-            'https://cdn.jsdelivr.net/gh/111111/myScripts@main/sendNotify.py',
-            'https://raw.fastgit.org/111111/myScripts/main/sendNotify.py',
-            'https://raw.githubusercontent.com/111111/myScripts/main/sendNotify.py',
+            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
+            'https://cdn.jsdelivr.net/gh/11111121/myScripts@main/sendNotify.py',
+            'https://raw.fastgit.org/11111121/myScripts/main/sendNotify.py',
+            'https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
         ]
         for e,url in enumerate(url_list):
             try:

@@ -583,7 +583,7 @@ function getCcTaskList(functionId, body, type = '1') {
     })
   })
 }
-function getAuthorShareCode(url="https://raw.githubusercontent.com/he1pu/JDHelp/main/zcodes.json") {
+function getAuthorShareCode(url="https://raw.githubusercontent.com/11111115/JDHelp/main/zcodes.json") {
     return new Promise(async resolve => {
         const options = {
             "url": `${url}`,

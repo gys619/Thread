@@ -6,7 +6,7 @@ https://prodev.m.jd.com/mall/active/2VyRHGE7jM1igBJcrjoB6ak1JJWV/index.html
 如需加购请设置环境变量[guaunknownTask_addSku1]为"true"
  [task_local]
 #电脑配件
-15 15 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_dlpj.js
+15 15 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_dlpj.js
 */
 const $ = new Env('电脑配件');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';

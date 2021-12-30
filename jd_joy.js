@@ -10,18 +10,18 @@ Combine from Zero-S1/JD_tools(https://github.com/Zero-S1/JD_tools)
 ==========Quantumult X==========
 [task_local]
 #京东宠汪汪
-15 0-23/2 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy.js, tag=京东宠汪汪, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
+15 0-23/2 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_joy.js, tag=京东宠汪汪, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
 
 ============Loon===========
 [Script]
-cron "15 0-23/2 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy.js,tag=京东宠汪汪
+cron "15 0-23/2 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_joy.js,tag=京东宠汪汪
 
 ============Surge==========
 [Script]
-京东宠汪汪 = type=cron,cronexp="15 0-23/2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy.js
+京东宠汪汪 = type=cron,cronexp="15 0-23/2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_joy.js
 
 ===============小火箭==========
-京东宠汪汪 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy.js, cronexpr="15 0-23/2 * * *", timeout=3600, enable=true
+京东宠汪汪 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_joy.js, cronexpr="15 0-23/2 * * *", timeout=3600, enable=true
 */
 const $ = new Env('宠汪汪');
 const zooFaker = require('./utils/JDJRValidator_Pure');

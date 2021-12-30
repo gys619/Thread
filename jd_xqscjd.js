@@ -9,17 +9,17 @@
 ============Quantumultx===============
 [task_local]
 #写情书抽京豆
-1 1,14 12-25 12 * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_xqscjd.js, tag=写情书抽京豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+1 1,14 12-25 12 * https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js, tag=写情书抽京豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "1 1,14 12-25 12 *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_xqscjd.js,tag=写情书抽京豆
+cron "1 1,14 12-25 12 *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js,tag=写情书抽京豆
 
 ===============Surge=================
-写情书抽京豆 = type=cron,cronexp="1 1,14 12-25 12 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_xqscjd.js
+写情书抽京豆 = type=cron,cronexp="1 1,14 12-25 12 *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js
 
 ============小火箭=========
-写情书抽京豆 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_xqscjd.js, cronexpr="1 1,14 12-25 12 *", timeout=3600, enable=true
+写情书抽京豆 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_xqscjd.js, cronexpr="1 1,14 12-25 12 *", timeout=3600, enable=true
 
 */
 const $ = new Env('写情书抽京豆');

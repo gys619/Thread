@@ -5,17 +5,17 @@
 ============Quantumultx===============
 [task_local]
 #5魔方兑换
-0 0 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_xmf_exchange.js, tag=5魔方兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+0 0 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_xmf_exchange.js, tag=5魔方兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "0 0 * * *" script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_xmf_exchange.js,tag=5魔方兑换
+cron "0 0 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_xmf_exchange.js,tag=5魔方兑换
 
 ===============Surge=================
-5魔方兑换 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_xmf_exchange.js
+5魔方兑换 = type=cron,cronexp="0 0 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_xmf_exchange.js
 
 ============小火箭=========
-5魔方兑换 = type=cron,script-path=https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_xmf_exchange.js, cronexpr="0 0 * * *", timeout=3600, enable=true
+5魔方兑换 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_xmf_exchange.js, cronexpr="0 0 * * *", timeout=3600, enable=true
 */
 const $ = new Env('5魔方兑换');
 const notify = $.isNode() ? require('./sendNotify') : '';

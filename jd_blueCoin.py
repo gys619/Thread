@@ -31,7 +31,7 @@ try:
     from utils.JDCookie import getJDCookie
     getCk = getJDCookie()
 except:
-    print("请先下载依赖脚本，放至utils文件夹内，\n下载链接：https://raw.githubusercontent.com/he1pu/JDHelp/main/utils/JDCookie.py")
+    print("请先下载依赖脚本，放至utils文件夹内，\n下载链接：https://raw.githubusercontent.com/11111115/JDHelp/main/utils/JDCookie.py")
     sys.exit(3)
 
 pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep

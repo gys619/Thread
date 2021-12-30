@@ -2,7 +2,7 @@
 
 https://prodev.m.jd.com/mall/active/2y1S9xVYdTud2VmFqhHbkcoAYhJT/index.html
 
-27 8,18 * 9-12 * https://raw.githubusercontent.com/smiek2121/scripts/master/gua_UnknownTask7.js
+27 8,18 * 9-12 * https://raw.githubusercontent.com/11111120/scripts/master/gua_UnknownTask7.js
 */
 const $ = new Env('寻找内容鉴赏官');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -469,7 +469,7 @@ function getList2() {
 function jdSign(fn,body) {
   return new Promise((resolve) => {
     let url = {
-      url: `https://jd.smiek.tk/jdsign_21092132`,
+      url: `https://jd.11111118/jdsign_21092132`,
       body:`{"fn":"${fn}","body":${body}}`,
       followRedirect:false,
       headers: {
