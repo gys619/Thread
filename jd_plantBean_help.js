@@ -72,7 +72,6 @@ let llhelp=true;
       subTitle = '';
       option = {};
       await jdPlantBean();
-      await showMsg();
     }
   }
   if(llhelp){
@@ -81,9 +80,8 @@ let llhelp=true;
 		  cookie = cookiesArr[j];
 		  $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
 		  $.index = j + 1;
-		  //await shareCodesFormat();
 		  await doHelp()
-		  await $.wait(3 * 1000)
+		  await $.wait(2000)
 		}
 	  }
 	}
@@ -98,7 +96,6 @@ let llhelp=true;
 
 async function jdPlantBean() {
   try {
-    console.log(`获取任务及基本信息`)
     await plantBeanIndex();
     if ($.plantBeanIndexResult.errorCode === 'PB101') {
       console.log(`\n活动太火爆了，还是去买买买吧！\n`)
@@ -280,81 +277,6 @@ async function helpShare(plantUuid) {
 async function plantBeanIndex() {
   $.plantBeanIndexResult = await request('plantBeanIndex');//plantBeanIndexBody
 }
-function readShareCode() {
-  return new Promise(async resolve => {
-    $.get({url: `/`, timeout: 10000}, (err, resp, data) => {
-      try {
-        if (err) {
-     //   console.log(`${JSON.stringify(err)}`)
-     //   console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-     //     console.log(`随机取个${randomCount}码放到您固定的互助码后面(不影响已有固定互助)`)
-            data = JSON.parse(data);
-          }
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
-    await $.wait(15000);
-    resolve()
-  })
-}
-//格式化助力码
-function shareCodesFormat() {
-  return new Promise(async resolve => {
-    console.log(`第${$.index}个京东账号的助力码:${$.shareCodesArr[$.index - 1]}`)
-    newShareCodes = [];
-    if ($.shareCodesArr[$.index - 1]) {
-      newShareCodes = $.shareCodesArr[$.index - 1].split('@');
-    } else {
-      // console.log(`由于您第${$.index}个京东账号未提供shareCode,将采纳本脚本自带的助力码\n`)
-      const tempIndex = $.index > shareCodes.length ? (shareCodes.length - 1) : ($.index - 1);
-      newShareCodes = shareCodes[tempIndex].split('@');
-    }
-    
-    console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
-    resolve();
-  })
-}
-function requireConfig() {
-  return new Promise(resolve => {
-    //console.log('开始获取种豆得豆配置文件\n')
-    notify = $.isNode() ? require('./sendNotify') : '';
-    //Node.js用户请在jdCookie.js处填写京东ck;
-    const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-    const jdPlantBeanShareCodes = '';
-    //IOS等用户直接用NobyDa的jd cookie
-    if ($.isNode()) {
-      Object.keys(jdCookieNode).forEach((item) => {
-        if (jdCookieNode[item]) {
-          cookiesArr.push(jdCookieNode[item])
-        }
-      })
-      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
-    } else {
-      cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
-    }
-    console.log(`共${cookiesArr.length}个京东账号\n`)
-    $.shareCodesArr = [];
-    if ($.isNode()) {
-      Object.keys(jdPlantBeanShareCodes).forEach((item) => {
-        if (jdPlantBeanShareCodes[item]) {
-          $.shareCodesArr.push(jdPlantBeanShareCodes[item])
-        }
-      })
-    } else {
-      if ($.getdata('jd_plantBean_help_inviter')) $.shareCodesArr = $.getdata('jd_plantBean_help_inviter').split('\n').filter(item => !!item);
-      console.log(`\nBoxJs设置的${$.name}好友邀请码:${$.getdata('jd_plantBean_help_inviter') ? $.getdata('jd_plantBean_help_inviter') : '暂无'}\n`);
-    }
-    // console.log(`\n种豆得豆助力码::${JSON.stringify($.shareCodesArr)}`);
-    //console.log(`您提供了${$.shareCodesArr.length}个账号的种豆得豆助力码\n`);
-    resolve()
-  })
-}
 function requestGet(function_id, body = {}) {
   if (!body.version) {
     body["version"] = "9.0.0.1";
@@ -436,6 +358,41 @@ function TotalBean() {
         resolve();
       }
     })
+  })
+}
+function requireConfig() {
+  return new Promise(resolve => {
+    //console.log('开始获取种豆得豆配置文件\n')
+    notify = $.isNode() ? require('./sendNotify') : '';
+    //Node.js用户请在jdCookie.js处填写京东ck;
+    const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+    const jdPlantBeanShareCodes = '';
+    //IOS等用户直接用NobyDa的jd cookie
+    if ($.isNode()) {
+      Object.keys(jdCookieNode).forEach((item) => {
+        if (jdCookieNode[item]) {
+          cookiesArr.push(jdCookieNode[item])
+        }
+      })
+      if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
+    } else {
+      cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
+    }
+    console.log(`共${cookiesArr.length}个京东账号\n`)
+    $.shareCodesArr = [];
+    if ($.isNode()) {
+      Object.keys(jdPlantBeanShareCodes).forEach((item) => {
+        if (jdPlantBeanShareCodes[item]) {
+          $.shareCodesArr.push(jdPlantBeanShareCodes[item])
+        }
+      })
+    } else {
+      if ($.getdata('jd_plantBean_help_inviter')) $.shareCodesArr = $.getdata('jd_plantBean_help_inviter').split('\n').filter(item => !!item);
+      //console.log(`\nBoxJs设置的${$.name}好友邀请码:${$.getdata('jd_plantBean_help_inviter') ? $.getdata('jd_plantBean_help_inviter') : '暂无'}\n`);
+    }
+    // console.log(`\n种豆得豆助力码::${JSON.stringify($.shareCodesArr)}`);
+    //console.log(`您提供了${$.shareCodesArr.length}个账号的种豆得豆助力码\n`);
+    resolve()
   })
 }
 function request(function_id, body = {}) {
