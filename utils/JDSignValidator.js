@@ -1,4 +1,4 @@
-const UA = require('../USER_AGENTS.js').USER_AGENT;
+const UA = require('./USER_AGENTS.js').USER_AGENT;
 
 const navigator = {
   userAgent: UA,
