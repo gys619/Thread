@@ -7,14 +7,14 @@
 =================================Quantumultx=========================
 [task_local]
 #见缝插针
-15 10 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, tag=见缝插针, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+15 3,20 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, tag=见缝插针, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 =================================Loon===================================
 [Script]
-cron "15 10 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js,tag=见缝插针
+cron "15 3,20 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js,tag=见缝插针
 ===================================Surge================================
-见缝插针 = type=cron,cronexp="15 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js
+见缝插针 = type=cron,cronexp="15 3,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js
 ====================================小火箭=============================
-见缝插针 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, cronexpr="15 10 * * *", timeout=3600, enable=true
+见缝插针 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_jfcz.js, cronexpr="15 3,20 * * *", timeout=3600, enable=true
  */
 const $ = new Env('见缝插针');
 const notify = $.isNode() ? require('./sendNotify') : '';
