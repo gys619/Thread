@@ -76,7 +76,8 @@ jd_bean_change_pro.js
 jd_fruit?.js
 jd_necklace.js
 jd_exchange_joy.js
-jd_ddworld_exchange.js
+# 东东世界兑换
+#jd_ddworld_exchange.js
 jdd_jd_fcdyj.js
 jd_zjd.js
 jd_qjdSupermarket.js
