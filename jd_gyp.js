@@ -1,4 +1,3 @@
-
 /*
 京东工业品，可抽奖获得京豆，
 活动入口：京东工业品 旁边的立即抽奖
@@ -10,7 +9,7 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东工业品
-10 7,19 * 12 * jd jd_gyp.js, tag=京东工业品, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
+10 7 * 12 * jd jd_gyp.js, tag=京东工业品, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
 
  */
 const $ = new Env('京东工业品');
