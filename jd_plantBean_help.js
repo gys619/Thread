@@ -42,8 +42,6 @@ let awardState = '';//上期活动的京豆是否收取
 let randomCount = $.isNode() ? 20 : 5;
 let num;
 $.newShareCode = [];
-let NowHour = new Date().getHours();
-let llhelp=true;
 
 !(async () => {  
   await requireConfig();
@@ -58,6 +56,7 @@ let llhelp=true;
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
+      $.hotFlag = false; //是否火爆
       await TotalBean();
       console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
@@ -72,19 +71,10 @@ let llhelp=true;
       subTitle = '';
       option = {};
       await jdPlantBean();
+	  await doHelp()
+	  await $.wait(2000)
     }
   }
-  if(llhelp){
-	  for (let j = 0; j < cookiesArr.length; j++) {
-		if (cookiesArr[j]) {
-		  cookie = cookiesArr[j];
-		  $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-		  $.index = j + 1;
-		  await doHelp()
-		  await $.wait(2000)
-		}
-	  }
-	}
   if ($.isNode() && allMessage) {
     await notify.sendNotify(`${$.name}`, `${allMessage}`)
   }
@@ -145,7 +135,7 @@ async function doHelp() {
     }
     await helpShare(plantUuid);
     if ($.helpResult && $.helpResult.code === '0') {
-      // console.log(`助力好友结果: ${JSON.stringify($.helpResult.data.helpShareRes)}`);
+      console.log(`助力好友结果: ${JSON.stringify($.helpResult.data.helpShareRes)}`);
       if ($.helpResult.data.helpShareRes) {
         if ($.helpResult.data.helpShareRes.state === '1') {
           console.log(`助力好友${plantUuid}成功`)
@@ -272,7 +262,7 @@ async function helpShare(plantUuid) {
     "followType": "1",
   }
   $.helpResult = await request(`plantBeanIndex`, body);
-  console.log(`助力结果的code:${$.helpResult && $.helpResult.code}`);
+  //console.log(`助力结果的code:${$.helpResult && $.helpResult.code}`);
 }
 async function plantBeanIndex() {
   $.plantBeanIndexResult = await request('plantBeanIndex');//plantBeanIndexBody
