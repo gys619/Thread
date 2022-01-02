@@ -28,13 +28,13 @@ try:
 except:
     logger.info("无推送文件")
 
-ver = 1231
+ver = 10102
 
 
 # 登录青龙 返回值 token
 def get_qltoken(username, password):
     logger.info("Token失效, 新登陆\n")
-    url = "http://127.0.0.1:{0}/api/login".format(port)
+    url = "http://127.0.0.1:{0}/api/user/login".format(port)
     payload = {
         'username': username,
         'password': password
