@@ -1,23 +1,8 @@
 /*
-女装盲盒
-活动地址：https://h5.m.jd.com/babelDiy/Zeus/4DYrdEbbkinoufRCg9LXnRxJKEZS/index.html
-活动入口：京东app-女装馆-赢京豆
-已支持IOS双京东账号,Node.js支持N个京东账号
-脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-============Quantumultx===============
-[task_local]
-#女装盲盒
-35 8,12 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, tag=女装盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+#女装盲盒抽京豆任务，自行加入一下环境变量
+export jd_nzmhurl="https://anmp.jd.com/babelDiy/Zeus/2x36jyruNVDWxUiAiGAgHRrkqVX2/index.html"
 
-================Loon==============
-[Script]
-cron "35 8,12 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js,tag=女装盲盒
-
-===============Surge=================
-女装盲盒 = type=cron,cronexp="35 8,12 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js
-
-============小火箭=========
-女装盲盒 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_nzmh.js, cronexpr="35 8,12 * * *", timeout=3600, enable=true
+cron 35 1,23 * * *
  */
 
 const $ = new Env('女装盲盒抽京豆');
@@ -25,23 +10,27 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message;
-
+let cookiesArr = [], cookie = '', message = '', allMessage = '';
+let jd_nzmhurl = '';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
   })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
-  };
+  if (process.env.jd_nzmhurl) jd_nzmhurl = process.env.jd_nzmhurl
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
-
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
     return;
   }
+  if (!jd_nzmhurl) {
+    $.log(`暂时没有女装盲盒，改日再来～`);
+    return;
+  }
+  console.log(`新的女装盲盒已经准备好: ${jd_nzmhurl}，准备开始薅豆`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -57,18 +46,20 @@ if ($.isNode()) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/`, {"open-url": "https://bean.m.jd.com/"});
         if ($.isNode()) {
           await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-        } else {
-          $.setdata('', `CookieJD${i ? i + 1 : ""}`);//cookie失效，故清空cookie。$.setdata('', `CookieJD${i ? i + 1 : "" }`);//cookie失效，故清空cookie。
         }
         continue
       }
       try {
-        await jdMh('https://anmp.jd.com/babelDiy/Zeus/2x36jyruNVDWxUiAiGAgHRrkqVX2/index.html')
+        await jdMh(jd_nzmhurl)
       } catch (e) {
         $.logErr(e)
       }
     }
   }
+  if (allMessage) {
+    if ($.isNode()) await notify.sendNotify(`${$.name}`, `${allMessage}`);
+    $.msg($.name, '', allMessage);
+    }
 })()
   .catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -97,14 +88,15 @@ function showMsg() {
   return new Promise(resolve => {
     if ($.beans) {
       message += `本次运行获得${$.beans}京豆`
+      allMessage += `京东账号${$.index}${$.nickName}获得${$.beans}京豆\n`
       $.msg($.name, '', `京东账号${$.index}${$.nickName}\n${message}`);
     }
     resolve()
   })
 }
 
-function getInfo(url = 'https://anmp.jd.com/babelDiy/Zeus/3DSHPs2xC66RgcCEB8YVLsudqfh5/index.html?wxAppName=jd') {
-  console.log(`url:${url}`)
+function getInfo(url) {
+  console.log(`\n女装盲盒url:${url}\n`)
   return new Promise(resolve => {
     $.get({
       url,
@@ -188,6 +180,8 @@ function draw() {
             if ($.prize.filter(vo => vo.prizeLevel === data.data.level).length > 0) {
               console.log(`获得${$.prize.filter(vo => vo.prizeLevel === data.data.level)[0].prizename}`)
               $.beans += $.prize.filter(vo => vo.prizeLevel === data.data.level)[0].beansPerNum
+            } else {
+              console.log(`抽奖 未中奖`)
             }
           }
         }
@@ -210,8 +204,8 @@ function taskUrl(function_id, body = '') {
       'Accept-Language': 'zh-cn',
       'Content-Type': 'application/json;charset=utf-8',
       'Origin': 'wq.jd.com',
-      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-      'Referer': `https://anmp.jd.com/babelDiy/Zeus/xKACpgVjVJM7zPKbd5AGCij5yV9/index.html?wxAppName=jd`,
+      'User-Agent': 'JD4iPhone/167490 (iPhone; iOS 14.2; Scale/3.00)',
+      'Referer': `${jd_nzmhurl}?wxAppName=jd`,
       'Cookie': cookie
     }
   }
@@ -220,44 +214,48 @@ function taskUrl(function_id, body = '') {
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
-      url: "https://me-api.jd.com/user_new/info/GetJDUserInfoUnion",
-      headers: {
-        Host: "me-api.jd.com",
-        Accept: "*/*",
-        Connection: "keep-alive",
-        Cookie: cookie,
-        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+      "url": `https://wq.jd.com/user/info/QueryJDUserInfo?sceneval=2`,
+      "headers": {
+        "Accept": "application/json,text/plain, */*",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Accept-Encoding": "gzip, deflate, br",
         "Accept-Language": "zh-cn",
-        "Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
-        "Accept-Encoding": "gzip, deflate, br"
+        "Connection": "keep-alive",
+        "Cookie": cookie,
+        "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
       }
     }
-    $.get(options, (err, resp, data) => {
+    $.post(options, (err, resp, data) => {
       try {
         if (err) {
-          $.logErr(err)
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data['retcode'] === "1001") {
+            if (data['retcode'] === 13) {
               $.isLogin = false; //cookie过期
-              return;
+              return
             }
-            if (data['retcode'] === "0" && data.data && data.data.hasOwnProperty("userInfo")) {
-              $.nickName = data.data.userInfo.baseInfo.nickname;
+            if (data['retcode'] === 0) {
+              $.nickName = (data['base'] && data['base'].nickname) || $.UserName;
+            } else {
+              $.nickName = $.UserName
             }
           } else {
-            console.log('京东服务器返回空数据');
+            console.log(`京东服务器返回空数据`)
           }
         }
       } catch (e) {
-        $.logErr(e)
+        $.logErr(e, resp)
       } finally {
         resolve();
       }
     })
   })
 }
+
 function safeGet(data) {
   try {
     if (typeof JSON.parse(data) == "object") {
