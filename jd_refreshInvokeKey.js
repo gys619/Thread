@@ -52,7 +52,7 @@ function refreshKey(jsStr) {
             if (err) {
                 $.logErr(err)
             }else {
-                let invokeKey = match(/invokeKey:"([^\"]+)"/, data)
+                let invokeKey = match(/invokeKey: '([^\']+)'/, data)
                 if (invokeKey) {
                     let config = {"invokeKey":invokeKey}
                     try {
