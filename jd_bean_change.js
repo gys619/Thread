@@ -813,13 +813,13 @@ async function showMsg() {
 
 	if ($.isNode() && WP_APP_TOKEN_ONE) {
 		var strTitle="京东资产变动";
+		ReturnMessage=`【账号名称】${$.nickName || $.UserName}\n`+ReturnMessage;
 		
 		if (TempBaipiao) {
-			strsummary=TempBaipiao + `\n` +strsummary;			
+			strsummary=TempBaipiao +strsummary;			
 			TempBaipiao = `【⏰商品白嫖活动提醒⏰】\n` + TempBaipiao;
 			ReturnMessage = TempBaipiao + `\n` + ReturnMessage;			
 		}
-		ReturnMessage=`【账号名称】${$.nickName || $.UserName}\n`+ReturnMessage;
 		
 		ReturnMessage += RemainMessage;
 		if(strAllNotify)
