@@ -71,8 +71,8 @@ $.newShareCode = [];
       subTitle = '';
       option = {};
       await jdPlantBean();
-	  await doHelp()
-	  await $.wait(2000)
+	  await doHelp();
+	  await $.wait(2000);
     }
   }
   if ($.isNode() && allMessage) {
@@ -123,13 +123,13 @@ async function jdPlantBean() {
 //助力好友
 async function doHelp() {
 
-  console.log(`开始账号内互助`);
+  console.log(`\n【开始账号内互助】\n`);
   $.newShareCode = [...(jdPlantBeanShareArr || [])]
   
   for (let plantUuid of $.newShareCode) {
-    console.log(`${$.UserName}开始助力: ${plantUuid}`);
+    console.log(`【${$.UserName}】开始助力: ${plantUuid}`);
     if (!plantUuid) continue;
-    if (plantUuid === $.myPlantUuid) {
+    if (plantUuid === $.myPlantUuid || $.plantBeanIndexResult.errorCode === 'PB101' ) {
       console.log(`\n跳过自己的plantUuid\n`)
       continue
     }
@@ -153,6 +153,7 @@ async function doHelp() {
       }
     } else {
       console.log(`助力好友失败: ${JSON.stringify($.helpResult)}`);
+	  break;
     }
   }
 }
