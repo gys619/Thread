@@ -162,6 +162,7 @@ jd_flp.js
 jd_mn.js
 #不能跑的
 jd_task_*.js
+jx_task_*.js
 creat.sh
 jw_*.js
 jr_*.js
