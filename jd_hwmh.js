@@ -3,6 +3,12 @@
 运动户外盲盒活动
 
 即时任务，无需cron,短期或者长期请参考活动规则设置cron
+
+跑此脚本需要添加依赖文件[sign_graphics_validate.js]
+————————————————
+如需开卡请设置环境变量[guaunknownTask_card5]为"true"
+
+如需加购请设置环境变量[guaunknownTask_addSku5]为"true"
 ============Quantumultx===============
 [task_local]
 #运动户外盲盒活动
@@ -34,11 +40,18 @@ if ($.isNode()) {
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
+let guaopencard = "false"
+guaopencard = $.isNode() ? (process.env.guaunknownTask_card5 ? process.env.guaunknownTask_card5 : `${guaopencard}`) : ($.getdata('guaunknownTask_card5') ? $.getdata('guaunknownTask_card5') : `${guaopencard}`);
+guaopencard = $.isNode() ? (process.env.guaunknownTask_card_All ? process.env.guaunknownTask_card_All : `${guaopencard}`) : ($.getdata('guaunknownTask_card_All') ? $.getdata('guaunknownTask_card_All') : `${guaopencard}`);
+let guaunknownTask_addSku = "false"
+guaunknownTask_addSku = $.isNode() ? (process.env.guaunknownTask_addSku5 ? process.env.guaunknownTask_addSku5 : `${guaunknownTask_addSku}`) : ($.getdata('guaunknownTask_addSku5') ? $.getdata('guaunknownTask_addSku5') : `${guaunknownTask_addSku}`);
+guaunknownTask_addSku = $.isNode() ? (process.env.guaunknownTask_addSku_All ? process.env.guaunknownTask_addSku_All : `${guaunknownTask_addSku}`) : ($.getdata('guaunknownTask_addSku_All') ? $.getdata('guaunknownTask_addSku_All') : `${guaunknownTask_addSku}`);
+
 allMessage = ""
 message = ""
 let UA = ''
 let configCode = 'e71eadcf410d4fe5b79ea7b227488a2b'
-let friendPin = '1SxWKHmezsdVriTLjOkqyoVI+useK94bdK5BQ6zjgl4='
+let friendPin = 'fb554fb5a18719927a0df8332b8f242w'
 let toFriend = 0
 $.temp = [];
 !(async () => {
@@ -117,6 +130,10 @@ async function run() {
         continue
       }
       if(num <= 0) continue
+      if($.oneTask.taskType == 4 && guaopencard+"" != "true") console.log('如需开卡请设置环境变量[guaunknownTask_card5]为"true"')
+      if($.oneTask.taskType == 4 && guaopencard+"" != "true") continue
+      if($.oneTask.taskType == 11 && guaopencard+"" != "true") console.log('如需开卡请设置环境变量[guaunknownTask_card5]为"true"')
+      if($.oneTask.taskType == 11 && guaopencard+"" != "true") continue
       let taskNum = $.oneTask.itemCount - $.oneTask.finishCount
       if([2,3,4,11].includes($.oneTask.taskType)){
         $.itemId = $.oneTask.taskItem.itemId
