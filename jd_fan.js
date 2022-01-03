@@ -17,9 +17,9 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const activityList = [
-    {'id':'3ad40f25d3f949b9a7a6f9abf460a27d','endTime':1639584000000},
-    {'id':'68cd1c64d3cc4421a992c40d46f0e0d5','endTime':1640015999000},
-    {'id':'572c45d23ce341ceb72391c4555fc96e','endTime':1639583999000},
+    {'id':'83cf785ee5f74d0f8c35a8ba8a674cf2','endTime':1939584000000},
+    {'id':'7a681393b93e41758f63cb1ed38e811e','endTime':1940015999000},
+    {'id':'28e32a3b6afb4d389d888187a99ce292','endTime':1939583999000},
 ];
 let ruhuiFlag = $.isNode() ? (process.env.RUHUIFLAG ? process.env.RUHUIFLAG : 2):2;//有些粉丝互动需要入会，RUHUIFLAG=1，自动入会，默认不自动入会
 ruhuiFlag = Number(ruhuiFlag);
