@@ -13,6 +13,7 @@ import re
 import sys
 import random
 import string
+import urllib
 
 
 def load_send():
@@ -54,14 +55,14 @@ def getinfo(ck):
     area3=random.randint(10000,99999)
     area4=random.randint(1000,9999)
     area=str(area1)+"_"+str(area2)+"_"+str(area3)+"_"+str(area4)
-    data='appid=newtry&functionId=try_MyTrials&uuid='+uuid+'&clientVersion=10.3.0&client=wh5&osVersion=15.1.1&area='+area+'&networkType=wifi&body=%7B%22page%22%3A1%2C%22selected%22%3A2%2C%22previewTime%22%3A%22%22%7D'
+    data='appid=newtry&functionId=try_MyTrials&uuid='+uuid+'&clientVersion=10.3.0&client=wh5&osVersion=13.2.3&area='+area+'&networkType=wifi&body=%7B%22page%22%3A1%2C%22selected%22%3A2%2C%22previewTime%22%3A%22%22%7D'
     response=requests.post(url=url,headers=headers,data=data)
     isnull=True
     try:
         for i in range(len(json.loads(response.text)['data']['list'])):
             if(json.loads(response.text)['data']['list'][i]['text']['text']).find('试用资格将保留')!=-1:
                 print(json.loads(response.text)['data']['list'][i]['trialName'])
-                send("京东试用待领取物品通知",'账号名称：'+ptpin+'\n'+'商品名称:'+json.loads(response.text)['data']['list'][i]['trialName']+"\n"+"商品链接:https://item.jd.com/"+json.loads(response.text)['data']['list'][i]['skuId']+".html")
+                send("京东试用待领取物品通知",'账号名称：'+urllib.parse.unquote(ptpin)+'\n'+'商品名称:'+json.loads(response.text)['data']['list'][i]['trialName']+"\n"+"商品链接:https://item.jd.com/"+json.loads(response.text)['data']['list'][i]['skuId']+".html")
                 isnull=False
             i+=1
         if isnull==True:
@@ -69,13 +70,22 @@ def getinfo(ck):
     except:
         pass
 if __name__ == '__main__':
+    jd_try_notify=''
     try:
         cks = os.environ["JD_COOKIE"].split("&")
     except:
         f = open("/jd/config/config.sh", "r", encoding='utf-8')
         cks = re.findall(r'Cookie[0-9]*="(pt_key=.*?;pt_pin=.*?;)"', f.read())
         f.close()
-    for ck in cks:
-        ptpin = re.findall(r"pt_pin=(.*?);", ck)[0]
-        printf("--账号:" + ptpin + "--")
-        getinfo(ck)
+    try:
+        jd_try_notify=os.environ["jd_try_notify"]
+    except:
+        print('环境变量未设置，默认不运行，如需运行请添加环境变量export jd_try_notify="True"')
+        sys.exit(0)
+    if jd_try_notify=='True' or jd_try_notify=='true':
+        for ck in cks:
+            ptpin = re.findall(r"pt_pin=(.*?);", ck)[0]
+            printf("--账号:" + urllib.parse.unquote(ptpin) + "--")
+            getinfo(ck)
+    else:
+            print('环境变量设置错误，如需运行请修改环境变量jd_try_notify="True"')
