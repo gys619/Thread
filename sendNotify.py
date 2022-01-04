@@ -1,15 +1,10 @@
-# !/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# @Time    : 2021/9/16
-# @Author  : curtinlv
-# @File    : sendNotify.py
-# @Software: PyCharm
+#!/usr/bin/env python3
+# _*_ coding:utf-8 _*_
+
+#Modify: Kirin
 
 import sys
 import os, re
-cur_path = os.path.abspath(os.path.dirname(__file__))
-root_path = os.path.split(cur_path)[0]
-sys.path.append(root_path)
 import requests
 import json
 import time
@@ -17,20 +12,28 @@ import hmac
 import hashlib
 import base64
 import urllib.parse
+from requests.adapters import HTTPAdapter
+from urllib3.util import Retry
+
+cur_path = os.path.abspath(os.path.dirname(__file__))
+root_path = os.path.split(cur_path)[0]
+sys.path.append(root_path)
 
 # 通知服务
 BARK = ''                   # bark服务,自行搜索; secrets可填;
+BARK_PUSH=''                # bark自建服务器，要填完整链接，结尾的/不要
 SCKEY = ''                  # Server酱的SCKEY; secrets可填
 TG_BOT_TOKEN = ''           # tg机器人的TG_BOT_TOKEN; secrets可填1407203283:AAG9rt-6RDaaX0HBLZQq0laNOh898iFYaRQ
 TG_USER_ID = ''             # tg机器人的TG_USER_ID; secrets可填 1434078534
 TG_API_HOST=''              # tg 代理api
 TG_PROXY_IP = ''            # tg机器人的TG_PROXY_IP; secrets可填
 TG_PROXY_PORT = ''          # tg机器人的TG_PROXY_PORT; secrets可填
-DD_BOT_TOKEN = ''           # 钉钉机器人的DD_BOT_TOKEN; secrets可填
+DD_BOT_ACCESS_TOKEN = ''    # 钉钉机器人的DD_BOT_ACCESS_TOKEN; secrets可填
 DD_BOT_SECRET = ''          # 钉钉机器人的DD_BOT_SECRET; secrets可填
 QQ_SKEY = ''                # qq机器人的QQ_SKEY; secrets可填
 QQ_MODE = ''                # qq机器人的QQ_MODE; secrets可填
 QYWX_AM = ''                # 企业微信
+QYWX_KEY = ''                # 企业微信BOT
 PUSH_PLUS_TOKEN = ''        # 微信推送Plus+
 
 notify_mode = []
@@ -40,6 +43,8 @@ message_info = ''''''
 # GitHub action运行需要填写对应的secrets
 if "BARK" in os.environ and os.environ["BARK"]:
     BARK = os.environ["BARK"]
+if "BARK_PUSH" in os.environ and os.environ["BARK_PUSH"]:
+    BARK_PUSH = os.environ["BARK_PUSH"]
 if "SCKEY" in os.environ and os.environ["SCKEY"]:
     SCKEY = os.environ["SCKEY"]
 if "TG_BOT_TOKEN" in os.environ and os.environ["TG_BOT_TOKEN"] and "TG_USER_ID" in os.environ and os.environ["TG_USER_ID"]:
@@ -47,8 +52,8 @@ if "TG_BOT_TOKEN" in os.environ and os.environ["TG_BOT_TOKEN"] and "TG_USER_ID" 
     TG_USER_ID = os.environ["TG_USER_ID"]
 if "TG_API_HOST" in os.environ and os.environ["TG_API_HOST"]:
     TG_API_HOST = os.environ["TG_API_HOST"]
-if "DD_BOT_TOKEN" in os.environ and os.environ["DD_BOT_TOKEN"] and "DD_BOT_SECRET" in os.environ and os.environ["DD_BOT_SECRET"]:
-    DD_BOT_TOKEN = os.environ["DD_BOT_TOKEN"]
+if "DD_BOT_ACCESS_TOKEN" in os.environ and os.environ["DD_BOT_ACCESS_TOKEN"] and "DD_BOT_SECRET" in os.environ and os.environ["DD_BOT_SECRET"]:
+    DD_BOT_ACCESS_TOKEN = os.environ["DD_BOT_ACCESS_TOKEN"]
     DD_BOT_SECRET = os.environ["DD_BOT_SECRET"]
 if "QQ_SKEY" in os.environ and os.environ["QQ_SKEY"] and "QQ_MODE" in os.environ and os.environ["QQ_MODE"]:
     QQ_SKEY = os.environ["QQ_SKEY"]
@@ -62,9 +67,17 @@ if "PUSH_PLUS_TOKEN" in os.environ:
 if "QYWX_AM" in os.environ:
     if len(os.environ["QYWX_AM"]) > 1:
         QYWX_AM = os.environ["QYWX_AM"]
+        
+
+if "QYWX_KEY" in os.environ:
+    if len(os.environ["QYWX_KEY"]) > 1:
+        QYWX_KEY = os.environ["QYWX_KEY"]        
         # print("已获取并使用Env环境 QYWX_AM")
 
 if BARK:
+    notify_mode.append('bark')
+    # print("BARK 推送打开")
+if BARK_PUSH:
     notify_mode.append('bark')
     # print("BARK 推送打开")
 if SCKEY:
@@ -73,7 +86,7 @@ if SCKEY:
 if TG_BOT_TOKEN and TG_USER_ID:
     notify_mode.append('telegram_bot')
     # print("Telegram 推送打开")
-if DD_BOT_TOKEN and DD_BOT_SECRET:
+if DD_BOT_ACCESS_TOKEN and DD_BOT_SECRET:
     notify_mode.append('dingding_bot')
     # print("钉钉机器人 推送打开")
 if QQ_SKEY and QQ_MODE:
@@ -87,6 +100,10 @@ if QYWX_AM:
     notify_mode.append('wecom_app')
     # print("企业微信机器人 推送打开")
 
+if QYWX_KEY:
+    notify_mode.append('wecom_key')
+    # print("企业微信机器人 推送打开")
+
 
 def message(str_msg):
     global message_info
@@ -96,19 +113,30 @@ def message(str_msg):
 
 def bark(title, content):
     print("\n")
-    if not BARK:
+    if BARK:
+        try:
+            response = requests.get(
+            f"""https://api.day.app/{BARK}/{title}/{urllib.parse.quote_plus(content)}""").json()
+            if response['code'] == 200:
+                print('推送成功！')
+            else:
+                print('推送失败！')
+        except:
+            print('推送失败！')
+    if BARK_PUSH:
+        try:
+            response = requests.get(
+            f"""{BARK_PUSH}/{title}/{urllib.parse.quote_plus(content)}""").json()
+            if response['code'] == 200:
+                print('推送成功！')
+            else:
+                print('推送失败！')
+        except:
+            print('推送失败！')
+    print("bark服务启动")
+    if BARK=='' and BARK_PUSH=='':
         print("bark服务的bark_token未设置!!\n取消推送")
         return
-    print("bark服务启动")
-    try:
-        response = requests.get(
-            f"""https://api.day.app/{BARK}/{title}/{urllib.parse.quote_plus(content)}""").json()
-        if response['code'] == 200:
-            print('推送成功！')
-        else:
-            print('推送失败！')
-    except:
-        print('推送失败！')
 
 def serverJ(title, content):
     print("\n")
@@ -169,7 +197,7 @@ def dingding_bot(title, content):
     hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
     sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))  # 签名
     print('开始使用 钉钉机器人 推送消息...', end='')
-    url = f'https://oapi.dingtalk.com/robot/send?access_token={DD_BOT_TOKEN}&timestamp={timestamp}&sign={sign}'
+    url = f'https://oapi.dingtalk.com/robot/send?access_token={DD_BOT_ACCESS_TOKEN}&timestamp={timestamp}&sign={sign}'
     headers = {'Content-Type': 'application/json;charset=utf-8'}
     data = {
         'msgtype': 'text',
@@ -217,6 +245,30 @@ def pushplus_bot(title, content):
             print('推送失败！')
     except Exception as e:
         print(e)
+
+
+
+print("xxxxxxxxxxxx")
+def wecom_key(title, content):
+    print("\n")
+    if not QYWX_KEY:
+        print("QYWX_KEY未设置!!\n取消推送")
+        return
+    print("QYWX_KEY服务启动")
+    print("content"+content)
+    headers = {'Content-Type': 'application/json'}
+    data = { 
+        "msgtype":"text",
+        "text":{
+            "content":title+"\n"+content.replace("\n", "\n\n")
+         }
+    }
+    
+    print(f"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={QYWX_KEY}")
+    response = requests.post(f"https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={QYWX_KEY}", json=data,headers=headers).json()
+    print(response)
+
+
 # 企业微信 APP 推送
 def wecom_app(title, content):
     try:
@@ -311,9 +363,10 @@ def send(title, content):
     :param content:
     :return:
     """
+
     for i in notify_mode:
         if i == 'bark':
-            if BARK:
+            if BARK or BARK_PUSH:
                 bark(title=title, content=content)
             else:
                 print('未启用 bark')
@@ -325,7 +378,7 @@ def send(title, content):
                 print('未启用 Server酱')
             continue
         elif i == 'dingding_bot':
-            if DD_BOT_TOKEN and DD_BOT_SECRET:
+            if DD_BOT_ACCESS_TOKEN and DD_BOT_SECRET:
                 dingding_bot(title=title, content=content)
             else:
                 print('未启用 钉钉机器人')
@@ -351,6 +404,16 @@ def send(title, content):
         elif i == 'wecom_app':
             if QYWX_AM:
                 wecom_app(title=title, content=content)
+            else:
+                print('未启用企业微信应用消息推送')
+            continue
+        elif i == 'wecom_key':
+            if QYWX_KEY:
+                
+                for i in range(int(len(content)/2000)+1):
+                    wecom_key(title=title, content=content[i*2000:(i+1)*2000])
+                
+                
             else:
                 print('未启用企业微信应用消息推送')
             continue
