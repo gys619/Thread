@@ -62,6 +62,10 @@ if ($.isNode()) {
       }
     }
   }
+  if (allMessage) {
+    if ($.isNode()) await notify.sendNotify(`${$.name}`, `${allMessage}`);
+    $.msg($.name, '', allMessage);
+    }
 })()
   .catch((e) => {
     $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -90,6 +94,7 @@ function showMsg() {
   return new Promise(resolve => {
     if ($.beans) {
       message += `本次运行获得${$.beans}京豆`
+      allMessage += `京东账号${$.index}-${$.nickName}：   获得【${$.beans}】京豆\n`
       $.msg($.name, '', `京东账号${$.index}${$.nickName}\n${message}`);
     }
     resolve()
