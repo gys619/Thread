@@ -109,6 +109,7 @@ if ($.isNode()) {
     await $.wait(1000)
     $.res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jxmc.json')
   }
+  $.res = [...($.res || []), ...(await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/jxmc2.json') || [])]
   await shareCodesFormat()
   for (let i = 0; i < cookiesArr.length; i++) {
     $.cookie = cookiesArr[i];
