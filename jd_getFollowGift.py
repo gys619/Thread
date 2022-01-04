@@ -125,16 +125,16 @@ class getJDCookie(object):
 
     # 检测cookie格式是否正确
     def getUserInfo(self, ck, pinName, userNum):
-        url = 'https://wq.jd.com/user_new/info/GetJDUserInfoUnion?sceneval=2'
+        url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'
         headers = {
             'Cookie': ck,
             'Accept': '*/*',
             'Connection': 'keep-alive',
             'Referer': 'https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&',
             'Accept-Encoding': 'gzip, deflate, br',
-            'Host': 'wq.jd.com',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1',
-            'Accept-Language': 'zh-cn'
+            'Host': 'me-api.jd.com',
+            'User-Agent': 'jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+            'Accept-Language': 'gzip, deflate, br'
         }
         try:
             resp = requests.get(url=url, verify=False, headers=headers, timeout=60).text
