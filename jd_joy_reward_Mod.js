@@ -146,20 +146,18 @@ async function joyReward() {
 						}
 					}
 				} catch (e) {
-					llError = true;
+					llError = true;					
+				}				
+				if (!llError && saleInfoId) {
+					console.log('成功获取场次信息...');
+					break;					
+				} else {
 					console.log('东哥搞事情，不给京豆ID，等待5秒后重新获取...');
 					await $.wait(5000);
 				}
-				if (llError) {
-					continue;
-				} else {
-					console.log('成功获取场次信息...');
-					break;
-				}
-
 			}
 		}
-		if (llError) {
+		if (llError || !saleInfoId) {
 			console.log('东哥说现在不给你兑换，死了这条心吧...');
 			return;
 		}
