@@ -34,6 +34,13 @@ $.inviteCodeList = [];
 let cookiesArr = [];
 let UA, token, UAInfo = {}
 $.appId = 10028;
+function oc(fn, defaultVal) {//optioanl chaining
+  try {
+    return fn()
+  } catch (e) {
+    return undefined
+  }
+}
 let cardinfo = {
   "16": "小黄鸡",
   "17": "辣子鸡",
@@ -158,7 +165,7 @@ async function pasture() {
         console.log(`\n温馨提示：${$.UserName} 请先手动完成【新手指导任务】再运行脚本再运行脚本\n`);
         return;
       }
-      $.currentStep = $.homeInfo?.finishedtaskId
+      $.currentStep = oc(() => $.homeInfo.finishedtaskId)
       console.log(`打印新手流程进度：当前进度：${$.currentStep}，下一流程：${$.homeInfo.maintaskId}`)
       if ($.homeInfo.maintaskId !== "pause" || isNew($.currentStep)) {
         console.log(`开始初始化`)
@@ -167,7 +174,7 @@ async function pasture() {
         for (let i = 0; i < 20; i++) {
           if ($.DoMainTask.maintaskId !== "pause") {
             await $.wait(2000)
-            $.currentStep = $.DoMainTask?.finishedtaskId
+            $.currentStep = oc(() => $.DoMainTask.finishedtaskId)
             $.step = $.DoMainTask.maintaskId
             await takeGetRequest('DoMainTask');
           } else if (isNew($.currentStep)) {
@@ -195,7 +202,7 @@ async function pasture() {
           }
         }
       }
-      const petNum = ($.homeInfo?.petinfo || []).length
+      const petNum = (oc(() => $.homeInfo.petinfo) || []).length
       await takeGetRequest('GetCardInfo');
       if ($.GetCardInfo && $.GetCardInfo.cardinfo) {
         let msg = '';
@@ -651,7 +658,7 @@ function dealReturn(type, data) {
         $.homeInfo = data.data;
         $.activeid = $.homeInfo.activeid
         $.activekey = $.homeInfo.activekey || null
-        $.coins = $.homeInfo?.coins || 0;
+        $.coins = oc(() => $.homeInfo.coins) || 0;
         if ($.homeInfo.giftcabbagevalue) {
           console.log(`登陆获得白菜：${$.homeInfo.giftcabbagevalue} 颗`);
         }
