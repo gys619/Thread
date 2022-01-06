@@ -1,8 +1,8 @@
 /**
-农场集勋章
-cron 16 7,16 * * * jd_medal.js
-TG频道：https://t.me/sheeplost
-*/
+ 农场集勋章
+ cron 16 7,16 * * * jd_medal.js
+ TG频道：https://t.me/sheeplost
+ */
 const $ = new Env('农场集勋章');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
