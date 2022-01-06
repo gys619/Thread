@@ -76,9 +76,9 @@ async function run() {
       return
     }
     let config = [
-      {configCode:'8277ae337e5c4ebbbad92bbf9bf1bdee',configName:'我爱520-1'},
+      {configCode:'469f588bbf0f45e1bf06c87c76df9db8',configName:'我爱520-1'},
        //   {configCode:'761d289b16d74713bf6cee8462ca0e76',configName:'我爱520-2'},
-      //      {configCode:'b3cc4f6e5e924c3d82b10404f91740ce',configName:'我爱520-3'},
+        //    {configCode:'3d83678471e74b84940b99d16d8848b5',configName:'我爱520-3'},
       //{configCode:'ce04c87546ea40cc8f601e85f2dda2a9',configName:'秋新资任务组件 组1'},
     ]
     for(let i in config){
