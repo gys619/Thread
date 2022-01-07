@@ -214,6 +214,30 @@ jd_ddworld.js
 jd_work_pigPet.js
 # 电器盲盒
 jd_dqmh.js
+# 农场集勋章
+jd_medal_Mod.js
+# 锦鲤助力
+jd_koiHelp.js
+jd_angryKoi.py
+#jdjoy通用ID任务
+jd_joyjd_open2.js
+# 禁用重复任务
+jd_disableDuplicateTasksImplement.py
+
+
+# 过期活动
+
+# 运动户外盲盒
+jd_UnknownTask5.js
+jd_hwmh.js
+
+
+
+# 不能跑的
+# 通用游戏
+jd_game.js
+# 通用ID任务
+jd_prodev_dailyTask.js
 
 
 jd_anjia.js
