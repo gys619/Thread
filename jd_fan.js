@@ -17,6 +17,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const activityList = [
+    {'id':'1b4439403ca9491b9de395a0e29c1e22','endTime':1939584000000},
     {'id':'83cf785ee5f74d0f8c35a8ba8a674cf2','endTime':1939584000000},
     {'id':'7a681393b93e41758f63cb1ed38e811e','endTime':1940015999000},
     {'id':'28e32a3b6afb4d389d888187a99ce292','endTime':1939583999000},
