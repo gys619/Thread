@@ -230,7 +230,8 @@ jd_disableDuplicateTasksImplement.py
 # 运动户外盲盒
 jd_UnknownTask5.js
 jd_hwmh.js
-
+# 惊喜88红包
+jd_jxlhb.js
 
 
 # 不能跑的
