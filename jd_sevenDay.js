@@ -15,38 +15,35 @@ let cookiesArr = [], cookie = '', message = '';
 // https://lzkj-isv.isvjcloud.com/sign/sevenDay/signActivity?activityId=
 let activityIdList = [
     'eaf0e5313fa1484db90c3fc467af33e5',
-    '5758b4c61a954367af1d654df11e37f2',
     'f3207d49ac8e4fcfbd542befc1338916',
     'ba2d672b1fc44814aef1c3ee4c3ac5fa',
     'f46601936b40496b97a85de2b5ab97eb',
     '13126645fcb2477fa1090a94cb7f3ca2',
+    '202f8daefb63452ebcdd68ef2d3db135',
+    '3a9885564c6a4633b55b6bfcd083d3a4',
+    'e181d252d0354331ad6226c407745ad6',
+    '52a339445cba489f8df00cf18666d2be',
+    'eaf0e5313fa1484db90c3fc467af33e5',
 ]
 // https://lzkj-isv.isvjcloud.com/sign/signActivity2?activityId=
 let activityIdList2 = [
-    'ddeb92bbfb364c1f8d78fcfefeabbf27',
-    'fa9904f5666e477d955c66e043ca7e3f',
-    '562e959648844c4ab9dcc410684c7726',
-    'c2560ac2bcc94894ae41bb66e5921640',
-    '05b2ea9157ef4d6d9094af302edad286',
     'af38e0ae3c534e5882a2c29cbd08a355',
     '478c9f15a4fc43f691db0451d956cfef',
-    '233d27dfc35e423a98bbe142ec0544c2',
-    'c23c2c321e6e4f81bc1a524315d082f5',
-    'd8449f1ac94d4f2fa8a78c674ede1a0a',
-    '4c1acceddc4444538937d06aed855a35',
     'b688a802471443d092343821a8403531',
-    'c4415b2b45a34d219821dba08c334512',
     'ab51ff694beb41948a554aade50d5608',
-    '020c62972942451e887d060bd4abb2ad',
-    '412a10bdb3094730b22c1955e1c545b6',
     '462aae0d426443cd962257afce4b760f',
-    '2b3ee1b59f7a401d878216c8053687b2',
     'c3fde07f69bb43e79f12686013b45f8b',
     'd7d28539c7e54d0896cec5089f1b82f2',
-    'e6d46a5b87854723bcca14096fdbf828',
+    'e170e27eb0374b01bfed88138a82f968',
+    'bea32e6d4a6749ec98a990dbf276278f',
+    '7fb38e10addf49b487c84f579971cbd4',
+    '393ddb3a8ce04f19aed59fb458e2425f',
+    'cbf22d6dfbde42ac98fb3f693530132e',
+    '2a20095bf87e408bb70fdf537ea3f57f',
 ]
 let activityIdList3 = [
     '456de0f620024cbda71e9a9cbaaf95e1',
+    '0dee39bb7c9b48828d8cdc08af4875e7',
 ]
 let lz_cookie = {}
 
