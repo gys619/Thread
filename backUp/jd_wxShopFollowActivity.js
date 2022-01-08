@@ -1,24 +1,81 @@
 /*
-https://lzkj-isv.isvjcloud.com/wxgame/activity/8530275?activityId=
-
-TG https://t.me/duckjobs
-
-不能并发
-
-JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
-JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
-
+写脚本不容易
+TG https://t.me/ducktalk
+看脸活动
+https://lzkj-isv.isvjcloud.com//activity/xxx?activityId=xxx
 */
-const $ = new Env('加购物车抽奖');
+const $ = new Env('关注店铺抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let cookiesArr = [], cookie = '', message = '' ,isPush = false;
-let activityIdList = ['bdacfcba95964d04b3e1cf0cb0e186dd', '6cb3e11671af40f9a8ab461d68995583', '892cb7fbfb844d0098e7f11d69bad6bd', 'cb052bef22334cd29089a39a52dfa1ed', '51de2cce01754429a6a0bc10c369ad8a', 'a1e3fb99b82345738aee4cc907224232', '6818e794a8d143328a819e0a22aced29']
+let cookiesArr = [], cookie = '', message = '';
+let activityIdList = [
+    "433d21343fd84405b86fb91eef2b2c25",
+    "4e77b62468c64ac9a0532c0c5669baa4",
+    "308a4cdd92004ecf8d7163460c984781",
+    "e6d5b827e56345efbefbb48856a12f51",
+    "abb65314005d45f5ada3239581393e92",
+    "3267fbd8f5b943ae9dbeb6398a2395de",
+    "6824582589254fb1bf4d604b3296d347",
+    "8713d129696d463ea05c8c16d9b5b624",
+    "d90de2e7cb274f27bf795d54d263eaeb",
+    "bcbf70f0ab344fb88ffd284bae026acc",
+    "9134a013afa7492b993b58b4acbd2264",
+    "4b328b87b2604a138414702df34ed3b5",
+    "972202bd790e4c4a8340ef13e696469a",
+    "bd44226f8e0948e7ba4cf1bb02f1a9cf",
+    "31bfb899ea8b4ff1a263a9ef423b36c7",
+    "a4d66377c92a41b1965719797be6487a",
+    "b2c6413ed65541aabcd39ef70cd51fe9",
+    "a4b34f567ff340bdb44724d8b45a4cb5",
+    "4888ea04703f43018a12d0b894ef49af",
+    "55f2f9965015403c8177550c67ae09b9",
+    "6a5ed847303b4c22a9ef9bf555e5f0e2",
+    "ffb33af060ce46babd515667ea4517ba",
+    "8748d71ed5e3437192799dfed229191d",
+    "acdcaad1620049fabe5294f8b5cff86f",
+    "d14cfdf4a0894d91b890f98843d50377",
+    "a233d16782f74bc388c372d7583e3418",
+    "ea9ee5f3493a42dda17813067d06ac4e",
+    "23b2d4388b4d484899f29da396b4ae74",
+    "64ae9e95cc554e2797057075dcc433d2",
+    "395c68820f5848c7af0b34a0d3cc7e0d",
+    "8ca55a8468f846859e39e30b434c80f9",
+    "265250e5996142c3ba145052c844a074",
+    "c66fac62e85747119fd6042401228797",
+    "aefb118ba160421daa27107c4274d182",
+    "dbec51bd66df4244a3a7a49421790521",
+    "0bdae1c3f2464605a918cc9bb75e4c4f",
+    "cefc161b7e914773a96e6142ff8a804e",
+    "c7ae17ed7fb944c882f56205dc6b1b27",
+    "faab3f6791024d7a9e478afc74ddd06e",
+    "23772fae119d42dc9d4490247a47c135",
+    "1e75fa153a6c4fefa7a430d6c1eef378",
+    "de1cccc1bc224d778a6556e972597af1",
+    "3872200adde340a5aed5ae5ca411bb11",
+    "62b1bb17aaec4447b277f0c3d7bbe842",
+    "6a61985cfb644b1a940fdc258abe1a19",
+    "40c01055dce14952a2725d8369a81e0b",
+    "1c10e6134f1842d196d55a007266b0c6",
+    "54bca808c9ea43cfb8d63e8f496be480",
+    "b652bbd16e3f46d7bbd55b0dd2d999f0",
+    "8b724092aa2149d499eda473d55fa619",
+    "e3115ea3b79540e484a741445e6605bc",
+    "3da2693008094d2d90009f7288301bf4",
+    "190c60f65aea46fb99a14c768009bff2",
+    "9e0ca083814748189050426158c6d811",
+    "9ae156c1572c429da09493f8208ce424",
+    "70a1866902514cff9f582e3e113ec4d4",
+    "1663d5c5107d4824bfed595d76328cb7",
+    "9dfd7845eb7f4b9aafb8fe2ade9919a0",
+    "9dfd7845eb7f4b9aafb8fe2ade9919a0",
+    "c92d074814c94c61bd92ecdbdc2cd775",
+    "9e52aaf6a7a242daa82e8a4017268420",
+    "8d9b4b40f03c43cb9c6bac4943aa81e7",
+    "8ef26b4a6a3a421d85c1e8b0e08e037a",
+    "971472dd55424fe0a38cdf272fa3efce",
+    "24d7658e8f0f48189404c1240de6a150",
+]
 let lz_cookie = {}
-
-if (process.env.ACTIVITY_ID && process.env.ACTIVITY_ID != "") {
-    activityId = process.env.ACTIVITY_ID;
-}
 
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -34,17 +91,13 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
-let doPush = process.env.DoPush || false; // 设置为 false 每次推送, true 跑完了推送
-let removeSize = process.env.JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
-let isRemoveAll = process.env.JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
-$.keywords = process.env.JD_CART_KEYWORDS || []
-$.keywordsNum = 0;
+
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    // activityIdList = await getActivityIdList('https://raw.githubusercontent.com/FKPYW/dongge/master/code/wxCollectionActivity.json')
+    console.log("TG https://t.me/ducktalk")
     for(let a in activityIdList){
         activityId = activityIdList[a];
         console.log("开起第 "+ a +" 个活动，活动id："+activityId)
@@ -66,38 +119,18 @@ $.keywordsNum = 0;
                     }
                     continue
                 }
-                authorCodeList = [
-                    '',
-                ]
+                // authorCodeList = [
+                //     'b5d9535918264a4f92fff9d314d7db81',
+                // ]
                 $.bean = 0;
                 $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);
                 $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                $.authorCode = authorCodeList[random(0, authorCodeList.length)]
+                // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
                 $.authorNum = `${random(1000000, 9999999)}`
                 $.activityId = activityId
-                $.activityUrl = `https://lzkj-isv.isvjcloud.com/wxCollectionActivity/activity2/${$.authorNum}?activityId=${$.activityId}&shareUuid=${encodeURIComponent($.authorCode)}&adsource=null&sid=&un_area=`
-                $.drawInfoName = false
-                $.getPrize = null;
-                await addCart();
-                if($.drawInfoName === false || $.getPrize === null){
-                    break
-                } else if($.getPrize != null && !$.getPrize.includes("京豆")){
-                    break
-                }
-                await $.wait(2000)
-                await requireConfig();
-                do {
-                    await getCart_xh();
-                    $.keywordsNum = 0
-                    if($.beforeRemove !== "0"){
-                        await cartFilter_xh(venderCart);
-                        if(parseInt($.beforeRemove) !== $.keywordsNum) await removeCart();
-                        else {
-                            console.log('由于购物车内的商品均包含关键字，本次执行将不删除购物车数据')
-                            break;
-                        }
-                    } else break;
-                } while(isRemoveAll && $.keywordsNum !== $.beforeRemove)
+                $.activityUrl = `https://lzkj-isv.isvjcloud.com/wxShopFollowActivity/activity/${$.activityId}?activityId=${$.activityId}&adsource=null&lng=00.000000&lat=00.000000&sid=&un_area=`
+                await wxShopFollow()
+                await $.wait(5000)
                 if ($.bean > 0) {
                     message += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n       └ 获得 ${$.bean} 京豆。`
                 }
@@ -121,27 +154,26 @@ $.keywordsNum = 0;
     })
 
 
-async function addCart() {
+async function wxShopFollow() {
     $.token = null;
     $.secretPin = null;
     $.venderId = null;
     await getFirstLZCK()
     await getToken();
+    // await task('wxAssemblePage/getFloatIconStatus', `activityId=${$.activityId}`, 1)
     await task('customer/getSimpleActInfoVo', `activityId=${$.activityId}`, 1)
     if ($.token) {
         await getMyPing();
         if ($.secretPin) {
-            await task('common/accessLogWithAD', `venderId=${$.venderId}&code=6&pin=${encodeURIComponent($.secretPin)}&activityId=${$.activityId}&pageUrl=${$.activityUrl}&subType=app&adSource=tg_xuanFuTuBiao`, 1);
+            await task('common/accessLogWithAD', `venderId=${$.venderId}&code=${$.activityType}&pin=${encodeURIComponent($.secretPin)}&activityId=${$.activityId}&pageUrl=${$.activityUrl}&subType=app&adSource=tg_xuanFuTuBiao`, 1);
             // await task('wxActionCommon/getUserInfo', `pin=${encodeURIComponent($.secretPin)}`, 1)
-            await task('activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`)
-            if ($.activityContent.drawInfo.name.includes("京豆")) {
-                $.log("-> 加入购物车")
-                for(let i in $.activityContent.cpvos){
-                    await $.wait(1000)
-                    await task('addCart', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&productId=${$.activityContent.cpvos[i].skuId}`)
-                }
+            await task('activityContentOnly', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`)
+            if ($.activityContent) {
+                // await $.wait(3000)
+                $.log("-> 关注店铺")
+                await task('follow', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`)
+                await $.wait(3000)
                 $.log("-> 抽奖")
-                await $.wait(1000)
                 await task('getPrize', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`)
             } else {
                 $.log("未能成功获取到活动信息")
@@ -175,36 +207,32 @@ function task(function_id, body, isCommon = 0) {
                         }
                         if (data.result) {
                             switch (function_id) {
+                                case 'wxAssemblePage/getFloatIconStatus':
+                                    console.log(data.data);
+                                    break;
                                 case 'customer/getSimpleActInfoVo':
                                     $.jdActivityId = data.data.jdActivityId;
                                     $.venderId = data.data.venderId;
-                                    $.activityShopId = data.data.venderId;
+                                    $.activityShopId = data.data.shopId;
+                                    $.activityType = data.data.activityType;
                                     break;
-                                case 'activityContent':
+                                case 'activityContentOnly':
                                     $.activityContent = data.data;
-                                    $.drawInfoName = $.activityContent.drawInfo.name.includes("京豆")
+                                    console.log("活动奖品: "+$.activityContent.drawContentVOs[0]['name'])
                                     break;
-                                case 'addCart':
+                                case 'follow':
                                     console.log(data.data)
                                     break
                                 case 'getPrize':
-                                    console.log(data.data.name)
-                                    $.getPrize = data.data.name;
-                                    if (doPush === true) {
-                                        if (data.data.name) {
-                                            message += data.data.name + " "
-                                        }
-                                    } else {
-                                        // await notify.sendNotify($.name, data.data.name, '', `\n`);
-                                    }
+                                    console.log(data.data)
+                                    // $.getPrize = data.data.name;
+                                    // await notify.sendNotify($.name, data.data.name, '', `\n`);
                                     break
                                 default:
                                     $.log(JSON.stringify(data))
                                     break;
                             }
                         }
-                    } else {
-                        // $.log("京东没有返回数据")
                     }
                 }
             } catch (error) {
@@ -217,7 +245,7 @@ function task(function_id, body, isCommon = 0) {
 }
 function taskUrl(function_id, body, isCommon) {
     return {
-        url: isCommon ? `https://lzkj-isv.isvjcloud.com/${function_id}` : `https://lzkj-isv.isvjcloud.com/wxCollectionActivity/${function_id}`,
+        url: isCommon ? `https://lzkj-isv.isvjcloud.com/${function_id}` : `https://lzkj-isv.isvjcloud.com/wxShopFollowActivity/${function_id}`,
         headers: {
             Host: 'lzkj-isv.isvjcloud.com',
             Accept: 'application/json',
@@ -252,7 +280,7 @@ function getMyPing() {
             Referer: $.activityUrl,
             Cookie: cookie,
         },
-        body: `userId=${$.activityShopId}&token=${$.token}&fromType=APP&riskType=1`
+        body: `userId=${$.venderId}&token=${$.token}&fromType=APP`
     }
     return new Promise(resolve => {
         $.post(opt, (err, resp, data) => {
@@ -358,146 +386,6 @@ function random(min, max) {
 
     return Math.floor(Math.random() * (max - min)) + min;
 
-}
-function strToJson(str){
-	var json = eval('(' + str + ')');
-	return json;
-}
-function requireConfig(){
-    return new Promise(resolve => {
-        if($.isNode() && process.env.JD_CART){
-            if(process.env.JD_CART_KEYWORDS){
-                $.keywords = process.env.JD_CART_KEYWORDS.split('@')
-            }
-        }
-        resolve()
-    })
-}
-function getCart_xh(){
-    console.log('正在获取购物车数据...')
-    return new Promise((resolve) => {
-        const option = {
-            url: 'https://p.m.jd.com/cart/cart.action?fromnav=1&sceneval=2',
-            headers: {
-                "Cookie": cookie,
-                "User-Agent": "jdapp;JD4iPhone/167724 (iPhone; iOS 15.0; Scale/3.00)",
-            },
-        }
-        $.get(option, async(err, resp, data) => {
-            try{
-                data = strToJson(getSubstr(data, "window.cartData = ", "window._PFM_TIMING"));
-                $.areaId = data.areaId;   // locationId的传值
-                $.traceId = data.traceId; // traceid的传值
-                venderCart = data.cart.venderCart;
-                postBody = 'pingouchannel=0&commlist=';
-                $.beforeRemove = data.cartJson.num
-                console.log(`获取到购物车数据 ${$.beforeRemove} 条`)
-            } catch(e){
-                $.logErr(e, resp);
-            } finally{
-                resolve(data);
-            }
-        });
-    })
-}
-function cartFilter_xh(cartData){
-    console.log("正在整理数据...")
-    let pid;
-    $.pushed = 0
-    for(let cartJson of cartData){
-        if($.pushed === removeSize) break;
-        for(let sortedItem of cartJson.sortedItems){
-            if($.pushed === removeSize) break;
-            pid = typeof (sortedItem.polyItem.promotion) !== "undefined" ? sortedItem.polyItem.promotion.pid : ""
-            for(let product of sortedItem.polyItem.products){
-                if($.pushed === removeSize) break;
-                let mainSkuName = product.mainSku.name
-                $.isKeyword = false
-                $.isPush = true
-                for(let keyword of $.keywords){
-                    if(mainSkuName.indexOf(keyword) !== -1){
-                        $.keywordsNum += 1
-                        $.isPush = false
-                        $.keyword = keyword;
-                        break;
-                    } else $.isPush = true
-                }
-                if($.isPush){
-                    let skuUuid = product.skuUuid;
-                    let mainSkuId = product.mainSku.id
-                    if(pid === "") postBody += `${mainSkuId},,1,${mainSkuId},1,,0,skuUuid:${skuUuid}@@useUuid:0$`
-                    else postBody += `${mainSkuId},,1,${mainSkuId},11,${pid},0,skuUuid:${skuUuid}@@useUuid:0$`
-                    $.pushed += 1;
-                } else {
-                    console.log(`\n${mainSkuName}`)
-                    console.log(`商品已被过滤，原因：包含关键字 ${$.keyword}`)
-                    $.isKeyword = true
-                }
-            }
-        }
-    }
-    postBody += `&type=0&checked=0&locationid=${$.areaId}&templete=1&reg=1&scene=0&version=20190418&traceid=${$.traceId}&tabMenuType=1&sceneval=2`
-}
-function removeCart(){
-    console.log('正在删除购物车数据...')
-    return new Promise((resolve) => {
-        const option = {
-            url: 'https://wq.jd.com/deal/mshopcart/rmvCmdy?sceneval=2&g_login_type=1&g_ty=ajax',
-            body: postBody,
-            headers: {
-                "Cookie": cookie,
-                "User-Agent": "jdapp;JD4iPhone/167724 (iPhone; iOS 15.0; Scale/3.00)",
-                "referer": "https://p.m.jd.com/",
-                "origin": "https://p.m.jd.com/"
-            },
-        }
-        $.post(option, async(err, resp, data) => {
-            try{
-                data = JSON.parse(data);
-                $.afterRemove = data.cartJson.num
-                if($.afterRemove < $.beforeRemove){
-                    console.log(`删除成功，当前购物车剩余数据 ${$.afterRemove} 条\n`)
-                    $.beforeRemove = $.afterRemove
-                } else {
-                    console.log('删除失败')
-                    console.log(data.errMsg)
-                    isRemoveAll = false;
-                }
-            } catch(e){
-                $.logErr(e, resp);
-            } finally{
-                resolve(data);
-            }
-        });
-    })
-}
-function getSubstr(str, leftStr, rightStr){
-    let left = str.indexOf(leftStr);
-    let right = str.indexOf(rightStr, left);
-    if(left < 0 || right < left) return '';
-    return str.substring(left + leftStr.length, right);
-}
-function getActivityIdList(url) {
-    return new Promise(resolve => {
-        const options = {
-            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        };
-        $.get(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    $.log(err)
-                } else {
-                if (data) data = JSON.parse(data)
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-    })
 }
 function getUUID(format = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', UpperCase = 0) {
     return format.replace(/[xy]/g, function (c) {
