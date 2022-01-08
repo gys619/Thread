@@ -7,14 +7,14 @@ IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
 #组队分豆-蒙牛
-18 1,16 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
+18 1,16 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
 ================Loon==============
 [Script]
-cron "18 1,16 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js,tag=组队分豆-蒙牛
+cron "18 1,16 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js,tag=组队分豆-蒙牛
 ===============Surge=================
-组队分豆-蒙牛 = type=cron,cronexp="18 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js
+组队分豆-蒙牛 = type=cron,cronexp="18 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js
 ============小火箭=========
-组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js, cronexpr="18 1,16 * * *", timeout=3600, enable=true
+组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, cronexpr="18 1,16 * * *", timeout=3600, enable=true
 */
 const $ = new Env("组队分豆-蒙牛");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -69,7 +69,7 @@ if ($.isNode()) {
             $.activityId = '4e3b9b6233104c199c0c44ff6edbc85d'
             $.activityShopId = '1000014803'
             $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/pool/captain/${$.authorNum}?activityId=${$.activityId}&signUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
-            await anjia();
+            await mn();
             await $.wait(3000)
             if ($.bean > 0) {
                 message += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n       └ 获得 ${$.bean} 京豆。`
@@ -92,7 +92,7 @@ if ($.isNode()) {
     })
 
 
-async function anjia() {
+async function mn() {
     $.token = null;
     $.secretPin = null;
     $.openCardActivityId = null
