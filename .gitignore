@@ -241,7 +241,8 @@ jd_jxlhb.js
 jd_game.js
 # 通用ID任务
 jd_prodev_dailyTask.js
-
+# 炸年兽
+jd_zhanianshou.js
 
 jd_anjia.js
 jd_senbeans.js
