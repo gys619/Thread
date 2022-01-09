@@ -66,7 +66,8 @@ jd_1111.js
 jd_nhjred.js
 jd_nhs_red.js
 gua_nhjRed.js
-
+# 年货节红包
+jd_nhRed.js
 ##
 jd_disable.py
 jd_dreamFactory2.js
@@ -235,8 +236,8 @@ jd_angryKoi.py
 jd_joyjd_open2.js
 # 禁用重复任务
 jd_disableDuplicateTasksImplement.py
-# 炸年兽重复
-jd_zns.js
+# 炸年兽重
+#jd_zns.js
 
 # 过期活动
 
