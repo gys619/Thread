@@ -225,7 +225,7 @@ jd_joyjd_open2.js
 # 禁用重复任务
 jd_disableDuplicateTasksImplement.py
 # 炸年兽重复
-jd_zns.je
+jd_zns.js
 
 # 过期活动
 
