@@ -1,10 +1,15 @@
+if (!["true"].includes(process.env.JD_ZNS)) {
+    console.log("避免自动运行请设置环境变量JD_ZNS为\"true\"来运行本脚本")
+    return
+}
+
 /*
 
-
+脚本有问题，凑活用
 =================================Quantumultx=========================
 [task_local]
-#城城领现金
-0 0-23/5 * * * jd_zhanianshou.js, tag=城城领现金, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+#炸年兽
+0 0-23/5 * * * jd_zhanianshou.js, tag=炸年兽, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 
  */
@@ -152,16 +157,16 @@ $.shareCodesArr = [];
                                 }
                                 break
                             case 21:
-                                for (var o = 0; o < task.brandMemberVos.length; o++) {
-                                    if (task.brandMemberVos[o].status == 1) {
-                                        console.log(`\n\n ${task.brandMemberVos[o].title}`)
-                                        memberUrl = task.brandMemberVos[o].memberUrl
-                                        memberUrl = transform(memberUrl)
-                                        await join(task.brandMemberVos[o].vendorIds, memberUrl.channel, memberUrl.shopId ? memberUrl.shopId : "")
-                                        await tigernian_collectScore(task.brandMemberVos[o].taskToken, task.taskId)
-                                    }
+                                    for (var o = 0; o < task.brandMemberVos.length; o++) {
+                                        if (task.brandMemberVos[o].status == 1) {
+                                            console.log(`\n\n ${task.brandMemberVos[o].title}`)
+                                            memberUrl = task.brandMemberVos[o].memberUrl
+                                            memberUrl = transform(memberUrl)
+                                            await join(task.brandMemberVos[o].vendorIds, memberUrl.channel, memberUrl.shopId ? memberUrl.shopId : "")
+                                            await tigernian_collectScore(task.brandMemberVos[o].taskToken, task.taskId)
+                                        }
 
-                                }
+                                    }
                         }
 
                     }
