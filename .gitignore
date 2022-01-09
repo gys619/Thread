@@ -45,7 +45,8 @@ jd_big_winner_Mod.js
 jd_tyt_ks.js
 jd_MovementFaker.js	
 gua_city.js
-jd_city.js
+# 城城分现金
+# jd_city.js
 jd_speed_redEnvelope.ts
 jd_redpocke.js
 jd_tie.js
@@ -223,7 +224,8 @@ jd_angryKoi.py
 jd_joyjd_open2.js
 # 禁用重复任务
 jd_disableDuplicateTasksImplement.py
-
+# 炸年兽重复
+jd_zns.je
 
 # 过期活动
 
