@@ -1,11 +1,8 @@
 /*
 TG https://t.me/duckjobs
-
 活动入口:京东汽车 - 右下角 - 领京豆
 纯助力,无内置,ck1不能黑号,不要问为什么分开😂
-
 新人助力10,老用户5
-
 10 3 * * * jd_mpdzcar_help.js
 */
 const $ = new Env('头文字J 助力');
