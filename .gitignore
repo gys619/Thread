@@ -65,6 +65,7 @@ jd_1111RedEnvelope.js
 jd_1111.js
 jd_nhjred.js
 jd_nhs_red.js
+gua_nhjRed.js
 
 ##
 jd_disable.py
@@ -109,7 +110,12 @@ jd_jxsign.js
 jd_big_winner_Mod.js
 superbox.js
 jxhlk.py
-jd_tw.js
+# 特务z
+#jd_tw.js
+#不能跑的特务z
+jd_productZ4Brand.js
+jd_productZ4Brand*.js
+
 jingsubang.js
 jd_jxqd_new.js
 jd_vivo.js
@@ -162,7 +168,7 @@ jd_cfd_pearl_ex.js
 # he1pu的内置互助
 zcodes.json
 # 飞利浦重复
-jd_FLP.js
+#jd_FLP.js
 jd_flp.js
 # 蒙牛开卡重复
 jd_mn.js
