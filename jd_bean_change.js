@@ -841,9 +841,12 @@ async function showMsg() {
 			strsummary=strSubNotify+TempBaipiao +strsummary;			
 			TempBaipiao = `【⏰商品白嫖活动提醒⏰】\n` + TempBaipiao;
 			ReturnMessage = TempBaipiao + `\n` + ReturnMessage;			
+		} else {
+			strsummary = strSubNotify + ReturnMessage;				
 		}
 		
 		ReturnMessage += RemainMessage;
+		
 		if(strAllNotify)
 			ReturnMessage=strAllNotify+`\n`+ReturnMessage;
 		
