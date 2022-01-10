@@ -53,7 +53,6 @@ if ($.isNode()) {
         }
         await $.wait(1000);
     }
-    return ;
     if($.allInvite.length > 0 ){
         console.log(`\n开始脚本内互助\n`);
     }
@@ -102,7 +101,7 @@ async function main() {
     }else{
         console.log(`已加入战队`);
     }
-    if($.activityInfo.activityPkInfo.userTeamName === $.activityInfo.activityPkInfo.winTeamName && $.activityInfo.activityPkInfo.divideStatus === 0){
+    if($.activityInfo.activityPkInfo.userTeamName === $.activityInfo.activityPkInfo.winTeamName && $.activityInfo.activityPkInfo.divideStatus === 0 && $.activityInfo.activityPkInfo.divideTimeStatus === 1){
         console.log(`去瓜分`);
         await takeRequest('superBrandTaskLottery',{"source":"pk","activityId":$.activityId,"encryptProjectId":$.encryptProjectId,"encryptAssignmentId":"2v8f6JzBBTjrvzwZbYztuV9MVWv7","tag":"divide"});
         return ;
