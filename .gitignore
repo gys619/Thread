@@ -68,6 +68,10 @@ jd_nhs_red.js
 gua_nhjRed.js
 # 年货节红包
 jd_nhRed.js
+jd_nhjRed.js
+jd_nhRedEnvelope.js
+jd_nh*.js
+jd_nh_red.js
 ##
 jd_disable.py
 jd_dreamFactory2.js
