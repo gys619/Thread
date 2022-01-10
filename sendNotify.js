@@ -14,7 +14,7 @@ const querystring = require('querystring');
 const exec = require('child_process').exec;
 const $ = new Env();
 const timeout = 15000; //超时时间(单位毫秒)
-console.log("加载sendNotify，当前版本: 20211230_V3");
+console.log("加载sendNotify，当前版本: 20220110");
 // =======================================go-cqhttp通知设置区域===========================================
 //gobot_url 填写请求地址http://127.0.0.1/send_private_msg
 //gobot_token 填写在go-cqhttp文件设置的访问密钥
@@ -165,6 +165,12 @@ let Notify_SkipText = [];
 let isLogin = false;
 if (process.env.NOTIFY_SHOWNAMETYPE) {
     ShowRemarkType = process.env.NOTIFY_SHOWNAMETYPE;
+	if(ShowRemarkType=="2")
+		console.log("检测到显示备注名称，格式为: 京东别名(备注)");
+	if(ShowRemarkType=="3")
+		console.log("检测到显示备注名称，格式为: 京东账号(备注)");
+	if(ShowRemarkType=="4")
+		console.log("检测到显示备注名称，格式为: 备注");
 }
 async function sendNotify(text, desp, params = {}, author = '\n\n本通知 By ccwav Mod', strsummary = "") {
     console.log(`开始发送通知...`);
@@ -364,6 +370,7 @@ async function sendNotify(text, desp, params = {}, author = '\n\n本通知 By cc
         }
         if (strtext.indexOf("cookie已失效") != -1 || strdesp.indexOf("重新登录获取") != -1 || strtext == "Ninja 运行通知") {
             if (Notify_NoCKFalse == "true" && text != "Ninja 运行通知") {
+				console.log(`检测到NOTIFY_NOCKFALSE变量为true,不发送ck失效通知...`);
                 return;
             }
         }
