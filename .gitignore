@@ -255,7 +255,8 @@ jd_game.js
 jd_prodev_dailyTask.js
 # 炸年兽
 jd_zhanianshou.js
-
+# 互助
+share_code.js
 jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js
