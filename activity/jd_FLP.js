@@ -2,7 +2,7 @@
 组队分豆-飞利浦 [jd_teamFLP.js]
 
 ————————————————
-入口：[组队分豆-飞利浦 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7208ffe82f644228b145888dbf39a9ae)]
+入口：[组队分豆-飞利浦 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7ee392bb231c4de3a842ca3c11323042)]
 IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
@@ -40,7 +40,7 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7208ffe82f644228b145888dbf39a9ae`)
+    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=52c0712263f342308da1287a66702009&signUuid=7ee392bb231c4de3a842ca3c11323042`)
     
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -60,7 +60,7 @@ if ($.isNode()) {
                 }
                 continue
             }
-            authorCodeList = ['63dda38005e344e4bd89eba5b85c46a4','7208ffe82f644228b145888dbf39a9ae']
+            authorCodeList = ['7ee392bb231c4de3a842ca3c11323042','7208ffe82f644228b145888dbf39a9ae']
             $.bean = 0;
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
             $.activityId = '52c0712263f342308da1287a66702009'
