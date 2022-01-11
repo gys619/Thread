@@ -72,6 +72,7 @@ jd_nhjRed.js
 jd_nhRedEnvelope.js
 jd_nh*.js
 jd_nh_red.js
+!jd_nh_sign.js
 ##
 jd_disable.py
 jd_dreamFactory2.js
@@ -241,7 +242,8 @@ jd_joyjd_open2.js
 # 禁用重复任务
 jd_disableDuplicateTasksImplement.py
 # 炸年兽重
-#jd_zns.js
+jd_zns.js
+jd_zhaNS.js
 
 # 过期活动
 
