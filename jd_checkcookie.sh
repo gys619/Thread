@@ -41,7 +41,7 @@ local notify_content=""
         j=$((m + 1))
         if [[ `check_jd_cookie ${array[m]}` =~ "已失效"  ]]; then
             echo -n "用户 $j ${remark_name[m]} 的 Cookie 已失效。\n" >> $dir_log/Cookie_Notify/Cookie_Notify.log
-            task /ql/scripts/gys619_jdd_wskey.py
+            task /ql/scripts/gys619_jdd/wskey.py
         fi
         echo -e "## 用户名 $j：${pt_pin[m]} 备注：${remark_name[m]} `check_jd_cookie ${array[m]}`\nCookie$j=\"${array[m]}\""
     done
