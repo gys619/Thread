@@ -107,7 +107,7 @@ async function clean(ck,url,goodsArr){
                 }
               }
             }else if(res.mainTitle){
-              if(res.mainTitle == '购物车是空的'){
+              if(res.mainTitle.indexOf('购物车是空的') > -1){
                 msg = []
               }
               console.log(res.mainTitle)
