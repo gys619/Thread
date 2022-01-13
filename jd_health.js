@@ -84,6 +84,10 @@ const JD_API_HOST = "https://api.m.jd.com/";
 
 async function main() {
   try {
+    if (reward) {
+      await getCommodities()
+    }
+
     $.score = 0
     $.earn = false
     await getTaskDetail(-1)
@@ -99,10 +103,6 @@ async function main() {
     await helpFriends()
     await getTaskDetail(22);
     await getTaskDetail(-1)
-
-    if (reward) {
-      await getCommodities()
-    }
 
   } catch (e) {
     $.logErr(e)
