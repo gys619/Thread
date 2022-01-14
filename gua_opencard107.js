@@ -466,7 +466,7 @@ async function dealReturn(type, data) {
           if(res.result && res.result === true){
             $.endTime = res.data.endTime || (res.data.activityVo && res.data.activityVo.endTime) || res.data.activity.endTime || 0
             $.hasEnd = res.data.hasEnd || false
-            $.score = res.data.signStatus || 0
+            $.score = res.data.assistCount || 0
             $.actorUuid = res.data.actorUuid || ''
             $.followShop = res.data.followShopStatus || ''
             $.signStatus = res.data.signStatus || false
