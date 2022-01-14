@@ -27,7 +27,7 @@ try:
 except:
     logger.info("无推送文件")
 
-ver = 10113
+ver = 10114
 
 
 # 登录青龙 返回值 token
@@ -306,7 +306,7 @@ def ql_check(port):
 
 
 # 返回值 bool, key, eid
-def serch_ck_old(pin):
+def serch_ck(pin):
     if all('\u4e00' <= char <= '\u9fff' for char in pin):
         pin1 = urllib.parse.quote(pin)
         pin2 = pin1.replace('%', '%5C%25')
@@ -339,48 +339,12 @@ def serch_ck_old(pin):
         return True, key, eid
 
 
-def serch_ck(pin):
-    for i in range(len(envlist)):
-        if pin in envlist[i]['value']:
-            value = envlist[i]['value']
-            id = envlist[i][ql_id]
-            logger.info(str(pin) + "检索成功\n")
-            return True, value, id
-        else:
-            continue
-    logger.info(str(pin) + "检索失败\n")
-    return False, 1
-
-
-def get_env():
-    url = 'http://127.0.0.1:{0}/api/envs'.format(port)
-    try:
-        res = s.get(url)
-    except:
-        logger.info("\n青龙环境接口错误")
-        sys.exit(1)
-    else:
-        data = json.loads(res.text)['data']
-        return data
-
-
-def get_version():
-    url = 'http://127.0.0.1:{0}/api/system'.format(port)
-    res = s.get(url)
-    version = str(json.loads(res.text)['data']['version'])
-    logger.info("青龙面板版本: " + version)
-    if version > '2.10.13':
-        return 1
-    else:
-        return 0
-
-
 def ql_update(e_id, n_ck):
     url = 'http://127.0.0.1:{0}/api/envs'.format(port)
     data = {
         "name": "JD_COOKIE",
         "value": n_ck,
-        ql_id: e_id
+        "_id": e_id
     }
     data = json.dumps(data)
     res = json.loads(s.put(url=url, data=data).text)
@@ -458,7 +422,7 @@ def check_cloud():
             continue
         else:
             info = ['Default', 'HTTPS', 'CloudFlare']
-            logger.info(str(info[url_list.index(i)]) + " Server Check OK\n--------------------\n")
+            logger.info(str(info[url_list.index(i)]) + " Server Check OK\n")
             return i
     logger.info("\n云端地址全部失效, 请检查网络!")
     try:
@@ -483,13 +447,12 @@ if __name__ == '__main__':
         logger.info("\n如果你很确定端口没错, 还是无法执行, 在GitHub给我发issus\n--------------------\n")
         sys.exit(1)
     else:
-        logger.info(str(port) + "端口检查通过")
+        logger.info(str(port) + "端口检查通过\n")
     # global cloud_arg
     token = ql_login()  # 获取青龙 token
     s = requests.session()
     s.headers.update({"authorization": "Bearer " + str(token)})
     s.headers.update({"Content-Type": "application/json;charset=UTF-8"})
-    ql_id = ['_id', 'id'][get_version()]
     url_t = check_cloud()
     cloud_arg = cloud_info()
     update()
@@ -497,7 +460,6 @@ if __name__ == '__main__':
     ua = cloud_arg['User-Agent']
     sv, st, uuid, sign = get_sign()
     wslist = get_wskey()
-    envlist = get_env()
     for ws in wslist:
         wspin = ws.split(";")[0]
         if "pin" in wspin:
