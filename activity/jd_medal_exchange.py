@@ -7,7 +7,7 @@ new Env('东东农场-集勋章合成兑换奖励');
 变量: JD_COOKIE，awardType
 export awardType="3"   1或2或3 -->  1是2500水滴 2是5元无门槛红包(仅限京东使用) 3是500京豆 ，不使用该环境变量默认500豆
 export JD_COOKIE="第1个cookie&第2个cookie"
-地址：https://raw.githubusercontent.com/11111121/myScripts/main/jd/jd_fruit_medalExchange.py
+地址：https://raw.githubusercontent.com/wuye999/myScripts/main/jd/jd_fruit_medalExchange.py
 '''
 import os,json,random,time,re,string,functools
 import sys
@@ -107,10 +107,10 @@ cookie_list=Judge_env().main_run()
 class Msg(object):
     def getsendNotify(self):
         url_list = [
-            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
-            'https://cdn.jsdelivr.net/gh/11111121/myScripts@main/sendNotify.py',
-            'https://raw.fastgit.org/11111121/myScripts/main/sendNotify.py',
-            'https://raw.githubusercontent.com/11111121/myScripts/main/sendNotify.py',
+            'https://mirror.ghproxy.com/https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py',
+            'https://cdn.jsdelivr.net/gh/wuye999/myScripts@main/sendNotify.py',
+            'https://raw.fastgit.org/wuye999/myScripts/main/sendNotify.py',
+            'https://raw.githubusercontent.com/wuye999/myScripts/main/sendNotify.py',
         ]
         for e,url in enumerate(url_list):
             try:
