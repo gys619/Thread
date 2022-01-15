@@ -1,7 +1,7 @@
 /*
 [task_local]
 #把智能生活带给TA
-10 7 * * * jd_bzlshdgt.js, tag=把智能生活带给TA, enabled=true
+10 4,19 * * * jd_bzlshdgt.js, tag=把智能生活带给TA, enabled=true
  */
 const $ = new Env('把智能生活带给TA');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -21,7 +21,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 !(async () => {
-	console.log('入口下拉：https://prodev.m.jd.com/mall/active/3z1Vesrhx3GCCcBn2HgbFR4Jq68o/index.html')
+    console.log('入口下拉：https://prodev.m.jd.com/mall/active/3z1Vesrhx3GCCcBn2HgbFR4Jq68o/index.html')
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;

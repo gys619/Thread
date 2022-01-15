@@ -72,8 +72,6 @@ async function jdsign() {
     await getInfo("https://pro.m.jd.com/mall/active/kPM3Xedz1PBiGQjY4ZYGmeVvrts/index.html");//陪伴
     await $.wait(1000)
     await getInfo("https://pro.m.jd.com/mall/active/3SC6rw5iBg66qrXPGmZMqFDwcyXi/index.html");//京东图书
-    await $.wait(1000)
-    await getInfo("https://prodev.m.jd.com/mall/active/whyxjHX23eNgT6Xvej19JnamfEH/index.html");//签到1.14结束
   } catch (e) {
     $.logErr(e)
   }
