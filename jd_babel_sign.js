@@ -61,7 +61,9 @@ async function main() {
             let taskInfo = await task('doInteractiveAssignment', { "encryptProjectId": e.encryptProjectId, "encryptAssignmentId": e.encryptAssignmentId, "completionFlag": true, "itemId": "1", "sourceCode": "aceaceqingzhan" });
             if (taskInfo.code === "0" && taskInfo.subCode === "0") {
                 console.log(JSON.stringify(taskInfo.rewardsInfo.successRewards));
-            } else { console.log('没有获取到活动ID!') }
+            } else { console.log(JSON.stringify(taskInfo)) }
+        } else {
+            console.log('没有获取到活动ID')
         }
     } else { console.log('没有获取到活动信息！') };
 }
