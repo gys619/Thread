@@ -13,10 +13,11 @@ const {
     DisableCk,
     EnableCk,
     updateEnv,
+	updateEnv11,
     getstatus
 } = require('./ql');
 
-let strUidFile = './CK_WxPusherUid.json';
+let strUidFile = '/ql/scripts/CK_WxPusherUid.json';
 const fs = require('fs');
 let UidFileexists = fs.existsSync(strUidFile);
 let TempCKUid = [];
@@ -40,11 +41,21 @@ if (UidFileexists) {
     }
     var struid = "";
     var strRemark = "";
-    for (let i = 0; i < envs.length; i++) {
+    for (let i = 0; i < envs.length; i++) {		
         if (envs[i].value) {
-            cookie = await getEnvById(envs[i]._id);
-            $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+			var tempid = 0;
+			if(envs[i]._id)
+				tempid = envs[i]._id;
+			if(envs[i].id)
+				tempid = envs[i].id;
+			
+			cookie = await getEnvById(tempid);
+
+			if(!cookie)
+				continue;
+            $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);			
             $.index = i + 1;
+			console.log(`\n**********检测【京东账号${$.index}】${$.UserName}**********\n`);
             strRemark = envs[i].remarks;
             struid = getuuid(strRemark, $.UserName);
             if (struid) {
@@ -58,15 +69,25 @@ if (UidFileexists) {
                 } else {
                     var DateTimestamp = new Date(envs[i].timestamp);
                     strRemark = strRemark + "@@" + DateTimestamp.getTime() + "@@" + struid;
-                }
-                console.log("\n"+$.UserName + `: \n` + strRemark);
+                }		
 				
-				const updateEnvBody = await updateEnv(cookie,envs[i]._id,strRemark);
-				
-				if (updateEnvBody.code == 200) 
-					console.log("更新Remark 成功!");
-				else	
-					console.log("更新Remark 失败!");				
+				if (envs[i]._id) {
+				    var updateEnvBody = await updateEnv(cookie, envs[i]._id, strRemark);
+
+				    if (updateEnvBody.code == 200)
+				        console.log("更新Remark成功!");
+				    else
+				        console.log("更新Remark失败!");
+				}
+				if (envs[i].id) {
+				    var updateEnvBody = await updateEnv11(cookie, envs[i].id, strRemark);
+
+				    if (updateEnvBody.code == 200)
+				        console.log("新版青龙更新Remark成功!");
+				    else
+				        console.log("新版青龙更新Remark失败!");
+				}
+						
             }
         }
     }
@@ -93,15 +114,17 @@ function getuuid(strRemark, PtPin) {
                 }
             }
         }
-    }
+    }	
     if (!strTempuuid && TempCKUid) {
-        for (let j = 0; j < TempCKUid.length; j++) {
+		console.log(`查询uid`);
+        for (let j = 0; j < TempCKUid.length; j++) {			
             if (PtPin == decodeURIComponent(TempCKUid[j].pt_pin)) {
                 strUid = TempCKUid[j].Uid;
                 break;
             }
         }
     }
+	console.log(`uid:`+strUid);
     return strUid;
 }
 
