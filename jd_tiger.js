@@ -2,7 +2,7 @@
 萌虎摇摇乐
 https://yearfestival.jd.com
 优先内部互助,剩余次数助力作者和助力池
-cron 0 0,12,18 * * * jd_tiger.js
+0 0,12,18 * * * jd_tiger.js
 转义自HW大佬
 const $ = new Env('萌虎摇摇乐');
 */
@@ -15,8 +15,8 @@ let shareCodesSelf = []
 let cookiesArr = [],
     cookie
 Object.keys(jdCookieNode).forEach((item) => {
-    cookiesArr.push(jdCookieNode[item])
-})
+        cookiesArr.push(jdCookieNode[item])
+    })
 
 !(async () => {
     if (!cookiesArr[0]) {
@@ -119,12 +119,12 @@ Object.keys(jdCookieNode).forEach((item) => {
         }
     }
 })()
-    .catch((e) => {
-        console.error(`${name} error: ${e.stack}`)
-    })
-    .finally(() => {
-        console.log(`${name} finished}`)
-    })
+.catch((e) => {
+    console.error(`${name} error: ${e.stack}`)
+})
+.finally(() => {
+    console.log(`${name} finished}`)
+})
 
 async function getAuthorShareCode(url) {
     try {
@@ -184,8 +184,8 @@ async function getShareCodePool(key, num) {
     let shareCode = []
     for (let i = 0; i < 2; i++) {
         try {
-            const { body } = await got(``)
-            //console.debug('getShareCodePool:', body)
+            const { body } = await got(`https://api.11111117/api/${key}/${num}`)
+            console.debug('getShareCodePool:', body)
             shareCode = JSON.parse(body).data || []
             console.log(`随机获取${num}个${key}成功：${JSON.stringify(shareCode)}`)
             if (shareCode.length !== 0) {
