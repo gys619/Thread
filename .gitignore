@@ -174,7 +174,7 @@ m_*.js
 # he1pu的内置互助
 zcodes.json
 # 飞利浦重复
-#jd_FLP.js
+jd_FLP.js
 jd_flp.js
 # 蒙牛开卡重复
 jd_mn.js
