@@ -2,7 +2,7 @@
 萌虎摇摇乐
 https://yearfestival.jd.com
 优先内部互助,剩余次数助力作者和助力池
-cron 0 0,18 * * * jd_tiger.js
+cron 0 0,18 * * * jd_tiger_help.js
 转义自HW大佬
 const $ = new Env('萌虎摇摇乐助力');
 */
