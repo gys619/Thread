@@ -119,9 +119,10 @@ Object.keys(jdCookieNode).forEach((item) => {
         try {
             let res = await api({ "apiMapping": "/api/index/indexInfo" })
             let lotteryNum = res.data.lotteryNum
+            console.log('抽奖次数：', lotteryNum)
             for (let i = 0; i < lotteryNum; i++) {
                 res = await api({ "apiMapping": "/api/lottery/lottery" })
-                console.log('抽奖：', res.data.prizeName)
+                console.log('抽奖', i + 1, '/', lotteryNum, res.data.prizeName)
                 await wait(4000)
             }
         } catch (e) {
