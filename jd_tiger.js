@@ -2,7 +2,7 @@
 萌虎摇摇乐
 https://yearfestival.jd.com
 优先内部互助,剩余次数助力作者
-1 0,10,15 * * * jd_tiger.js
+1 0,12,18 * * * jd_tiger.js
 转义自HW大佬
 */
 const name = '萌虎摇摇乐'

@@ -2,19 +2,19 @@
 组队分豆-蒙牛 [jd_mengniu.js]
 
 ————————————————
-入口：[组队分豆-蒙牛 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=)]
+入口：[组队分豆-蒙牛 (https://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=1fc26ba85abe4d7fa8024c9917163442)]
 IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
 #组队分豆-蒙牛
-18 1,16 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
+18 1,16 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
 ================Loon==============
 [Script]
-cron "18 1,16 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js,tag=组队分豆-蒙牛
+cron "18 1,16 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js,tag=组队分豆-蒙牛
 ===============Surge=================
-组队分豆-蒙牛 = type=cron,cronexp="18 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js
+组队分豆-蒙牛 = type=cron,cronexp="18 1,16 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js
 ============小火箭=========
-组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mengniu.js, cronexpr="18 1,16 * * *", timeout=3600, enable=true
+组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mengniu.js, cronexpr="18 1,16 * * *", timeout=3600, enable=true
 */
 const $ = new Env("组队分豆-蒙牛");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -40,7 +40,7 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=`)
+    console.log(`若之前做过该活动，则无法重复入队。\n入口:\nhttps://lzkjdz-isv.isvjcloud.com/pool/captain/4471266?activityId=4e3b9b6233104c199c0c44ff6edbc85d&signUuid=1fc26ba85abe4d7fa8024c9917163442`)
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i]
@@ -59,7 +59,7 @@ if ($.isNode()) {
                 }
                 continue
             }
-            authorCodeList = ['','','']
+            authorCodeList = ['1fc26ba85abe4d7fa8024c9917163442','efa6d50b6d32488ba485f07629ff6c99','8a0d5f341e8440e2aa04a1592cd3f1b3']
             $.bean = 0;
             $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);
             $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
