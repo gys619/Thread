@@ -32,12 +32,12 @@ Object.keys(jdCookieNode).forEach((item) => {
             console.log('助力码：', res.data)
             await wait(1000)
             shareCodesSelf.push(res.data)
-            //res = await api({ "apiMapping": "/api/task/support/list" })
-            //console.log('收到助力：', res.data.supportedNum)
-            // await wait(1000)
+            res = await api({ "apiMapping": "/api/task/support/list" })
+            console.log('收到助力：', res.data.supportedNum)
+            await wait(1000)
 
-            //res = await api({ "apiMapping": "/api/task/brand/tabs" })
-            //await wait(1000)
+            res = await api({ "apiMapping": "/api/task/brand/tabs" })
+            await wait(1000)
             for (let tab of res.data) {
                 let taskGroupId = tab.taskGroupId
                 // res = await api({ "taskGroupId": taskGroupId, "apiMapping": "/api/task/brand/getTaskList" })
