@@ -94,7 +94,7 @@ async function main() {
                     }
                 }
                 console.log('助力作者')
-                await taskPost('invite_friend', `inviter_id=61e577478cfb057339&uuid=${$.uuid}&source=shareFriend`);
+                await taskPost('invite_friend', `inviter_id=61e58b5c20ade60129&uuid=${$.uuid}&source=shareFriend`);
             }
         } else {
             $.log('获取accessToken失败')
