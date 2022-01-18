@@ -116,13 +116,13 @@ async function doTask(){
             console.log(`任务：${$.oneTask.assignmentName}，已完成`);
             continue;
         }
-        if($.oneTask.assignmentType === 3 || $.oneTask.assignmentType === 0 || $.oneTask.assignmentType === 7){
+        if($.oneTask.assignmentType === 3 || $.oneTask.assignmentType === 0 || $.oneTask.assignmentType === 1 || $.oneTask.assignmentType === 7){
             if($.oneTask.assignmentType === 7){
                 console.log(`任务：${$.oneTask.assignmentName}，尝试领取开卡奖励；（不会自动开卡，如果你已经是会员，则会领取成功）`);
             }else{
                 console.log(`任务：${$.oneTask.assignmentName}，去执行`);
             }
-            let subInfo = $.oneTask.ext.followShop || $.oneTask.ext.brandMemberList || '';
+            let subInfo = $.oneTask.ext.followShop || $.oneTask.ext.brandMemberList || $.oneTask.ext.shoppingActivity ||'';
             if(subInfo && subInfo[0]){
                 $.runInfo = subInfo[0];
             }else{
