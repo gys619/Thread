@@ -5,8 +5,8 @@
 
 
 '''
-cron: 0
-new Env('修复脚本依赖文件');
+cron: 1
+new Env('单容器 二叉树修复脚本依赖文件');
 '''
 
 import os, requests
@@ -15,14 +15,18 @@ import time
 
 # from os import popen
 
-# 感谢spiritLHL大佬的脚本！
+# 版本号 2.10.9 ，其他环境自测
 # 只修复依赖文件（jdCookie.js那种）！！不修复环境依赖（pip install aiohttp）！！
-# 如要运行脚本 请在配置文件添加
+# 默认不做任何操作只查询依赖脚本存在与否，有需求请在配置文件中配置对应变量进行操作，更新不会增加缺失文件
+# 如果你有发现更多的脚本依赖文件没有新增，欢迎提交issues到https://github.com/spiritLHL/dependence_scripts/issues
+# 增加缺失依赖文件(推荐)
 # export ec_fix_dep="true"
+# 更新老旧依赖文件(慎填，默认的依赖我使用的魔改版本，非必要别选)
+# export ec_ref_dep="true"
 
-# 如果运行完本脚本仍然出错，请使用Faker一键部署脚本重新部署
+# 2021.11.27 支持新版本仓库拉取的脚本目录结构，针对各个仓库进行依赖检索
 
-txtx = "青龙配置文件中的config中填写下列变量启用对应功能\n\n增加缺失依赖文件(推荐)\n填写export ec_fix_dep=\"true\"\n"
+txtx = "青龙配置文件中的config中填写下列变量启用对应功能\n\n增加缺失依赖文件(推荐)\n填写export ec_fix_dep=\"true\"\n更新老旧依赖文件(日常使用别填，默认的依赖我使用的魔改版本，非必要别选)\n如果选择使用请使用对应code文件等相关文件：https://github.com/spiritLHL/dependence_config \n填写export ec_ref_dep=\"true\"\n"
 print(txtx)
 
 try:
@@ -599,7 +603,7 @@ if __name__ == '__main__':
     if fix == 1:
         print("修复完毕后脚本无法运行，显示缺依赖文件，大概率库里没有或者依赖文件同名但内容不一样，请另寻他法\n")
         print("修复完毕后缺依赖环境导致的脚本无法运行，这种无法修复，请自行在依赖管理中添加\n")
-        print("如果运行完本脚本仍然出错，请使用Faker一键部署脚本重新部署")
+        print("前者缺文件(如 Error: Cannot find module './utils/magic')，后者缺依赖(如 Error: Cannot find module 'date-fns' )，本脚本只修复前一种")
 
 # 待开发
 # 修复依赖环境
