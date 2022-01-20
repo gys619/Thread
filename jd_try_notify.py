@@ -66,7 +66,7 @@ def printf(text):
 def get_remarkinfo():
     url='http://127.0.0.1:5600/api/envs'
     try:
-        with open(os.getcwd().replace('scripts','config')+'/auth.json', 'r') as f:
+        with open('/ql/config/auth.json', 'r') as f:
             token=json.loads(f.read())['token']
         headers={
             'Accept':'application/json',
