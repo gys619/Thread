@@ -281,8 +281,11 @@ jd_rush_*.js
 #jd_share_common_enc.js
 # 1111
 !jd_fcwb.js
+#jd_xsqjd.js
 !jd_hbCount.py
+jd_getred.py
 !jd_jieMo.js
+jd_genz.js
 !jd_joypark_open.js
 !jd_lotteryMachine.js
 !jd_qjd.py
