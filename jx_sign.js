@@ -196,7 +196,7 @@ async function main(help = true) {
         await $.wait(2000)
       }
     }
-    if ($.signhb_source === '1000') await doubleSign()
+    if ($.signhb_source === '1000') await SignedInfo()
   } else {
     console.log(`此账号已黑`)
   }
@@ -387,32 +387,51 @@ function bxdraw() {
 }
 
 // 双签
-function doubleSign() {
-  return new Promise((resolve) => {
-    let options = {
-      url: `${JD_API_HOST}double_sign/IssueReward?sceneval=2&g_login_type=1&_ste=1&g_ty=ajax`,
-      headers: {
-        "Host": "m.jingxi.com",
-        "Accept": "application/json",
-        "Origin": "https://st.jingxi.com",
-        "Accept-Encoding": "gzip, deflate, br",
-        "User-Agent": UA,
-        "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-        "Referer": "https://st.jingxi.com/",
-        "Cookie": cookie
-      }
-    }
-    $.get(options, async (err, resp, data) => {
+function SignedInfo() {
+  return new Promise(resolve => {
+    $.get(JDtaskUrl("SignedInfo", `_=${Date.now()}`), async (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} SignedInfo API请求失败，请检查网路重试`)
+        } else {
+          data = JSON.parse(data);
+          const { data: { jd_sign_status, jx_sign_status, double_sign_status } } = data
+          if (data.retCode === 0) {
+            if (double_sign_status === 0) {
+              if (jd_sign_status === 1 && jx_sign_status === 1) {
+                await IssueReward()
+              } else {
+                console.log(`京东或京喜未签到，无法双签`)
+              }
+            } else {
+              console.log(`已完成双签`)
+            }
+          } else {
+            console.log(JSON.stringify(data))
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+  })
+}
+function IssueReward() {
+  return new Promise(resolve => {
+    $.get(JDtaskUrl("IssueReward"), async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(JSON.stringify(err))
           console.log(`${$.name} IssueReward API请求失败，请检查网路重试`)
         } else {
           data = JSON.parse(data);
           if (data.retCode === 0){
-            console.log(`双签成功`)
+            console.log(`双签成功：获得${data.data.jx_award}京豆`)
           } else {
-            console.log(`任务完成失败，错误信息${data.errMsg}`)
+            console.log(`任务完成失败，错误信息${JSON.stringify(data)}`)
           }
         }
       } catch (e) {
@@ -442,6 +461,22 @@ function taskUrl(functionId, body = '') {
       "User-Agent": UA,
       "Accept-Language": "zh-CN,zh-Hans;q=0.9",
       "Referer": "https://st.jingxi.com/",
+      "Cookie": cookie
+    }
+  }
+}
+function JDtaskUrl(functionId, body = '') {
+  let url = `https://wq.jd.com/jxjdsignin/${functionId}?${body ? `${body}&` : ''}sceneval=2&g_login_type=1&g_ty=ajax`
+  return {
+    url,
+    headers: {
+      "Host": "wq.jd.com",
+      "Accept": "application/json",
+      "Origin": "https://wqs.jd.com",
+      "Accept-Encoding": "gzip, deflate, br",
+      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+      "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+      "Referer": "https://wqs.jd.com/",
       "Cookie": cookie
     }
   }

@@ -245,6 +245,10 @@ jd_disableDuplicateTasksImplement.py
 # 炸年兽重
 jd_zns.js
 jd_zhaNS.js
+#送豆得豆重复
+jd_sddd.js
+#健康社区收集能量
+jd_z_health_energy.js
 
 # 过期活动
 
@@ -275,7 +279,19 @@ jd_rush_*.js
 #jd_card_collecting_common_enc.js
 #jd_look_video_common_enc.js
 #jd_share_common_enc.js
-
+# 1111
+!jd_fcwb.js
+!jd_hbCount.py
+!jd_jieMo.js
+!jd_joypark_open.js
+!jd_lotteryMachine.js
+!jd_qjd.py
+!jd_redPacket.js
+!jd_refreshInvokeKey.js 
+!jd_reward.ts
+!jd_upgrade.js
+!jd_week.js
+!jd_xmf_exchange.js
 
 jd_jx_cfd_pearl_exchange.js
 jd_jx_factory_automation.js
