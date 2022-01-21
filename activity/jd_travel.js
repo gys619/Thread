@@ -1,8 +1,5 @@
-if (process.env.ZNS != 'true') {
-    console.log('脚本默认不运行,请设置环境变量ZNS为true运行,可能黑号,运行前最少手动进去过一次')
-    return
-}
 /*
+TG https://t.me/aaron_scriptsG
 被内鬼偷给柠檬了,大家一起玩吧
 33 0,6-23/2 * * * jd_travel.js
 */
