@@ -97,6 +97,15 @@ let activityCookie =''
   $.activityId = "67ba2ad44b8041c9925bf0e72febbdb2"
   $.shareUuid = "571baca3aed440ba9aee0317c1ada7a4"
   console.log(`入口:\nhttps://lzdz1-isv.isvjcloud.com/dingzhi/dz/openCard/activity?activityId=${$.activityId}&shareUuid=${$.shareUuid}`)
+
+
+  let shareUuidArr = [$.shareUuid,"746302931fb64cad983a0b3e18f35590","dc9cbccae7da4740b372ede03922b498","dec8def705a24143ab4be085e317fb56","f3b119cd7d2d4439905bde7237f08980","a42d3d2c092f45debdddced925c60175","397fa9dd1eb741bdb44478461fa0c917","8531f75be9e84119ad85ae10182e7b5b","84104a78c91048c29ee7f28ec703541b"]
+  let s = Math.floor((Math.random()*10))
+  let n = 0
+  if(s >= 1 && s<= 5) n = Math.floor((Math.random()*shareUuidArr.length))
+  $.shareUuid = shareUuidArr[n] ? shareUuidArr[n] : $.shareUuid
+
+
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     if (cookie) {
@@ -204,6 +213,12 @@ async function run() {
       await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
     }
     
+    $.log("关注: " + $.followShop)
+    if(!$.followShop && !$.outFlag){
+      flag = true
+      await takePostRequest('followShop');
+      await $.wait(parseInt(Math.random() * 3000 + 2000, 10))
+    }
     $.log("加购: " + $.addSku)
     if(!$.addSku && !$.outFlag){
       if(guaopencard_addSku+"" == "true"){
@@ -466,7 +481,7 @@ async function dealReturn(type, data) {
             $.endTime = res.data.endTime || 0
             $.hasEnd = res.data.hasEnd || false
             $.actorUuid = res.data.actorUuid || ''
-            // $.followShop = res.data.followShop.allStatus || false
+            $.followShop = res.data.followShop.allStatus || false
             $.addSku = res.data.addSku.allStatus || false
             if(res.data.followShop && res.data.followShop.settings && res.data.followShop.settings[0]){
               $.followShopValue = res.data.followShop.settings[0].value || 1
