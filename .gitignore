@@ -56,7 +56,7 @@ jd_newtask.js
 jd_park.js
 jd_task.js
 jd_plantBean2.js
-# 红包脚本锁佣
+########红包脚本锁佣########
 gua_1111RedEnvelope.js
 jd_read.js 
 jd_redEnvelope.js
@@ -169,7 +169,7 @@ jd_exjxbeans.js
 jd_jx_*.js
 
 m_*.js
-
+######重复脚本#######
 # 财富岛珍珠兑换
 #jd_cfd_pearl_ex.js
 # he1pu的内置互助
@@ -251,7 +251,7 @@ jd_sddd.js
 #健康社区收集能量
 jd_z_health_energy.js
 
-# 过期活动
+########过期活动##############
 
 # 运动户外盲盒
 jd_UnknownTask5.js
@@ -260,7 +260,7 @@ jd_hwmh.js
 jd_jxlhb.js
 
 
-# 不能跑的
+############不能跑的################
 # 通用游戏
 jd_game.js
 # 通用ID任务
@@ -276,7 +276,8 @@ wx_*.js
 jd_lzdz1_*.js
 jd_jinggengjcq_*.js
 jd_rush_*.js
-
+#发财大赢家助力
+jd_fcdyj.js
 #jd_card_collecting_common_enc.js
 #jd_look_video_common_enc.js
 #jd_share_common_enc.js
