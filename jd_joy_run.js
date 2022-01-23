@@ -193,7 +193,7 @@ async function getToken() {
       $.msg($.name, '更新Token: 成功🎉', ``);
       console.log(`\nToken，${LKYLToken}\n`)
       $.http.post({
-        url: `http://share.turinglabs.net/api/v3/create/sharecode/`,
+        url: `http://share.11111122.net/api/v3/create/sharecode/`,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           "activity_name": "joy",
@@ -221,7 +221,7 @@ async function getToken() {
       //   $.setdata(`${count}`, 'countFlag');
       //   $.msg($.name, '更新Token: 成功🎉', ``);
       //   console.log(`开始上传Token，${LKYLToken}\n`)
-      //   await $.http.get({url: `http://jd.turinglabs.net/api/v2/jd/joy/create/${LKYLToken}/`}).then((resp) => {
+      //   await $.http.get({url: `http://jd.11111122.net/api/v2/jd/joy/create/${LKYLToken}/`}).then((resp) => {
       //     if (resp.statusCode === 200) {
       //       let { body } = resp;
       //       console.log(`Token提交结果:${body}\n`)
