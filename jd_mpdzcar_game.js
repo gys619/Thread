@@ -6,7 +6,7 @@ TG https://t.me/duckjobs
 
 一天3次
 
-10 6,10,12 * * * jd_mpdzcar_game.js
+10 6,10,12 * * * jd_mpdzcar.js
 */
 const $ = new Env('头文字J 游戏');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -90,7 +90,6 @@ async function mpdzCar() {
         })
         // console.log($.buyerNick)
         if ($.buyerNick) {
-            await $.wait(5000);
             console.log("游戏")
             await task('/ql/front/carPlayUpdate', {
                 buyerNick: $.buyerNick,

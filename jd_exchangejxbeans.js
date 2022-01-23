@@ -49,7 +49,6 @@ if ($.isNode()) {
                 continue
             }
             await domain();
-			await $.wait(3000);
         }
     }
     if (message !== "") {

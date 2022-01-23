@@ -1,28 +1,27 @@
 /*
 星系牧场
-活动入口：QQ星儿童牛奶京东自营旗舰店->品牌会员->星系牧场
+活动入口：QQ星儿童牛奶京东自营旗舰店->星系牧场
+每次都要手动打开才能跑 不知道啥问题
+号1默认给我助力,后续接龙 2给1 3给2
+ 19.0复制整段话 http:/J7ldD7ToqMhRJI星系牧场养牛牛，可获得DHA专属奶！%VAjYb8me2b!→去猄倲←
+https://lzdz-isv.isvjcloud.com/dingzhi/qqxing/pasture/activity?activityId=90121061401&lng=107.146935&lat=33.255252&sid=cad74d1c843bd47422ae20cadf6fe5aw&un_area=8_573_6627_52446
+更新地址：https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_ddnc_farmpark.js
+============Quantumultx===============
 [task_local]
 #星系牧场
-1 0-23/4 * * * jd_qqxing.js
+1 0-23/2 * * * https://raw.githubusercontent.com/Wenmoux/scripts/wen/jd/jd_qqxing.js, tag=星系牧场, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('QQ星系牧场');
 //Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
 const randomCount = $.isNode() ? 20 : 5;
-const notify = $.isNode() ? require('./sendNotify') : '';
+const notify = $.isNode() ? require('../sendNotify') : '';
 let merge = {}
 let codeList = []
-Exchange = true;
+Exchange = $.isNode() ? (process.env.Cowexchange ? process.env.Cowexchange : false) : ($.getdata("Cowexchange") ? $.getdata("Cowexchange") : false);
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [],
     cookie = '';
-function oc(fn, defaultVal) {//optioanl chaining
-  try {
-    return fn()
-  } catch (e) {
-    return undefined
-  }
-}
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -34,7 +33,7 @@ if ($.isNode()) {
 
 const JD_API_HOST = `https://api.m.jd.com/client.action`;
 message = ""
-$.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71ffc87"][Math.floor((Math.random() * 2))];
+$.shareuuid = "85ebc8331aee41c8a85aa4f223ba7783"
     !(async () => {
         if (!cookiesArr[0]) {
             $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
@@ -83,37 +82,35 @@ $.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71f
                         if (task.taskid == "interact") {
                             for (l = 0; l < 20 - task.curNum; l++) {
                                 await dotask(task.taskid, task.params)
-                                await $.wait(18000)
+                                await $.wait(500)
                             }
                         } else if (task.taskid == "scansku") {
                             await getproduct()
                             await writePersonInfo($.vid)
                             await dotask(task.taskid, $.pparam)
-						} else if (task.taskid !== "add2cart") {
+                        } else {
                             await dotask(task.taskid, task.params)
-                            await $.wait(18000)
+                            await $.wait(500)
                         }
                     }
                     await getinfo()
                     for (k = 0; k < $.drawchance; k++) {
                         await draw()
                     }
-                    let exchanges =Math.floor($.foodNum/10000)
-                    console.log(`可兑换 ${exchanges} 次 100京🐶`)
+                    let exchanges =Math.floor($.foodNum/1000)
+                    console.log(`可兑换 ${exchanges} 次 20京🐶`)
                     for(q = 0;q<exchanges && Exchange;q++){
-                    await exchange(16)   //16是100豆，14是50豆，13是20豆
+                    await exchange(13)
                     }
                     await getinfo()
                     if(!Exchange){console.log("你 默认 不兑换东西,请自行进去活动兑换")}
                     message += `【京东账号${$.index}】${$.nickName || $.UserName}\n${$.cow} 兑换京🐶 ${$.exchange}  ${$.drawresult}\n`
-                    console.log("休息休息~") 
-                    await $.wait(80*1000) 
                 } else {
                   $.msg($.name, "", "跑不起来了~请自己进去一次牧场")
                 }
             }
         }
-        if (message.length != 0) {
+        if (message.length != 0&&new Date().getHours() == 11) {
         if ($.isNode()) {
            await notify.sendNotify("星系牧场", `${message}\n牧场入口：QQ星儿童牛奶京东自营旗舰店->星系牧场\n\n吹水群：https://t.me/wenmouxx`);
    }  else {
@@ -125,53 +122,13 @@ $.shareuuid = ["bf3ffb1c973a49acbac4983ac15162f3", "be5c05485b624d69b2bb1acee71f
     .finally(() => $.done())
 //获取活动信息
 
-// 更新cookie 
 
-function updateCookie (resp) {
-    if (!oc(() => resp.headers['set-cookie'])){
-        return
-    }
-    let obj = {}
-    let cookieobj = {}
-    let cookietemp = cookie.split(';')
-    for (let v of cookietemp) {
-        const tt2 = v.split('=')
-        obj[tt2[0]] = v.replace(tt2[0] + '=', '')
-    }
-    for (let ck of resp['headers']['set-cookie']) {
-        const tt = ck.split(";")[0]
-        const tt2 = tt.split('=')
-        obj[tt2[0]] = tt.replace(tt2[0] + '=', '')
-    }
-    const newObj = {
-        ...cookieobj,
-        ...obj,
-    }
-    cookie = ''
-    for (let key in newObj) {
-        key && (cookie = cookie + `${key}=${newObj[key]};`)
-    }
-    // console.log(cookie, 'jdCookie')
-}
-function jdUrl(functionId, body) {
-  return {
-    url: `https://api.m.jd.com/client.action?functionId=${functionId}`,
-    body: body,
-    headers: {
-      'Host': 'api.m.jd.com',
-      'accept': '*/*',
-      'user-agent': 'JD4iPhone/167490 (iPhone; iOS 14.2; Scale/3.00)',
-      'accept-language': 'zh-Hans-JP;q=1, en-JP;q=0.9, zh-Hant-TW;q=0.8, ja-JP;q=0.7, en-US;q=0.6',
-      'content-type': 'application/x-www-form-urlencoded',
-      'Cookie': cookie
-    }
-  }
-}
+
 //genToken
 function genToken() {
     let config = {
-        url: 'https://api.m.jd.com/client.action?functionId=genToken',
-        body: '&body=%7B%22to%22%3A%22https%3A%5C/%5C/lzdz-isv.isvjcloud.com%5C/dingzhi%5C/qqxing%5C/pasture%5C/activity?activityId%3D90121061401%22%2C%22action%22%3A%22to%22%7D&build=167588&client=apple&clientVersion=9.4.4&d_brand=apple&d_model=iPhone9%2C2&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=1805a3ab499eebc088fd9ed1c67f5eaf350856d4&osVersion=12.0&partner=apple&rfs=0000&scope=11&screen=1242%2A2208&sign=73af724a6be5f3cb89bf934dfcde647f&st=1624887881842&sv=111',
+        url: 'https://api.m.jd.com/client.action?functionId=genToken&clientVersion=10.0.5&build=88679&client=android&d_brand=Xiaomi&d_model=RedmiK30&osVersion=11&screen=2175*1080&partner=xiaomi001&oaid=b30cf82cacfa8972&openudid=290955c2782e1c44&eid=eidAef5f8122a0sf2tNlFbi9TV+3rtJ+jl5UptrTZo/Aq5MKUEaXcdTZC6RfEBt5Jt3Gtml2hS+ZvrWoDvkVv4HybKpJJVMdRUkzX7rGPOis1TRFRUdU&sdkVersion=30&lang=zh_CN&uuid=290955c2782e1c44&aid=290955c2782e1c44&area=8_573_6627_52446&networkType=wifi&wifiBssid=unknown&uts=0f31TVRjBSv3jTHxm2nVw0TY2tLLC%2BbMUWTL7l1wiidLQvx5ZA%2FtBqu04oDVd%2BAlgB%2FjTkTFhNHNpAgtViMD%2FiXVmOPPYYRQmRjsyK4Z61d%2BWQHH%2B3z7HGBUCyPLkYM%2Bb6QgeLXtFB%2FZVoGMidghf8RwpjmGNEtCcEY3WFFPvfKnNZKXPzwSJfkIsVes9jUE6bkyM4YGvjNk24i1yafg5g%3D%3D&uemps=0-0&st=1624319523639&sign=344ece5825b6f9623131c3bcfa42e9bd&sv=122',
+        body: 'body=%7B%22action%22%3A%22to%22%2C%22to%22%3A%22https%253A%252F%252Flzdz-isv.isvjcloud.com%252Fdingzhi%252Fqqxing%252Fpasture%252Factivity%252F9559009%253FactivityId%253D90121061401%2526shareUuid%253D8cec00a4917e4af6ae49f8f4f9e7b58d%2526adsource%253Dnull%2526shareuserid4minipg%253DqvjNiWQ2yv8K3NDiWv3DDE7oeVP9kq2pYSH90mYt4m3fwcJlClpxrfmVYaGKuquQkdK3rLBQpEQH9V4tdrrh0w%25253D%25253D%2526shopid%253Dundefined%22%7D&',
         headers: {
             'Host': 'api.m.jd.com',
             'accept': '*/*',
@@ -182,18 +139,14 @@ function genToken() {
         }
     }
     return new Promise(resolve => {
-        // let body = `body=%7B%22to%22%3A%22https%3A%5C/%5C/lzdz-isv.isvjcloud.com%5C/dingzhi%5C/qqxing%5C/pasture%5C/activity?activityId%3D90121061401%22%2C%22action%22%3A%22to%22%7D&build=167588&client=apple&clientVersion=9.4.4&lang=zh_CN&scope=11&sv=111`
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`);
                     console.log(`${JSON.stringify(err)}`)
                 } else {
                     data = JSON.parse(data);
-                    // console.log(data, 'data')
                     $.isvToken = data['tokenKey']
-                    cookie += `IsvToken=${data['tokenKey']}`
                     //   console.log($.isvToken)
                 }
             } catch (e) {
@@ -208,8 +161,8 @@ function genToken() {
 //获取pin需要用到
 function getToken2() {
     let config = {
-        url: 'https://api.m.jd.com/client.action?functionId=isvObfuscator',
-        body: 'body=%7B%22url%22%3A%22https%3A%5C/%5C/lzdz-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&build=167588&client=apple&clientVersion=9.4.4&d_brand=apple&d_model=iPhone9%2C2&lang=zh_CN&openudid=1805a3ab499eebc088fd9ed1c67f5eaf350856d4&osVersion=12.0&partner=apple&rfs=0000&scope=11&screen=1242%2A2208&sign=ede16c356f954b5e48b259f94cf02e10&st=1624887883419&sv=120',
+        url: 'https://api.m.jd.com/client.action?functionId=isvObfuscator&clientVersion=10.0.4&build=88641&client=android&d_brand=Xiaomi&d_model=RedmiK30&osVersion=11&screen=2175*1080&partner=xiaomi001&oaid=b30cf82cacfa8972&openudid=290955c2782e1c44&eid=eidAef5f8122a0sf2tNlFbi9TV+3rtJ+jl5UptrTZo/Aq5MKUEaXcdTZC6RfEBt5Jt3Gtml2hS+ZvrWoDvkVv4HybKpJJVMdRUkzX7rGPOis1TRFRUdU&sdkVersion=30&lang=zh_CN&uuid=290955c2782e1c44&aid=290955c2782e1c44&area=8_573_6627_52446&networkType=wifi&wifiBssid=unknown&uts=0f31TVRjBSu9ApHUouD8ZP%2BCIJSPfALzaaOxqgfonS67U6HheQNiBOrPSrSFlb95oI9qzuPuELmi%2F%2FXuuWZaM43r%2BL4Fk5d2eLpAtYb0ncWIZn0RtPoGD13HYTyZvdEv4lbuDE3%2Ffs5unT6u6fNdyKyT4khBw%2BCv4LL9n30ljoHX428ThOV2iwP1bxn0hTFM1Yyl%2BracFlZv6oNKsBWeaA%3D%3D&uemps=0-0&st=1624067570330&sign=189b90a2a6ac9cbd6c1017085f1baec2&sv=111',
+        body: 'body=%7B%22id%22%3A%22%22%2C%22url%22%3A%22https%3A%2F%2Flzdz-isv.isvjcloud.com%22%7D&',
         headers: {
             'Host': 'api.m.jd.com',
             'accept': '*/*',
@@ -221,14 +174,12 @@ function getToken2() {
     }
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
-                    //console.log(data)
                     $.token2 = data['token']
                     //     console.log($.token2)
                 }
@@ -247,22 +198,20 @@ function getToken2() {
 //抄的书店的 不过不加好像也能进去
 function getActCk() {
     return new Promise(resolve => {
-        $.get(taskUrl("/dingzhi/qqxing/pasture/activity", `activityId=90121061401`), (err, resp, data) => {
-            updateCookie(resp)
-            // console.log(resp)
+        $.get(taskUrl("/dingzhi/qqxing/pasture/activity", `activityId=90121061401&lng=107.146945&lat=33.255267&sid=cad74d1c843bd47422ae20cadf6fe5aw&un_area=27_2442_2444_31912`), (err, resp, data) => {
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
-                    // if ($.isNode())
-                    //     for (let ck of resp['headers']['set-cookie']) {
-                    //         cookie = `${cookie}; ${ck.split(";")[0]};`
-                    //     }
-                    // else {
-                    //     for (let ck of resp['headers']['Set-Cookie'].split(',')) {
-                    //         cookie = `${cookie}; ${ck.split(";")[0]};`
-                    //     }
-                    // }
+                    if ($.isNode())
+                        for (let ck of resp['headers']['set-cookie']) {
+                            cookie = `${cookie}; ${ck.split(";")[0]};`
+                        }
+                    else {
+                        for (let ck of resp['headers']['Set-Cookie'].split(',')) {
+                            cookie = `${cookie}; ${ck.split(";")[0]};`
+                        }
+                    }
                 }
             } catch (e) {
                 $.logErr(e, resp)
@@ -278,7 +227,6 @@ function getshopid() {
     let config = taskPostUrl("/dz/common/getSimpleActInfoVo", "activityId=90121061401")
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -305,7 +253,6 @@ function getMyPin() {
     //   console.log(config)
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -316,8 +263,10 @@ function getMyPin() {
                         $.pin = data.data.secretPin
                         //    console.log($.pin)
                         $.nickname = data.data.nickname
+                        $.lz_jdpin_token = resp['headers']['set-cookie'].filter(row => row.indexOf("lz_jdpin_token") !== -1)[0]
                         // console.log(data)
                         console.log(`欢迎回来~  ${$.nickname}`);
+                        console.log("lz_jdpin_token=" +$.lz_jdpin_token)
                     }
                 }
             } catch (e) {
@@ -334,7 +283,6 @@ function adlog() {
     //   console.log(config)
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -362,14 +310,13 @@ function adlog() {
 
 
 
-// 获得用户信息  
+// 获得用户信息
 function getUserInfo() {
     return new Promise(resolve => {
         let body = `pin=${encodeURIComponent($.pin)}`
         let config = taskPostUrl('/wxActionCommon/getUserInfo', body)
         //   console.log(config)
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
@@ -396,17 +343,16 @@ function getUid() {
     return new Promise(resolve => {
         let body = `activityId=90121061401&pin=${encodeURIComponent($.pin)}&pinImg=${$.pinImg }&nick=${encodeURIComponent($.nick)}&cjyxPin=&cjhyPin=&shareUuid=${$.shareuuid}`
         $.post(taskPostUrl('/dingzhi/qqxing/pasture/activityContent', body), async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
                 } else {
                     data = JSON.parse(data);
-                        if (data.result) {                           
+                        if (data.result) {
                            if(data.data.openCardStatus !=3){
                            console.log("当前未开卡,无法助力和兑换奖励哦")
-                           }                           
-                            // $.shareuuid = data.data.uid                            
+                           }
+                            $.shareuuid = data.data.uid
                             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.shareuuid}\n`);
                         }
                       }
@@ -424,7 +370,6 @@ function getinfo() {
     let config = taskPostUrl("/dingzhi/qqxing/pasture/myInfo", `activityId=90121061401&pin=${encodeURIComponent($.pin)}&pinImg=${$.pinImg}&nick=${$.nick}&cjyxPin=&cjhyPin=&shareUuid=${$.shareuuid}`)
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -472,7 +417,6 @@ function getproduct() {
     return new Promise(resolve => {
         let body = `type=4&activityId=90121061401&pin=${encodeURIComponent($.pin)}&actorUuid=${$.uuid}&userUuid=${$.uuid}`
         $.post(taskPostUrl('/dingzhi/qqxing/pasture/getproduct', body), async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
@@ -501,7 +445,6 @@ function writePersonInfo(vid) {
         let body = `jdActivityId=1404370&pin=${encodeURIComponent($.pin)}&actionType=5&venderId=${vid}&activityId=90121061401`
 
         $.post(taskPostUrl('/interaction/write/writePersonInfo', body), async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
@@ -522,7 +465,6 @@ function exchange(id) {
     return new Promise(resolve => {
         let body = `pid=${id}&activityId=90121061401&pin=${encodeURIComponent($.pin)}&actorUuid=&userUuid=`
         $.post(taskPostUrl('/dingzhi/qqxing/pasture/exchange?_', body), async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${$.name} API请求失败，请检查网路重试`)
@@ -550,7 +492,6 @@ function dotask(taskId, params) {
     //     console.log(config)
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -580,7 +521,6 @@ function draw() {
     //  console.log(config)
     return new Promise(resolve => {
         $.post(config, async (err, resp, data) => {
-            updateCookie(resp)
             try {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`)
@@ -618,8 +558,7 @@ function taskUrl(url, body) {
             'Referer': 'https://lzdz-isv.isvjcloud.com/dingzhi/qqxing/pasture/activity/6318274?activityId=90121061401&shareUuid=15739046ca684e8c8fd303c8a14e889a&adsource=null&shareuserid4minipg=Ej42XlmwUZpSlF8TzjHBW2Sy3WQlSnqzfk0%2FaZMj9YjTmBx5mleHyWG1kOiKkz%2Fk&shopid=undefined&lng=107.146945&lat=33.255267&sid=cad74d1c843bd47422ae20cadf6fe5aw&un_area=8_573_6627_52446',
             'user-agent': 'jdapp;android;10.0.4;11;2393039353533623-7383235613364343;network/wifi;model/Redmi K30;addressid/138549750;aid/290955c2782e1c44;oaid/b30cf82cacfa8972;osVer/30;appBuild/88641;partner/xiaomi001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; Redmi K30 Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045537 Mobile Safari/537.36',
             'content-type': 'application/x-www-form-urlencoded',
-            'Cookie': cookie,
-            // 'Cookie': `${cookie} IsvToken=${$.IsvToken};AUTH_C_USER=${$.pin}`,
+            'Cookie': `${cookie} IsvToken=${$.IsvToken};AUTH_C_USER=${$.pin}`,
         }
     }
 }
@@ -637,8 +576,7 @@ function taskPostUrl(url, body) {
             'Referer': 'https://lzdz-isv.isvjcloud.com/dingzhi/qqxing/pasture/activity/6318274?activityId=90121061401&shareUuid=15739046ca684e8c8fd303c8a14e889a&adsource=null&shareuserid4minipg=Ej42XlmwUZpSlF8TzjHBW2Sy3WQlSnqzfk0%2FaZMj9YjTmBx5mleHyWG1kOiKkz%2Fk&shopid=undefined&lng=107.146945&lat=33.255267&sid=cad74d1c843bd47422ae20cadf6fe5aw&un_area=8_573_6627_52446',
             'user-agent': 'jdapp;android;10.0.4;11;2393039353533623-7383235613364343;network/wifi;model/Redmi K30;addressid/138549750;aid/290955c2782e1c44;oaid/b30cf82cacfa8972;osVer/30;appBuild/88641;partner/xiaomi001;eufv/1;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 11; Redmi K30 Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045537 Mobile Safari/537.36',
             'content-type': 'application/x-www-form-urlencoded',
-            'Cookie': cookie,
-            // 'Cookie': `${cookie} IsvToken=${$.IsvToken};AUTH_C_USER=${$.pin};`,
+            'Cookie': `${cookie} IsvToken=${$.IsvToken};AUTH_C_USER=${$.pin};${$.lz_jdpin_token}`,
         }
     }
 }

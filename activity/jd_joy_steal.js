@@ -6,21 +6,21 @@ jd宠汪汪偷好友积分与狗粮,及给好友喂食
 偷好友积分上限是20个好友(即获得100积分)，帮好友喂食上限是20个好友(即获得200积分)，偷好友狗粮上限也是20个好友(最多获得120g狗粮)
 IOS用户支持京东双账号,NodeJs用户支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
-如果开启了给好友喂食功能，建议先凌晨0点运行jd_joy.js脚本获取狗粮后，再运行此脚本(https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joy_steal.js)可偷好友积分，6点运行可偷好友狗粮
+如果开启了给好友喂食功能，建议先凌晨0点运行jd_joy.js脚本获取狗粮后，再运行此脚本(https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js)可偷好友积分，6点运行可偷好友狗粮
 ==========Quantumult X==========
 [task_local]
 #宠汪汪偷好友积分与狗粮
-10 0-21/3 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joy_steal.js, tag=宠汪汪偷好友积分与狗粮, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
+10 0-21/3 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, tag=宠汪汪偷好友积分与狗粮, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
 
 =======Loon========
 [Script]
-cron "10 0-21/3 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joy_steal.js,tag=宠汪汪偷好友积分与狗粮
+cron "10 0-21/3 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js,tag=宠汪汪偷好友积分与狗粮
 
 ========Surge==========
-宠汪汪偷好友积分与狗粮 = type=cron,cronexp="10 0-21/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joy_steal.js
+宠汪汪偷好友积分与狗粮 = type=cron,cronexp="10 0-21/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js
 
 =======小火箭=====
-宠汪汪偷好友积分与狗粮 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_joy_steal.js, cronexpr="10 0-21/3 * * *", timeout=3600, enable=true
+宠汪汪偷好友积分与狗粮 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, cronexpr="10 0-21/3 * * *", timeout=3600, enable=true
 */
 const $ = new Env('宠汪汪偷好友积分与狗粮');
 const zooFaker = require('./utils/JDJRValidator_Pure');

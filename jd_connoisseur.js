@@ -6,17 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #内容鉴赏官
-15 3,6 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_connoisseur.js, tag=内容鉴赏官, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+15 3,6 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js, tag=内容鉴赏官, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "15 3,6 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_connoisseur.js,tag=内容鉴赏官
+cron "15 3,6 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js,tag=内容鉴赏官
 
 ===============Surge=================
-内容鉴赏官 = type=cron,cronexp="15 3,6 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_connoisseur.js
+内容鉴赏官 = type=cron,cronexp="15 3,6 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js
 
 ============小火箭=========
-内容鉴赏官 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_connoisseur.js, cronexpr="15 3,6 * * *", timeout=3600, enable=true
+内容鉴赏官 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js, cronexpr="15 3,6 * * *", timeout=3600, enable=true
  */
 const $ = new Env('内容鉴赏官');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -43,30 +43,12 @@ let allMessage = '';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  let res = await getAuthorShareCode('')
-  for (let i = 0; i < cookiesArr.length; i++) {
-    if (cookiesArr[i]) {
-      cookie = cookiesArr[i];
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-      $.index = i + 1;
-      $.isLogin = true;
-      $.nickName = '';
-      message = '';
-      await TotalBean();
-      isLoginInfo[$.UserName] = $.isLogin
-      console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
-      if (!$.isLogin) {
-        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-
-        if ($.isNode()) {
-          await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-        }
-        continue
-      }
-      await jdConnoisseur()
-    }
-  }
-  $.shareCodes = [...new Set([...$.shareCodes, ...(res || [])])]
+  // let res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/connoisseur.json')
+  // if (!res) {
+  //   $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/connoisseur.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+  //   await $.wait(1000)
+  //   res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/connoisseur.json')
+  // }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];

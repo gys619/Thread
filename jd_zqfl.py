@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*
 """
+建议cron: 40 0,1 * * *  python3 jd_zqfl.py
+new Env('领京豆-早起福利');
 领京豆-早起福利，每天8点前访问领取额外京豆奖励
-2021-07-05 修改增加错误重试
 """
 
 cookies = ''
@@ -151,8 +152,9 @@ def start():
     print("### 领京豆-早起福利 ###")
     global cookiesList, userNameList, pinNameList
     cookiesList, userNameList, pinNameList = getCk.iscookie()
-    for ck in cookiesList:        
-        url = 'https://api.m.jd.com/client.action?functionId=morningGetBean&area=22_1930_50948_52157&body=%7B%22rnVersion%22%3A%224.7%22%2C%22fp%22%3A%22-1%22%2C%22eid%22%3A%22%22%2C%22shshshfp%22%3A%22-1%22%2C%22userAgent%22%3A%22-1%22%2C%22shshshfpa%22%3A%22-1%22%2C%22referUrl%22%3A%22-1%22%2C%22jda%22%3A%22-1%22%7D&build=167724&client=apple&clientVersion=10.0.6&d_brand=apple&d_model=iPhone12%2C8&eid=eidI1aaf8122bas5nupxDQcTRriWjt7Slv2RSJ7qcn6zrB99mPt31yO9nye2dnwJ/OW%2BUUpYt6I0VSTk7xGpxEHp6sM62VYWXroGATSgQLrUZ4QHLjQw&isBackground=N&joycious=60&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=32280b23f8a48084816d8a6c577c6573c162c174&osVersion=14.4&partner=apple&rfs=0000&scope=01&screen=750%2A1334&sign=0c19e5962cea97520c1ef9a2e67dda60&st=1625354180413&sv=112&uemps=0-0&uts=0f31TVRjBSsqndu4/jgUPz6uymy50MQJSPYvHJMKdY9TUw/AQc1o/DLA/rOTDwEjG4Ar9s7IY4H6IPf3pAz7rkIVtEeW7XkXSOXGvEtHspPvqFlAueK%2B9dfB7ZbI91M9YYXBBk66bejZnH/W/xDy/aPsq2X3k4dUMOkS4j5GHKOGQO3o2U1rhx5O70ZrLaRm7Jy/DxCjm%2BdyfXX8v8rwKw%3D%3D&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D&wifiBssid=c99b216a4acd3bce759e369eaeeafd7'
+    for ck in cookiesList:
+        print(f"账号：{userNameList[cookiesList.index(ck)]}")
+        url = 'https://api.m.jd.com/client.action?functionId=morningGetBean&area=22_1930_50948_52157&body=%7B%22rnVersion%22%3A%224.7%22%2C%22fp%22%3A%22-1%22%2C%22eid%22%3A%22%22%2C%22shshshfp%22%3A%22-1%22%2C%22userAgent%22%3A%22-1%22%2C%22shshshfpa%22%3A%22-1%22%2C%22referUrl%22%3A%22-1%22%2C%22jda%22%3A%22-1%22%7D&build=167724&client=apple&clientVersion=10.0.6&d_brand=apple&d_model=iPhone12%2C8&eid=eidI1aaf8122bas5nupxDQcTRriWjt7Slv2RSJ7qcn6zrB99mPt31yO9nye2dnwJ/OW%2BUUpYt6I0VSTk7xGpxEHp6sM62VYWXroGATSgQLrUZ4QHLjQw&isBackground=N&joycious=60&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=32280b23f8a48084816d8a6c577c6573c162c174&osVersion=14.4&partner=apple&rfs=0000&scope=01&screen=750%2A1334&sign=0c19e5962cea97520c1ef9a2e67dda60&st=1625354180413&sv=112&uemps=0-0&uts=0f31TVRjBSsqndu4/jgUPz6uymy50MQJSPYvHJMKdY9TUw/AQc1o/DLA/rOTDwEjG4Ar9s7IY4H6IPf3pAz7rkIVtEeW7XkXSOXGvEtHspPvqFlAueK%2B9dfB7ZbI91M9YYXBBk66bejZnH/W/xDy/aPsq2X3k4dUMOkS4j5GHKOGQO3o2U1rhx5O70ZrLaRm7Jy/DxCjm%2BdyfXX8v8rwKw%3D%3D&uuid=&wifiBssid='
         header = {
             'Cookie': ck,
             'Accept': '*/*',
@@ -162,26 +164,16 @@ def start():
             'Accept-Language': 'zh-Hans-CN;q=1',
             'Host': 'api.m.jd.com'
         }
-        maxTryNum = 20
-        tries=1
-        print(f"账号：{userNameList[cookiesList.index(ck)]}")
-        for tries in range(maxTryNum):
-            try:           
-                resp = requests.get(url=url, headers=header, verify=False, timeout=30).json()
-                print(resp['data']['bizMsg'])
-                if int(resp['data']['awardResultFlag']) == 1:
-                    print(f"获得{resp['data']['beanNum']}京豆")
-                else:
-                    print("任务失败，可能已过时间或者已经领取过!")
-                break
-            except:
-                if tries < (maxTryNum - 1):
-                    continue
-                else:
-                    print("重试了20次仍然无法获取返回数据, 任务失败!")
-                    break
-   
-        
+        try:
+            resp = requests.get(url=url, headers=header, verify=False, timeout=30).json()
+            print(resp['data']['bizMsg'])
+            if int(resp['data']['awardResultFlag']) == 1:
+                print(f"获得{resp['data']['beanNum']}京豆")
+            time.sleep(0.5)
+        except Exception as e:
+            print(e)
+            continue
+
     print("运行结束")
 
 

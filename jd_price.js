@@ -1,23 +1,24 @@
 /*
 京东保价
-by 标哥丶 220120
+
 已支持IOS双京东账号,Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #京东保价
-39 20 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_price.js, tag=京东保价, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+41 23 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_price.js, tag=京东保价, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "39 20 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_price.js,tag=京东保价
+cron "41 23 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_price.js,tag=京东保价
 
 ===============Surge=================
-京东保价 = type=cron,cronexp="39 20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_price.js
+京东保价 = type=cron,cronexp="41 23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_price.js
 
 ============小火箭=========
-京东保价 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_price.js, cronexpr="39 20 * * *", timeout=3600, enable=true
+京东保价 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_price.js, cronexpr="41 23 * * *", timeout=3600, enable=true
  */
+// by 标哥丶 220120
 const $ = new Env('京东保价');
 const CryptoJS = require('crypto-js');
 const notify = $.isNode() ? require('./sendNotify') : '';

@@ -6,7 +6,7 @@
 ===========================
 [task_local]
 #京东通天塔--签到
-3 1,11 * * * jd_m_sign.js, tag=京东通天塔--签到, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+3 0 * * * jd_m_sign.js, tag=京东通天塔--签到, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
  */
 
 const $ = new Env('京东通天塔--签到');
@@ -72,12 +72,6 @@ async function jdsign() {
     await getInfo("https://pro.m.jd.com/mall/active/kPM3Xedz1PBiGQjY4ZYGmeVvrts/index.html");//陪伴
     await $.wait(1000)
     await getInfo("https://pro.m.jd.com/mall/active/3SC6rw5iBg66qrXPGmZMqFDwcyXi/index.html");//京东图书
-//     await getInfo("https://pro.m.jd.com/mall/active/ZrH7gGAcEkY2gH8wXqyAPoQgk6t/index.html");//箱包签到
-//     await $.wait(1000)
-//     await getInfo("https://pro.m.jd.com/mall/active/4RXyb1W4Y986LJW8ToqMK14BdTD/index.html");//鞋靴馆签到
-
-//     await $.wait(1000)
-//     await getInfo("https://pro.m.jd.com/mall/active/3joSPpr7RgdHMbcuqoRQ8HbcPo9U/index.html");//生活特权签到
   } catch (e) {
     $.logErr(e)
   }
