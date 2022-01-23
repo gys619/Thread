@@ -1,12 +1,6 @@
 /*
 #天天压岁钱
-京喜App-下方中间-天天压岁钱
-33 0,14,20 * * * jx_ttysq.js
-
-#############
-PS:(不是玩代码的人，写代码有bug很正常！！)
-
-
+50 0,14,20 * * * jd_ttysq.js
  */
 const $ = new Env('天天压岁钱');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -16,8 +10,9 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [],
     cookie = '',
     secretp = '',
-    joyToken = "";
-$.shareCoseList = [];
+    joyToken = "",
+    UA = `jdpingou;iPhone;4.13.0;14.4.2;${randomString(40)};network/wifi;model/iPhone10,2;appBuild/100609;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/1;hasOCPay/0;supportBestPay/0;session/${Math.random * 98 + 1};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
+$.shareCoseList = []
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -57,9 +52,9 @@ const JD_API_HOST = `https://m.jingxi.com`;
             }
         }
     }
-    let res = await getAuthorShareCode('https://raw.githubusercontent.com/555555/updateTeam/main/shareCodes/ttysq2.json')
+    let res = await getAuthorShareCode('https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/ttysq2.json')
     if (!res) {
-        res = await getAuthorShareCode('https://raw.fastgit.org/555555/updateTeam/main/shareCodes/ttysq2.json')
+        res = await getAuthorShareCode('https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/ttysq2.json')
     }
     if (res) {
         authorCode = res.sort(() => 0.5 - Math.random())
@@ -77,7 +72,7 @@ const JD_API_HOST = `https://m.jingxi.com`;
         })
         $.shareCoseList = [...$.shareCoseList, ...authorCode]
     }
-    console.log(`要助力的助理码${JSON.stringify($.shareCoseList.length)}个\n`)
+    console.log(`要助力的助力码${JSON.stringify($.shareCoseList.length)}个\n`)
     //助力任务
     for (let i = 0; i < cookiesArr.length; i++) {
         $.canHelp = true
@@ -102,12 +97,15 @@ const JD_API_HOST = `https://m.jingxi.com`;
                         console.log(`助力任务`)
                         await task(`jxnhj/DoTask`, `taskId=${$.taskId}&strShareId=${$.shareCoseList[y].code}&bizCode=jxnhj_task&configExtra=`);
                         if ($.max === true){$.shareCoseList[y].beHelp = false}
-                        await $.wait(3000);
+                        await $.wait(6000);
                         if ($.canHelp === false) { break }
                     }
                 }
             }
         }
+        if (i != cookiesArr.length - 1) {
+                await $.wait(5000)
+            }
     };
     //助力红包
     for (let i = 0; i < cookiesArr.length; i++) {
@@ -135,7 +133,7 @@ const JD_API_HOST = `https://m.jingxi.com`;
                         console.log(`助力红包，Id: ${$.shareCoseList[y].redId}`)
                         await task(`jxnhj/BestWishes`, `shareId=${$.shareCoseList[y].code}&id=${$.shareCoseList[y].redId}`);
                         if ($.goHelp === true) {
-                            await $.wait(1000)
+                            await $.wait(3000)
                             await task(`jxnhj/WishHelp`, `id=${$.shareCoseList[y].redId}&shareId=${$.shareCoseList[y].code}`);
                             $.doHelpTimes += 1;
                             $.shareCoseList[y].beHelp += 1;
@@ -149,8 +147,8 @@ const JD_API_HOST = `https://m.jingxi.com`;
     };
     if ($.message) await notify.sendNotify(`${$.name}`, `${message}\n`);
 })()
-    .catch((e) => $.logErr(e))
-    .finally(() => $.done())
+.catch((e) => $.logErr(e))
+.finally(() => $.done())
 
 function getAuthorShareCode(url) {
     return new Promise(async resolve => {
@@ -174,6 +172,13 @@ function getAuthorShareCode(url) {
         resolve();
     })
 }
+function randomString(e) {
+  e = e || 32;
+  let t = "0123456789abcdef", a = t.length, n = "";
+  for (let i = 0; i < e; i++)
+    n += t.charAt(Math.floor(Math.random() * a));
+  return n
+}
 
 async function main() {
     try {
@@ -193,8 +198,8 @@ async function main() {
                     $.taskName = $.oneTask.taskName
                     console.log(`去做${$.taskName}`)
                     await task(`jxnhj/DoTask`, `taskId=${$.taskId}&strShareId=&bizCode=jxnhj_task&configExtra=`)
-                    console.log(`等待5秒`)
-                    await $.wait(5100)
+                    console.log(`等待6秒`)
+                    await $.wait(8100)
                     await task(`newtasksys/newtasksys_front/Award`, `taskId=${$.taskId}&bizCode=jxnhj_task&source=jxnhj_task`)
                 }
                 if ([4].includes($.oneTask.taskType)) {
@@ -214,7 +219,7 @@ async function main() {
             for (let w = 0; w < $.lotteryNum; w++) {
                 console.log(`可以抽奖${$.lotteryNum}次 ==>>第${w+1}次抽奖`)
                 await task(`jxnhj/GreetUpgrade`)
-                await $.wait(1000)
+                await $.wait(3000)
             }
         }
     } catch (e) {
@@ -369,7 +374,7 @@ function getToken(timeout = 0) {
 
 function taskUrl(function_path, body = '', dwEnv = 7) {
     let url = `${JD_API_HOST}/${function_path}?__t=${Date.now()}&dwEnv=${dwEnv}&${body}&_stk=__t%2CbizCode%2CconfigExtra%2CdwEnv%2CstrShareId%2CtaskId&_ste=1`;
-    url += `&h5st=${Date.now(), '', '', url}&_=${Date.now() + 2}&sceneval=2&g_login_type=1&g_ty=ajax`;
+    url += `&h5st=${Date.now(), '', '', url}&sceneval=2&g_login_type=1&g_ty=ajax`;
     return {
         url,
         headers: {
@@ -379,7 +384,7 @@ function taskUrl(function_path, body = '', dwEnv = 7) {
             Referer: "https://st.jingxi.com/promote/2022/spring2022/index.html?ptag=139419.6.28&sceneval=2",
             "Accept-Encoding": "gzip, deflate, br",
             "origin": "https://st.jingxi.com",
-            "User-Agent": "jdpingou;android;5.17.0;appBuild/19876;session/414;pap/JA2019_3111789;ef/1;ep/%7B%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22ts%22%3A1642052542608%2C%22ridx%22%3A-1%2C%22cipher%22%3A%7B%22bd%22%3A%22%22%2C%22ad%22%3A%22EJVwZwYmYJq4DWU5YwO3CG%3D%3D%22%2C%22sv%22%3A%22CJO%3D%22%2C%22od%22%3A%22DJPrDzVvYJTrZNVwCtq2CK%3D%3D%22%2C%22ud%22%3A%22EJVwZwYmYJq4DWU5YwO3CG%3D%3D%22%7D%2C%22ciphertype%22%3A5%2C%22version%22%3A%221.2.0%22%2C%22appname%22%3A%22com.jd.pingou%22%7D;Mozilla/5.0 (Linux; Android 11; M2007J3SC Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/96.0.4664.92 Mobile Safari/537.36",
+            "User-Agent": UA,
             "Accept-Language": "zh-cn",
         },
         timeout: 10000
@@ -391,7 +396,7 @@ function taskPostUrl(functionId, body = {}) {
         url: `${JD_API_HOST}?functionId=${functionId}`,
         body: `functionId=${functionId}&body=${JSON.stringify(body)}&_t=${Date.now()}&appid=activities_platform&client=wh5&clientVersion=1.0.0`,
         headers: {
-            'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+            'User-Agent': UA,
             'Content-Type': 'application/x-www-form-urlencoded',
             'Host': 'api.m.jd.com',
             'Cookie': cookie,

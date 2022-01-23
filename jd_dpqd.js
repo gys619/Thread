@@ -1,23 +1,17 @@
 /*
-cron 0 0 * * * jd_dpqd.js
 店铺签到，各类店铺签到，有新的店铺直接添加token即可
-搬运cui521大佬脚本，请勿外传！！！
-环境变量:
-DPQDTK: token1&token2
-仓库不再提供token
+============Quantumultx===============
+[task_local]
+#店铺签到
+15 2,14 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_shop_sign.js, tag=店铺签到, enabled=true
+===========Loon============
+[Script]
+cron "15 2,14 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_shop_sign.js,tag=店铺签到
+============Surge=============
+店铺签到 = type=cron,cronexp="15 2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_shop_sign.js
+===========小火箭========
+店铺签到 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_shop_sign.jss, cronexpr="15 2,14 * * *", timeout=3600, enable=true
 */
-let token = []
-if (process.env.DPQDTK) {
-  if (process.env.DPQDTK.includes('\n')) {
-    token = [...process.env.DPQDTK.split('\n'),...token]
-  } else {
-    token = [...process.env.DPQDTK.split('&'),...token]
-  }
-}
-if (!token.length) {
-  console.log('无店铺签到token,不执行.需自备token:环境变DPQDTK: tk1&tk2.')
-  return
-}
 const $ = new Env('店铺签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -30,6 +24,27 @@ let activityId=''
 let vender=''
 let num=0
 let shopname=''
+const token = [
+  "C22CEFD33E8331E6859BEC93C2BDF537",
+  "851A07C25A65DF722EF2731EBFF7CBE1",
+  "C4FF5A919CEE68F9669A32950697694C",
+  "6AC2C359FD6F8676976E8D355F777E1D",
+  "7A64973CD1A0873108CB2E4740A86D7D",
+  "C7048BA40D33EEFFBFABA3714A7A4693",
+  "B6676C89BE1BDCEADDCF522BDD6C3BC3",
+  "BBDC1893E731CFC07945196E7E4496DC",
+  "7AFD6CBB744454967F5086EF6737CE91",
+  "AFC71B4BFEFD168AF0889313EC642ABB",
+  "344CDCE624282AB0D50E71F002064A59",
+  "755A1AA058A02D18CCB4D239E35FCB5B",
+  "7765870BE5277C77671BB516128A54CD",
+  "CD5CE31B72FE8799D4572EBD2A8DF81A",
+  "08FBC4EE41DE216E0FA610A7B82ECE53",
+  "F21F54D77A164114746ABFBFD509393F",
+  "332C448EA5D09D5627B7068C502CDE9A",
+  "3B4780A6320DA492A1FA6FA44519DF06",
+  "8C7BF004FFC34BC7F69EBABA72D07452"
+]
 
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {

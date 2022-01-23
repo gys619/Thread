@@ -132,7 +132,7 @@ async function GetHomePageInfo() {
 // 撸珍珠
 async function Pearl(){
   try{
-    await $.wait(2000)
+    await $.wait(1500)
     $.ComposeGameState = await taskGet(`user/ComposePearlState`, '', '&dwGetType=0')
     console.log(`\n当前有${$.ComposeGameState.dwCurProgress}个珍珠${$.ComposeGameState.ddwVirHb && ' '+$.ComposeGameState.ddwVirHb/100+"红包" || ''}`)
     if($.ComposeGameState.dayDrawInfo.dwIsDraw == 0){
@@ -158,11 +158,11 @@ async function Pearl(){
       console.log(`合珍珠${b}次 `)
       // b = 8-$.ComposeGameState.dwCurProgress
       for(i=1;b--;i++){
-        let n = Math.ceil(Math.random()*20+20)
+        let n = Math.ceil(Math.random()*8+8)
         console.log(`上报次数${n}`)
         for(m=1;n--;m++){
           console.log(`上报第${m}次`)
-          await $.wait(5000)
+          await $.wait(3000)
           await taskGet(`user/RealTmReport`, '', `&dwIdentityType=0&strBussKey=composegame&strMyShareId=${$.ComposeGameState.strMyShareId}&ddwCount=10`)
           let s = Math.floor((Math.random()*3))
           let n = 0

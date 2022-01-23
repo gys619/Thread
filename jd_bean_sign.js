@@ -1,6 +1,6 @@
 /*
 Node.JS专用
-cron 0 0 * * *  https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_bean_sign.js
+cron 0 0 * * *  jd_bean_sign.js
 金融签到有一定使用门槛,需要请仔细阅读下方文字:
 JRBODY抓取网站:ms.jr.jd.com/gw/generic/hy/h5/m/appSign(进入金融APP签到页面手动签到);抓取请求body,格式:"reqData=xxx"
 变量填写示例:JRBODY: reqData=xxx&reqData=xxx&&reqData=xxx(比如第三个号没有,则留空,长度要与CK一致)
@@ -26,7 +26,7 @@ const jr_file = 'JRBODY.txt'
 const readline = require('readline')
 let cookiesArr = []
 let notification = ''
-const stopVar = process.env.JD_BEAN_STOP ? process.env.JD_BEAN_STOP : '2000-5000';
+const stopVar = process.env.JD_BEAN_STOP ? process.env.JD_BEAN_STOP : '2000-3000';
 console.log('Stop:',stopVar)
 
 async function processLineByLine(jrbodys) {

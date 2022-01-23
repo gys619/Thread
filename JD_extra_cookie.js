@@ -51,7 +51,7 @@ function GetCookie() {
     if ($request.headers && $request.url.indexOf("GetJDUserInfoUnion") > -1) {
       var CV = $request.headers["Cookie"] || $request.headers["cookie"];
       if (CV.match(/(pt_key=.+?pt_pin=|pt_pin=.+?pt_key=)/)) {
-        var CookieValue = CV.match(/pt_key=.+?;/) + CV.match(/pt_pin=.+?;/);
+        var CookieValue = CV.match(/pt_key=.+?;/)[0] + CV.match(/pt_pin=([^; ]+)(?=;?)/)[0] + ';';
         var UserName = CookieValue.match(/pt_pin=([^; ]+)(?=;?)/)[1];
         var DecodeName = decodeURIComponent(UserName);
         var CookiesData = getCache();
@@ -61,7 +61,7 @@ function GetCookie() {
         var updateCodkie = CookiesData.find((item, index) => {
           var ck = item.cookie;
           var Account = ck
-            ? ck.match(/pt_pin=.+?;/)
+            ? ck.match(/pt_pin=([^; ]+)(?=;?)/)
               ? ck.match(/pt_pin=([^; ]+)(?=;?)/)[1]
               : null
             : null;

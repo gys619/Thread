@@ -1,9 +1,10 @@
 /*
-发财大赢家助力
-更新时间：2021-7-15
-0 0 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_dyj_help.js
+发财大赢家助力-快速
+环境变量：
+export dyjHelpPins="pin值"  多个账号请使用@链接
+11 0,5 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_dyj_help.js
 */
-const $ = new Env("发财大赢家助力")
+const $ = new Env("发财大赢家助力-快速")
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
 let cookiesArr = []
 let pins = process.env.dyjHelpPins ?? ""
@@ -52,7 +53,7 @@ let tools = []
     }
 })()
 function openRedEnvelopeInteract(body = {}) {
-     body.linkId = "yMVR-_QKRd2Mq27xguJG-w"
+     body.linkId = "PFbUR7wtwUcQ860Sn8WRfw"
      return new Promise(resolve => {
          $.get({
              url: "https://api.m.jd.com/?functionId=openRedEnvelopeInteract&body="+JSON.stringify(body)+"&t=" + Date.now() + "&appid=activities_platform&clientVersion=3.5.6",
@@ -81,7 +82,7 @@ function openRedEnvelopeInteract(body = {}) {
  function redEnvelopeInteractHome() {
      return new Promise(resolve => {
          $.get({
-             url: "https://api.m.jd.com/?functionId=redEnvelopeInteractHome&body={%22linkId%22:%22yMVR-_QKRd2Mq27xguJG-w%22,%22redEnvelopeId%22:%22%22,%22inviter%22:%22%22,%22helpType%22:%22%22}&t=" + Date.now() + "&appid=activities_platform&clientVersion=3.5.6",
+             url: "https://api.m.jd.com/?functionId=redEnvelopeInteractHome&body={%22linkId%22:%22PFbUR7wtwUcQ860Sn8WRfw%22,%22redEnvelopeId%22:%22%22,%22inviter%22:%22%22,%22helpType%22:%22%22}&t=" + Date.now() + "&appid=activities_platform&clientVersion=3.5.6",
              headers: {
                  'Cookie': cookie,
                  'Accept': '*/*',

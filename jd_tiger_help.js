@@ -1,8 +1,8 @@
 /*
 萌虎摇摇乐
 https://yearfestival.jd.com
-优先内部互助,剩余次数助力作者和助力池
-cron 0 0,18 * * * jd_tiger_help.js
+优先内部互助,剩余次数助力作者
+cron 8 0,18 * * * jd_tiger_help.js
 转义自HW大佬
 const $ = new Env('萌虎摇摇乐助力');
 */
@@ -66,9 +66,9 @@ Object.keys(jdCookieNode).forEach((item) => {
         }
     }
     let authorCode = []
-    let res = await getAuthorShareCode('')
+    let res = await getAuthorShareCode('https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/tiger.json')
     if (!res) {
-        res = await getAuthorShareCode('')
+        res = await getAuthorShareCode('https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/tiger.json')
     }
     if (res) {
         authorCode = res.sort(() => 0.5 - Math.random())
@@ -80,14 +80,13 @@ Object.keys(jdCookieNode).forEach((item) => {
     for (let i = 0; i < cookiesArr.length; i++) {
         cookie = cookiesArr[i]
         const userName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
-        const pool = await getShareCodePool('tiger', 5)
         // if (shareCodesHW.length === 0) {
         //     shareCodesHW = await getshareCodeHW('tiger')
         // }
         // index === 0 ?
         //     shareCodes = Array.from(new Set([...shareCodesHW, ...shareCodesSelf, ...temp])) :
         //     shareCodes = Array.from(new Set([...shareCodesSelf, ...shareCodesHW, ...temp]))
-        shareCodes = Array.from(new Set([...shareCodesSelf, ...authorCode, ...pool]))
+        shareCodes = Array.from(new Set([...shareCodesSelf, ...authorCode]))
         // console.log(shareCodes)
         for (let code of shareCodes) {
             console.log(`账号${i + 1} 去助力 ${code} ${shareCodesSelf.includes(code) ? '(内部)' : ''}`)
@@ -119,9 +118,10 @@ Object.keys(jdCookieNode).forEach((item) => {
         try {
             let res = await api({ "apiMapping": "/api/index/indexInfo" })
             let lotteryNum = res.data.lotteryNum
+            console.log('抽奖次数：', lotteryNum)
             for (let i = 0; i < lotteryNum; i++) {
                 res = await api({ "apiMapping": "/api/lottery/lottery" })
-                console.log('抽奖：', res.data.prizeName)
+                console.log('抽奖', i + 1, '/', lotteryNum, res.data.prizeName)
                 await wait(4000)
             }
         } catch (e) {
