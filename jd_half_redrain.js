@@ -173,7 +173,7 @@ function redRainId(url) {
 }
 
 function rraUrl() {
-    let url = "http://r0a79r6l0.hb-bkt.clouddn.com/jd-half-rain.json";
+    let url = "https://gitee.com/msewb/update/raw/master/m_redrain_half_5232420221612.json";
     if ($.isNode() && process.env.JD_HALF_RRA_URL) {
         url = process.env.JD_HALF_RRA_URL;
     } else if ($.getdata("jdHalfRRAUrl")) {
