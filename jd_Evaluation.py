@@ -5,7 +5,6 @@
 '''
 new Env('京东自动评价');
 '''
-
 import os
 import random
 import re
@@ -280,7 +279,7 @@ def generation(pname, _class=0, _type=1):
         if _type == 1:
             # return 5, '东西很好，孩子很喜欢，每天晚上不抱着碎觉，就完全睡不着。买的时候看见评论里都说好就买了，看到发货的时候挺激动的，到了之后，满怀期待一激动得从快递员那里拿回了寝室，试一下，结果挺不错啊！而且客服小姐姐也特别的好，很有礼貌，客服小姐姐也是秒回我的疑问呢，嘻嘻，下次还会回购哒。'
             comments = datas[_type]
-            return random.randint(3, 5), (
+            return random.randint(5, 5), (
                     random.choice(comments["开始"]) + random.choice(comments["中间"]) + random.choice(comments["结束"])).replace("$", name)
         elif _type == 0:
             comments = datas[_type]
@@ -329,11 +328,11 @@ def start():
                 # 'pin': '%E9%82%B1%E5%B8%85%E7%9A%AE%E7%9A%AE%E8%99%BE',
                 'userclient': '29',
                 'orderId': da["oid"],
-                'otype': random.randint(3, 5),
-                'DSR1': random.randint(3, 5),
-                'DSR2': random.randint(3, 5),
-                'DSR3': random.randint(3, 5),
-                'DSR4': random.randint(3, 5),
+                'otype': random.randint(5, 5),
+                'DSR1': random.randint(5, 5),
+                'DSR2': random.randint(5, 5),
+                'DSR3': random.randint(5, 5),
+                'DSR4': random.randint(5, 5),
                 'g_login_type': '0',
                 'g_ty': 'ls'
             }
