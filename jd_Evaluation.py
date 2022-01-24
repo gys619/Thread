@@ -3,7 +3,6 @@
 # @Time : 2021/10/30 10:58
 # 京东自动评价1
 '''
-cron: 0 0 8 ? * WED  python3 jd_Evaluation.py
 new Env('京东自动评价');
 '''
 
