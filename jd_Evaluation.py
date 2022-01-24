@@ -3,12 +3,10 @@
 # @Time : 2021/10/30 10:58
 # 京东自动评价1
 '''
-项目名称: JD-Script / jd_Evaluation
-Author: qiu_lzsnmb
-功能：全自动完成评价+晒单，提高京享值，满足强迫症
-Date: 2021/10/30 上午10:58
-update: 2021.11.6 13:21
+cron: 0 0 8 ? * WED  python3 jd_Evaluation.py
+new Env('京东自动评价');
 '''
+
 import os
 import random
 import re
