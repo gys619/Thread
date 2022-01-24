@@ -1,6 +1,6 @@
 /*
 整点京豆雨
-更新时间：2021-12-8
+更新时间：2022-1-24
 脚本兼容: Quantumult X, Surge, Loon, JSBox, Node.js
 by：msechen
 github:https://github.com/msechen/jdrain
@@ -79,7 +79,7 @@ if ($.isNode()) {
       console.log(`\n甘露殿【https://t.me/jdredrain】提醒你:RRA: "${$.activityId}"不符合规则\n`);
       continue;
     }
-    for (let i = 0; i < cookiesArr.length; i++) {
+    for (let i = 0; i < 5; i++) {
       if (cookiesArr[i]) {
         cookie = cookiesArr[i];
         $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -96,7 +96,7 @@ if ($.isNode()) {
           }
           continue
         }
-        await noahRedRainLottery();
+        await queryRedRainTemplateNew($.activityId)
       }
     }
   }
@@ -112,12 +112,12 @@ if ($.isNode()) {
     $.done();
   })
 
-
-function noahRedRainLottery() {
-  const body = { "actId": $.activityId };
+// 查询红包
+function queryRedRainTemplateNew(actId) {
+  const body = { "actId": actId };
   return new Promise(async resolve => {
     const options = {
-      url: `https://api.m.jd.com/client.action?functionId=noahRedRainLottery&client=wh5&clientVersion=1.0.0&&body=${encodeURIComponent(JSON.stringify(body))}&_=${(new Date).getTime()}`,
+      url: `https://api.m.jd.com/client.action?appid=redrain-2021&functionId=queryRedRainTemplateNew&client=wh5&clientVersion=1.0.0&body=${encodeURIComponent(JSON.stringify(body))}&_=${(new Date).getTime()}`,
       headers: {
         Host: "api.m.jd.com",
         origin: 'https://h5.m.jd.com/',
@@ -133,17 +133,52 @@ function noahRedRainLottery() {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
-          console.log(`noahRedRainLottery api请求失败，请检查网路重试`)
+          console.log(`queryRedRainTemplateNew api请求失败，请检查网路重试`)
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.subCode === '0') {
-              console.log(`领取成功，获得${data.lotteryResult.jPeasList[0].quantity}个京豆`);
-              message += `领取成功，获得 ${data.lotteryResult.jPeasList[0].quantity}个京豆`
-              allMessage += `京东账号${$.index}${$.nickName || $.UserName}\n领取成功，获得 ${(data.lotteryResult.jPeasList[0].quantity)}京豆${$.index !== cookiesArr.length ? '\n\n' : ''}`;
-            } else if (data.subCode === '8') {
-              console.log(`领取失败：本场已领过`)
-              message += `领取失败，本场已领过`;
+            //console.log(data);
+            await doInteractiveAssignment(data.activityInfo.encryptProjectId, data.activityInfo.encryptAssignmentId);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
+}
+
+// 拆红包
+function doInteractiveAssignment(encryptProjectId, encryptAssignmentId) {
+  const body = { "encryptProjectId": encryptProjectId, "encryptAssignmentId": encryptAssignmentId, "completionFlag": true, "sourceCode": "acehby20210924" };
+  return new Promise(async resolve => {
+    const options = {
+      url: `https://api.m.jd.com/client.action?appid=redrain-2021&functionId=doInteractiveAssignment&client=wh5&clientVersion=1.0.0&body=${encodeURIComponent(JSON.stringify(body))}&_=${(new Date).getTime()}`,
+      headers: {
+        Host: "api.m.jd.com",
+        origin: 'https://h5.m.jd.com/',
+        Accept: "*/*",
+        "Accept-Language": "zh-cn",
+        "Accept-Encoding": "gzip, deflate, br",
+        Cookie: cookie,
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; WLZ-AN00 Build/HUAWEIWLZ-AN00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/89.0.4389.72 MQQBrowser/6.2 TBS/045811 Mobile Safari/537.36 MMWEBID/2874 MicroMessenger/8.0.15.2020(0x28000F39) Process/tools WeChat/arm64 Weixin NetType/4G Language/zh_CN ABI/arm64",
+        "Referer": `https://h5.m.jd.com/`
+      }
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`)
+          console.log(`doInteractiveAssignment api请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            data = JSON.parse(data);
+            if (data.subCode == "0") {
+              //console.log(`${data.rewardsInfo.successRewards[3][0].rewardName}`);
+              message += `领取成功，获得 ${data.rewardsInfo.successRewards[3][0].rewardName}`
+              allMessage += `京东账号${$.index}${$.nickName || $.UserName}\n领取成功，获得 ${data.rewardsInfo.successRewards[3][0].rewardName}${$.index !== cookiesArr.length ? '\n\n' : ''}`;
             } else {
               console.log(data);
             }
@@ -157,6 +192,7 @@ function noahRedRainLottery() {
     })
   })
 }
+
 
 function getRedRainIds(url) {
   return new Promise(async resolve => {

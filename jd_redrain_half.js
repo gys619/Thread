@@ -6,14 +6,14 @@ by：msechen 感谢小手大佬修改接口
 ==============Quantumult X==============
 [task_local]
 #半点京豆雨
-31 20-23/1 * * * https://raw.githubusercontent.com/msechen/jdrain/main/jd_live_redrain.js, tag=半点京豆雨, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+30 21,22 * * * https://raw.githubusercontent.com/msechen/jdrain/main/jd_live_redrain.js, tag=半点京豆雨, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 ==============Loon==============
 [Script]
-cron "31 20-23/1 * * *" script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js,tag=半点京豆雨
+cron "30 21,22 * * *" script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js,tag=半点京豆雨
 ================Surge===============
-半点京豆雨 = type=cron,cronexp="31 20-23/1 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js
+半点京豆雨 = type=cron,cronexp="30 21,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js
 ===============小火箭==========
-半点京豆雨 = type=cron,script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js, cronexpr="31 20-23/1 * * *", timeout=3600, enable=true
+半点京豆雨 = type=cron,script-path=https://raw.githubusercontent.com/msechen/jdrain/main/jd_redrain_half.js, cronexpr="30 21,22 * * *", timeout=3600, enable=true
 */
 const $ = new Env('半点京豆雨');
 let allMessage = '', id = '';
@@ -40,16 +40,21 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     return;
   }
   if (!jd_redrain_half_url) {
-    $.log(`\n甘露殿【https://t.me/jdredrain】提醒你:今日龙王🐲出差，天气晴朗☀️，改日再来～\n`);
-    return;
+    $.log(`尝试使用默认远程url`);
+    jd_redrain_half_url = 'https://raw.githubusercontent.com/Ca11back/scf-experiment/master/json/redrain_half.json'
   }
   let hour = (new Date().getUTCHours() + 8) % 24;
   $.log(`\n甘露殿【https://t.me/jdredrain】提醒你:正在远程获取${hour}点30分京豆雨ID\n`);
   await $.wait(1000);
-  let redIds = await getRedRainIds(jd_redrain_half_url);
-  if (!redIds.length) {
-    $.log(`\n甘露殿【https://t.me/jdredrain】提醒你:今日龙王🐲出差，天气晴朗☀️，改日再来～\n`);
-    return;
+  let redIds = await getRedRainIds(jd_redrain_half_url)
+  if (!redIds || !redIds.length) {
+    $.log(`尝试使用cdn`);
+    jd_redrain_half_url = 'https://raw.fastgit.org/Ca11back/scf-experiment/master/json/redrain_half.json'
+    redIds = await getRedRainIds(jd_redrain_half_url)
+    if (!redIds || !redIds.length) {
+      $.log(`默认远程url获取失败`);
+      return
+    }
   }
   for (let id of redIds) {
     if (!/^RRA/.test(id)) {
