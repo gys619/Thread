@@ -349,9 +349,9 @@ function doJoyMerge(joyId1, joyId2) {
         } else {
           data = JSON.parse(data);
           $.log(`合成 ${joyId1} <=> ${joyId2} ${data.success ? `成功！` : `失败！【${data.errMsg}】 code=${data.code}`}`)
-          if (data.code == '1006') {
-            hot_flag = true
-          }
+          // if (data.code == '1006') {
+          //   hot_flag = true
+          // }
         }
       } catch (e) {
         $.logErr(e, resp)
