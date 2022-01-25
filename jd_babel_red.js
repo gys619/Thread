@@ -2,7 +2,7 @@
 cron 0 20-23/1 * * * jd_babel_red.js
 TG频道：https://t.me/sheeplost
 */
-const $ = new Env('会场红包');
+const $ = new Env('会场红包雨');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
