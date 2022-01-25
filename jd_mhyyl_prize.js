@@ -1,14 +1,11 @@
 /*
-萌虎摇摇乐送卡，一次性脚本，需要就运行下，不用加定时
-若账号有2张卡，并且其他账号缺这张卡，则会赠送
-PS：一旦开始执行脚本，则不要暂停，暂停可能导致卡片消失
-https://raw.githubusercontent.com/star261/jd/main/scripts/jd_mhyyl_sendCard.js
+萌虎摇摇乐账号获奖情况
+cron 10 22 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_mhyyl_prize.js
 * */
-const $ = new Env('萌虎摇摇乐送卡');
+const $ = new Env('萌虎摇摇乐奖励列表');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [];
-let needKardInfo = {};
-let haveCardInfo = {};
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -20,6 +17,7 @@ if ($.isNode()) {
         $.getdata("CookieJD2"),
         ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
+let message = '';
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -29,156 +27,56 @@ if ($.isNode()) {
         console.log(`活动结束`);
         return ;
     }
-    console.log(`\n===========================获取账号卡片缺失情况===========================\n`);
     for (let i = 0; i < cookiesArr.length; i++) {
-        if (cookiesArr[i]) {
-            $.cookie = cookiesArr[i];
-            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-            $.index = i + 1;
-            await main($.cookie,1);
-        }
-        await $.wait(1000)
+        $.index = i+1;
+        await main(cookiesArr[i]);
     }
-    console.log(`\n===========================赠送卡片===========================\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
-        if (cookiesArr[i]) {
-            $.cookie = cookiesArr[i];
-            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-            $.index = i + 1;
-            let runFg = false;
-            for(let cardName in needKardInfo){
-                let oneCardInfo = needKardInfo[cardName];
-                for(let needUser in oneCardInfo){
-                    if(needUser !== $.UserName){
-                        let oneInfo = oneCardInfo[needUser];
-                        if(oneInfo.flag === '1' && haveCardInfo[cardName+$.UserName] && haveCardInfo[cardName+$.UserName] > 1){
-                            runFg = true;
-                        }
-                    }
-                }
-            }
-            if(runFg){
-                await main($.cookie,2);
-                await $.wait(1000)
-            }else{
-               // console.log(`\n${$.UserName},没有多余卡片赠送`);
-            }
-        }
+    if(message){
+        message += `请尽快进APP填写地址`;
+        await notify.sendNotify(`萌虎摇摇乐`,message);
     }
-    console.log(`\n===========================领取赠送的卡片===========================\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
-        if (cookiesArr[i]) {
-            $.cookie = cookiesArr[i];
-            $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-            $.index = i + 1;
-            let runFg = false;
-            for(let cardName in needKardInfo){
-                let oneCardInfo = needKardInfo[cardName];
-                for(let needUser in oneCardInfo){
-                    if(needUser === $.UserName){
-                        let oneInfo = oneCardInfo[needUser];
-                        if(oneInfo.flag === '2' && oneInfo.cardId){
-                            runFg = true;
-                        }
-                    }
-                }
-            }
-            if(runFg){
-                await main($.cookie,3);
-                await $.wait(1000)
-            }else{
-                //console.log(`\n${$.UserName},没有卡片可以领取`);
-            }
-        }
-    }
-
 })().catch((e) => {$.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')}).finally(() => {$.done();})
 
-async function  main(ck,runType) {
+async function  main(ck) {
     let usName = decodeURIComponent(ck.match(/pt_pin=([^; ]+)(?=;?)/) && ck.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
     let UA = `jdapp;iPhone;10.0.8;14.6;${randomWord(false,40,40)};network/wifi;JDEbook/openapp.jdreader;model/iPhone9,2;addressid/2214222493;appBuild/168841;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16E158;supportJDSHWK/1`;
     let mainInfo = await takePost('{"apiMapping":"/api/index/indexInfo"}',ck,UA);
-    if(runType === 1){
-        if(JSON.stringify(mainInfo) === '{}'){
-            console.log(`\n${usName},获取活动详情失败`);
-            return ;
-        }
-        console.log(`\n第${$.index}个账号，${usName},获取活动详情成功`);
+    if(JSON.stringify(mainInfo) === '{}'){
+        console.log(`\n${usName},获取活动详情失败`);
+        return ;
     }
-    if(runType === 1){
-        let cardInfo = await takePost('{"apiMapping":"/api/card/list"}',ck,UA);
-        if(cardInfo && cardInfo.cardList){
-
-        }else{
-            console.log(`获取卡片列表失败`);
-            return ;
+    console.log(`\n${usName},获取活动详情成功`);
+    let showFlag = true;
+    let dd = 0
+    let kapian = 0
+    for (let i = 0; i < 60 && showFlag; i++) {
+        showFlag = false;
+        let pageNum = i+1;
+        let pageInfo = await takePost(`{"pageNum":${pageNum},"apiMapping":"/api/record/prizeRecord"}`,ck,UA);
+        let list = pageInfo.list
+        if(list.length === 10){
+            showFlag = true;
         }
-        let cardList = cardInfo.cardList;
-        console.log(`\n${usName},拥有卡片情况`)
-        for (let i = 0; i < cardList.length; i++) {
-            console.log(`名称：${cardList[i].cardName}，数量：${cardList[i].count}`);
-            haveCardInfo[cardList[i].cardName+usName] = cardList[i].count;
-        }
-        let needMessage = '';
-        for (let i = 0; i < cardList.length; i++) {
-            if(cardList[i].count === 0){
-                needMessage += `${cardList[i].cardName};`
-                if(!needKardInfo[cardList[i].cardName]){
-                    needKardInfo[cardList[i].cardName] = {};
-                }
-                if(!needKardInfo[cardList[i].cardName][usName]){
-                    needKardInfo[cardList[i].cardName][usName] = {'flag':'1','cardId':null,'sendUser':null};
-                }
+        for (let j = 0; j < list.length; j++) {
+            if(list[j].prizeType === 2){
+                dd = dd + list[j].num;
+                continue;
+            }
+            if(list[j].prizeType === 98){
+                kapian++;
+                continue;
+            }
+            console.log(`获得奖品:${list[j].content}`);
+            if(list[j].prizeType === 1 && !list[j].addressStatus){
+                message += `第${$.index}个账号，${usName},获得：${list[j].content}\n`;
             }
         }
-        if(needMessage){
-            console.log(`\n缺少卡片：${needMessage}`);
-        }
+        await $.wait(1000)
     }
-    if(runType === 2){
-        let cardInfo = await takePost('{"apiMapping":"/api/card/list"}',ck,UA);
-        let cardList = cardInfo.cardList;
-        if(cardInfo && cardInfo.cardList){
-
-        }else{
-            console.log(`获取卡片列表失败`);
-            return ;
-        }
-        for (let i = 0; i < cardList.length; i++) {
-            if(cardList[i].count >1){
-                let needInfo = needKardInfo[cardList[i].cardName];
-                for(let needUser in needInfo){
-                    let oneCardInfo = needInfo[needUser];
-                    if(oneCardInfo.flag === '1'){
-                        let sendId = await takePost(`{"cardId":${cardList[i].cardId},"apiMapping":"/api/card/share"}`,ck,UA);
-                        console.log(`\n${usName} 赠送 ${needUser},卡片：${cardList[i].cardName},赠送ID：${sendId}`);
-                        oneCardInfo.flag = '2';
-                        oneCardInfo.cardId = sendId;
-                        oneCardInfo.sendUser = usName;
-                        await $.wait(3000);
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    if(runType === 3){
-        for(let cardName in needKardInfo){
-            let oneCardInfo = needKardInfo[cardName];
-            for(let needUser in oneCardInfo){
-                if(needUser === usName){
-                    let oneInfo = oneCardInfo[needUser];
-                    if(oneInfo.flag === '2' && oneInfo.cardId){
-                        console.log(`\n领取 ${oneInfo.sendUser} 赠送的【${cardName}】,赠送ID：${oneInfo.cardId}`);
-                        let receiveCard = await takePost(`{"uuid":"${oneInfo.cardId}","apiMapping":"/api/card/receiveCard"}`,ck,UA);
-                        console.log(`领取结果：\n${JSON.stringify(receiveCard)}`);
-                        await $.wait(3000);
-                    }
-                }
-            }
-        }
-    }
+    console.log(`获得卡片：${kapian}张`);
+    console.log(`获得京豆：${dd}个`);
 }
+
 async function takePost(info,ck,UA){
     let body = `appid=china-joy&functionId=collect_bliss_cards_prod&body=${info}&t=${Date.now()}&loginType=2`
     let options = {
