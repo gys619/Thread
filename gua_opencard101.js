@@ -228,6 +228,7 @@ async function run() {
     }
     await takePostRequest('getCardInfo');
     if($.drawCardNum && $.compositeCard+"" == "true"){
+      $.runFalag = true
       let count = $.drawCardNum
       for(m=1;count--;m++){
         console.log(`第${m}次集卡`)
@@ -242,6 +243,7 @@ async function run() {
         await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
       }
       if($.compositeCardNum){
+        $.runFalag = true
         let count = $.compositeCardNum
         for(m=1;count--;m++){
           console.log(`第${m}次合卡`)
@@ -707,6 +709,7 @@ async function dealReturn(type, data) {
               $.drawCardNum = res.data.drawCardNum || 0
             }
           }else if(res.errorMessage){
+            $.runFalag = false;
             console.log(`${type} ${res.errorMessage || ''}`)
           }else{
             console.log(`${type} ${data}`)
