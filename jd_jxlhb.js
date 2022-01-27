@@ -219,7 +219,7 @@ function getUserInfo() {
 //助力好友
 function enrollFriend(strPin) {
   return new Promise(resolve => {
-    $.get(taskurl('EnableEnrollFriend', `strPin=${strPin}`), (err, resp, data) => {
+    $.get(taskurl('EnrollFriend', `stepreward_jstoken=${token['farm_jstoken']}&timestamp=${token['timestamp']}&phoneid=${token['phoneid']}&strPin=${strPin}`), (err, resp, data) => {
       try {
         if (err) {
           console.log(`\n${$.name}:  API查询请求失败 ‼️‼️`)
