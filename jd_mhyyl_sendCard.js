@@ -2,7 +2,7 @@
 萌虎摇摇乐送卡，一次性脚本，需要就运行下，不用加定时
 若账号有2张卡，并且其他账号缺这张卡，则会赠送
 PS：一旦开始执行脚本，则不要暂停，暂停可能导致卡片消失
-https://raw.githubusercontent.com/star261/jd/main/scripts/jd_mhyyl_sendCard.js
+https://raw.githubusercontent.com/333333/jd/main/scripts/jd_mhyyl_sendCard.js
 * */
 const $ = new Env('萌虎摇摇乐送卡');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
