@@ -3,7 +3,7 @@
 活动入口： 微信小程序-京东好物街-发财大赢家
 环境变量：
 export dyjHelpPins="pin值"  多个账号请使用@链接
-11 0,5 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_dyj_help.js
+11 0,5 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_dyj_help.js
 */
 const $ = new Env("发财大赢家助力-快速")
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`
