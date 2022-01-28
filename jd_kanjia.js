@@ -104,7 +104,7 @@ headers: {
                     data = JSON.parse(data);
                  
                    
-                   
+                   if($.index === 1){
                     if(data.code == 0){
 console.log("商品："+data.data[0].goodsName+"\n商品ID："+data.data[0].actId)
 await listyqm(data.data[0].actId)
@@ -118,6 +118,7 @@ console.log("\n商品："+data.data[4].goodsName+"\n商品ID："+data.data[4].ac
 await listyqm(data.data[4].actId)
 
                 }
+			}
             } catch (e) {
                 $.logErr(e, resp);
             } finally {
