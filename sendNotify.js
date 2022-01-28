@@ -14,7 +14,7 @@ const querystring = require('querystring');
 const exec = require('child_process').exec;
 const $ = new Env();
 const timeout = 15000; //超时时间(单位毫秒)
-console.log("加载sendNotify，当前版本: 20220119");
+console.log("加载sendNotify，当前版本: 20220128");
 // =======================================go-cqhttp通知设置区域===========================================
 //gobot_url 填写请求地址http://127.0.0.1/send_private_msg
 //gobot_token 填写在go-cqhttp文件设置的访问密钥
@@ -1487,20 +1487,21 @@ function getQLinfo(strCK, intcreated, strTimestamp, strRemark) {
                     if (TempRemarkList[j]) {
                         if (TempRemarkList[j].length == 13) {
                             DateTimestamp = new Date(parseInt(TempRemarkList[j]));
-                            //console.log(strPtPin + ": 获取登录时间成功:" + GetDateTime(DateTimestamp));
-                            //过期时间
-                            var UseDay = Math.ceil((DateToday.getTime() - DateCreated.getTime()) / 86400000);
-                            var LogoutDay = 30 - Math.ceil((DateToday.getTime() - DateTimestamp.getTime()) / 86400000);
-                            if (LogoutDay < 1) {
-                                strReturn = "\n【登录信息】总挂机" + UseDay + "天(账号即将到期，请重登续期)"
-                            } else {
-                                strReturn = "\n【登录信息】总挂机" + UseDay + "天(有效期约剩" + LogoutDay + "天)"
-                            }
+                            //console.log(strPtPin + ": 获取登录时间成功:" + GetDateTime(DateTimestamp));                            
                             break;
                         }
                     }
                 }
             }
+        }
+		
+		//过期时间
+        var UseDay = Math.ceil((DateToday.getTime() - DateCreated.getTime()) / 86400000);
+        var LogoutDay = 30 - Math.ceil((DateToday.getTime() - DateTimestamp.getTime()) / 86400000);
+        if (LogoutDay < 1) {
+            strReturn = "\n【登录信息】总挂机" + UseDay + "天(账号即将到期，请重登续期)"
+        } else {
+            strReturn = "\n【登录信息】总挂机" + UseDay + "天(有效期约剩" + LogoutDay + "天)"
         }
 
     }
