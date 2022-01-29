@@ -1,11 +1,12 @@
 /*
 萌虎摇摇乐送卡，一次性脚本，需要就运行下，不用加定时
-若账号有2张卡，并且其他账号缺这张卡，则会赠送
+环境变量：SSCK,从第几个CK开始送卡，例如你有5个CK，BYTYPE填2，则会获取前2个CK的卡片缺失情况，然后若后3个ck有前2个ck缺失的卡，则会赠送（一张卡也会送）
 PS：一旦开始执行脚本，则不要暂停，暂停可能导致卡片消失
 https://raw.githubusercontent.com/333333/jd/main/scripts/jd_mhyyl_sendCard.js
 * */
 const $ = new Env('萌虎摇摇乐送卡');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const SSCK = $.isNode() ? (process.env.SSCK ? process.env.SSCK : `***`):`***`;
 let cookiesArr = [];
 let needKardInfo = {};
 let haveCardInfo = {};
@@ -29,8 +30,13 @@ if ($.isNode()) {
         console.log(`活动结束`);
         return ;
     }
+    if(SSCK === '***'){
+        console.log(`请先设置环境变量【SSCK】`);
+        console.log(`环境变量：SSCK,从第几个CK开始送卡，例如你有5个CK，BYTYPE填2，则会获取前2个CK的卡片缺失情况，然后若后3个ck有前2个ck缺失的卡，则会赠送（一张卡也会送`);
+        return
+    }
     console.log(`\n===========================获取账号卡片缺失情况===========================\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
+    for (let i = 0; i < cookiesArr.length && i< Number(SSCK); i++) {
         if (cookiesArr[i]) {
             $.cookie = cookiesArr[i];
             $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -40,7 +46,7 @@ if ($.isNode()) {
         await $.wait(1000)
     }
     console.log(`\n===========================赠送卡片===========================\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
+    for (let i = Number(SSCK); i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             $.cookie = cookiesArr[i];
             $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -51,7 +57,7 @@ if ($.isNode()) {
                 for(let needUser in oneCardInfo){
                     if(needUser !== $.UserName){
                         let oneInfo = oneCardInfo[needUser];
-                        if(oneInfo.flag === '1' && haveCardInfo[cardName+$.UserName] && haveCardInfo[cardName+$.UserName] > 1){
+                        if(oneInfo.flag === '1'){
                             runFg = true;
                         }
                     }
@@ -66,7 +72,7 @@ if ($.isNode()) {
         }
     }
     console.log(`\n===========================领取赠送的卡片===========================\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
+    for (let i = 0; i < cookiesArr.length  && i< Number(SSCK); i++) {
         if (cookiesArr[i]) {
             $.cookie = cookiesArr[i];
             $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -145,7 +151,7 @@ async function  main(ck,runType) {
             return ;
         }
         for (let i = 0; i < cardList.length; i++) {
-            if(cardList[i].count >1){
+            if(cardList[i].count >0){
                 let needInfo = needKardInfo[cardList[i].cardName];
                 for(let needUser in needInfo){
                     let oneCardInfo = needInfo[needUser];
