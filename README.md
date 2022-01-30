@@ -296,7 +296,7 @@ ql repo https://github.com/panghu999/panghu.git "jd_"
 * [@kangwenhang](https://github.com/kangwenhang)
 * [@smiek2221](https://github.com/smiek2221/scripts.git)
 * [@yuannian1112](https://github.com/yuannian1112/jd_scripts.git)
-*  [@shufflewzc](https://github.com/shufflewzc/faker2.git)
+*  [@shufflewzc](https://github.com.cnpmjs.org/Hyominn/hyominnn.git)
 *  [@passerby-b](https://github.com/passerby-b/JDDJ.git)
 *  [@he1pu](https://github.com/he1pu/JDHelp.git)
 *  [@airacg](https://github.com/airacg/jd_task.git)
