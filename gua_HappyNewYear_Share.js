@@ -61,34 +61,45 @@ let timeH = $.time('H')
     }
   }
 
-  for (let i = 0; i < cookiesArr.length && $.temp.length > 0 && true; i++) {
-    if (cookiesArr[i]) {
-      cookie = cookiesArr[i];
-      $.canHelp = true;//能否助力
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-      console.log(`\n账号内部相互邀请助力\n`);
-      for (let n in $.temp) {
-        let item = $.temp[n]
-        if(!item) continue
-        console.log(`\n${$.UserName} 去参助力 ${item}`);
-        const helpRes = await getCoupons(item.trim());
-        let res = $.toObj(helpRes,helpRes)
-        if(typeof res == 'object'){
-          if(res.data.bizMsg){
-            console.log(res.data.bizMsg)
+  try{
+    for (let i = 0; i < cookiesArr.length && $.temp.length > 0 && true; i++) {
+      if (cookiesArr[i]) {
+        cookie = cookiesArr[i];
+        $.canHelp = true;//能否助力
+        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+        console.log(`\n账号内部相互邀请助力\n`);
+        for (let n in $.temp) {
+          let item = $.temp[n]
+          if(!item || !$.canHelp) continue
+          console.log(`\n${$.UserName} 去参助力 ${item}`);
+          const helpRes = await getCoupons(item.trim());
+          let res = $.toObj(helpRes,helpRes)
+          if(typeof res == 'object'){
+            if(res.code == 0 && res.data){
+              if(res.data.bizMsg){
+                console.log(res.data.bizMsg)
+              }
+              if(res.data.bizCode === -106){
+                delete $.temp[n]
+              }else if([-105,-1001].includes(res.data.bizCode)){
+                $.canHelp = false
+              }
+            }else if([-30001].includes(res.code)){
+              $.canHelp = false
+            }else if(res.message || res.msg){
+              console.log(res.message || res.msg)
+            }
           }
-          if(res.data.bizCode === -106){
-            delete $.temp[n]
-          }else if(res.data.bizCode === -105){
-            break;
+          await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
+          if(!$.canHelp){
+            break
           }
-        }else{
-          console.log(data)
         }
-        await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
+        
       }
-      
     }
+  }catch(e){
+    console.log(e)
   }
 })()
     .catch((e) => $.logErr(e))
