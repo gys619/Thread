@@ -1,6 +1,6 @@
 /*
 萌虎摇摇乐
-cron 0 0,12,18 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_mhyyl.js
+cron 0 9,23 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_mhyyl.js
 * */
 const $ = new Env('萌虎摇摇乐');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -21,10 +21,6 @@ if ($.isNode()) {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
-    }
-    if(Date.now() > 1643587200000){
-        console.log(`活动结束`);
-        return ;
     }
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -48,40 +44,6 @@ if ($.isNode()) {
             }
         }
     }
-    let otherCk = []
-    cookiesArr = [...cookiesArr,...otherCk];
-    cookiesArr = getRandomArrayElements(cookiesArr,cookiesArr.length);
-    for (let i = 0; i < cookiesArr.length; i++) {
-        let UA = `jdapp;iPhone;10.0.8;14.6;${randomWord(false,40,40)};network/wifi;JDEbook/openapp.jdreader;model/iPhone9,2;addressid/2214222493;appBuild/168841;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/16E158;supportJDSHWK/1`;
-        $.cookie = cookiesArr[i];
-        $.canHelp = true;
-        $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
-        for (let j = 0; j < helpCodeList.length && $.canHelp; j++) {
-            $.codeInfo = helpCodeList[j];
-            $.code = $.codeInfo.code;
-            if($.UserName ===  $.codeInfo.user || $.codeInfo.need <= 0){
-                continue;
-            }
-            console.log(`\n${$.UserName},去助力:${$.codeInfo.user },${$.code}`);
-            let doSupport = await takePost(`{"shareId":"${$.code}","apiMapping":"/api/task/support/doSupport"}`,$.cookie,UA);
-            if(doSupport.status === 7){
-                console.log(`助力成功`);
-                $.codeInfo.need--;
-            }else if(doSupport.status === 3){
-                console.log(`已助力过`);
-            }else if(doSupport.status === 5){
-                $.canHelp = false;
-                console.log(`助力次数已用完`);
-            }else if(doSupport.status === 4){
-                $.codeInfo.need = 0;
-                console.log(`助力已满`);
-            }else{
-                $.canHelp = false;
-            }
-            console.log(JSON.stringify(doSupport));
-            await $.wait(1000);
-        }
-    }
 })().catch((e) => {$.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')}).finally(() => {$.done();})
 
 async function  main(ck) {
@@ -92,77 +54,9 @@ async function  main(ck) {
         console.log(`\n${usName},获取活动详情失败`);
         return ;
     }
-    console.log(`\n${usName},获取活动详情成功`);
-    let tabList = await takePost('{"apiMapping":"/api/task/brand/tabs"}',ck,UA);
-    let doFlag = true;
-    let fresh = false;
-    for (let i = 0; i < tabList.length; i++) {
-        doFlag = true;
-        await $.wait(3000);
-        console.log(`\n${usName},去执行，${tabList[i].brandName}会场任务`);
-        for (let k = 0; k < 20 && doFlag; k++) {
-            doFlag = false;
-            let taskList = await takePost(`{"taskGroupId":${tabList[i].taskGroupId},"apiMapping":"/api/task/brand/getTaskList"}`,ck,UA);
-            for (let j = 0; j < taskList.length; j++) {
-                let oneTask = taskList[j];
-                if(oneTask.totalNum === oneTask.finishNum){
-                    console.log(`${usName},任务：${oneTask.taskItemName || ''},已完成`);
-                    continue;
-                }
-                let browseTime = oneTask.browseTime || 3;
-                console.log(`${usName},任务：${oneTask.taskItemName || ''},去执行,等待：${browseTime}秒`);
-                if(oneTask.taskType === 'FOLLOW_SHOP_TASK'){
-                    let doTask = await takePost(`{"taskGroupId":${tabList[i].taskGroupId},"taskId":${oneTask.taskId},"taskItemId":${oneTask.taskItemId},"apiMapping":"/api/task/brand/doTask"}`,ck,UA);
-                    if(doTask && doTask.rewardInfoVo){
-                        console.log(`${usName},获得积分:${doTask.rewardInfoVo.integral},京豆：${doTask.rewardInfoVo.jbean}`);
-                    }else{
-                        await $.wait(browseTime*1000);
-                        let getReward = await takePost(`{"taskGroupId":${tabList[i].taskGroupId},"taskId":${oneTask.taskId},"taskItemId":${oneTask.taskItemId},"timestamp":${doTask.timeStamp},"apiMapping":"/api/task/brand/getReward"}`,ck,UA);
-                        if(getReward ){
-                            console.log(`${usName},获得积分:${getReward.integral},京豆：${getReward.jbean}`);
-                        }else{
-                            console.log(`${usName},异常：${JSON.stringify(getReward)}`);
-                        }
-                    }
-                    doFlag = true;
-                    fresh = true;
-                }else{
-                    let doTask = await takePost(`{"taskGroupId":${tabList[i].taskGroupId},"taskId":${oneTask.taskId},"taskItemId":${oneTask.taskItemId},"apiMapping":"/api/task/brand/doTask"}`,ck,UA);
-                    await $.wait(browseTime*1000);
-                    let getReward = await takePost(`{"taskGroupId":${tabList[i].taskGroupId},"taskId":${oneTask.taskId},"taskItemId":${oneTask.taskItemId},"timestamp":${doTask.timeStamp},"apiMapping":"/api/task/brand/getReward"}`,ck,UA);
-                    if(getReward ){
-                        console.log(`${usName},获得积分:${getReward.integral},京豆：${getReward.jbean}`);
-                    }else{
-                        console.log(`${usName},异常：${JSON.stringify(getReward)}`);
-                    }
-                    doFlag = true;
-                    fresh = true;
-                }
-            }
-        }
-    }
-    if(fresh){
-        mainInfo = await takePost('{"apiMapping":"/api/index/indexInfo"}',ck,UA);
-    }
-    let heatOwn = mainInfo.heatOwn;
-    let chance = Math.floor(heatOwn/100);
-    console.log(`${usName},福气值:${heatOwn},可以抽奖：${chance}次`);
-    for (let i = 0; i < chance; i++) {
-        console.log(`\n${usName},抽奖`);
-        let lottery = await takePost('{"apiMapping":"/api/lottery/lottery"}',ck,UA);
-        console.log(`${usName},获得：${lottery.prizeName || ''}`);
-        console.log(JSON.stringify(lottery));
-        await $.wait(3000);
-    }
-
-    let supportInfo = await takePost('{"apiMapping":"/api/task/support/list"}',ck,UA);
-    if(supportInfo.supportNeedNum !== supportInfo.supportedNum){
-        let need = supportInfo.supportNeedNum - supportInfo.supportedNum;
-        await $.wait(2000);
-        let shareId = await takePost('{"apiMapping":"/api/task/support/getShareId"}',ck,UA);
-        console.log(`${usName},需要助力${need},助力码：${shareId}`);
-        allInvite.push({'user':usName,'need':need,'code':shareId})
-    }
+    console.log(`\n${usName},获取活动详情成功,去瓜分`);
+    let receivePrize = await takePost('{"apiMapping":"/api/carveUp/receivePrize"}',ck,UA);
+    console.log(JSON.stringify(receivePrize));
 }
 function getRandomArrayElements(arr, count) {
     var shuffled = arr.slice(0), i = arr.length, min = i - count, temp, index;
