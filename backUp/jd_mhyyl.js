@@ -1,6 +1,6 @@
 /*
 萌虎摇摇乐
-cron 0 0,12,18 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_mhyyl.js
+cron 0 0,12,18 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_mhyyl.js
 * */
 const $ = new Env('萌虎摇摇乐');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
