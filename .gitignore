@@ -257,10 +257,11 @@ jd_tiger.js
 #天天领压岁钱
 jd_ttysq.js
 #击鼓助力
-jd_HappyNewYear_Share.js
+jd_HappyNewYear_Shares.js
 jd_drum.js
 gua_HappyNewYear_Share.js
-
+#invokekey获取
+jd_work_invokeKey.js
 
 
 ########过期活动##############
@@ -304,7 +305,7 @@ jd_shopsign.js
 #星店长
 jd_xdz.py
 fanli.js
-
+jd_reward.ts
 
 
 
