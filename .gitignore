@@ -262,6 +262,8 @@ jd_drum.js
 gua_HappyNewYear_Share.js
 #invokekey获取
 jd_work_invokeKey.js
+#锦鲤
+jd_redPacket.js
 
 
 ########过期活动##############
@@ -275,7 +277,8 @@ jd_hwmh.js
 jd_mt.js
 #京东金融天天试手气
 jd_btdraw.py
-
+#农场集勋章
+jd_medal.js
 
 
 ############不能跑的################
