@@ -1,7 +1,7 @@
 /*
 手机年货节
 日常任务，10豆的样子，先到先得
-cron 10 0 1-30 1 * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_sjnhj.js
+cron 10 0 1-30 1 * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_sjnhj.js
 * */
 const $ = new Env('手机年货节');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
