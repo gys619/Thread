@@ -46,13 +46,13 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  $.authorTuanList = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/jd_zz.json');
+  $.authorTuanList = await getAuthorShareCode('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127');
   if (!$.authorTuanList) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_zz.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    $.authorTuanList = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_zz.json') || [];
+    $.authorTuanList = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127') || [];
   }
-  const temp = await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/jd_zz.json') || []
+  const temp = await getAuthorShareCode('https://raw.fastgit.org/888888/11111128/main/shareCodes/11111127') || []
   $.authorTuanList = [...$.authorTuanList,...temp]
   // await getRandomCode();
   for (let i = 0; i < cookiesArr.length; i++) {

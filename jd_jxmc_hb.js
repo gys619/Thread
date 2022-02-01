@@ -82,7 +82,7 @@ let token ='';
   }
   console.log('\n##################开始账号内互助#################\n');
   $.shareCode = undefined
-  await getShareCode('jxmc.json')
+  await getShareCode('11111127')
   let newCookiesArr = [];
   for(let i = 0;i<$.helpCkList.length;i+=4){
     newCookiesArr.push($.helpCkList.slice(i,i+4))

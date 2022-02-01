@@ -189,7 +189,7 @@ function requireConfig() {
     shareCode = await getAuthorShareCode()
 //     try {
 //       let options = {
-//         "url": `https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jxnc.txt`,
+//         "url": `https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/jxnc.txt`,
 //         "headers": {
 //           "Accept": "application/json,text/plain, */*",
 //           "Content-Type": "application/x-www-form-urlencoded",

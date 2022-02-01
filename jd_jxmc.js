@@ -110,13 +110,13 @@ if ($.isNode()) {
     await pasture();
     await $.wait(2000);
   }
-  $.res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/jxmc.json')
+  $.res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
   if (!$.res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jxmc.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
     await $.wait(1000)
-    $.res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jxmc.json')
+    $.res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   }
-  $.res = [...($.res || []), ...(await getAuthorShareCode('https://raw.fastgit.org/888888/updateTeam/main/shareCodes/jxmc2.json') || [])]
+  $.res = [...($.res || []), ...(await getAuthorShareCode('https://raw.fastgit.org/888888/11111128/main/shareCodes/11111127') || [])]
   await shareCodesFormat()
   for (let i = 0; i < cookiesArr.length; i++) {
     $.cookie = cookiesArr[i];

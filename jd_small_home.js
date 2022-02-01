@@ -77,11 +77,11 @@ const JD_API_HOST = 'https://lkyl.dianpusoft.cn/api';
       await smallHome();
     }
   }
-  $.inviteCodes = await getAuthorShareCode('https://raw.githubusercontent.com/222222/updateTeam/master/shareCodes/jd_updateSmallHomeInviteCode.json')
+  $.inviteCodes = await getAuthorShareCode('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/jd_updateSmallHomeInviteCode.json')
   if (!$.inviteCodes) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_updateSmallHomeInviteCode.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/jd_updateSmallHomeInviteCode.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    $.inviteCodes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/updateTeam@master/shareCodes/jd_updateSmallHomeInviteCode.json')
+    $.inviteCodes = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/jd_updateSmallHomeInviteCode.json')
   }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
