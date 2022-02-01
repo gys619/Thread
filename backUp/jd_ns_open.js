@@ -1,6 +1,6 @@
 /*
 炸年兽满级开奖
-cron 10 22 31 1 * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_ns_open.js
+cron 10 22 31 1 * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_ns_open.js
 * */
 const $ = new Env('炸年兽满级开奖');
 const notify = $.isNode() ? require('./sendNotify') : '';
