@@ -72,7 +72,7 @@ jd_nhjRed.js
 jd_nhRedEnvelope.js
 jd_nh*.js
 jd_nh_red.js
-!jd_nh_sign.js
+jd_nh_sign.js
 jd_Red.js
 ##
 jd_disable.py
@@ -272,6 +272,10 @@ jd_hwmh.js
 #jd_jxlhb.js
 ###开卡
 jd_mt.js
+#京东金融天天试手气
+jd_btdraw.py
+
+
 
 ############不能跑的################
 # 通用游戏
@@ -282,6 +286,10 @@ jd_prodev_dailyTask.js
 jd_zhanianshou.js
 # 互助
 share_code.js
+#白条抽奖
+jd_bt_sign.js
+
+
 jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js
@@ -297,21 +305,9 @@ jd_fcdyj.js
 #jd_look_video_common_enc.js
 #jd_share_common_enc.js
 # 1111
-!jd_fcwb.js
 #jd_xsqjd.js
-!jd_hbCount.py
 jd_getred.py
-!jd_jieMo.js
 jd_genz.js
-!jd_joypark_open.js
-!jd_lotteryMachine.js
-!jd_qjd.py
-!jd_redPacket.js
-!jd_refreshInvokeKey.js 
-!jd_reward.ts
-!jd_upgrade.js
-!jd_week.js
-!jd_xmf_exchange.js
 
 jd_jx_cfd_pearl_exchange.js
 jd_jx_factory_automation.js
