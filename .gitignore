@@ -288,6 +288,26 @@ jd_zhanianshou.js
 share_code.js
 #白条抽奖
 jd_bt_sign.js
+# 东东农场-集勋章合成兑换奖励
+jd_fruit_medalExchange.py
+# 财富岛100
+jd_cfdhb100.py
+jd_cfdhb111.py
+# 冬香节
+jd_dongxiang_benefits.py
+#农场天天红包抽奖
+jd_fruit_everydayRed.py
+#转喜豆
+jd_jd2xd.js
+#店铺签到ff
+jd_shopsign.js
+#星店长
+jd_xdz.py
+fanli.js
+
+
+
+
 
 
 jd_anjia.js
