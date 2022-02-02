@@ -1,7 +1,3 @@
-if (!["card","car"].includes(process.env.FS_LEVEL)) {
-    console.log("请设置通用加购/开卡环境变量FS_LEVEL为\"car\"(或\"card\"开卡+加购)来运行加购脚本")
-    return
-}
 /*
  粉丝互动
  蚊子腿活动，不定时更新,尽量自己改定时跑，一起冲容易挂掉
