@@ -2,7 +2,6 @@
 '''
 new Env('wskey转换');
 '''
-
 import socket
 import base64
 import json
@@ -261,6 +260,8 @@ def ql_check(port):
 
 def serch_ck(pin):
     for i in range(len(envlist)):
+        if "name" not in envlist[i] or envlist[i]["name"] != "JD_COOKIE":
+            continue
         if pin in envlist[i]['value']:
             value = envlist[i]['value']
             id = envlist[i][ql_id]
