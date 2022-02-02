@@ -5,13 +5,11 @@ new Env('wskey转换');
 
 import socket
 import base64
-import http.client
 import json
 import os
 import sys
 import logging
 import time
-import urllib.parse
 
 if "WSKEY_DEBUG" in os.environ:
     logging.basicConfig(level=logging.DEBUG, format='%(message)s')
@@ -34,7 +32,7 @@ except Exception as err:
     logger.debug(str(err))
     logger.info("无推送文件")
 
-ver = 20202
+ver = 20203
 
 
 # 登录青龙 返回值 token
@@ -140,26 +138,8 @@ def check_ck(ck):
             res = requests.get(url=url, headers=headers, verify=False, timeout=10)
         except Exception as err:
             logger.debug(str(err))
-            # logger.info("JD接口错误, 切换第二接口")
-            url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'
-            headers = {
-                'Cookie': ck,
-                'user-agent': ua,
-                'Referer': 'https://home.m.jd.com/myJd/home.action'
-            }
-            res = requests.get(url=url, headers=headers, verify=False, timeout=30)
-            if res.status_code == 200:
-                code = int(json.loads(res.text)['retcode'])
-                pin = ck.split(";")[1]
-                if code == 0:
-                    logger.info(str(pin) + ";状态正常\n")
-                    return True
-                else:
-                    logger.info(str(pin) + ";状态失效\n")
-                    return False
-            else:
-                logger.info("JD接口错误码: " + str(res.status_code))
-                return False
+            logger.info("JD接口错误, 代码: " + str(res.status_code))
+            return False
         else:
             if res.status_code == 200:
                 code = int(json.loads(res.text)['retcode'])
@@ -233,7 +213,7 @@ def appjmp(wskey, tokenKey):
             return True, jd_ck
     except Exception as err:
         logger.info("JD接口转换失败, 默认WsKey失效\n")
-        logger.debug(str(err))
+        logger.info(str(err))
         wskey = "pt_" + str(wskey.split(";")[0])
         return False, wskey
 
@@ -270,40 +250,6 @@ def ql_check(port):
         return True
 
 
-# 返回值 bool, key, eid
-def serch_ck_old(pin):
-    if all('\u4e00' <= char <= '\u9fff' for char in pin):
-        pin1 = urllib.parse.quote(pin)
-        pin2 = pin1.replace('%', '%5C%25')
-        logger.info(str(pin) + "-->" + str(pin1))
-    else:
-        pin2 = pin.replace('%', '%5C%25')
-    # TMD 中文!
-    # url = "http://127.0.0.1:5700/api/envs?searchValue={0}".format(pin)
-    # res = json.loads(s.get(url, verify=False).text)
-    conn = http.client.HTTPConnection("127.0.0.1", port)
-    payload = ''
-    headers = {
-        'Authorization': 'Bearer ' + token
-    }
-    url = '/api/envs?searchValue={0}'.format(pin2)
-    conn.request("GET", url, payload, headers)
-    res = json.loads(conn.getresponse().read())
-    if len(res['data']) == 0:
-        logger.info(str(pin) + "检索失败\n")
-        return False, 1
-    elif len(res['data']) > 1:
-        logger.info(str(pin) + "存在重复, 取第一条, 请删除多余变量\n")
-        key = res['data'][0]['value']
-        eid = res['data'][0]['_id']
-        return True, key, eid
-    else:
-        logger.info(str(pin) + "检索成功\n")
-        key = res['data'][0]['value']
-        eid = res['data'][0]['_id']
-        return True, key, eid
-
-
 def serch_ck(pin):
     for i in range(len(envlist)):
         if pin in envlist[i]['value']:
@@ -330,20 +276,21 @@ def get_env():
         return data
 
 
-def get_version():
-    url = 'http://127.0.0.1:{0}/api/system'.format(port)
+def check_id():
+    url = 'http://127.0.0.1:{0}/api/envs'.format(port)
     try:
-        res = s.get(url)
-        version = str(json.loads(res.text)['data']['version'])
+        res = s.get(url).json()
     except Exception as err:
         logger.debug(str(err))
-        return 0
+        logger.info("\n青龙环境接口错误")
+        sys.exit(1)
     else:
-        logger.info("青龙面板版本: " + version)
-        if version > '2.10.13':
-            return 1
+        if '_id' in res['data'][0]:
+            logger.info("使用 _id 键值")
+            return '_id'
         else:
-            return 0
+            logger.info("使用 id 键值")
+            return 'id'
 
 
 def ql_update(e_id, n_ck):
@@ -463,7 +410,7 @@ if __name__ == '__main__':
     s = requests.session()
     s.headers.update({"authorization": "Bearer " + str(token)})
     s.headers.update({"Content-Type": "application/json;charset=UTF-8"})
-    ql_id = ['_id', 'id'][get_version()]
+    ql_id = check_id()
     url_t = check_cloud()
     cloud_arg = cloud_info()
     update()
