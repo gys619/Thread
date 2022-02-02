@@ -6,6 +6,7 @@ model
 /shareCodes
 /ModScript
 /NoUsed
+config.sample.sh.new
 jd_update.js
 
 jd_checkCK.js
