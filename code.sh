@@ -1,26 +1,153 @@
 #!/usr/bin/env bash
 
-# Build 20211208-003-test
+## Build 20211208-001-test
 
-name_js=(
-  jd_fruit
-  jd_pet
-  jd_plantBean
-  jd_dreamFactory
-  jd_jdfactory
-  jd_crazy_joy
-  jd_jdzz
-  jd_jxnc
-  jd_bookshop
-  jd_cash
-  jd_sgmh
-  jd_cfd
-  jd_health
-  jd_carnivalcity
-  jd_city
-  jd_moneyTree
-  jd_cfdtx
+## 导入通用变量与函数
+dir_shell=/ql/shell
+. $dir_shell/share.sh
+
+## 预设的仓库及默认调用仓库设置
+## 将"repo=$repo1"改成repo=$repo2"或其他，以默认调用其他仓库脚本日志
+## 也可自行搜索本脚本内的"name_js=("和"name_js_only",将"repo"改成"repo2"或其他，用以自由组合调用仓库的脚本日志
+repo1='panghu999_jd_scripts'                       #预设的 panghu999 仓库
+repo2='JDHelloWorld_jd_scripts'                    #预设的 JDHelloWorld 仓库
+repo3='he1pu_JDHelp'                               #预设的 he1pu 仓库
+repo4='shufflewzc_faker2'                          #预设的 shufflewzc 仓库
+repo5='Wenmoux_scripts_wen_chinnkarahoi'           #预设的 Wenmoux 仓库，用于读取口袋书店互助码。需提前拉取温某人的仓库或口袋书店脚本并完整运行。
+repo6='Aaron-lv_sync_jd_scripts'                   #预设的 Aaron-lv 仓库
+repo7='smiek2221_scripts'                          #预设的 smiek2221 仓库
+repo8='gys619_jdd'
+repo="$repo8"                                            #空值，表示遍历所有仓库脚本日志
+
+## 调试模式开关，默认是0，表示关闭；设置为1，表示开启
+DEBUG="1"
+
+## 本脚本限制的最大线程数量
+proc_num="20"
+
+## 备份配置文件开关，默认是1，表示开启；设置为0，表示关闭。备份路径 /ql/config/bak/
+BACKUP="1"
+## 是否删除指定天数以前的备份文件开关，默认是1，表示开启；设置为0，表示关闭。删除路径 /ql/config/bak/
+CLEANBAK="1"
+## 定义删除指定天数以前的备份文件
+CLEANBAK_DAYS="2"
+
+## 定义 jcode 脚本导出的互助码模板样式（选填）
+## 不填 使用“按编号顺序互助模板”，Cookie编号在前的优先助力
+## 填 0 使用“全部一致互助模板”，所有账户要助力的码全部一致
+## 填 1 使用“均等机会互助模板”，所有账户获得助力次数一致
+## 填 2 使用“随机顺序互助模板”，本套脚本内账号间随机顺序助力，每次生成的顺序都不一致。
+## 填 3 使用“车头A模式互助模板”，本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序随机)。
+## 填 4 使用“车头B模式互助模板”，本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序固定)。
+HelpType="3"
+
+## 定义前 N 个账号优先助力，N 个以后账号间随机助力。front_num="N"，N 定义值小于账号总数，当HelpType 赋值 3 或 4 时有效
+front_num="7"
+
+## 定义指定活动采用指定的互助模板。
+## 设定值为 DiyHelpType="1" 表示启用功能；不填或填其他内容表示不开启功能。
+## 如果只是想要控制某个活动以执行某种互助规则，可以参考下面 case 这个命令的例子来控制
+## 活动名称参见 name_config 定义内容；具体可在本脚本中搜索 name_config=( 获悉
+DiyHelpType=""
+diy_help_rules(){
+    case $1 in
+        Fruit)
+            tmp_helptype="0"            # 东东农场使用“全部一致互助模板”，所有账户要助力的码全部一致
+            ;;
+        DreamFactory | JdFactory)
+            tmp_helptype="1"            # 京喜工厂和东东工厂使用“均等机会互助模板”，所有账户获得助力次数一致
+            ;;
+        Jdzz | Joy)
+            tmp_helptype="2"            # 京东赚赚和疯狂的Joy使用“随机顺序互助模板”，本套脚本内账号间随机顺序助力，每次生成的顺序都不一致。
+            ;;
+        *)
+            tmp_helptype=$HelpType      # 其他活动仍按默认互助模板生产互助规则。
+            ;;
+    esac
+}
+
+## 定义屏蔽模式。被屏蔽的账号将不被助力，被屏蔽的账号仍然可以助力其他账号。
+## 设定值为 BreakHelpType="1" 表示启用屏蔽模式；不填或填其他内容表示不开启功能。
+## 自定义屏蔽账号序号或序号区间。当 BreakHelpType="1"时生效。
+## 设定值为一个或多个不相同正整数，每个正整数不大于账号总数；也可以设置正整数区间，最大正整数不大于账号总数；
+## 如：a) 设定为 BreakHelpNum="3" 表示第 3 个账号不被助力；
+##     b) 设定为 BreakHelpNum="5 7 8 10" 表示第 5 7 8 10 个账号均不被助力；
+##     c) 设定为 BreakHelpNum="6-12" 表示从第 6 至 12 个账号均不被助力；
+##     d) 设定为 BreakHelpNum="4 9-14 15~18 19_21" 表示第4个账号、第9至14账号、第15至18账号、第19至21账号均不被助力。注意序号区间连接符仅支持 - ~ _；
+## 不按示例填写可能引发报错。
+BreakHelpType="1"                  ## 屏蔽模式
+BreakHelpNum="25-77"  ## 屏蔽账号序号或序号区间
+
+## 定义是否自动更新配置文件中的互助码和互助规则
+## 默认为 UpdateType="1" 表示更新互助码和互助规则；UpdateType="2" 表示只更新互助码，不更新互助规则；UpdateType="3" 表示只更新互助规则，不更新互助码；留空或其他数值表示不更新。
+UpdateType="1"
+
+## 定义是否自动安装或修复缺失的依赖，默认为1，表示自动修复；留空或其他数值表示不修复。
+FixDependType=""
+## 定义监控修复的依赖名称
+package_name="canvas png-js date-fns axios crypto-js ts-md5 tslib @types/node dotenv got md5 requests typescript fs require tslib jsdom download js-base64 tough-cookie tunnel ws qrcode-terminal jieba prettytable form-data json5 global-agent"
+
+## 需组合的环境变量列表，env_name需要和var_name一一对应，如何有新活动按照格式添加(不懂勿动)
+env_name=(
+  FRUITSHARECODES
+  PETSHARECODES
+  PLANT_BEAN_SHARECODES
+  DREAM_FACTORY_SHARE_CODES
+  DDFACTORY_SHARECODES
+  JDJOY_SHARECODES
+  JDZZ_SHARECODES
+  JXNC_SHARECODES
+  BOOKSHOP_SHARECODES
+  JD_CASH_SHARECODES
+  JDSGMH_SHARECODES
+  JDCFD_SHARECODES
+  JDHEALTH_SHARECODES
+  JD818_SHARECODES
+  CITY_SHARECODES
+  MONEYTREE_SHARECODES
 )
+var_name=(
+  ForOtherFruit
+  ForOtherPet
+  ForOtherBean
+  ForOtherDreamFactory
+  ForOtherJdFactory
+  ForOtherJoy
+  ForOtherJdzz
+  ForOtherJxnc
+  ForOtherBookShop
+  ForOtherCash
+  ForOtherSgmh
+  ForOtherCfd
+  ForOtherHealth
+  ForOtherCarni
+  ForOtherCity
+  ForOtherMoneyTree
+)
+
+## name_js为脚本文件名，如果使用ql repo命令拉取，文件名含有作者名
+## 所有有互助码的活动，把脚本名称列在 name_js 中，对应 config.sh 中互助码后缀列在 name_config 中，中文名称列在 name_chinese 中。
+## name_js、name_config 和 name_chinese 中的三个名称必须一一对应。
+name_js=(
+  "$repo"_jd_fruit
+  "$repo"_jd_pet
+  "$repo"_jd_plantBean
+  "$repo"_jd_dreamFactory
+  "$repo"_jd_jdfactory
+  "$repo"_jd_crazy_joy
+  "$repo"_jd_jdzz
+  "$repo"_jd_jxnc
+  "$repo"_jd_bookshop
+  "$repo"_jd_cash
+  "$repo"_jd_sgmh
+  "$repo"_jd_cfd
+  "$repo"_jd_health
+  "$repo"_jd_carnivalcity
+  "$repo"_jd_city
+  "$repo"_jd_moneyTree_he?p
+  "$repo"_jd_cfd
+)
+
 name_config=(
   Fruit
   Pet
@@ -40,6 +167,7 @@ name_config=(
   MoneyTree
   TokenJxnc
 )
+
 name_chinese=(
   东东农场
   东东萌宠
@@ -59,663 +187,629 @@ name_chinese=(
   摇钱树
   京喜token
 )
-env_name=(
-  FRUITSHARECODES                     ## 1、东东农场互助码
-  PETSHARECODES                       ## 2、东东萌宠互助码
-  PLANT_BEAN_SHARECODES               ## 3、种豆得豆互助码
-  DREAM_FACTORY_SHARE_CODES           ## 4、京喜工厂互助码
-  DDFACTORY_SHARECODES                ## 5、东东工厂互助码
-  JDJOY_SHARECODES                    ## 6、疯狂的JOY互助码
-  JDZZ_SHARECODES                     ## 7、京东赚赚互助码
-  JXNC_SHARECODES                     ## 8、京喜农场助力码
-  BOOKSHOP_SHARECODES                 ## 9、口袋书店互助码
-  JD_CASH_SHARECODES                  ## 10、签到领现金互助码
-  JDSGMH_SHARECODES                   ## 11、闪购盲盒互助码
-  JDCFD_SHARECODES                    ## 12、京喜财富岛互助码
-  JDHEALTH_SHARECODES                 ## 13、东东健康社区互助码
-  JD818_SHARECODES                    ## 14、京东手机狂欢城互助码
-  CITY_SHARECODES                     ## 15、城城领现金互助码
-  MONEYTREE_SHARECODES                ## 16、摇钱树
-  JXNCTOKENS                          ## 17、京喜Token(京喜财富岛提现用)
-)
-var_name=(
-  ForOtherFruit                       ## 1、东东农场互助规则
-  ForOtherPet                         ## 2、东东萌宠互助规则
-  ForOtherBean                        ## 3、种豆得豆互助规则
-  ForOtherDreamFactory                ## 4、京喜工厂互助规则
-  ForOtherJdFactory                   ## 5、东东工厂互助规则
-  ForOtherJoy                         ## 6、疯狂的JOY互助规则
-  ForOtherJdzz                        ## 7、京东赚赚互助规则
-  ForOtherJxnc                        ## 8、京喜农场助力码
-  ForOtherBookShop                    ## 9、口袋书店互助规则
-  ForOtherCash                        ## 10、签到领现金互助规则
-  ForOtherSgmh                        ## 11、闪购盲盒互助规则
-  ForOtherCfd                         ## 12、京喜财富岛互助规则
-  ForOtherHealth                      ## 13、东东健康社区互助规则
-  ForOtherCarni                       ## 14、京东手机狂欢城互助规则
-  ForOtherCity                        ## 15、城城领现金互助规则
-  ForOtherMoneyTree                   ## 16、摇钱树
-  TokenJxnc                           ## 17、京喜Token(京喜财富岛提现用)
-)
-
-local_scr=$1
-repo_dir=""
-sub_dir_scripts="$(ls -l $dir_scripts |awk '/^d/ {print $NF}')"
-if [[ ! $local_scr =~ "/" ]] || [[ $local_scr == $dir_scripts/[^/]* ]]; then
-    local_scr_dir="$dir_scripts"
-elif [[ $local_scr == */* ]] && [[ ! $local_scr =~ ql ]]; then
-    repo_dir="$(echo $local_scr | awk -F '/' '{print $(NF-1)}')"
-    [[ $sub_dir_scripts[@] =~ $repo_dir ]] && local_scr_dir="$dir_scripts/$repo_dir"
-else
-    local_scr_dir=""
-fi
 
 ## 生成pt_pin清单
 gen_pt_pin_array() {
-    source $file_env
-    ori_jdCookie=$JD_COOKIE
-    ori_envs=$(eval echo "\$ori_jdCookie")
-    ori_array=($(echo $ori_envs | sed 's/&/ /g'))
-    local i j ori_pt_pin_temp
-    for i in "${!ori_array[@]}"; do
-        j=$((i + 1))
-        ori_pt_pin_temp=$(echo ${ori_array[i]} | perl -pe "{s|.*pt_pin=([^; ]+)(?=;?).*|\1|; s|%|\\\x|g}")
-        ori_remark_name[i]="$(cat $dir_db/env.db | grep ${ori_array[i]} | grep remarks | perl -pe "{s|.*remarks\":\"([^\"]+).*|\1|g}" | tail -1)"
-        [[ ! ${ori_remark_name[i]} ]] && ori_remark_name[i]="未备注"
-        [[ $ori_pt_pin_temp == *\\x* ]] && ori_pt_pin[i]=$(printf $ori_pt_pin_temp) || ori_pt_pin[i]=$ori_pt_pin_temp
-        ori_sn=$j
-        ori_uesr_info[i]="序号 $j. 用户名：${ori_pt_pin[i]} 备注：${ori_remark_name[i]}"
-    done
+  local envs=$(eval echo "\$JD_COOKIE")
+  local array=($(echo $envs | sed 's/&/ /g'))
+  local tmp1 tmp2 i pt_pin_temp
+  for i in "${!array[@]}"; do
+    pt_pin_temp=$(echo ${array[i]} | perl -pe "{s|.*pt_pin=([^; ]+)(?=;?).*|\1|; s|%|\\\x|g}")
+    remark_name[i]=$(cat $dir_db/env.db | grep ${array[i]} | grep remarks | perl -pe "{s|.*remarks\":\"([^\"]+).*|\1|g}" | tail -1)
+    [[ $pt_pin_temp == *\\x* ]] && pt_pin[i]=$(printf $pt_pin_temp) || pt_pin[i]=$pt_pin_temp
+  done
 }
 
-export_uesr_info(){
-for i in $@; do
-    for j in "${!ori_array[@]}"; do
-        [[ ${ori_array[j]} == *$i* ]] && echo ${ori_uesr_info[j]}
-    done
-done
-}
-
-# Cookie 有效性检查
-check_jd_ck(){
-    local test_jd_cookie="$(curl -s --connect-timeout 5 --retry 3 --noproxy "*" "https://bean.m.jd.com/bean/signIndex.action" -H "cookie: $1")"
-    [[ "$test_jd_cookie" ]] && return 0 || return 1
-}
-
-# 移除失效的 Cookie
-remove_void_ck(){
-    gen_pt_pin_array
-    local tmp_jdCookie i j void_ck_num
-    if [[ $jdCookie_1 ]]; then
-        tmp_jdCookie=$jdCookie_1
-    else
-        source $file_env
-        tmp_jdCookie=$JD_COOKIE
-    fi
-    local envs=$(eval echo "\$tmp_jdCookie")
-    local array=($(echo $envs | sed 's/&/ /g'))
-    local user_sum=${#array[*]}
-    local test_connect="$(curl -I -s --connect-timeout 5 --retry 3 --noproxy "*" https://bean.m.jd.com/bean/signIndex.action -w %{http_code} | tail -n1)"
-    echo -e "# 开始检测 Cookie 的有效性，可能花费一定时间，请耐心等待 ..."
-    if [ "$test_connect" -eq "302" ]; then
-        echo -e "# 本次一共导入 $user_sum 个 Cookie ，其中："
-        for ((i = 0; i < $user_sum; i++)); do
-            j=$((i + 1))
-            check_jd_ck ${array[i]}
-            [[ $? = 0 ]] && echo -e "# `export_uesr_info ${array[i]}` 状态正常"
-            [[ $? = 1 ]] && echo -e "# `export_uesr_info ${array[i]}` 已失效" && unset array[i]
-        done
-        jdCookie_2=$(echo ${array[*]} | sed 's/\ /\&/g')
-        [[ $jdCookie_2 ]] && export JD_COOKIE="$jdCookie_2"
-        void_ck_num=$((user_sum - ${#array[*]}))
-        [[ $void_ck_num = 0 ]] && echo -e "# 未检测到失效 Cookie 。" || echo -e "# 已剔除以上 $void_ck_num 个失效的 Cookie 。"
-    else
-        echo -e "# API 连接失败，跳过检测。"
-    fi
-    echo -e ""
-}
-
-## 临时禁止账号运行活动脚本
-TempBlock_CK(){
-    ## 按 Cookie 序号禁止账号
-    TempBlock_JD_COOKIE(){
-        ## 导入基础 JD_COOKIE 变量
-        source $file_env
-        local tmp_jdCookie=$JD_COOKIE
-        local envs=$(eval echo "\$tmp_jdCookie")
-        local array=($(echo $envs | sed 's/&/ /g'))
-        local user_sum=${#array[*]}
-        local TempBlockCookie="$(eval echo $(echo $TempBlockCookie | perl -pe "{s|~\|-|_|g; s|\W+\|[A-Za-z]+| |g; s|(\d+)_(\d+)|{\1..\2}|g;}"))"
-        local TempBlockPin="$(echo $TempBlockPin | perl -pe "{s|,| |g;}")"
-        local TempBlockCookieArray=($TempBlockCookie)
-        local TempBlockPinArray=($TempBlockPin)
-        local i j k m jdCookie_3
-        for ((i = 1; i <= $user_sum; i++)); do
-            j=$((i - 1))
-            for ((k = 0; k < ${#TempBlockCookieArray[*]}; k++)); do
-                [[ "${TempBlockCookieArray[k]}" = "$i" ]] && unset array[j]
-            done
-            pt_pin_temp=$(echo ${array[j]} | perl -pe "{s|.*pt_pin=([^; ]+)(?=;?).*|\1|; s|%|\\\x|g}")
-            [[ $pt_pin_temp == *\\x* ]] && pt_pin[j]=$(printf $pt_pin_temp) || pt_pin[j]=$pt_pin_temp
-            for ((m = 0; m < ${#TempBlockPinArray[*]}; m++)); do
-                pt_pin_temp_block=$(echo ${TempBlockPinArray[m]} | perl -pe "{s|%|\\\x|g}")
-                [[ $pt_pin_temp_block == *\\x* ]] && pt_pin_block[m]=$(printf $pt_pin_temp_block) || pt_pin_block[m]=$pt_pin_temp_block
-                [[ "${pt_pin[j]}" =~ "${pt_pin_block[m]}" ]] && unset array[j]
-            done
-        done
-        jdCookie_1=$(echo ${array[*]} | sed 's/\ /\&/g')
-        [[ $jdCookie_1 ]] && export JD_COOKIE="$jdCookie_1"
-        user_sum_1=${#array[*]}
-    }
-
-    local i j k
-    if [[ -n "$(echo $tempblock_ck_envs_num|sed -n "/^[0-9]\+$/p")" ]]; then
-        for ((k = 1; k <= $tempblock_ck_envs_num; k++)); do
-            if [ tempblock_ck_envs$k ]; then
-                local tempblock_ck_array=($(eval echo "\$tempblock_ck_envs$k" | perl -pe "{s|&| |g}"))
-                for i in "${tempblock_ck_array[@]}"; do
-                    local tmp_task_array=($(echo $i | perl -pe "{s|@| |g}"))
-                    local tmp_script_array=($(echo ${tmp_task_array[0]} | perl -pe "{s/\|/ /g}"))
-                    for j in ${tmp_script_array[@]}; do
-                        if [[ $local_scr == *$j* ]]; then
-                            [[ $(echo ${tmp_task_array[1]} | perl -pe "{s|\D||g;}") ]] && TempBlockCookie=${tmp_task_array[1]} || TempBlockCookie=""
-                            TempBlockPin=${tmp_task_array[2]}
-                            break
-                        fi
-                    done
-                done
-            fi
-        done
-    fi
-    if [[ $TempBlockCookie ]] || [[ $TempBlockPin ]]; then
-        TempBlock_JD_COOKIE
-    else
-        export JD_COOKIE="$tmp_jdCookie"
-    fi
-}
-
-## 重组 CK
-Recombin_CK(){
-    ## 导入基础 JD_COOKIE 变量
-    if [[ $jdCookie_2 ]]; then
-        tmp_jdCookie=$jdCookie_2
-    elif [[ $jdCookie_1 ]]; then
-        tmp_jdCookie=$jdCookie_1
-    else
-        source $file_env
-        tmp_jdCookie=$JD_COOKIE
-    fi
-
-    ## JD_COOKIE 基本分析
-    local envs=$(eval echo "\$tmp_jdCookie")
-    array=($(echo $envs | sed 's/&/ /g'))
-    user_sum=${#array[*]}
-    local jdCookie_4 i j k m n
-    if [[ -n "$(echo $recombin_ck_envs_num|sed -n "/^[0-9]\+$/p")" ]]; then
-        for ((k = 1; k <= $recombin_ck_envs_num; k++)); do
-            if [ recombin_ck_envs$k ]; then
-                local recombin_ck_array=($(eval echo "\$recombin_ck_envs$k" | perl -pe "{s|&| |g}"))
-                for i in "${recombin_ck_array[@]}"; do
-                    local tmp_task_array=($(echo $i | perl -pe "{s|@| |g}"))
-                    local tmp_script_array=($(echo ${tmp_task_array[0]} | perl -pe "{s/\|/ /g}"))
-                    #[[ $DEBUG_MODE = 1 ]]  && echo ${tmp_script_array[@]}
-                    for j in "${tmp_script_array[@]}"; do
-                        if [[ $local_scr == *$j* ]]; then
-                            [[ $DEBUG_MODE = 1 ]] && echo -n "${tmp_script_array[@]}" && echo -e "\n"
-                            Recombin_CK_Mode="${tmp_task_array[1]}"
-                            for ((m = 1; m <= 5; m++)); do
-                                n=$((m + 1))
-                                eval Recombin_CK_ARG$m="${tmp_task_array[n]}"
-                                [[ $DEBUG_MODE = 1 ]] && eval echo "Recombin_CK_ARG$m : \$Recombin_CK_ARG$m"
-                            done
-                            local temp_status=1
-                            [[ $Recombin_CK_Mode = 4 || $Recombin_CK_Mode = 5 ]] && Recombin_CK_cal && break 4 || Recombin_CK_cal
-                        fi
-                    done
-                done
-            fi
-        done
-    fi
-
-    [[ ! $temp_status ]] && Recombin_CK_cal
-}
-
-## 重组 CK 计算
-Recombin_CK_cal(){
-    ## 随机模式算法
-    combine_random(){
-        local combined_all ran_sub tmp i
-        echo "# 正在应用 随机Cookie 模式..."
-        [[ -n "$(echo $1|sed -n "/^[0-9]\+$/p")" ]] && ran_num=$1 || ran_num=$user_sum
-        echo -e "# 当前总共 $user_sum 个有效账号，本次随机抽取 $ran_num 个账号按随机顺序参加活动。"
-        ran_sub="$(seq $user_sum | sort -R | head -$ran_num)"
-        for i in $ran_sub; do
-            j=$((i -1))
-            tmp="${array[j]}"
-            combined_all="$combined_all&$tmp"
-        done
-        jdCookie_4=$(echo $combined_all | sed 's/^&//g')
-        [[ $jdCookie_4 ]] && export JD_COOKIE="$jdCookie_4"
-        #[[ $DEBUG_MODE = 1 ]] && echo $jdCookie_4
-    }
-
-    ## 优先模式算法
-    combine_priority(){
-        local combined_all ran_sub jdCookie_priority jdCookie_random m n
-        if [ $1 ]; then
-            # 固定区账号数量
-            [[ -n "$(echo $1|sed -n "/^[0-9]\+$/p")" ]] && fixed_num=$1 || fixed_num="0"
-            if [[ $fixed_num -ge $user_sum ]]; then
-                echo "# 固定账号数量不得大于或等于有效账号总量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            elif [[ $fixed_num -eq 0 ]]; then
-                echo "# 未设定固定账号数量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            else
-                echo "# 正在应用 优先Cookie 模式..."
-                echo -e "# 当前总共 $user_sum 个有效账号，其中前 $fixed_num 个账号为固定顺序。\n# 本次从第 $((fixed_num + 1)) 个账号开始按随机顺序参加活动。"
-                ran_sub=$(seq $fixed_num $user_sum | sort -R)
-                for ((m = 0; m < $fixed_num; m++)); do
-                    tmp="${array[m]}"
-                    jdCookie_priority="$jdCookie_priority&$tmp"
-                done
-                for n in $ran_sub; do
-                    tmp="${array[n]}"
-                    jdCookie_random="$jdCookie_random&$tmp"
-                done
-                combined_all="$jdCookie_priority$jdCookie_random"
-                jdCookie_4=$(echo $combined_all | perl -pe "{s|^&||; s|&&|&|; s|&$||}")
-                [[ $jdCookie_4 ]] && export JD_COOKIE="$jdCookie_4"
-                #[[ $DEBUG_MODE = 1 ]] && echo $jdCookie_4
-            fi
-        else
-            echo "# 由于参数缺失，切换回正常 Cookie 模式..."
-            export JD_COOKIE="$tmp_jdCookie"
-        fi
-    }
-
-    ## 轮换模式算法
-    combine_rotation(){
-        # 当月总天数
-        local total_days=$(cal | grep ^[0-9] | tail -1 | awk -F " " '{print $NF}')
-        # 今天几号
-        local today_day=$(date +%-d)
-        local combined_all rot_num rot_start_num jdCookie_priority jdCookie_rot_head jdCookie_rot_mid tmp_1 tmp_2 tmp_3 a b c
-        # 固定区账号数量
-        [[ -n "$(echo $1|sed -n "/^[0-9]\+$/p")" ]] && fixed_num=$1 || fixed_num="0"
-        if [[ $fixed_num -ge $user_sum ]]; then
-            echo "# 固定账号数量不得大于或等于有效账号总量，切换回正常 Cookie 模式..."
-            export JD_COOKIE="$tmp_jdCookie"
-        elif [[ $today_day -gt 1 ]]; then
-            echo "# 正在应用 轮换Cookie 模式..."
-            local rot_total_num=$((user_sum - $fixed_num))
-            if [[ $rot_total_num -gt 2 ]]; then
-                # 轮换区的账号数量
-                rot_num=$Recombin_CK_ARG2
-                [[ -z "$(echo $rot_num|sed -n "/^[0-9]\+$/p")" || ! $rot_num || $rot_num -lt 1 || $rot_total_num -lt $rot_num ]] && rot_num=$(((rot_total_num + total_days -1)/total_days)) && [[ $rot_num -lt 1 ]] && rot_num="1"
-                rot_start_num=$((fixed_num + rot_num * ((today_day - 1))))
-                while [[ $user_sum -lt $rot_start_num ]]; do rot_start_num=$((rot_start_num - rot_total_num)); done
-                echo -n "# 当前总共 $user_sum 个有效账号"
-                [[ $fixed_num -gt 0 ]] && echo -e "，其中前 $fixed_num 个账号为固定顺序。" || echo -e "，所有账号参与轮换。"
-                echo -e "# 今天从第 $((rot_start_num + 1)) 个账号开始轮换，轮换频次为：$rot_num 个账号/天。"
-                for ((a = 0; a < fixed_num; a++)); do
-                    tmp_1="${array[a]}"
-                    jdCookie_priority="$jdCookie_priority&$tmp_1"
-                done
-                for ((b = $rot_start_num; b < $user_sum; b++)); do
-                    tmp_2="${array[b]}"
-                    jdCookie_rot_head="$jdCookie_rot_head&$tmp_2"
-                done
-                for ((c = $fixed_num; c < $((rot_start_num)); c++)); do
-                    tmp_3="${array[c]}"
-                    jdCookie_rot_mid="$jdCookie_rot_mid&$tmp_3"
-                done
-                combined_all="$jdCookie_priority$jdCookie_rot_head$jdCookie_rot_mid"
-                jdCookie_4=$(echo $combined_all | perl -pe "{s|^&||; s|&$||}")
-                [[ $jdCookie_4 ]] && export JD_COOKIE="$jdCookie_4"
-                #[[ $DEBUG_MODE = 1 ]] && echo $jdCookie_4
-            else
-                echo "# 由于参加轮换的账号数量不足 2 个，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            fi
-        elif [[ $today_day -eq 1 ]]; then
-            echo "# 今天是 1 号，不应用轮换模式，全部 Cookie 按正常顺序参加活动..."
-            export JD_COOKIE="$tmp_jdCookie"
-        fi
-    }
-
-    ## 组队模式算法
-    combine_team(){
-        run_js_in_team(){
-            local jdCookie_team_part1 jdCookie_team_part2 i j k m n
-            for ((i = 0; i < $user_sum; i++)); do
-                j=$((i + 1))
-                m=$((i/team_num))
-                n=$(((teamer_num - 1)*i + 1))
-                jdCookie_team_part1="${array[m]}"
-                jdCookie_team_part2=""
-                if [[ $j -le $team_num ]]; then
-                    for ((k = 1; k < $teamer_num; k++)); do
-                        jdCookie_team_part2="$jdCookie_team_part2&${array[n]}"
-                        let n++
-                    done
-                elif [[ $j -eq $((team_num + 1)) ]]; then
-                    for ((k = 1; k < $((teamer_num-1)); k++)); do
-                        jdCookie_team_part1="${array[m]}&${array[0]}"
-                        jdCookie_team_part2="$jdCookie_team_part2&${array[n]}"
-                        let n++
-                    done
-                elif [[ $j -gt $((team_num + 1)) ]]; then
-                    [[ $((n+1)) -le $user_sum ]] && n=$(((teamer_num - 1)*i)) || break
-                    for ((k = $i; k < $((i + teamer_num -1)); k++)); do
-                        jdCookie_team_part2="$jdCookie_team_part2&${array[n]}"
-                        let n++
-                        [[ $n = $m ]] && n=$((n+1))
-                        [[ $((n+1)) -gt $user_sum ]] && break
-                    done
-                fi
-                jdCookie_4=$(echo -e "$jdCookie_team_part1$jdCookie_team_part2")
-                if [[ $jdCookie_4 ]]; then
-                    export JD_COOKIE="$jdCookie_4"
-                    #[[ $DEBUG_MODE = 1 ]] && echo $jdCookie_4
-                    if [[ $local_scr == *.js ]]; then
-                        if [ $temp_status = 3 ]; then
-                            node /ql/scripts/$local_scr
-                            [[ $interval_time != "0" ]] && echo -e "# 等待 $interval_time 秒后开始进行下一组队任务 ..."
-                            sleep $interval_time
-                        else
-                            node /ql/scripts/$local_scr &
-                            sleep $delay_time
-                        fi
-                    fi
-                fi
-            done
-            exit
-        }
-
-        local teamer_num="$1"
-        local team_num="$2"
-        local p q
-        if [[ $1 ]] && [[ $2 ]]; then
-            # 每组队伍的成员数量
-            [[ -n "$(echo $1|sed -n "/^[0-9]\+$/p")" ]] && teamer_num=$1 || teamer_num=$user_sum
-            # 单个账号最多发起的组队数量
-            [[ -n "$(echo $2|sed -n "/^[0-9]\+$/p")" ]] && team_num=$2 || team_num=1
-            if [[ $teamer_num -ge $user_sum ]]; then
-                echo "# 每组队伍的成员数量不得大于或等于有效账号总数量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            elif [[ $((teamer_num * team_num)) -ge $user_sum ]]; then
-                echo "# 参与组队的总成员数量不得大于或等于有效账号总数量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            else
-                echo "# 正在应用 组队Cookie 模式..."
-                [[ $team_num -ge $((user_sum/teamer_num)) ]] && team_num=$((user_sum/teamer_num)) && [[ $team_num -lt 1 ]] && team_num=1
-                echo -e "# 当前总共 $user_sum 个有效账号，每支队伍包含 $1 个账号，每个账号可以发起 $2 次组队。"
-                if [[ -n "$(echo $3|perl -pe "{s|\.\|s\|m\|h\|d||g}"|sed -n "/^[0-9]\+$/p")" ]]; then
-                    temp_status="1"
-                    local delay_time="$(echo $3|perl -pe "{s|([a-z])(\d)+|\1 \2|g;}")"
-                    echo -e "各支队伍启动脚本的延隔时间为`format_time $3`。"
-                elif [[ $3 = 0 ]]; then
-                    temp_status="2"
-                    local delay_time="0"
-                    echo -e "所有队伍并发启动脚本，可能会占用较高的系统资源导致卡顿。"
-                elif [[ $3 = "-" ]] && [[ -n "$(echo $4|perl -pe "{s|\.\|s\|m\|h\|d||g}"|sed -n "/^[0-9]\+$/p")" ]] ; then
-                    temp_status="3"
-                    local interval_time="$(echo $4|perl -pe "{s|([a-z])(\d)|\1 \2|g;}")"
-                    echo -e "各支队伍启动脚本的间隔时间为`format_time $4`。"
-                else
-                    temp_status="3"
-                    delay_time="0"
-                    interval_time="0"
-                fi
-                if [[ ${activity_env[0]} ]]; then
-                    if [[ $5 = 0 ]]; then
-                        for p in ${activity_env[@]}; do
-                            activity_array=($(echo $p | perl -pe "{s|@| |g}"))
-                            export jd_zdjr_activityId=${activity_array[0]}
-                            export jd_zdjr_activityUrl=${activity_array[1]}
-                            echo -e "活动ID(activityId)   : $jd_zdjr_activityId"
-                            echo -e "活动链接(activityUrl): $jd_zdjr_activityUrl"
-                            run_js_in_team
-                        done
-                    elif [[ $5 -gt 0 ]]; then
-                        q=$(($5 - 1))
-                        activity_array=($(echo ${activity_env[q]} | perl -pe "{s|@| |g}"))
-                        export jd_zdjr_activityId=${activity_array[0]}
-                        export jd_zdjr_activityUrl=${activity_array[1]}
-                        run_js_in_team
-                    fi
-                else
-                    run_js_in_team
-                fi
-            fi
-        else
-            echo "# 由于参数缺失，切换回 正常 Cookie 模式..."
-            export JD_COOKIE="$tmp_jdCookie"
-        fi
-    }
-
-    ## 分段模式算法
-    combine_segmentation(){
-        local delay_time="$3"
-        local interval_time="$4"
-        local jdCookie_priority jdCookie_team_part i j k m n
-        if [[ $1 ]] && [[ $2 ]]; then
-            # 固定区账号数量
-            [[ -n "$(echo $1|sed -n "/^[0-9]\+$/p")" ]] && fixed_num=$1 || fixed_num="0"
-            # 每段账号总数量
-            [[ -n "$(echo $2|sed -n "/^[0-9]\+$/p")" ]] && segment_length=$2 || segment_length=$user_sum
-            if [[ $fixed_num -ge $segment_length ]]; then
-                echo "# 固定账号数量不得大于或等于每段账号总数量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            elif [[ $segment_length -ge $user_sum ]]; then
-                echo "# 分段账号数量不得大于或等于有效账号总数量，切换回正常 Cookie 模式..."
-                export JD_COOKIE="$tmp_jdCookie"
-            elif [[ $fixed_num -lt $segment_length ]]; then
-                echo "# 正在应用 分段Cookie 模式..."
-                local team_length="$((segment_length - fixed_num))"
-                local team_total_num=$(((user_sum - fixed_num + team_length -1)/team_length)) && [[ $team_total_num -lt 1 ]] && team_total_num=1
-                echo -n "# 当前总共 $user_sum 个有效账号"
-                [[ $fixed_num -ne 0 ]] && echo -n "，其中前 $fixed_num 个账号为固定顺序"
-                echo -n "。每 $segment_length 个账号分一段，一共分 $team_total_num 段。"
-                if [[ -n "$(echo $3|perl -pe "{s|\.\|s\|m\|h\|d||g}"|sed -n "/^[0-9]\+$/p")" ]]; then
-                    temp_status="1"
-                    local delay_time="$(echo $3|perl -pe "{s|([a-z])(\d)+|\1 \2|g;}")"
-                    echo -e "各分段启动脚本的延隔时间为`format_time $3`。"
-                    echo -e "# 注意：如果每段的运行时间较长且延隔时间设定较短，运行日志可能会显示混乱，此为正常现象。"
-                elif [[ $3 = 0 ]]; then
-                    temp_status="2"
-                    local delay_time="0"
-                    echo -e "所有分段并发启动脚本，可能会占用较高的系统资源导致卡顿。"
-                    echo -e "# 注意：运行日志会显示混乱，此为正常现象。"
-                elif [[ $3 = "-" ]] && [[ -n "$(echo $4|perl -pe "{s|\.\|s\|m\|h\|d||g}"|sed -n "/^[0-9]\+$/p")" ]] ; then
-                    temp_status="3"
-                    local interval_time="$(echo $4|perl -pe "{s|([a-z])(\d)|\1 \2|g;}")"
-                    echo -e ""
-                else
-                    temp_status="3"
-                    delay_time="0"
-                    interval_time="0"
-                    echo -e "各分段启动脚本的间隔时间为`format_time $4`。"
-                fi
-                for ((m = 0; m < $fixed_num; m++)); do
-                    tmp="${array[m]}"
-                    jdCookie_priority="$jdCookie_priority&$tmp"
-                done
-                for ((i = 0; i < $team_total_num; i++)); do
-                    j=$((i + 1))
-                    m=$((team_length * i + fixed_num))
-                    n=$((team_length * j + fixed_num))
-                    t=$n && [[ $user_sum -lt $t ]] && t=$user_sum
-                    jdCookie_team_part=""
-                    for ((k = m; k < $n; k++)); do
-                        tmp="${array[k]}"
-                        jdCookie_team_part="$jdCookie_team_part&$tmp"
-                    done
-                    jdCookie_4=$(echo $jdCookie_priority$jdCookie_team_part | perl -pe "{s|^&+\|&+$||g}")
-                    if [[ $jdCookie_4 ]]; then
-                        export JD_COOKIE="$jdCookie_4"
-                        #[[ $DEBUG_MODE = 1 ]] && echo $jdCookie_4
-                        if [[ $local_scr == *.js ]]; then
-                            if [ $temp_status = 3 ]; then
-                                [[ $fixed_num -ne 0  ]] && echo -e "# 本次提交的是前 $fixed_num 位账号及第 $((m + 1)) - $n 位账号。" || echo -e "# 本次提交的是第 $((m + 1)) - $n 位账号。"
-                                node /ql/scripts/$local_scr
-                                [[ $interval_time != "0" ]] && echo -e "# 等待`format_time $interval_time`后开始进行下一段任务 ..."
-                                sleep $interval_time
-                            else
-                                [[ $fixed_num -ne 0  ]] && echo -e "# 本次提交的是前 $fixed_num 位账号及第 $((m + 1)) - $n 位账号。" || echo -e "# 本次提交的是第 $((m + 1)) - $n 位账号。"
-                                node /ql/scripts/$local_scr &
-                                sleep $delay_time
-                            fi
-                        fi
-                    fi
-                done
-                exit
-            fi
-        else
-            echo "# 由于参数缺失，切换回正常 Cookie 模式..."
-            export JD_COOKIE="$tmp_jdCookie"
-        fi
-    }
-
-    # 格式化时间
-    format_time(){
-        for i in $@; do
-            if [[ -n "$(echo $i|perl -pe "{s|\.||g}"|sed -n "/^[0-9]\+$/p")" ]]; then
-                time_text=" $i 秒"
-            elif [[ -n "$(echo $i|perl -pe "{s|\.\|s\|m\|h\|d||g}"|sed -n "/^[0-9]\+$/p")" ]]; then
-                time_text="$(echo $i|perl -pe "{s|([a-z])(\d)+|\1 \2|g; s|s| 秒|g; s|m| 分|g; s|h| 小时|g; s|d| 天|g; s|^| |g; s|(\d+)$|\1 秒|g;}")"
-            fi
-            echo -n "$time_text"
-        done
-    }
-
-    # Cookie 环境变量迭代导入
-    [[ $jdCookie_4 ]] && array=($(echo $jdCookie_4 | sed 's/&/ /g')) && user_sum=${#array[*]}
-    ## 移除无效 Cookie
-    [[ $Recombin_CK_Mode ]] && [[ $Remove_Void_CK = 1 ]] && remove_void_ck
-    # Recombin_CK_ARG1 参数基本判断
-    if [ -n "$(echo $Recombin_CK_ARG1|sed -n "/^[0-9]\+$/p")" ]; then
-        [[ $user_sum -lt $Recombin_CK_ARG1 || $Recombin_CK_ARG1 -lt 0 ]] && Recombin_CK_ARG1=$user_sum
-    else
-        Recombin_CK_ARG1=""
-    fi
-
-    case $Recombin_CK_Mode in
-        1)
-            combine_random $Recombin_CK_ARG1
-            ;;
-        2)
-            combine_priority $Recombin_CK_ARG1
-            ;;
-        3)
-            combine_rotation $Recombin_CK_ARG1 $Recombin_CK_ARG2
-            ;;
-        4)
-            combine_team $Recombin_CK_ARG1 $Recombin_CK_ARG2 $Recombin_CK_ARG3 $Recombin_CK_ARG4 $Recombin_CK_ARG5
-            ;;
-        5)
-            combine_segmentation $Recombin_CK_ARG1 $Recombin_CK_ARG2 $Recombin_CK_ARG3 $Recombin_CK_ARG4
-            ;;
-        *)
-            export JD_COOKIE="$tmp_jdCookie"
-            ;;
-    esac
-}
-
-## 组合互助码格式化为全局变量的函数
-combine_sub() {
-    source $file_env
-    local what_combine=$1
-    local combined_all=""
-    local tmp1 tmp2
-    local TempBlockCookieInterval="$(echo $TempBlockCookie | perl -pe "{s|~|-|; s|_|-|}" | sed 's/\(\d\+\)-\(\d\+\)/{\1..\2}/g')"
-    local TempBlockCookieArray=($(eval echo $TempBlockCookieInterval))
+## 导出互助码的通用程序，$1：去掉后缀的脚本名称，$2：config.sh中的后缀，$3：活动中文名称
+export_codes_sub() {
+    local task_name=$1
+    local config_name=$2
+    local chinese_name=$3
+    local config_name_my=My$config_name
+    local config_name_for_other=ForOther$config_name
+    local tmp_helptype=$HelpType
+    local BreakHelpInterval=$(echo $BreakHelpNum | perl -pe "{s|~|-|; s|_|-|}" | sed 's/\(\d\+\)-\(\d\+\)/{\1..\2}/g')
+    local BreakHelpNumArray=($(eval echo $BreakHelpInterval))
+    local BreakHelpNumVerify=$(echo $BreakHelpNum | sed 's/ //g' | perl -pe "{s|-||; s|~||; s|_||}" | sed 's/^\d\+$//g')
+    local i j k m n t pt_pin_in_log code tmp_grep tmp_my_code tmp_for_other user_num tmp_helptype HelpTemp random_num_list
     local envs=$(eval echo "\$JD_COOKIE")
     local array=($(echo $envs | sed 's/&/ /g'))
     local user_sum=${#array[*]}
-    local a b i j t sum combined_all
-    for ((i=1; i <= $user_sum; i++)); do
-        local tmp1=$what_combine$i
-        local tmp2=${!tmp1}
-        [[ ${tmp2} ]] && sum=$i || break
-    done
-    [[ ! $sum ]] && sum=$user_sum
-    for ((j = 1; j <= $sum; j++)); do
-        a=$temp_user_sum
-        b=$sum
-        if [[ $a -ne $b ]]; then
-            for ((t = 0; t < ${#TempBlockCookieArray[*]}; t++)); do
-                [[ "${TempBlockCookieArray[t]}" = "$j" ]] && continue 2
-            done
-        fi
-        local tmp1=$what_combine$j
-        local tmp2=${!tmp1}
-        combined_all="$combined_all&$tmp2"
-    done
-    echo $combined_all | perl -pe "{s|^&||; s|^@+||; s|&@|&|g; s|@+&|&|g; s|@+|@|g; s|@+$||}"
-}
+    if cd $dir_log &>/dev/null && [[ $(ls ./*$task_name*/*.log 2> /dev/null | wc -l) -gt 0 ]]; then
+        ## 寻找所有互助码以及对应的pt_pin
+        i=0
+        pt_pin_in_log=()
+        code=()
+        pt_pin_and_code=$(ls -t ./*$task_name*/*.log | xargs awk -v var="的$chinese_name好友互助码" 'BEGIN{FS="[（ ）】]+"; OFS="&"} $3~var {print $2,$4}')
+        for line in $pt_pin_and_code; do
+            pt_pin_in_log[i]=$(echo $line | awk -F "&" '{print $1}')
+            code[i]=$(echo $line | awk -F "&" '{print $2}')
+            let i++
+        done
 
-## 正常依次运行时，组合互助码格式化为全局变量
-combine_all() {
-    for ((i = 0; i < ${#env_name[*]}; i++)); do
-        result=$(combine_sub ${var_name[i]})
-        if [[ $result ]]; then
-            export ${env_name[i]}="$result"
-        fi
-    done
-}
-
-## 正常依次运行时，组合互助码格式化为全局变量
-combine_only() {
-    for ((i = 0; i < ${#env_name[*]}; i++)); do
-        case $local_scr in
-            *${name_js[i]}*.js | *${name_js[i]}*.ts)
-                if [[ -f $dir_log/.ShareCode/${name_config[i]}.log ]]; then
-                    . $dir_log/.ShareCode/${name_config[i]}.log
-                    result=$(combine_sub ${var_name[i]})
-                    if [[ $result ]]; then
-                        export ShareCodeConfigChineseName=${name_chinese[i]}
-                        export ShareCodeConfigName=${name_config[i]}
-                        export ShareCodeEnvName=${env_name[i]}
+        ## 输出My系列变量
+        if [[ ${#code[*]} -gt 0 ]]; then
+            for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                tmp_my_code=""
+                j=$((m + 1))
+                for ((n = 0; n < ${#code[*]}; n++)); do
+                    if [[ ${pt_pin[m]} == ${pt_pin_in_log[n]} ]]; then
+                        tmp_my_code=${code[n]}
+                        break
                     fi
-                fi
+                done
+                echo "$config_name_my$j='$tmp_my_code'"
+            done
+        else
+            echo "## 从日志中未找到任何互助码"
+        fi
+
+        ## 输出ForOther系列变量
+        if [[ ${#code[*]} -gt 0 ]]; then
+            [[ $DiyHelpType = "1" ]] && diy_help_rules $2
+            case $tmp_helptype in
+            0) ## 全部一致
+                HelpTemp="全部一致"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板："
+                tmp_for_other=""
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    j=$((m + 1))
+                    if [[ $BreakHelpType = "1" ]]; then
+                        if [ "$BreakHelpNumVerify" = "" ]; then
+                            for ((t = 0; t < ${#BreakHelpNumArray[*]}; t++)); do
+                                [[ "${BreakHelpNumArray[t]}" = "$j" ]] && continue 2
+                            done
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$j}"
+                        else
+                            echo -e "\n#【`date +%X`】 变量值填写不规范，请检查后重试！"
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$j}"
+                        fi
+                    else
+                        tmp_for_other="$tmp_for_other@\${$config_name_my$j}"
+                    fi
+                done
+                echo "${config_name_for_other}1=\"$tmp_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                for ((m = 1; m < ${#pt_pin[*]}; m++)); do
+                    j=$((m + 1))
+                    echo "$config_name_for_other$j=\"$tmp_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
                 ;;
-           *)
-                export ${env_name[i]}=""
+
+            1) ## 均等助力
+                HelpTemp="均等助力"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板："
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    tmp_for_other=""
+                    j=$((m + 1))
+                    for ((n = $m; n < $(($user_sum + $m)); n++)); do
+                        [[ $m -eq $n ]] && continue
+                        if [[ $((n + 1)) -le $user_sum ]]; then
+                            k=$((n + 1))
+                        else
+                            k=$((n + 1 - $user_sum))
+                        fi
+                        if [[ $BreakHelpType = "1" ]]; then
+                            if [ "$BreakHelpNumVerify" = "" ]; then
+                                for ((t = 0; t < ${#BreakHelpNumArray[*]}; t++)); do
+                                    [[ "${BreakHelpNumArray[t]}" = "$k" ]] && continue 2
+                                done
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                            else
+                                echo -e "\n#【`date +%X`】 变量值填写不规范，请检查后重试！"
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                            fi
+                        else
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                        fi
+                    done
+                    echo "$config_name_for_other$j=\"$tmp_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
                 ;;
-        esac
-    done
+
+            2) ## 本套脚本内账号间随机顺序助力
+                HelpTemp="随机顺序"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板："
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    tmp_for_other=""
+                    random_num_list=$(seq $user_sum | sort -R)
+                    j=$((m + 1))
+                    for n in $random_num_list; do
+                        [[ $j -eq $n ]] && continue
+                        if [[ $BreakHelpType = "1" ]]; then
+                            if [ "$BreakHelpNumVerify" = "" ]; then
+                                for ((t = 0; t < ${#BreakHelpNumArray[*]}; t++)); do
+                                    [[ "${BreakHelpNumArray[t]}" = "$n" ]] && continue 2
+                                done
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$n}"
+                            else
+                                echo -e "\n#【`date +%X`】 变量值填写不规范，请检查后重试！"
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$n}"
+                            fi
+                        else
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$n}"
+                        fi
+                    done
+                    echo "$config_name_for_other$j=\"$tmp_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
+                ;;
+
+            3) ## 本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序随机)。
+                HelpTemp="车头A模式"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板"
+                [[ $user_sum -le $front_num ]] && front_num=$user_sum
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    tmp_for_other=""
+                    j=$((m + 1))
+                    for ((n = 0; n < $user_sum; n++)); do
+                        [[ $m -eq $n ]] && continue
+                        k=$((n + 1))
+                        if [[ $k -le $front_num ]]; then
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                        fi
+                    done
+                    tmp_ramdom_for_other=""
+                    random_num_list=$(seq $((front_num+1)) $user_sum | sort -R)
+                    for x in $random_num_list; do
+                        tmp_ramdom_for_other="$tmp_ramdom_for_other@\${$config_name_my$x}"
+                    done
+                    echo "$config_name_for_other$j=\"$tmp_for_other$tmp_ramdom_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
+                ;;
+
+            4) ## 本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序固定)。
+                HelpTemp="车头B模式"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板"
+                [[ $user_sum -le $front_num ]] && front_num=$user_sum
+                random_num_list=$(seq $((front_num+1)) $user_sum | sort -R)
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    tmp_for_other=""
+                    j=$((m + 1))
+                    for ((n = 0; n < $user_sum; n++)); do
+                        [[ $m -eq $n ]] && continue
+                        k=$((n + 1))
+                        if [[ $k -le $front_num ]]; then
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                        fi
+                    done
+                    tmp_ramdom_for_other=""
+                    for x in $random_num_list; do
+                        [[ $m -eq $((x-1)) ]] && continue
+                        tmp_ramdom_for_other="$tmp_ramdom_for_other@\${$config_name_my$x}"
+                    done
+                    echo "$config_name_for_other$j=\"$tmp_for_other$tmp_ramdom_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
+                ;;
+
+            *) ## 按编号优先
+                HelpTemp="按编号优先"
+                echo -e "\n## 采用\"$HelpTemp\"互助模板"
+                for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                    tmp_for_other=""
+                    j=$((m + 1))
+                    for ((n = 0; n < $user_sum; n++)); do
+                        [[ $m -eq $n ]] && continue
+                        k=$((n + 1))
+                        if [[ $BreakHelpType = "1" ]]; then
+                            if [ "$BreakHelpNumVerify" = "" ]; then
+                                for ((t = 0; t < ${#BreakHelpNumArray[*]}; t++)); do
+                                    [[ "${BreakHelpNumArray[t]}" = "$k" ]] && continue 2
+                                done
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                            else
+                                echo -e "\n#【`date +%X`】 变量值填写不规范，请检查后重试！"
+                                tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                            fi
+                        else
+                            tmp_for_other="$tmp_for_other@\${$config_name_my$k}"
+                        fi
+                    done
+                    echo "$config_name_for_other$j=\"$tmp_for_other\"" | perl -pe "s|($config_name_for_other\d+=\")@|\1|"
+                done
+                ;;
+            esac
+        fi
+    else
+        echo "#【`date +%X`】 未运行过 $chinese_name 的脚本，未产生日志"
+    fi
 }
 
-## 提前替换js基础依赖
-JS_Deps_Replace() {
-    if [ $js_deps_replace_envs ]; then
-        local js_deps_replace_array=($(echo $js_deps_replace_envs | perl -pe "{s|&| |g}"))
-        for i in "${js_deps_replace_array[@]}"; do
-            local tmp_task_array=($(echo $i | perl -pe "{s|@| |g}"))
-            local tmp_script_array=($(echo ${tmp_task_array[0]} | perl -pe "{s/\|/ /g}"))
-            local tmp_skip_repo=($(echo ${tmp_task_array[1]} | perl -pe "{s/\|/ /g}"))
-            for j in "${tmp_script_array[@]}"; do
-                [[ ! ${tmp_skip_repo[@]} =~ $repo_dir ]] && [[ -f $dir_config/$j.js ]] && [[ $local_scr_dir ]] && cp -rvf $dir_config/$j.js $local_scr_dir/$j.js
-            done
+## 汇总输出
+export_all_codes() {
+    gen_pt_pin_array
+    [[ $DEBUG = "1" ]] && echo -e "\n#【`date +%X`】 当前 code.sh 的线程数量：$ps_num"
+    [[ $DEBUG = "1" ]] && echo -e "\n#【`date +%X`】 预设的 JD_COOKIE 数量：`echo $JD_COOKIE | grep -o 'pt_key' | wc -l`"
+    [[ $DEBUG = "1" ]] && echo -e "\n#【`date +%X`】 预设的 JD_COOKIE 环境变量数量：`echo $JD_COOKIE | sed 's/&/\n/g' | wc -l`"
+    [[ $DEBUG = "1" && "$(echo $JD_COOKIE | sed 's/&/\n/g' | wc -l)" = "1" && "$(echo $JD_COOKIE | grep -o 'pt_key' | wc -l)" -gt 1 ]] && echo -e "\n#【`date +%X`】 检测到您将多个 COOKIES 填写到单个环境变量值，请注意将各 COOKIES 采用 & 分隔，否则将无法完整输出互助码及互助规则！"
+    echo -e "\n#【`date +%X`】 从日志提取互助码，编号和配置文件中Cookie编号完全对应，如果为空就是所有日志中都没有。\n\n#【`date +%X`】 即使某个MyXxx变量未赋值，也可以将其变量名填在ForOtherXxx中，jtask脚本会自动过滤空值。\n"
+    if [[ $DiyHelpType = "1" ]]; then
+        echo -e "#【`date +%X`】 您已启用指定活动采用指定互助模板功能！"
+    else
+        echo -n "#【`date +%X`】 您选择的互助码模板为："
+        case $HelpType in
+        0)
+            echo "所有账号助力码全部一致。"
+            ;;
+        1)
+            echo "所有账号机会均等助力。"
+            ;;
+        2)
+            echo "本套脚本内账号间随机顺序助力。"
+            ;;
+        3)
+            echo "本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序随机)。"
+            ;;
+        4)
+            echo "本套脚本内指定前 N 个账号优先助力，N 个以后账号间随机助力(随机部分账号顺序固定)。"
+            ;;
+    	*)
+            echo "按账号编号优先。"
+            ;;
+        esac
+    fi
+    [[ $BreakHelpType = "1" ]] && echo -e "\n#【`date +%X`】 您已启用屏蔽模式，账号 $BreakHelpNum 将不被助力！"
+    if [ "$ps_num" -gt $proc_num ]; then
+        echo -e "\n#【`date +%X`】 检测到 code.sh 的线程过多 ，请稍后再试！"
+        exit
+    else
+        [[ $repo ]] && echo -e "\n#【`date +%X`】 默认查询 $repo 的活动脚本日志，格式化导出互助码，生成互助规则！" || echo -e "\n#【`date +%X`】 遍历活动脚本日志，格式化导出互助码，生成互助规则！"
+        # dump_user_info
+        for ((i = 0; i < ${#name_js[*]}; i++)); do
+            echo -e "\n## ${name_chinese[i]}："
+            export_codes_sub "${name_js[i]}" "${name_config[i]}" "${name_chinese[i]}"
         done
     fi
 }
 
-## 魔改版 jdCookie.js 复制到 /ql/deps/。仅支持v2.10.8及以上版本的青龙
-## [[ -d $dir_dep && -f $dir_config/jdCookie.js ]] && cp -rf $dir_config/jdCookie.js $dir_dep
-## 魔改版 jdCookie.js 和 sendNotify.js 覆盖到 /ql/scripts/及子路径下的所有 jdCookie.js。支持v2.10.8 以下版本的青龙
-## [[ -f $dir_config/$i.js ]] && find $dir_scripts ! \( -path "*JDHelloWorld*" -o -path "*ccwav*" \) -type f -name $i|xargs -n 1 cp -rf $dir_config/$i.js && cp -rf $dir_config/$i.js $dir_scripts
-## [[ -f $dir_config/$i.js ]] && cp -rf $dir_config/$i.js $local_scr_dir/
+#更新配置文件中互助码的函数
+help_codes(){
+local envs=$(eval echo "\$JD_COOKIE")
+local array=($(echo $envs | sed 's/&/ /g'))
+local user_sum=${#array[*]}
+local config_name=$1
+local chinese_name=$2
+local config_name_my=My$config_name
+local config_name_for_other=ForOther$config_name
+local ShareCode_dir="$dir_log/.ShareCode"
+local ShareCode_log="$ShareCode_dir/$config_name.log"
+local i j k
 
+#更新配置文件中的互助码
+[[ ! -d $ShareCode_dir ]] && mkdir -p $ShareCode_dir
+[[ "$1" = "TokenJxnc" ]] && config_name_my=$1    
+if [ ! -f $ShareCode_log ] || [ -z "$(cat $ShareCode_log | grep "^$config_name_my\d")" ]; then
+   echo -e "\n## $chinese_name\n${config_name_my}1=''\n" >> $ShareCode_log
+fi
+echo -e "\n#【`date +%X`】 正在更新 $chinese_name 的互助码..."
+for ((i=1; i<=200; i++)); do
+    local new_code="$(cat $latest_log_path | grep "^$config_name_my$i=.\+'$" | sed "s/\S\+'\([^']*\)'$/\1/")"
+    local old_code="$(cat $ShareCode_log | grep "^$config_name_my$i=.\+'$" | sed "s/\S\+'\([^']*\)'$/\1/")"
+    if [[ $i -le $user_sum ]]; then
+        if [ -z "$(grep "^$config_name_my$i" $ShareCode_log)" ]; then
+            sed -i "/^$config_name_my$[$i-1]='.*'/ s/$/\n$config_name_my$i=\'\'/" $ShareCode_log
+        fi
+        if [ "$new_code" != "$old_code" ]; then
+            if [[ "$new_code" != "undefined" ]] && [[ "$new_code" != "{}" ]]; then
+                sed -i "s/^$config_name_my$i='$old_code'$/$config_name_my$i='$new_code'/" $ShareCode_log
+            fi
+        fi
+    elif [[ $i -gt $user_sum ]] && [[ $i -gt 1 ]]; then
+        sed -i "/^$config_name_my$i/d" $ShareCode_log
+    elif [[ $i -eq 1 ]] && [[ -z "$new_code" ]]; then
+        sed -i "s/^$config_name_my$i='\S*'$/$config_name_my$i=''/" $ShareCode_log
+    fi
+done
+sed -i "1c ## 上次导入时间：$(date +%Y年%m月%d日\ %X)" $ShareCode_log
+}
 
-JS_Deps_Replace && TempBlock_CK && Recombin_CK
+#更新配置文件中互助规则的函数
+help_rules(){
+local envs=$(eval echo "\$JD_COOKIE")
+local array=($(echo $envs | sed 's/&/ /g'))
+local user_sum=${#array[*]}
+local config_name=$1
+local chinese_name=$2
+local config_name_my=My$config_name
+local config_name_for_other=ForOther$config_name
+local ShareCode_dir="$dir_log/.ShareCode"
+local ShareCode_log="$ShareCode_dir/$config_name.log"
+local i j k
 
-combine_only
+#更新配置文件中的互助规则
+echo -e "\n#【`date +%X`】 正在更新 $chinese_name 的互助规则..."
+if [ -z "$(cat $ShareCode_log | grep "^$config_name_for_other\d")" ]; then
+   echo -e "${config_name_for_other}1=\"\"" >> $ShareCode_log
+fi
+for ((j=1; j<=200; j++)); do
+    local new_rule="$(cat $latest_log_path | grep "^$config_name_for_other$j=.\+\"$" | sed "s/\S\+\"\([^\"]*\)\"$/\1/")"
+    local old_rule="$(cat $ShareCode_log | grep "^$config_name_for_other$j=.\+\"$" | sed "s/\S\+\"\([^\"]*\)\"$/\1/")"
+    if [[ $j -le $user_sum ]]; then
+        if [ -z "$(grep "^$config_name_for_other$j" $ShareCode_log)" ]; then
+            sed -i "/^$config_name_for_other$[$j-1]=".*"/ s/$/\n$config_name_for_other$j=\"\"/" $ShareCode_log
+        fi
+        if [ "$new_rule" != "$old_rule" ]; then
+            sed -i "s/^$config_name_for_other$j=\"$old_rule\"$/$config_name_for_other$j=\"$new_rule\"/" $ShareCode_log
+        fi
+    elif [[ $j -gt $user_sum ]] && [[ $j -gt 1 ]]; then
+        sed -i "/^$config_name_for_other$j/d" $ShareCode_log
+    elif [[ $j -eq 1 ]] && [[ -z "$new_rule" ]]; then
+        sed -i "s/^$config_name_for_other$j=\"\S*\"$/$config_name_for_other$j=\"\"/" $ShareCode_log
+    fi
+done
+sed -i "1c ## 上次导入时间：$(date +%Y年%m月%d日\ %X)" $ShareCode_log
+}
 
-#if [[ $(ls $dir_code) ]]; then
-#    latest_log=$(ls -r $dir_code | head -1)
-#    . $dir_code/$latest_log
-#    combine_all
-#fi
+export_codes_sub_only(){
+    if [ "$(cat $dir_scripts/"$repo"_jd_cfd.js | grep "// console.log(\`token")" != "" ]; then
+        echo -e "\n# 正在修改 "$repo"_jd_cfd.js ，待完全运行 "$repo"_jd_cfd.js 后即可输出 token ！"
+    fi
+    sed -i 's/.*\(c.*log\).*\(${JSON.*token)}\).*/      \1(\`\\n【京东账号${$.index}（${$.UserName}）的京喜token好友互助码】\2\\n\`)/g' /ql/scripts/*_jd_cfd.js
+    local task_name=$1
+    local config_name=$2
+    local chinese_name=$3
+    local i j k m n pt_pin_in_log code tmp_grep tmp_my_code tmp_for_other user_num random_num_list
+    local envs=$(eval echo "\$JD_COOKIE")
+    local array=($(echo $envs | sed 's/&/ /g'))
+    local user_sum=${#array[*]}
+    if cd $dir_log &>/dev/null && [[ $(ls ./*$task_name*/*.log 2> /dev/null | wc -l) -gt 0 ]]; then
+        ## 寻找所有互助码以及对应的pt_pin
+        i=0
+        pt_pin_in_log=()
+        code=()
+        pt_pin_and_code=$(ls -t ./*$task_name*/*.log | xargs awk -v var="的$chinese_name好友互助码" 'BEGIN{FS="[（ ）】]+"; OFS="&"} $3~var {print $2,$4}' | xargs awk -v var="的$chinese_name好友互助码" 'BEGIN{FS="[（ ）】]+"; OFS="&"} $3~var {print $2,$4}')
+        for line in $pt_pin_and_code; do
+            pt_pin_in_log[i]=$(echo $line | awk -F "&" '{print $1}')
+            code[i]=$(echo $line | awk -F "&" '{print $2}')
+            let i++
+        done
+
+        ## 输出互助码
+        if [[ ${#code[*]} -gt 0 ]]; then
+            for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+                tmp_my_code=""
+                j=$((m + 1))
+                for ((n = 0; n < ${#code[*]}; n++)); do
+                    if [[ ${pt_pin[m]} == ${pt_pin_in_log[n]} ]]; then
+                        tmp_my_code=${code[n]}
+                        break
+                    fi
+                done
+                echo "$config_name$j='$tmp_my_code'"
+            done
+        else
+            echo "## 从日志中未找到任何互助码"
+        fi
+    else
+        echo "#【`date +%X`】 未运行过 $chinese_name 的脚本，未产生日志"
+    fi
+}
+
+#更新互助码和互助规则
+update_help(){
+case $UpdateType in
+    1)
+        if [ "$ps_num" -le $proc_num ] && [ -f $latest_log_path ]; then
+            backup_del
+            echo -e "\n#【`date +%X`】 开始更新配置文件的互助码和互助规则"
+            for ((i = 0; i < ${#name_config[*]}; i++)); do
+                help_codes "${name_config[i]}" "${name_chinese[i]}"
+                [[ "${name_config[i]}" != "TokenJxnc" ]] && help_rules "${name_config[i]}" "${name_chinese[i]}"
+            done
+            echo -e "\n#【`date +%X`】 配置文件的互助码和互助规则已完成更新"
+        elif [ ! -f $latest_log_path ]; then
+            echo -e "\n#【`date +%X`】 日志文件不存在，请检查后重试！"
+        fi
+        ;;
+    2)
+        if [ "$ps_num" -le $proc_num ] && [ -f $latest_log_path ]; then
+            backup_del
+            echo -e "\n#【`date +%X`】 开始更新配置文件的互助码，不更新互助规则"
+            for ((i = 0; i < ${#name_config[*]}; i++)); do
+                help_codes "${name_config[i]}" "${name_chinese[i]}"
+            done
+            echo -e "\n#【`date +%X`】 配置文件的互助码已完成更新"
+        elif [ ! -f $latest_log_path ]; then
+            echo -e "\n#【`date +%X`】 日志文件不存在，请检查后重试！"
+        fi
+        ;;
+    3)
+        if [ "$ps_num" -le $proc_num ] && [ -f $latest_log_path ]; then
+            backup_del
+            echo -e "\n#【`date +%X`】 开始更新配置文件的互助规则，不更新互助码"
+            for ((i = 0; i < ${#name_config[*]}; i++)); do
+                [[ "${name_config[i]}" != "TokenJxnc" ]] && help_rules "${name_config[i]}" "${name_chinese[i]}"
+            done
+            echo -e "\n#【`date +%X`】 配置文件的互助规则已完成更新"
+        elif [ ! -f $latest_log_path ]; then
+            echo -e "\n#【`date +%X`】 日志文件不存在，请检查后重试！"
+        fi
+        ;;
+    *)
+        echo -e "\n#【`date +%X`】 您已设置不更新配置文件的互助码和互助规则，跳过更新！"
+        ;;
+esac
+}
+
+check_jd_cookie(){
+    local test_connect="$(curl -I -s --connect-timeout 5 --retry 3 --noproxy "*" https://bean.m.jd.com/bean/signIndex.action -w %{http_code} | tail -n1)"
+    local test_jd_cookie="$(curl -s --connect-timeout 5 --retry 3 --noproxy "*" "https://bean.m.jd.com/bean/signIndex.action" -H "cookie: $1")"
+    if [ "$test_connect" -eq "302" ]; then
+        [[ "$test_jd_cookie" ]] && echo "(COOKIE 有效)" || echo "(COOKIE 已失效)"
+    else
+        echo "(API 连接失败)"
+    fi
+}
+
+dump_user_info(){
+echo -e "\n## 账号用户名及 COOKIES 整理如下："
+local envs=$(eval echo "\$JD_COOKIE")
+local array=($(echo $envs | sed 's/&/ /g'))
+    for ((m = 0; m < ${#pt_pin[*]}; m++)); do
+        j=$((m + 1))
+        echo -e "## 用户名 $j：${pt_pin[m]} 备注：${remark_name[m]} `check_jd_cookie ${array[m]}`\nCookie$j=\"${array[m]}\""
+    done
+}
+
+backup_del(){
+[[ ! -d $dir_log/.bak_ShareCode ]] && mkdir -p $dir_log/.bak_ShareCode
+local bak_ShareCode_full_path_list=$(find $dir_log/.bak_ShareCode/ -name "*.log")
+local diff_time
+if [[ $BACKUP = "1" ]]; then
+    for ((i = 0; i < ${#name_config[*]}; i++)); do
+        [[ -f $dir_log/.ShareCode/${name_config[i]}.log ]] && cp $dir_log/.ShareCode/${name_config[i]}.log $dir_log/.bak_ShareCode/${name_config[i]}_`date "+%Y-%m-%d-%H-%M-%S"`.log
+    done
+fi
+if [[ $CLEANBAK = "1" ]]; then
+    for log in $bak_ShareCode_full_path_list; do
+        local log_date=$(echo $log | awk -F "_" '{print $NF}' | cut -c1-10)
+        if [[ $(date +%s -d $log_date 2>/dev/null) ]]; then
+            if [[ $is_macos -eq 1 ]]; then
+                diff_time=$(($(date +%s) - $(date -j -f "%Y-%m-%d" "$log_date" +%s)))
+            else
+                diff_time=$(($(date +%s) - $(date +%s -d "$log_date")))
+            fi
+            [[ $diff_time -gt $(($CLEANBAK_DAYS * 86400)) ]] && rm -rf $log
+        fi
+    done
+fi
+}
+
+#检查 node 依赖状态并修复
+install_node_dependencies_all(){
+    node_dependencies_ori_status(){
+        if [[ -n $(echo $(cnpm ls $1) | grep ERR) ]]; then
+            return 1
+        elif [[ -n $(echo $(cnpm ls $1 -g) | grep ERR) ]]; then
+            return 2
+        elif [[ $(cnpm ls $1) =~ $1 ]]; then
+            return 3
+        elif [[ $(cnpm ls $1 -g) =~ $1 ]]; then
+            return 4
+        fi
+    }
+
+    test(){
+        for i in $@; do
+            node_dependencies_ori_status
+            echo -e "$i : $?"
+        done
+    }
+
+    install_node_dependencie(){
+#        node_dependencies_ori_status $1
+#        if [[ $? = 1 || $? = 2 ]]; then
+#            cnpm uninstall $1
+#        elif [[ $? = 3 ]]; then
+#            cnpm uninstall $1 -g
+#        fi
+#
+#        node_dependencies_ori_status $1
+#        if [[ $? = 4 ]]; then
+#            if [[ $1 = "canvas" ]]; then
+#                apk add --no-cache build-base g++ cairo-dev pango-dev giflib-dev && cnpm install $1 -g
+#            else
+#                cnpm install $1 -g --force
+#            fi
+#        fi
+
+        node_dependencies_ori_status $1
+        if [[ $? = 1 ]]; then
+            [[ $1 = "canvas" ]] && { cnpm uninstall $1; rm -rf /ql/scripts/node_modules/canvas; rm -rf /usr/local/lib/node_modules/lodash/canvas; } || cnpm uninstall $1
+        elif [ $? = 2 ]; then
+            [[ $1 = "canvas" ]] && { cnpm uninstall $1 -g; rm -rf /usr/local/lib/node_modules/canvas; } || cnpm uninstall $1 -g
+        fi
+
+        node_dependencies_ori_status $1
+        if [[ $? != 3 && $? != 4 ]]; then
+            [[ $1 = "canvas" ]] && { apk add --no-cache build-base g++ cairo-dev pango-dev giflib-dev; cnpm install $1 -g --force; } || cnpm install $1 -g --force
+        fi
+    }
+
+    uninstall_dependencies(){
+        for i in $package_name; do
+            cnpm uninstall $i
+            cnpm uninstall i $i
+            cnpm uninstall $i -g
+            cnpm uninstall i $i -g
+        done
+    }
+
+    check_node_dependencies_setup_status(){
+        for i in $package_name; do
+            cnpm ls $i -g
+        done
+    }
+
+    cnpm install -g cnpm
+    [[ $(npm ls cnpm -g) =~ (empty) ]] && npm install cnpm -g
+    for i in $package_name; do
+        install_node_dependencie $i
+    done
+    #cnpm update --force
+    #cnpm i --legacy-peer-deps
+    #cnpm i --package-lock-only
+    #cnpm audit fix
+    #cnpm audit fix --force
+}
+
+kill_proc(){
+    ps -ef|grep "$1"|grep -Ev "$2"|awk '{print $1}'|xargs kill -9
+}
+
+batch_deps_scripts(){
+    switch_status=(
+      on
+      on
+      on
+    )
+    
+    scripts_name=(
+      ql.js
+      sendNotify.js
+      JD_DailyBonus.js
+    )
+    
+    test_connect(){
+        curl -o /dev/null -s -w %{http_code} $1
+    }
+
+    get_remote_filesize(){
+        curl -sI $1 | grep -i Content-Length | awk '{print $2}'
+    }
+
+    get_local_filesize(){
+       stat -c %s $1
+    }
+    
+    scripts_source=(
+      https://cdn.jsdelivr.net/gh/ccwav/QLScript2@main/ql.js
+      https://cdn.jsdelivr.net/gh/ccwav/QLScript2@main/sendNotify.js
+      https://cdn.jsdelivr.net/gh/NobyDa/Script@master/JD-DailyBonus/JD_DailyBonus.js
+    )
+    
+    download_scripts(){
+        if [[ "$(test_connect $1)" -eq "200" ]]; then
+           curl -C - -s --connect-timeout 5 --retry 3 --noproxy "*" $1 -o $dir_config/tmp_$2
+           [[ $(get_remote_filesize $1) -eq $(get_local_filesize $dir_config/tmp_$2 ) ]] && mv -f $dir_config/tmp_$2 $dir_config/$2 || rm -rf $dir_config/tmp_$2
+        fi
+    }
+    
+    for ((i = 0; i < ${#scripts_source[*]}; i++)); do
+        { if [[ ${switch_status[i]} = "on" ]]; then download_scripts ${scripts_source[i]} ${scripts_name[i]}; fi } &
+    done
+}
+
+## 执行并写入日志
+kill_proc "code.sh" "grep|$$" >/dev/null 2>&1
+batch_deps_scripts &
+[[ $FixDependType = "1" ]] && [[ "$ps_num" -le $proc_num ]] && install_node_dependencies_all >/dev/null 2>&1 &
+latest_log=$(ls -r $dir_code | head -1)
+latest_log_path="$dir_code/$latest_log"
+ps_num="$(ps | grep code.sh | grep -v grep | wc -l)"
+export_all_codes | perl -pe "{s|京东种豆|种豆|; s|crazyJoy任务|疯狂的JOY|}"
+sleep 5
+update_help
+
+## 修改curtinlv入会领豆配置文件的参数
+[[ -f /ql/repo/curtinlv_JD-Script/OpenCard/OpenCardConfig.ini ]] && sed -i "4c JD_COOKIE = '$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*\(pt_key=\S\+;\)\S*\(pt_pin=\S\+;\)\S*/\1\2/g;" | perl -pe "s| |&|g")'" /ql/repo/curtinlv_JD-Script/OpenCard/OpenCardConfig.ini
+
+exit
