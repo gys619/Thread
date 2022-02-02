@@ -138,7 +138,7 @@ def check_ck(ck):
             res = requests.get(url=url, headers=headers, verify=False, timeout=10)
         except Exception as err:
             logger.debug(str(err))
-            logger.info("JD接口错误, 代码: " + str(res.status_code))
+            logger.info("JD接口错误 请重试或者更换IP")
             return False
         else:
             if res.status_code == 200:
@@ -179,15 +179,19 @@ def getToken(wskey):
         res_json = json.loads(res.text)
         tokenKey = res_json['tokenKey']
     except Exception as err:
-        logger.info("JD_WSKEY接口抛出错误, 请稍后尝试, 脚本退出")
-        logger.debug(str(err))
-        sys.exit(1)
+        logger.info("JD_WSKEY接口抛出错误 尝试重试 更换IP")
+        logger.info(str(err))
+        return False, wskey
     else:
         return appjmp(wskey, tokenKey)
 
 
 # 返回值 bool jd_ck
 def appjmp(wskey, tokenKey):
+    wskey = "pt_" + str(wskey.split(";")[0])
+    if tokenKey == 'xxx':
+        logger.info(str(wskey) + ";WsKey状态失效\n--------------------\n")
+        return False, wskey
     headers = {
         'User-Agent': ua,
         'accept': 'accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
@@ -200,22 +204,27 @@ def appjmp(wskey, tokenKey):
     url = 'https://un.m.jd.com/cgi-bin/app/appjmp'
     try:
         res = requests.get(url=url, headers=headers, params=params, verify=False, allow_redirects=False, timeout=20)
-        res_set = res.cookies.get_dict()
-        pt_key = 'pt_key=' + res_set['pt_key']
-        pt_pin = 'pt_pin=' + res_set['pt_pin']
-        jd_ck = str(pt_key) + ';' + str(pt_pin) + ';'
-        wskey = wskey.split(";")[0]
-        if 'fake' in pt_key:
-            logger.info(str(wskey) + ";WsKey状态失效\n")
-            return False, jd_ck
-        else:
-            logger.info(str(wskey) + ";WsKey状态正常\n")
-            return True, jd_ck
     except Exception as err:
-        logger.info("JD接口转换失败, 默认WsKey失效\n")
+        logger.info("JD_appjmp 接口错误 请重试或者更换IP\n")
         logger.info(str(err))
-        wskey = "pt_" + str(wskey.split(";")[0])
         return False, wskey
+    else:
+        try:
+            res_set = res.cookies.get_dict()
+            pt_key = 'pt_key=' + res_set['pt_key']
+            pt_pin = 'pt_pin=' + res_set['pt_pin']
+            jd_ck = str(pt_key) + ';' + str(pt_pin) + ';'
+        except Exception as err:
+            logger.info("JD_appjmp提取Cookie错误 请重试或者更换IP\n")
+            logger.info(str(err))
+            return False, wskey
+        else:
+            if 'fake' in pt_key:
+                logger.info(str(wskey) + ";WsKey状态失效\n")
+                return False, wskey
+            else:
+                logger.info(str(wskey) + ";WsKey状态正常\n")
+                return True, jd_ck
 
 
 def update():
