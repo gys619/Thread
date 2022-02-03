@@ -266,7 +266,8 @@ jd_HappyNewYear_Share.js
 jd_work_invokeKey.js
 #锦鲤
 jd_redPacket.js
-
+# 早起福利
+jd_zqfl.py
 
 ########过期活动##############
 
@@ -312,7 +313,8 @@ jd_shopsign.js
 jd_xdz.py
 fanli.js
 jd_reward.ts
-
+# 整点红包雨 longzhuzhu
+jd_super_redrain.js
 
 
 
