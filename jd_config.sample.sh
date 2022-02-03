@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build 20211220-001-test
+## Mod: Build 20220203-002-test
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -154,7 +154,7 @@ TempDesiPin=""
 ###               jd_fruit|jd_dreamFactory@1,3-5,7~9   使用模式：按序号，1、3至5、7至9不参加活动
 ###               jd_plantBean@2,4-6,8@张三            使用模式：按序号，2、4至6、8不参加活动，且张三也不参加活动
 ###               jd_pigPet@-@张三,赵四                使用模式：按pt_pin或用户名，张三和赵四不参加活动。注意，参数1位置需要 - 作为占位符
-###               jd_pigPet@-@-@张三,赵四              使用模式：按pt_pin或用户名，仅张三和赵四参加活动。注意，参数1、参数2无论填什么，都会只允许参数3位置的账号参加活动
+###               jd_pigPet@-@-@张三,赵四              使用模式：按pt_pin或用户名，仅张三和赵四参加活动。注意，参数1、参数2填任意非空值，都只允许参数3位置的账号参加活动
 ###               jd_plantBean                         使用模式：所有账号参加活动
 
 ## 10.2.1 局部模式环境变量的启用数量
@@ -254,7 +254,7 @@ recombin_ck_envs_num="7"
 ### 释义：可以自由定义多组局部模式环境变量；
 ### 赋值要求：详见“局部模式环境变量”赋值要求。如果多组变量中针对同一个脚本设置了多次模式及参数变量，实现迭代组合，等同于局部模式环境变量的赋值要求 ⑨ ；
 recombin_ck_envs1="jd_fruit|jd_pet|jd_plantBean|jd_dreamFactory|jd_jdfactory|jd_crazy_joy|jd_jdzz|jd_jxnc|jd_bookshop|jd_cash|jd_sgmh|jd_cfd|jd_health|jd_carnivalcity|jd_city|jd_moneyTree_heip@3@5" ## 强制轮换
-recombin_ck_envs2="iroyway*zdjr@4@-@-@-@-@3"                                                                                                                                                          # 组队瓜分京豆。参数1、参数2，使用 - 占位符，表示引用 组队瓜分京豆活动变量组 的前两个参数，作为几人成队和发起几次组队
+recombin_ck_envs2="iroyway*zdjr@4@-@-@0@-@0"                                                                                                                                                          # 组队瓜分京豆。参数1、参数2，使用 - 占位符，表示引用 组队瓜分京豆活动变量组 的前两个参数，作为几人成队和发起几次组队
 recombin_ck_envs3="jd_jxlhb|jd_88hb@4@78@1"                                                                                                                                                           # 领88元红包
 recombin_ck_envs4="CheckCK|checkCookie|cookieCheck|checkCookie|bean_change|wskey&jd_islogin_xh"                                                                                                       # 强制黑名单
 recombin_ck_envs5="ccwav*speed_sign|jd_speed_signfaker@5@0@20@-@1h"                                                                                                                                   # ccwav 防黑号京东极速版任务分段
@@ -273,25 +273,99 @@ activity_env=(
   5@3@6757db2bea4748ae9168a8e5b4d050c4@https://cjhydz-isv.isvjcloud.com
   5@3@402541a7b196403c8781171a0c27967c@https://lzkjdz-isv.isvjcloud.com
   5@3@776e7e159a2b4b04bd3fc72791b50c17@https://cjhydz-isv.isvjcloud.com
-  teamer_num@team_num@activityId9@activityUrl9 # 第 9 组环境变量。前两个参数表示 teamer_num 人成队，每个账号最多发起 team_num 次组队
+  5@3@8dd125c39ede43b8882ef5b9d82b8e2d@https://lzkjdz-isv.isvjcloud.com
+  teamer_num@team_num@activityId9@activityUrl9 # 第 10 组环境变量。前两个参数表示 teamer_num 人成队，每个账号最多发起 team_num 次组队
 )
 
-## 12 基础 js 依赖文件的预先替换
-### 释义：目前仅支持将 /ql/config 路径下的 ql.js、sendNotify.js、JD_DailyBonus.js 三个文件，在 task 命令启动时会自动替换到当前运行的脚本所在的文件夹。
+## 12 自定义小工具 extra2.sh 环境变量
+## 12.1 定义是否自动安装或修复缺失或损坏的 node 依赖
+### 赋值要求：填 1 表示启用该功能；空值或填其他内容表示不启用该功能。
+FixDependType=""
+## 12.2 定义是否自动安装或修复缺失或损坏的 node 依赖名称
+package_name="canvas png-js date-fns axios crypto-js ts-md5 tslib @types/node dotenv got md5 requests typescript fs require jsdom download js-base64 tough-cookie tunnel ws jieba prettytable form-data json5 global-agent"
+## 12.3 基础 js 依赖文件的预先下载
+### 释义：目前仅支持将 ql.js、sendNotify.js、JD_DailyBonus.js、JS_USER_AGENTS.js、USER_AGENTS.js 5 个文件下载至 /ql/config 路径
+### 赋值要求：填 1 表示启用该功能；空值或填其他内容表示不启用该功能。
+DOWNLOAD_BASIC_JS=""
+## 12.4 基础 js 依赖文件的预先替换
+### 释义：目前仅支持将 /ql/config 路径下的  ql.js、sendNotify.js、JD_DailyBonus.js、JS_USER_AGENTS.js、USER_AGENTS.js 5 个文件，在 task 命令启动时会自动替换到当前运行的脚本所在的文件夹。
 ### 赋值要求：例如：ql|JD_DailyBonus&sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2。各个定义单元之间采用 & 连接。
-###              ql|JD_DailyBonus                                      两个脚本均不屏蔽仓库文件夹复制替换
-###              sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2    sendNotify.js 不复制到 /ql/scripts/路径下的 JDHelloWorld 和 ccwav 的仓库文件夹。文件夹名称必须精确完整写出，不支持模糊匹配。
-js_deps_replace_envs="ql|JD_DailyBonus&sendNotify@JDHelloWorld_jd_scripts"
+###                ql|JD_DailyBonus                                      两个脚本均不屏蔽仓库文件夹复制替换
+###                sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2    sendNotify.js 不复制到 /ql/scripts/路径下的 JDHelloWorld 和 ccwav 的仓库文件夹。文件夹名称必须精确完整写出，不支持模糊匹配。
+js_deps_replace_envs="ql|JD_DailyBonus&sendNotify|JS_USER_AGENTS|USER_AGENTS@JDHelloWorld_jd_scripts"
 
-## 13 Shell 版 Cookie 检测环境变量
+## 13 Shell 版 Cookie 检测工具 ckck2 环境变量
+## 13.1 推送失效账号、有效账号
+### 赋值要求：填 1 表示只推送失效账号；
+###          填 2 表示推送失效账号、有效账号；
+###          空值或填其他内容表示不启用该功能。
+NOTIFY_VALID_CK_TYPE=""
+## 13.2 如果本次检测的失效、有效账号与上次结果一致，则不通知
+### 赋值要求：填 1 表示如果失效账号未变化，则不通知。空值或填其他内容表示不启用该功能。
+NOTIFY_SKIP_SAME_CONTENT=""
+## 13.3 预测和通知账号剩余有效期的检测和通知类型
+### 赋值要求：填 1 表示预测和通知账号剩余有效期；
+###          填 2 表示只预测不通知账号剩余有效期；
+###          空值或填其他内容表示不启用该功能。
+NOTIFY_VALID_TIME=""
+## 13.4 JD_WSCK(wskey)相关
+## 13.4.1 检测到失效账号后是否搜索并运行 WSKEY 转换 Cookie 的脚本(需要 /ql/scripts 或其子路径已存在 wskey 转换脚本)
 ### 赋值要求：填 1 表示启用 WSKEY 转换 Cookie 功能。空值或其他值表示不启用该功能。
 WSKEY_TO_CK=""
-### 赋值要求：填 1 表示通知有效账号和失效账号。空值或其他值表示只通知失效账号。
-NOTIFY_VALID_CK=""
-### 赋值要求：填 1 表示检测和通知JD_WSCK(wskey)未录入情况。空值或其他值表示不启用该功能。
+## 13.4.2 自定义调用的 wskey 转换脚本
+### 赋值要求：例如 wskey_scr="hyzaw_scripts/ql_refreshCK.py"。空值或其他值表示自动搜索文件名中包含 wskey 的 py 文件。
+diy_wskey_scr=""
+## 13.4.3 当未搜索到 wskey 脚本时下载 wskey 转换脚本，下载路径 /ql/scripts/
+### 赋值要求：填 1 表示启用下载 wskey 转换脚本功能。空值或其他值表示不启用该功能。
+DOWNLOAD_WSKEY_SCR=""
+## 13.4.4 下载 wskey 转换脚本的 URL 链接
+### 赋值要求：空值，则默认下载 ZL143L 的脚本。非必要留空即可。也可自定义其他链接。
+WSKEY_SCR_URL=""
+## 13.4.5 当检索到下载路径 /ql/scripts/ 存在 wskey 转换脚本时，先行检测更新脚本后再进行 wskey 转换
+### 赋值要求：填 1 表示启用功能。空值或其他值表示不启用该功能。
+CHECK_UPDATE_WSKEY_SCR=""
+## 13.4.6 JD_WSCK(wskey) 未录入情况的检测和通知类型
+### 赋值要求：填 1 表示检测和通知 JD_WSCK(wskey) 未录入情况；
+###          填 2 表示只检测不通知 JD_WSCK(wskey) 未录入情况；
+###          空值或填其他内容表示不启用该功能。
 NOTIFY_WSKEY_NO_EXIST=""
-### 赋值要求：填 1 表示启用账号剩余有效期的计算和通知。空值或其他值表示不启用该功能。
-NOTIFY_VALID_TIME=""
+## 13.5 Zy143L wskey 转换脚本相关
+### 13.5.1 是否禁用失效 Cookie
+### 赋值要求：任意赋值表示自动禁用，空值表示不自动禁用
+WSKEY_AUTO_DISABLE=""
+### 13.5.2 按时间间隔更新 Cookie
+### 赋值要求：正整数数字，（单位：小时）
+WSKEY_UPDATE_HOUR=""
+### 13.5.3 自动重试
+### 赋值要求：正整数数字，（单位：次）；
+###          空值表示默认值 10 次。
+WSKEY_TRY_COUNT=""
+## 13.6 将 JD_COOKIE 的 pt_pin 值的备注名同步 至 JD_WSCK(wskey) 的同 pin 值的备注名
+### 赋值要求：填 1 表示同步；
+###          空值或填其他内容表示不启用该功能。
+WSKEY_REMARK_SYNC=""
+## 13.7 WxPusher相关
+## 说明：默认在 /ql/scripts/ 生成、更新 CK_WxPusherUid.json 文件，如果账号存在 UID ，可配合 ccwav 的 sendNotify.js 实现一对一推送
+### 13.7.1 未录入 WxPusher UID 的账号。
+### 赋值要求：填 1 表示检测并通知未录入 WxPusher UID 的账号；
+###          填 2 表示只预测不通知未录入 WxPusher UID 的账号；
+###          空值或填其他内容表示不启用该功能。
+CK_WxPusherUid=""
+### 13.7.2 自动补全备注中的时间戳和UID
+## 说明：当 CK_WxPusherUid.json 文件，中存在账号的 UID 且面板环境变量备注中缺少时间戳或 UID 时生效
+### 赋值要求：填 1 表示补全；
+###          空值或填其他内容表示不启用该功能。
+SCANF_WXPusher_Remarks=""
+### 13.7.3 WxPusher App Token，用于一对一推送账号失效通知(同 ccwav 一对一通知环境变量，只可保留一个)。
+### 格式为 AT_xxxx；查看地址：https://wxpusher.zjiecode.com/admin/main/app/appToken
+#WP_APP_TOKEN_ONE=""
+### 13.7.4 WxPusher 主 UID，主 UID 账号可以接收失效的第三者账号及其是否录入JD_WSCK(wskey)的信息。
+### 格式为 UID_xxxx；查看地址：https://wxpusher.zjiecode.com/admin/main/wxuser/list
+MainWP_UID=""
+## 13.8 扩展通知
+### 通知内容出现在正文末尾。支持 HTML 语言代码，仅支持 pushplus 、WxPusher 这些 HTML 代码通知的渠道
+### 例如：ExNotify_Content="NoLan服务器：<a href="http://服务器地址:端口?key=HeaderKey">点击访问</a>"
+ExNotify_Content=""
 
 ## 其他需要的变量，脚本中需要的变量使用 export 变量名= 声明即可
 
@@ -397,19 +471,24 @@ export JD_USER_AGENT=""
 # curtinlv 环境变量
 ## 1、赚京豆
 ### 助力账号，填写pt_pin或用户名的值，如 zlzh = ['aaaa','xxxx','yyyy'] ，支持ENV
-### export zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+### export zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s| ||g; s|^|[|; s|$\|,$|]|}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
+export zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s| ||g; s|^|[|; s|$\|,$|]|}")"
 ## 2、全民抢京豆
-### export qjd_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export qjd_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+### export qjd_zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s| ||g; s|^|[|; s|$\|,$|]|}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
+export qjd_zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s| ||g; s|^|[|; s|$\|,$|]|}")"
 ## 3、签到领现金助力
-### export cash_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
-export cash_zlzh="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\'\1\',/g; s/^/[/; s/$\|,$/]/;")"
+### export cash_zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s|^|[|; s|$\|,$|]|}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')"  ## 支持中文用户名
+export cash_zlzh="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|'\1',|g; s|^|[|; s|$\|,$|]|}")"
 ## 4、京喜工厂开团助力 for Python
 ### 支持指定账号开团，跑1次脚本默认开3次团，如未指定账号默认给账号一开团。
 ### 变量ENV 指定开团账号。可填用户名 或 pt_pin 的值。示例：export jxgc_kaituan="用户1&用户2"
-export jxgc_kaituan="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\)\S*;/\1/g; s/ /\&/g;" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')" ## 支持中文用户名
-## 5、入会开卡
+export jxgc_kaituan="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|\1|g; s| |&|g;}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')" ## 支持中文用户名
+## 5、城城分现金内部助力
+### 指定助力账号，默认按ck顺序助力
+export ccfxj_isOrder="true"
+### 助力账号pin名称
+export ccfxj_help="$(echo $JD_COOKIE | perl -pe "{s|&| |g; s|\S*pt_pin=([^; ]+)(?=;?)\S*|\1|g; s| |&|g;}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}')" ## 支持中文用户名
+## 6、入会开卡
 ### int，入会送豆满足此值，否则不入会
 export openCardBean="30"
 ### 布尔值，是否记录符合条件的shopid(默认True)
@@ -464,7 +543,7 @@ export guaunknownTask_card_All="true"
 export gua_carnivalcity_draw="true"
 export guaopenwait_All="true"
 export guaopencard_draw45="3"
-for ((s = 0; s <= 100; s++)); do
+for ((s = 0; s <= 200; s++)); do
   export guaopencard$s="3"
   export guaopencard_draw$s="3"
   export guaopencard_addSku$s="true"
@@ -479,8 +558,8 @@ export JD_CITY_HELPSHARE="false" # false 优先内部助力 | true 优先助力�
 # cdle 环境变量
 ## 1、签到领现金兑换
 ### 填写 pt_pin@金额，pt_pin为用户名，可以在 COOKIES 中提取；金额为 2 或 10，例如 LiLei@2 或 HanMeimei@10。多值用 & 连接，例如 LiLei@2&HanMeimei@10
-### export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1@10/g; s/\n/\&/g;")"  ##兑10元现金，比较难兑
-export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1@2/g; s/ /&/g;")" ##兑2元现金
+export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1@10/g; s/\n/\&/g;")" ##兑10元现金，比较难兑
+### export exchangeAccounts="$(echo $JD_COOKIE | sed "s/&/ /g; s/\S*pt_pin=\([^;]\+\);\S*/\1@2/g; s/ /&/g;")"           ##兑2元现金
 ## 2、愤怒的现金
 ### 极速助力，打击黑产盗取现金的犯罪行为。默认向前助力9个账号，若要指定被助力账号，需cashHelpPins环境变量中填入需要助力的pt_pin，有多个请用@符号连接。
 export cashHelpPins="$(echo $JD_COOKIE | sed "s/&/\n/g; s/\S*pt_pin=\([^;]\+\);\S*/\1/g; s/\n/@/g;")"
@@ -531,6 +610,12 @@ export validate_num="" ##你需要的数值
 # Aaron-lv 环境变量
 ## 1、京东健康社区京豆兑换
 export JD_HEALTH_REWARD_NAME="20" ##只能兑换京豆，填写纯数字20 10 5 3
+## 1、京东金融签到
+### 添加京东签到 金融签到body兼容，body抓包获取 不同账号不通用
+### 变量名： JD_BEAN_SIGN_BODY
+### 格式： 演示为两个账号，多账号以此类推
+### export JD_BEAN_SIGN_BODY="{\"pin\":\"ck1的pt_pin\",\"body\":\"reqData=xxxx一大串字符\"}&{\"pin\":\"ck2的pt_pin\",\"body\":\"reqData=xxx一大串字符\"}"
+export JD_BEAN_SIGN_BODY=""
 
 # Ninja 环境变量
 ## 1、通知黑名单
@@ -562,6 +647,12 @@ export BEANCHANGE_PERSENT="" ##10合1
 ### 	 今天天气不错...
 ###
 ### 	 哥斯拉大战金刚....
+export BEANCHANGE_ALLNOTIFY='京东APP-秒杀-秒秒币 1月17过期,记得换哦.
+因为加了购物车抽奖脚本，所有人早上8点半会自动清理购物车。
+活动1：<a href="http://mtw.so/6dtM4K">京东会员权益</a>
+活动2：<a href="https://u.jd.com/YMlLsvu">晚上12点下拉页面签到得20豆</a>
+活动3：<a href="https://u.jd.com/YI7HbhU">连续签到瓜分大奖</a>
+<iframe allowtransparency="true" frameborder="0" width="100%" height="auto" scrolling="yes" src="//tianqi.2345.com/plugin/widget/index.htm?s=2&z=1&t=0&v=0&d=2&bd=0&k=&f=&ltf=009944&htf=cc0000&q=1&e=1&a=1&c=54511&w=100%&h=auto&align=center"></iframe>'
 ### 4. BEANCHANGE_ExJxBeans
 ### 当设定BEANCHANGE_ExJxBeans="true"且时间在17点之后，会自动将临期京豆兑换成喜豆续命.
 export BEANCHANGE_ExJxBeans="true"
@@ -596,6 +687,7 @@ export PUSH_PLUS_USER2=""
 export TG_BOT_TOKEN2=""
 export TG_USER_ID2=""
 ### export NOTIFY_GROUP2_LIST="京东白嫖榜&京东月资产变动&省钱大赢家之翻翻乐&京东CK检测&京喜工厂&金融养猪"
+
 ### 3. NOTIFY_SHOWNAMETYPE 通知显示的账号类型
 ### 例：账号名:ccwav  别名:ccwav的别名  Remark:代码玩家
 #export NOTIFY_SHOWNAMETYPE="1"    ##效果: 账号名称：代码玩家
@@ -630,11 +722,16 @@ export NOTIFY_CUSTOMNOTIFY=""
 export PUSH_PLUS_TOKEN_hxtrip=""
 export PUSH_PLUS_USER_hxtrip=""
 ### 12. 用 WxPusher 进行一对一推送
+### 新方案：
+### 填写变量 WP_APP_TOKEN_ONE,按照备注内容@@WxPusherUid的格式修改备注,例子 萌新cc@@UID_AASDADASDQWEQWDADASDADASDASDSA
+### 旧方案：
 ### 详细教程有人写了，不知道是幸运还是不幸: https://www.kejiwanjia.com/jiaocheng/27909.html
 ### 填写变量 WP_APP_TOKEN_ONE,可在管理台查看: https://wxpusher.zjiecode.com/admin/main/app/appToken
 ### 手动建立CK_WxPusherUid.json,可以参考CKName_cache.json,只是nickName改成Uid，
 ### 每个用户的uid可在管理台查看: https://wxpusher.zjiecode.com/admin/main/wxuser/list
 ### 另外: export WP_APP_ONE_TEXTSHOWREMARK="true"，启用一对一推送标题显示备注信息，默认不启用.
+export WP_APP_TOKEN_ONE=""
+export WP_APP_ONE_TEXTSHOWREMARK=""
 ### CK_WxPusherUid.json 内容(pt_pin 如果是汉字需要填写转码后的!):
 ### [
 ###   {
@@ -649,6 +746,9 @@ export PUSH_PLUS_USER_hxtrip=""
 ### 15. NOTIFY_SKIP_TEXT
 ### 如果此变量(&隔开)的关键字在通知内容里面存在,则屏蔽不发送通知.
 ### 例子 :  export NOTIFY_SKIP_TEXT="忘了种植&异常"
+### 16. NOTIFY_AUTHOR_BLANK (tcbaby提交)
+### 控制不显示推送通知的底部信息
+### 例子 :  export NOTIFY_AUTHOR_BLANK="随便填只要非空即可"
 ## [4] jd_joy_reward_Mod.js 宠汪汪积分兑换有就换版
 export JOY_GET20WHEN16="true" ##控制16点才触发20京豆兑换.
 
@@ -700,10 +800,19 @@ export JOY_COIN_MAXIMIZE="1"   # 最大化硬币收益，如果合成后全部�
 
 # ddo
 export JD_CITY_HELPPOOL="true"
+# shufflewzc
+## 1、禁用重复脚本
+### 变量内容为任务关键词，各变量用 & 分隔”。
+### 例：export RES_SUB="Aaron-lv_sync&smiek2121_scripts& /ql/scripts/jd_zjd.py"有三个变量
+export RES_SUB="ccwav_QLScript2&shufflewzc_faker2&Aaron-lv_sync&smiek2121_scripts"
+## 2、京东自动评价
+### true为开启，false为关闭
+export JD_Evaluation="true"
 
-# Aaron-lv
-## 1、京东金融签到
-### 添加京东签到 金融签到body兼容，body抓包获取 不同账号不通用
-### 变量名： JD_BEAN_SIGN_BODY
-### 格式： 演示为两个账号，多账号以此类推
-### export JD_BEAN_SIGN_BODY="{\"pin\":\"ck1的pt_pin\",\"body\":\"reqData=xxxx一大串字符\"}&{\"pin\":\"ck2的pt_pin\",\"body\":\"reqData=xxx一大串字符\"}"
+# passerby-b
+## 1、滴滴橙心果园
+### 变量内容为抓包token，多账号用换行或者应为逗号(,)隔开。
+export DD_TOKEN=""
+## 2、美团买菜果园
+### 抓cookie:进果园点浇水,在抓包记录里搜water,在请求头里找属性t: thKFxxxxxxxxxxxxxxxxxxx_w,复制冒号后面的值
+export MTMC_COOKIE=""
