@@ -1,0 +1,52 @@
+{
+ "name": "gys619 task gallery",
+ "description": "see you latter",
+ "task": [
+    {"config":"0 0 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_angryBean.js, tag=真·抢京豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"20 0,6-22 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_aid_fortune.js, tag=财富岛助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"44 0-23/6 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_aid_factory.js, tag=京喜工厂助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"5 0 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_angryKoi.js, tag=愤怒的锦鲤, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"1 8,12,18 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bookshop.js, tag=口袋书店, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"59 23 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_blueCoin.py, tag=东东超市商品兑换, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"59 23 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_blueCoin.js, tag=东东超市兑换奖品, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"20 * * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_big_winner.js, tag=省钱大赢家之翻翻乐, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"20 12 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_beauty_ex.js, tag=美丽研究院--兑换, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+    {"config":"26 8 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_beauty.js, tag=美丽研究院, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"26 8 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bean_info.js, tag=京豆详情统计, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"0 0 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bean_sign.js, tag=京东多合一签到, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"30 10,22 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bean_change_new.js, tag=京东资产变动通知, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"23 1,12,22 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bean_home.js, tag=领京豆额外奖励, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"30 21 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_bean_change.js, tag=京东资产变动, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"0 0,3 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_babel_sign.js, tag=通天塔共建, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"50 * * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_cfd_hb.js, tag=财富岛兑换红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"50 8,20 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_ckck2.sh, tag=ck检测, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"10 10 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_china-joy_card.py, tag=萌虎摇摇乐卡片信息, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"15 3,6 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_connoisseur.js, tag=内容鉴赏官, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"5 0,23 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_club_lottery.js, tag=摇京豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"59 0-23/1 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_cfd_pearl_ex.js, tag=财富岛珍珠兑换, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"30 0-23/2 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_cfd_pearl.js, tag=财富岛珍珠合成互助, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+  ]
+}
