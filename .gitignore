@@ -188,7 +188,7 @@ jx_task_*.js
 creat.sh
 jw_*.js
 jr_*.js
-*.conf
+#*.conf
 jd_help_sendBean.js
 jx_help_*.js
 #大赢家助力
