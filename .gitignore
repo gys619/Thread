@@ -8,6 +8,7 @@ model
 /NoUsed
 config.sample.sh.new
 jd_update.js
+package-lock.json
 
 jd_checkCK.js
 

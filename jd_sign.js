@@ -44,7 +44,7 @@ async function cgame() {
         'Accept-Encoding': 'gzip, deflate, br',
         'Content-Type': 'application/json',
         'Origin': 'https://pro.m.jd.com',
-        'ActivityId': 'a54e9a0a1b6044189753e7eba51aab19',
+        'ActivityId': '7c51826be9f241c1ad9733df34d242c5',
         'Host': 'cgame-stadium.jd.com',
         'Referer': 'https://pro.m.jd.com/mall/active/dj6us2JJRLMMBb4iDaSK4wxvBMt/index.html',
         'Accept-Language': 'zh-cn',
