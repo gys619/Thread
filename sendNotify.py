@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # _*_ coding:utf-8 _*_
 
-#Source: https://github.com/curtinlv/JD-Script'
-#Modify: Kirin(添加bark自建服务器和企业微信BOT的支持)
+#Modify: Kirin
 
 import sys
 import os, re
@@ -34,7 +33,7 @@ DD_BOT_SECRET = ''          # 钉钉机器人的DD_BOT_SECRET; secrets可填
 QQ_SKEY = ''                # qq机器人的QQ_SKEY; secrets可填
 QQ_MODE = ''                # qq机器人的QQ_MODE; secrets可填
 QYWX_AM = ''                # 企业微信
-QYWX_KEY = ''               # 企业微信BOT
+QYWX_KEY = ''                # 企业微信BOT
 PUSH_PLUS_TOKEN = ''        # 微信推送Plus+
 
 notify_mode = []

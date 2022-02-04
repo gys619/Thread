@@ -479,7 +479,7 @@ async function mermaidOper(strStoryId, dwType, ddwTriggerDay) {
                 console.log(`昨日解救美人鱼领奖成功：获得${data.Data.Prize.strPrizeName}\n`)
               } else {
                 console.log(`昨日解救美人鱼领奖失败：${data.sErrMsg}\n`)
-              }
+              }             
               break
             default:
               break
@@ -1151,6 +1151,7 @@ function getUserInfo(showInvite = true) {
             console.log(`财富岛好友互助码每次运行都变化,旧的当天有效`);
             console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${strMyShareId}`);
             $.shareCodes.push(strMyShareId)
+            await uploadShareCode(strMyShareId)
           }
           $.info = {
             ...$.info,
@@ -1313,7 +1314,7 @@ function doTask(taskId, type = 1, bizCodeXx) {
     let bizCode = `jxbfd`;
     if (type === 2) bizCode = `jxbfddch`;
     if (type === 3) bizCode = `jxbfdprop`;
-    if (bizCodeXx) bizCode = bizCodeXx
+    if (bizCodeXx) bizCode = bizCodeXx 
     $.get(taskListUrl(`DoTask`, `taskId=${taskId}`, bizCode), (err, resp, data) => {
       try {
         if (err) {
@@ -1548,15 +1549,49 @@ function showMsg() {
 
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: ``, timeout: 30 * 1000}, (err, resp, data) => {
+    $.get({url: `https://111111/cfd`, timeout: 30 * 1000}, (err, resp, data) => {
       try {
         if (err) {
-          //console.log(JSON.stringify(err))
-          //console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
         } else {
           if (data) {
             console.log(`\n随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
             data = JSON.parse(data);
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(30 * 1000);
+    resolve()
+  })
+}
+function uploadShareCode(code) {
+  return new Promise(async resolve => {
+    $.post({url: `https://111111/upload/cfd?code=${code}&ptpin=${encodeURIComponent(encodeURIComponent($.UserName))}`, timeout: 30 * 1000}, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            if (data === 'OK') {
+              console.log(`已自动提交助力码\n`)
+            } else if (data === 'error') {
+              console.log(`助力码格式错误，乱玩API是要被打屁屁的~\n`)
+            } else if (data === 'full') {
+              console.log(`车位已满，请等待下一班次\n`)
+            } else if (data === 'exist') {
+              console.log(`助力码已经提交过了~\n`)
+            } else if (data === 'not in whitelist') {
+              console.log(`提交助力码失败，此用户不在白名单中\n`)
+            } else {
+              console.log(`未知错误：${data}\n`)
+            }
           }
         }
       } catch (e) {

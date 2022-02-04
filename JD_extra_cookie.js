@@ -24,15 +24,15 @@ hostname = me-api.jd.com
 ===================Quantumult X=====================
 [rewrite_local]
 # 获取多账号京东Cookie
-https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion url script-request-header https://gitee.com/lxk0301/jd_scripts/raw/master/JD_extra_cookie.js
+https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion url script-request-header JD_extra_cookie.js
 
 ===================Loon===================
 [Script]
-http-request https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/JD_extra_cookie.js, tag=获取多账号京东Cookie
+http-request https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion script-path=JD_extra_cookie.js, tag=获取多账号京东Cookie
 
 ===================Surge===================
 [Script]
-获取多账号京东Cookie = type=http-request,pattern=^https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion,requires-body=1,max-size=0,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/JD_extra_cookie.js,script-update-interval=0
+获取多账号京东Cookie = type=http-request,pattern=^https:\/\/me-api\.jd\.com\/user_new\/info\/GetJDUserInfoUnion,requires-body=1,max-size=0,script-path=JD_extra_cookie.js,script-update-interval=0
  */
 
 const APIKey = "CookiesJD";

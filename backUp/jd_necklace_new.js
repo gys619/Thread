@@ -10,7 +10,7 @@ Last Modified time: 2021-05-28 17:27:14
 
  */
 const $ = new Env('点点券二代目');
-const ZooFaker=require('./utils/ZooFaker_Necklace.js').utils;
+const ZooFaker=require('./ZooFaker_Necklace.js').utils;
 let allMessage = ``;
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;

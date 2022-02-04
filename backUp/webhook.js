@@ -1,14 +1,12 @@
 /*
- * @Author: LXK9301 https://github.com/LXK9301
- * @Date: 2020-10-24 18:53:29 
- * @Last Modified by: LXK9301
+ * @Date: 2020-10-24 18:53:29
  * @Last Modified time: 2020-11-05 18:54:13
  */
 
 const $ = new Env('Webhook触发Action');
 let ACTIONS_TRIGGER_TOKEN = '';//Personal access tokens，申请教程:https://www.jianshu.com/p/bb82b3ad1d11 记得勾选repo权限就行
 let TRIGGER_KEYWORDS = '';//.github/workflows/路径里面yml文件里面repository_dispatch项目的types值，例如jd_fruit.yml里面的值为fruit
-let githubUser = '';//github用户名，例:LXK9301
+let githubUser = '';//github用户名，例:xxxx
 let repo = '';//需要触发的 Github Action 所在的仓库名称 例:scripts
 
 !(async () => {

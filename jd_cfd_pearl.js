@@ -8,17 +8,17 @@
 ============Quantumultx===============
 [task_local]
 #京喜财富岛合成珍珠
-30 0-23/2 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_pearl.js, tag=京喜财富岛合成珍珠, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
+30 0-23/2 * * * https://raw.githubusercontent.com/okyyds/yydspure/master/jd_cfd_pearl.js, tag=京喜财富岛合成珍珠, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "30 0-23/2 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_pearl.js,tag=京喜财富岛合成珍珠
+cron "30 0-23/2 * * *" script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_cfd_pearl.js,tag=京喜财富岛合成珍珠
 
 ===============Surge=================
-京喜财富岛合成珍珠 = type=cron,cronexp="30 0-23/2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_pearl.js
+京喜财富岛合成珍珠 = type=cron,cronexp="30 0-23/2 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_cfd_pearl.js
 
 ============小火箭=========
-京喜财富岛合成珍珠 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_cfd_pearl.js, cronexpr="30 0-23/2 * * *", timeout=3600, enable=true
+京喜财富岛合成珍珠 = type=cron,script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_cfd_pearl.js, cronexpr="30 0-23/2 * * *", timeout=3600, enable=true
 
 */
 
@@ -132,7 +132,7 @@ async function GetHomePageInfo() {
 // 撸珍珠
 async function Pearl(){
   try{
-    await $.wait(1500)
+    await $.wait(2000)
     $.ComposeGameState = await taskGet(`user/ComposePearlState`, '', '&dwGetType=0')
     console.log(`\n当前有${$.ComposeGameState.dwCurProgress}个珍珠${$.ComposeGameState.ddwVirHb && ' '+$.ComposeGameState.ddwVirHb/100+"红包" || ''}`)
     if($.ComposeGameState.dayDrawInfo.dwIsDraw == 0){
@@ -158,11 +158,11 @@ async function Pearl(){
       console.log(`合珍珠${b}次 `)
       // b = 8-$.ComposeGameState.dwCurProgress
       for(i=1;b--;i++){
-        let n = Math.ceil(Math.random()*8+8)
+        let n = Math.ceil(Math.random()*20+20)
         console.log(`上报次数${n}`)
         for(m=1;n--;m++){
           console.log(`上报第${m}次`)
-          await $.wait(3000)
+          await $.wait(5000)
           await taskGet(`user/RealTmReport`, '', `&dwIdentityType=0&strBussKey=composegame&strMyShareId=${$.ComposeGameState.strMyShareId}&ddwCount=10`)
           let s = Math.floor((Math.random()*3))
           let n = 0

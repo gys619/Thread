@@ -4,7 +4,6 @@
 cron 13 5,16 * * * https://raw.githubusercontent.com/ickel00/gd_test/main/jd_industrial_task.js
  */
 const $ = new Env('京东工业品');
-console.log('taskList错误正常!因为eid是随机生成的,有的成功有的失效!就4个豆子,估计也不会主动在去修,就还是坚持目前这种取巧的办法,怕跑不完的话可以一天跑3次,别搞次数太多.')
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const listUrl = `https://prodev.m.jd.com/mall/active/2w43r74mJQjiHmXB3dnsx7mznuMV/index.html`;

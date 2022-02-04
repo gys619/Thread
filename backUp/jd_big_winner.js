@@ -23,7 +23,8 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message = '', linkId = 'PFbUR7wtwUcQ860Sn8WRfw', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
+let cookiesArr = [], cookie = '', message = '', linkId = 'yMVR-_QKRd2Mq27xguJG-w', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
+const money = process.env.BIGWINNER_MONEY || 0.3
 const JD_API_HOST = 'https://api.m.jd.com/api';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -57,7 +58,7 @@ const len = cookiesArr.length;
   }
   if (message) {
     $.msg($.name, '', message);
-    //if ($.isNode()) await notify.sendNotify($.name, message);
+    if ($.isNode()) await notify.sendNotify($.name, message);
   }
 })()
     .catch((e) => {
@@ -217,7 +218,7 @@ function openRedReward(functionId = 'gambleChangeReward', type) {
             if (data['code'] === 0) {
               $.rewardData = data.data;
               if (data.data.rewardState === 1) {
-                if (data.data.rewardValue >= 0.3) {
+                if (data.data.rewardValue >= money) {
                   //已翻倍到0.3元，可以提现了
                   $.canApCashWithDraw = true;
                   $.changeReward = false;

@@ -1,28 +1,10 @@
 /*
-#发财大赢家
-#自定义邀请码环境变量
-export redEnvelopeId="" ##本期活动ID
-export inviter="" ##邀请码
-[task_local]
-#发财大赢家
-============Quantumultx===============
-[task_local]
-#发财大赢家
-1 1,18 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcdyj.js, tag=发财大赢家, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
-================Loon==============
-[Script]
-cron "1 1,18 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcdyj.js tag=发财大赢家
-
-===============Surge=================
-发财大赢家 = type=cron,cronexp="1 1,18 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcdyj.js
-
-============小火箭=========
-发财大赢家 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_fcdyj.js, cronexpr="1 1,18 * * *", timeout=3600, enable=true
+ 0,2 0 * * * jd_fc.js, tag=柠檬发财大赢家, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 
 
-const $ = new Env('发财大赢家获取邀请码');
+const $ = new Env('柠檬发财大赢家获取邀请码');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -92,7 +74,7 @@ function info() {
     return new Promise(async (resolve) => {
 
                 let options = {
-    url: `https://api.m.jd.com/?functionId=redEnvelopeInteractHome&body={"linkId":"J6BvN4C_Jb01SFG0vSMFJg"}&t=1635169356654&appid=activities_platform&clientVersion=3.5.6`,
+    url: `https://api.m.jd.com/?functionId=redEnvelopeInteractHome&body={"linkId":"yMVR-_QKRd2Mq27xguJG-w"}&t=1626358531348&appid=activities_platform&clientVersion=3.5.6`,
 
    
 headers: {

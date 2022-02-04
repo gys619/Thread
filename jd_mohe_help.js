@@ -6,17 +6,17 @@
 =================================Quantumultx=========================
 [task_local]
 #5G超级盲盒
-5 0,19 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_mohe_help.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0,19 * * * https://raw.githubusercontent.com/okyyds/yydspure/master/jd_mohe_help.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "5 0,19 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mohe_help.js,tag=5G超级盲盒
+cron "5 0,19 * * *" script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_mohe_help.js,tag=5G超级盲盒
 
 ===================================Surge================================
-5G超级盲盒 = type=cron,cronexp="5 0,19 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mohe_help.js
+5G超级盲盒 = type=cron,cronexp="5 0,19 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_mohe_help.js
 
 ====================================小火箭=============================
-5G超级盲盒 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_mohe_help.js, cronexpr="5 0,19 * * *", timeout=3600, enable=true
+5G超级盲盒 = type=cron,script-path=https://raw.githubusercontent.com/okyyds/yydspure/master/jd_mohe_help.js, cronexpr="5 0,19 * * *", timeout=3600, enable=true
  */
 const $ = new Env('5G超级盲盒内部互助');
 const notify = $.isNode() ? require('./sendNotify') : '';

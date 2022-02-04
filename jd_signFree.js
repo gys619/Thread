@@ -8,8 +8,7 @@ const UA = $.isNode() ? (process.env.JS_USER_AGENT ? process.env.JS_USER_AGENT :
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [],
     cookie,
-    msg = [],
-    first_flag = true
+    msg = []
 
 const activityId = 'PiuLvM8vamONsWzC0wqBGQ'
 
@@ -32,7 +31,6 @@ const JD_API_HOST = 'https://api.m.jd.com/';
             message = '';
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             msg.push(($.nickName || $.UserName) + ':')
-            first_flag = true
             await sign_all()
         }
     }
@@ -95,14 +93,11 @@ function query() {
                             msg.push("没有需要签到的商品,请到京东极速版[签到免单]购买商品")
                         } else {
                             $.signFreeOrderInfoList = data.data.signFreeOrderInfoList
-                            if (first_flag) {
-                                first_flag = false
-                                console.log("脚本也许随时失效,请注意");
-                                msg.push("脚本也许随时失效,请注意")
-                                if (data.data.risk == true) {
-                                    console.log("风控用户,可能有异常");
-                                    msg.push("风控用户,可能有异常")
-                                }
+                            console.log("脚本也许随时失效,请注意");
+                            msg.push("脚本也许随时失效,请注意")
+                            if (data.data.risk == true) {
+                                console.log("风控用户,可能有异常");
+                                msg.push("风控用户,可能有异常")
                             }
                         }
                     }else{

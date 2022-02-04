@@ -70,12 +70,12 @@ if ($.isNode()) {
     }
   }
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-      $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
 
 async function jsRedPacket() {
   try {
@@ -396,7 +396,7 @@ function cashOut(id,poolBaseId,prizeGroupId,prizeBaseId,) {
 function invite2() {
   let inviterIdArr = [
     "5V7vHE23qh2EkdBHXRFDuA==",
-    "aKIygK8y83zhxs2LmpQv46conKGFsMrny570tt6IEhU="
+    "wXX9SjXOdYMWe5Ru/1+x9A=="
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {

@@ -1,4 +1,3 @@
-// @grant    require
 /*
 入口 京东APP >> 玩一玩 >> 汽车生活节
 https://h5.m.jd.com/babelDiy/Zeus/2FdCyR9rffxKUkMpQTP4WT4bArmL/index.html
@@ -21,9 +20,9 @@ cron "30 9,21 12-20 8 *" script-path=https://raw.githubusercontent.com/smiek2221
 */
 
 const $ = new Env('汽车生活节');
-const notify = $.isNode() ? require('../sendNotify') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '',
   allMessage = '';
