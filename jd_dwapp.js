@@ -1,7 +1,7 @@
 /*
 积分换话费
 入口：首页-生活·缴费-积分换话费
-cron 33 7,19 * * * jd_dwapp.js
+cron "33 5,17 * * *" jd_dwapp.js
 */
 const $ = new Env('积分换话费');
 const notify = $.isNode() ? require('./sendNotify') : '';

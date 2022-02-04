@@ -3,8 +3,7 @@
 更新时间：2021-7-17
 入口：京东汽车-瓜分万元
 备注：支付一元才能参与活动，填写环境变量morningScPins给指定账号打卡
-TG学习交流群：https://t.me/cdles
-30 7 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_morningSc.js
+cron 30 6,7 * * * https://raw.githubusercontent.com/cdle/jd_study/main/jd_morningSc.js
 */
 const $ = new Env("早起赢现金")
 const ua = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random()*4+10)}.${Math.ceil(Math.random()*4)};${randomString(40)}`

@@ -3,19 +3,19 @@ let CryptoJS = require('crypto-js');
 let qs = require('querystring');
 let urls = require('url');
 let path = require('path');
-let notify = require('./sendNotify');
+let notify = require('../sendNotify');
 let mainEval = require("./eval");
 let assert = require('assert');
 let jxAlgo = require("./jxAlgo");
-let config = require("./config");
+let config = {};
 let user = {}
 try {
     user = require("./user")
 } catch (e) {}
 class env {
     constructor(name) {
-        this.config = { ...process.env,
-            ...config,
+        this.config = { ...config,
+            ...process.env,
             ...user,
         };
         this.name = name;

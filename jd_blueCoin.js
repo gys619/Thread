@@ -108,8 +108,8 @@ Date.prototype.Format = function (fmt) { //author: meizz
     await notify.sendNotify(`${$.name}`, `${allMessage}`)
   }
 })()
-  .catch((e) => $.logErr(e))
-  .finally(() => $.done())
+    .catch((e) => $.logErr(e))
+    .finally(() => $.done())
 
 async function PrizeIndex() {
   let nowtime = new Date().Format("s.S")

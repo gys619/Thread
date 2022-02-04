@@ -1,17 +1,19 @@
 /*
 超级直播间红包雨
-更新时间：2021-06-24
-下一场超级直播间时间:06月25日  20:00，直播间地址：https://h5.m.jd.com/dev/3pbY8ZuCx4ML99uttZKLHC2QcAMn/live.html?id=4515551
+
 脚本兼容: Quantumult X, Surge, Loon, JSBox, Node.js
 ==============Quantumult X==============
 [task_local]
 #超级直播间红包雨
 0,30 0-23/1 * * * jd_live_redrain.js, tag=超级直播间红包雨, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
 ==============Loon==============
 [Script]
 cron "0,30 0-23/1 * * *" script-path=jd_live_redrain.js,tag=超级直播间红包雨
+
 ================Surge===============
 超级直播间红包雨 = type=cron,cronexp="0,30 0-23/1 * * *",wake-system=1,timeout=3600,script-path=jd_live_redrain.js
+
 ===============小火箭==========
 超级直播间红包雨 = type=cron,script-path=jd_live_redrain.js, cronexpr="0,30 0-23/1 * * *", timeout=3600, enable=true
 */
@@ -60,14 +62,7 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
       $.log(`无法从本地读取配置，请检查运行时间(注：非红包雨时间执行出现此提示请忽略！！！！！！！！！！！)`)
       return
     }
-    // if (ids[hour]) {
-    //   $.activityId = ids[hour]
-    //   $.log(`本地红包雨配置获取成功，ID为：${$.activityId}\n`)
-    // } else {
-    //   $.log(`无法从本地读取配置，请检查运行时间(注：非红包雨时间执行出现此提示请忽略！！！！！！！！！！！)`)
-    //   $.log(`非红包雨期间出现上面提示请忽略。红包雨期间会正常，此脚本提issue打死！！！！！！！！！！！)`)
-    //   return
-    // }
+   
   } else {
     $.log(`远程红包雨配置获取成功`)
   }
