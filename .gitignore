@@ -269,7 +269,8 @@ jd_work_invokeKey.js
 jd_redPacket.js
 # 早起福利
 jd_zqfl.py
-
+#禁用重复任务
+jd_identicalnew.py
 ########过期活动##############
 
 # 运动户外盲盒
