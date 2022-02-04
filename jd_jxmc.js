@@ -85,9 +85,9 @@ if ($.isNode()) {
     return;
   }
   console.log('京喜牧场\n' +
-      '更新时间：2021-11-7\n' +
-      '活动入口：京喜APP-我的-京喜牧场\n' +
-      '温馨提示：请先手动完成【新手指导任务】再运行脚本')
+    '更新时间：2021-11-7\n' +
+    '活动入口：京喜APP-我的-京喜牧场\n' +
+    '温馨提示：请先手动完成【新手指导任务】再运行脚本')
   for (let i = 0; i < cookiesArr.length; i++) {
     $.index = i + 1;
     $.cookie = cookiesArr[i];
@@ -144,12 +144,12 @@ if ($.isNode()) {
     }
   }
 })()
-    .catch((e) => {
-      $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-      $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
 
 async function pasture() {
   try {
@@ -165,26 +165,30 @@ async function pasture() {
         console.log(`\n温馨提示：${$.UserName} 请先手动完成【新手指导任务】再运行脚本再运行脚本\n`);
         return;
       }
-      $.currentStep = oc(() => $.homeInfo.finishedtaskId)
-      console.log(`打印新手流程进度：当前进度：${$.currentStep}，下一流程：${$.homeInfo.maintaskId}`)
-      if ($.homeInfo.maintaskId !== "pause" || isNew($.currentStep)) {
-        console.log(`开始初始化`)
-        $.step = isNew($.currentStep) ? isNew($.currentStep, true) : $.homeInfo.maintaskId
-        await takeGetRequest('DoMainTask');
-        for (let i = 0; i < 20; i++) {
-          if ($.DoMainTask.maintaskId !== "pause") {
-            await $.wait(2000)
-            $.currentStep = oc(() => $.DoMainTask.finishedtaskId)
-            $.step = $.DoMainTask.maintaskId
-            await takeGetRequest('DoMainTask');
-          } else if (isNew($.currentStep)) {
-            $.step = isNew($.currentStep, true)
-            await takeGetRequest('DoMainTask');
-          } else {
-            console.log(`初始化成功\n`)
-            break
+      try {
+        $.currentStep = oc(() => $.homeInfo.finishedtaskId)
+        console.log(`打印新手流程进度：当前进度：${$.currentStep}，下一流程：${$.homeInfo.maintaskId}`)
+        if ($.homeInfo.maintaskId !== "pause" || isNew($.currentStep)) {
+          console.log(`开始初始化`)
+          $.step = isNew($.currentStep) ? isNew($.currentStep, true) : $.homeInfo.maintaskId
+          await takeGetRequest('DoMainTask');
+          for (let i = 0; i < 20; i++) {
+            if ($.DoMainTask.maintaskId !== "pause") {
+              await $.wait(2000)
+              $.currentStep = oc(() => $.DoMainTask.finishedtaskId)
+              $.step = $.DoMainTask.maintaskId
+              await takeGetRequest('DoMainTask');
+            } else if (isNew($.currentStep)) {
+              $.step = isNew($.currentStep, true)
+              await takeGetRequest('DoMainTask');
+            } else {
+              console.log(`初始化成功\n`)
+              break
+            }
           }
         }
+      } catch (e) {
+        console.warn('活动初始化错误')
       }
       console.log('获取活动信息成功');
       console.log(`互助码：${$.homeInfo.sharekey}`);
@@ -194,9 +198,9 @@ async function pasture() {
         let vo = $.taskList[key]
         if (vo.taskName === "邀请好友助力养鸡" || vo.taskType === 4) {
           if (vo.completedTimes >= vo.configTargetTimes) {
-            //console.log(`助力已满，不上传助力码`)
+            console.log(`助力已满，不上传助力码`)
           } else {
-            // await uploadShareCode($.homeInfo.sharekey)
+            await uploadShareCode($.homeInfo.sharekey)
             $.inviteCodeList.push($.homeInfo.sharekey);
             await $.wait(2000)
           }
@@ -635,7 +639,7 @@ function getStk(url) {
 
 function isNew(step, getNextStep = false) {
   const charArr = [...Array(26).keys()].map(i => String.fromCharCode(i + 65)),
-      numArr = [...Array(12).keys()].map(i => i + 1)
+    numArr = [...Array(12).keys()].map(i => i + 1)
   if (getNextStep) {
     const tempArr = step.split(`-`)
     tempArr[0] = charArr[charArr.indexOf(tempArr[0]) + 1]
@@ -645,7 +649,7 @@ function isNew(step, getNextStep = false) {
   const tempArr = step.split(`-`)
   if (tempArr.length < 2) return true
   const num = numArr.length * (charArr.indexOf(tempArr[0])) + (+tempArr[1]),
-      orderArr = ['L', '6'] // 目标步骤
+    orderArr = ['L', '6'] // 目标步骤
   const numTo = numArr.length * (charArr.indexOf(orderArr[0])) + (+orderArr[1])
   return num < numTo
 }
@@ -918,11 +922,11 @@ function shareCodesFormat() {
 }
 function readShareCode() {
   return new Promise(async resolve => {
-    $.get({url: ``, timeout: 30 * 1000}, (err, resp, data) => {
+    $.get({url: `https://111111/jxmc`, timeout: 30 * 1000}, (err, resp, data) => {
       try {
         if (err) {
-          //console.log(JSON.stringify(err))
-          //console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} readShareCode API请求失败，请检查网路重试`)
         } else {
           if (data) {
             console.log(`\n随机取20个码放到您固定的互助码后面(不影响已有固定互助)`)
@@ -939,7 +943,40 @@ function readShareCode() {
     resolve()
   })
 }
-
+function uploadShareCode(code) {
+  return new Promise(async resolve => {
+    $.post({url: `https://111111/upload/jxmc?code=${code}&ptpin=${encodeURIComponent(encodeURIComponent($.UserName))}`, timeout: 30 * 1000}, (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(JSON.stringify(err))
+          console.log(`${$.name} uploadShareCode API请求失败，请检查网路重试`)
+        } else {
+          if (data) {
+            if (data === 'OK') {
+              console.log(`已自动提交助力码`)
+            } else if (data === 'error') {
+              console.log(`助力码格式错误，乱玩API是要被打屁屁的~`)
+            } else if (data === 'full') {
+              console.log(`车位已满，请等待下一班次`)
+            } else if (data === 'exist') {
+              console.log(`助力码已经提交过了~`)
+            } else if (data === 'not in whitelist') {
+              console.log(`提交助力码失败，此用户不在白名单中`)
+            } else {
+              console.log(`未知错误：${data}`)
+            }
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(30 * 1000);
+    resolve()
+  })
+}
 
 function decrypt(time, stk, type, url) {
   stk = stk || (url ? getUrlData(url, '_stk') : '')
@@ -1030,18 +1067,18 @@ async function requestAlgo() {
 
 Date.prototype.Format = function (fmt) {
   var e,
-      n = this, d = fmt, l = {
-        "M+": n.getMonth() + 1,
-        "d+": n.getDate(),
-        "D+": n.getDate(),
-        "h+": n.getHours(),
-        "H+": n.getHours(),
-        "m+": n.getMinutes(),
-        "s+": n.getSeconds(),
-        "w+": n.getDay(),
-        "q+": Math.floor((n.getMonth() + 3) / 3),
-        "S+": n.getMilliseconds()
-      };
+    n = this, d = fmt, l = {
+      "M+": n.getMonth() + 1,
+      "d+": n.getDate(),
+      "D+": n.getDate(),
+      "h+": n.getHours(),
+      "H+": n.getHours(),
+      "m+": n.getMinutes(),
+      "s+": n.getSeconds(),
+      "w+": n.getDay(),
+      "q+": Math.floor((n.getMonth() + 3) / 3),
+      "S+": n.getMilliseconds()
+    };
   /(y+)/i.test(d) && (d = d.replace(RegExp.$1, "".concat(n.getFullYear()).substr(4 - RegExp.$1.length)));
   for (var k in l) {
     if (new RegExp("(".concat(k, ")")).test(d)) {
