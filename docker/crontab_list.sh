@@ -18,7 +18,7 @@
 #东东超市商品兑换
 59 23 * * * node /scripts/jd_blueCoin.js >> /scripts/logs/jd_blueCoin.log 2>&1
 #东东超市兑换奖品
-20 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
+#20 * * * * node /scripts/jd_big_winner.js >> /scripts/logs/jd_big_winner.log 2>&1
 #省钱大赢家之翻翻乐
 20 12 * * * node /scripts/jd_beauty_ex.js >> /scripts/logs/jd_beauty_ex.log 2>&1
 #美丽研究院--兑换
@@ -74,7 +74,7 @@
 #京东CK检测
 1 * * * * node /scripts/jd_cfd.js >> /scripts/logs/jd_cfd.log 2>&1
 #京喜财富岛
-26 8 * * * node /scripts/jd_dreamFactory_product.js >> /scripts/logs/jd_dreamFactory_product.log 2>&1
+#26 8 * * * node /scripts/jd_dreamFactory_product.js >> /scripts/logs/jd_dreamFactory_product.log 2>&1
 #京喜工厂可生产
 4045 23 * * * node /scripts/jd_duobao.js >> /scripts/logs/jd_duobao.log 2>&1
 #M京豆夺宝
@@ -152,7 +152,7 @@
 #京东快递签到
 36 8 * * * node /scripts/jd_lotteryMachine.js >> /scripts/logs/jd_lotteryMachine.log 2>&1
 #京东抽奖机&内部互助
-10 7 * * * node /scripts/jd_lxLottery.js >> /scripts/logs/jd_lxLottery.log 2>&1
+#10 7 * * * node /scripts/jd_lxLottery.js >> /scripts/logs/jd_lxLottery.log 2>&1
 #京东我的理想家
 10 0 * * * node /scripts/jd_lottery_drew.js >> /scripts/logs/jd_lottery_drew.log 2>&1
 #京东赚京豆一分钱抽奖
@@ -270,7 +270,7 @@
 #赚京豆
 10 8 * * * node /scripts/jd_sgmh.js >> /scripts/logs/jd_sgmh.log 2>&1
 #闪购盲盒
-0 018 * * * node /scripts/jd_tiger_help.js >> /scripts/logs/jd_tiger_help.log 2>&1
+#0 018 * * * node /scripts/jd_tiger_help.js >> /scripts/logs/jd_tiger_help.log 2>&1
 #萌虎摇摇乐助力
 26 8 * * * node /scripts/jd_tw.js >> /scripts/logs/jd_tw.log 2>&1
 #特务Z
@@ -280,7 +280,7 @@
 #京东试用
 26 8 * * * node /scripts/jd_upgrade.js >> /scripts/logs/jd_upgrade.log 2>&1
 #升级赚京豆
-26 20 * * * node /scripts/jd_userAwardExpandinfo.py >> /scripts/logs/jd_userAwardExpandinfo.log 2>&1
+#26 20 * * * node /scripts/jd_userAwardExpandinfo.py >> /scripts/logs/jd_userAwardExpandinfo.log 2>&1
 #京东膨胀红包通知
 26 8 * * * node /scripts/jd_unsubscribe.js >> /scripts/logs/jd_unsubscribe.log 2>&1
 #批量取关店铺和商品
