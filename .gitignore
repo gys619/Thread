@@ -286,6 +286,9 @@ jd_btdraw.py
 jd_medal.js
 # 全民抢京豆8.6-8.16
 jd_qjd.py
+#点鞭炮赢京豆
+jd_festival.js
+
 
 ############不能跑的################
 # 通用游戏
