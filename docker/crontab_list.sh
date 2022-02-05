@@ -320,3 +320,5 @@
 #赚京豆组队
 0 5 * * * node /scripts/jd_zjb.js >> /scripts/logs/jd_zjb.log 2>&1
 #赚金币
+0 5 * * * node /scripts/ jd_freshgoods.js >> /scripts/logs/ jd_freshgoods.js.log 2>&1
+#春节游戏互动
