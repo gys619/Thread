@@ -81,12 +81,10 @@ async function jdSign() {
 
 async function getCouponConfig() {
   let functionId = `getCouponConfig`
-  let body = escape(JSON.stringify({"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","incentiveShowTimes":0,"monitorRefer":"","monitorSource":"ccresource_android_index_config","pageClickKey":"Coupons_GetCenter","rewardShowTimes":0,"sourceFrom":"1"}))
-  let uuid = randomString(16)
-  let sign = await getSign(functionId, decodeURIComponent(body), uuid)
-  let url = `${JD_API_HOST}?functionId=${functionId}&client=android&clientVersion=10.1.2&uuid=${uuid}&${sign}`
+  let body = {"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","incentiveShowTimes":0,"monitorRefer":"","monitorSource":"ccresource_android_index_config","pageClickKey":"Coupons_GetCenter","rewardShowTimes":0,"sourceFrom":"1"}
+  let sign = await getSign(functionId, body)
   return new Promise(async resolve => {
-    $.post(taskUrl(url, body), async (err, resp, data) => {
+    $.post(taskUrl(functionId, sign), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -101,7 +99,7 @@ async function getCouponConfig() {
               } else {
                 let pin = await getsecretPin($.UserName)
                 functionId = `ccSignInNecklace`
-                body = escape(JSON.stringify({"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","monitorRefer":"appClient","monitorSource":"cc_sign_android_index_config","pageClickKey":"Coupons_GetCenter","sessionId":"","signature":data.result.couponConfig.signNecklaceDomain.signature,"pin":pin,"verifyToken":""}))
+                body = {"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","monitorRefer":"appClient","monitorSource":"cc_sign_android_index_config","pageClickKey":"Coupons_GetCenter","sessionId":"","signature":data.result.couponConfig.signNecklaceDomain.signature,"pin":pin,"verifyToken":""}
               }
             } else {
               if (data.result.couponConfig.signNewDomain.roundData.ynSign === '1') {
@@ -109,7 +107,7 @@ async function getCouponConfig() {
               } else {
                 let pin = await getsecretPin($.UserName)
                 functionId = `ccSignInNew`
-                body = escape(JSON.stringify({"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","monitorRefer":"appClient","monitorSource":"cc_sign_android_index_config","pageClickKey":"Coupons_GetCenter","pin":pin}))
+                body = {"childActivityUrl":"openapp.jdmobile://virtual?params={\"category\":\"jump\",\"des\":\"couponCenter\"}","monitorRefer":"appClient","monitorSource":"cc_sign_android_index_config","pageClickKey":"Coupons_GetCenter","pin":pin}
               }
             }
             if (functionId && body) await ccSign(functionId, body)
@@ -124,11 +122,9 @@ async function getCouponConfig() {
   })
 }
 async function ccSign(functionId, body) {
-  let uuid = randomString(16)
-  let sign = await getSign(functionId, decodeURIComponent(body), uuid)
-  let url = `${JD_API_HOST}?functionId=${functionId}&client=android&clientVersion=10.1.2&uuid=${uuid}&${sign}`
+  let sign = await getSign(functionId, body)
   return new Promise(async resolve => {
-    $.post(taskUrl(url, body), async (err, resp, data) => {
+    $.post(taskUrl(functionId, sign), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -151,14 +147,13 @@ async function ccSign(functionId, body) {
     })
   })
 }
-function getSign(functionid, body, uuid) {
+function getSign(functionId, body) {
   return new Promise(async resolve => {
     let data = {
-      "functionId":functionid,
-      "body":body,
-      "uuid":uuid,
+      functionId,
+      body: JSON.stringify(body),
       "client":"android",
-      "clientVersion":"10.1.2"
+      "clientVersion":"10.3.2"
     }
     let HostArr = ['jdsign.cf', 'signer.nz.lu']
     let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
@@ -231,10 +226,10 @@ function showMsg() {
   })
 }
 
-function taskUrl(url, body) {
+function taskUrl(functionId, body) {
   return {
-    url,
-    body: `body=${body}`,
+    url: `${JD_API_HOST}?functionId=${functionId}`,
+    body,
     headers: {
       "Host": "api.m.jd.com",
       "Connection": "keep-alive",
@@ -247,13 +242,6 @@ function taskUrl(url, body) {
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
     }
   }
-}
-function randomString(e) {
-  e = e || 32;
-  let t = "abcdefghijklmnopqrstuvwxyz0123456789", a = t.length, n = "";
-  for (let i = 0; i < e; i++)
-    n += t.charAt(Math.floor(Math.random() * a));
-  return n
 }
 
 function TotalBean() {
