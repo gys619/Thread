@@ -164,7 +164,6 @@ function jdfactory_getTaskDetail() {
                 if (item.taskType === 14) {
                   console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${item.assistTaskDetailVo.taskToken}\n`)
                   inviteCodes.push(item.assistTaskDetailVo.taskToken)
-                  console.log(`收集邀请码‼️`)
                 }
               })
             }
