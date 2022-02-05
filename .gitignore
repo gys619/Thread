@@ -35,10 +35,11 @@ jd_joypark_task.js
 jd_work_ddworld.js
 jd_esManager.js
 jd_cleancart.js
-jd_clean_car.js
-gua_cleancart.js
+#清理购物车
+#jd_clean_car.js
+#gua_cleancart.js
 jd_jmsign.js
-jd_clean_car.js
+#jd_clean_car.js
 jd_priceProtect.js
 jd_jin_tie_xh.js
 jd_jmzhl.js
@@ -288,8 +289,10 @@ jd_medal.js
 jd_qjd.py
 #点鞭炮赢京豆
 jd_festival.js
-
-
+#会场红包
+jd_babel_red.js
+#打豆豆
+jd_dadoudou.js
 ############不能跑的################
 # 通用游戏
 jd_game.js
@@ -320,7 +323,8 @@ fanli.js
 jd_reward.ts
 # 整点红包雨 longzhuzhu
 jd_super_redrain.js
-
+#超级无线店铺抽奖
+jd_lzclient.js
 
 
 
