@@ -92,6 +92,7 @@
 	{"config":"0 0 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_xmf_exchange.js, tag=5魔方兑换, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	{"config":"38 5,18 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_ylyn.js, tag=伊利养牛记, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	{"config":"26 10 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_zjb_help.js, tag=赚金币邀请, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
-	{"config":"26 11 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_zdjr.js, tag=赚京豆组队, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}
+	{"config":"26 11 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_zdjr.js, tag=赚京豆组队, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	{"config":"50 4,17 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_jdfactory_help.js, tag=东东工厂内部互助, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}
   ]
 }
