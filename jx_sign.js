@@ -37,6 +37,7 @@ let cookiesArr = [], cookie = '', message;
 let UA, UAInfo = {}, isLoginInfo = {};
 $.shareCodes = [];
 $.blackInfo = {}
+$.appId = "0ac98";
 const JX_FIRST_RUNTASK = $.isNode() ? (process.env.JX_FIRST_RUNTASK && process.env.JX_FIRST_RUNTASK === 'xd' ? '5' : '1000') : ($.getdata('JX_FIRST_RUNTASK') && $.getdata('JX_FIRST_RUNTASK') === 'xd' ? '5' : '1000')
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -52,6 +53,7 @@ if ($.isNode()) {
     $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/bean/signIndex.action", { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
+  await requestAlgo();
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -71,10 +73,8 @@ if ($.isNode()) {
       if (!isLoginInfo[$.UserName]) continue
       if (JX_FIRST_RUNTASK === '5') {
         $.signhb_source = '5'
-        await requestAlgo();
       } else if (JX_FIRST_RUNTASK === '1000') {
         $.signhb_source = '1000'
-        await requestAlgo();
       }
       await signhb(1)
       await $.wait(500)
@@ -110,23 +110,19 @@ if ($.isNode()) {
         console.log(`开始运行喜豆任务`)
         $.taskName = '喜豆'
         $.signhb_source = '5'
-        await requestAlgo();
         await main()
         console.log(`\n开始运行红包任务`)
         $.taskName = '红包'
         $.signhb_source = '1000'
-        await requestAlgo();
         await main(false)
       } else if (JX_FIRST_RUNTASK === '1000') {
         console.log(`开始运行红包任务`)
         $.taskName = '红包'
         $.signhb_source = '1000'
-        await requestAlgo();
         await main()
         console.log(`\n开始运行喜豆任务`)
         $.taskName = '喜豆'
         $.signhb_source = '5'
-        await requestAlgo();
         await main(false)
       }
     }
@@ -571,11 +567,6 @@ Date.prototype.Format = function (fmt) {
 }
 
 async function requestAlgo() {
-  if ($.signhb_source === '5') {
-    $.appId = 10038;
-  } else {
-    $.appId = 10028;
-  }
   $.fingerprint = await generateFp();
   const options = {
     "url": `https://cactus.jd.com/request_algo?g_ty=ajax`,
@@ -594,7 +585,7 @@ async function requestAlgo() {
       'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en;q=0.7'
     },
     'body': JSON.stringify({
-      "version": "1.0",
+      "version": "3.0",
       "fp": $.fingerprint,
       "appId": $.appId.toString(),
       "timestamp": Date.now(),
@@ -657,7 +648,7 @@ function decrypt(time, stk, type, url) {
     const hash2 = $.CryptoJS.HmacSHA256(st, hash1.toString()).toString($.CryptoJS.enc.Hex);
     // console.log(`\nst:${st}`)
     // console.log(`h5st:${["".concat(timestamp.toString()), "".concat(fingerprint.toString()), "".concat($.appId.toString()), "".concat(token), "".concat(hash2)].join(";")}\n`)
-    return encodeURIComponent(["".concat(timestamp.toString()), "".concat($.fingerprint.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2)].join(";"))
+    return encodeURIComponent(["".concat(timestamp.toString()), "".concat($.fingerprint.toString()), "".concat($.appId.toString()), "".concat($.token), "".concat(hash2), "".concat("3.0"), "".concat(time)].join(";"))
   } else {
     return '20210318144213808;8277529360925161;10001;tk01w952a1b73a8nU0luMGtBanZTHCgj0KFVwDa4n5pJ95T/5bxO/m54p4MtgVEwKNev1u/BUjrpWAUMZPW0Kz2RWP8v;86054c036fe3bf0991bd9a9da1a8d44dd130c6508602215e50bb1e385326779d'
   }
