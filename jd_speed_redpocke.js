@@ -80,14 +80,14 @@ if ($.isNode()) {
 async function jsRedPacket() {
   try {
     await invite2();
-    await sign();//极速版签到提现
-    await reward_query();
-    for (let i = 0; i < 3; ++i) {
-      await redPacket();//开红包
-      await $.wait(2000)
-    }
-    await getPacketList();//领红包提现
-    await signPrizeDetailList();
+    // await sign();//极速版签到提现
+    // await reward_query();
+    // for (let i = 0; i < 3; ++i) {
+    //   await redPacket();//开红包
+    //   await $.wait(2000)
+    // }
+    // await getPacketList();//领红包提现
+    // await signPrizeDetailList();
     await showMsg()
   } catch (e) {
     $.logErr(e)
@@ -396,7 +396,9 @@ function cashOut(id,poolBaseId,prizeGroupId,prizeBaseId,) {
 function invite2() {
   let inviterIdArr = [
     "5V7vHE23qh2EkdBHXRFDuA==",
-    "wXX9SjXOdYMWe5Ru/1+x9A=="
+    "wXX9SjXOdYMWe5Ru/1+x9A==",
+    "4AVQao+eH8Q8kvmXnWmkG8ef/fNr5fdejnD9+9Ugbec=",
+    "jbGBRBPo5DmwB9ntTCSVOGXuh1YQyccCuZpWwb3PlIc="
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {
