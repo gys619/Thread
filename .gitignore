@@ -272,6 +272,9 @@ jd_redPacket.js
 jd_zqfl.py
 #禁用重复任务
 jd_identicalnew.py
+
+#京东极速版红包
+jd_speed_red.js
 ########过期活动##############
 
 # 运动户外盲盒
@@ -325,7 +328,8 @@ jd_reward.ts
 jd_super_redrain.js
 #超级无线店铺抽奖
 jd_lzclient.js
-
+#自动评价
+jd_Evaluation.py
 
 
 jd_anjia.js
