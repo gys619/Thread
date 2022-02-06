@@ -34,12 +34,12 @@ jd_mdou.js
 jd_joypark_task.js
 jd_work_ddworld.js
 jd_esManager.js
-jd_cleancart.js
 #清理购物车
-#jd_clean_car.js
-#gua_cleancart.js
+#jd_cleancart.js
+jd_clean_car.js
+gua_cleancart.js
 jd_jmsign.js
-#jd_clean_car.js
+jd_clean_car.js
 jd_priceProtect.js
 jd_jin_tie_xh.js
 jd_jmzhl.js
