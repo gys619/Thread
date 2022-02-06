@@ -1,9 +1,9 @@
 
 /**
-东东世界兑换
-cron 0 0 * * * jd_ddworld_exchange.js
-TG频道：https://t.me/sheeplost
-*/
+ 东东世界兑换
+ cron 0 0 * * * jd_ddworld_exchange.js
+ TG频道：https://t.me/sheeplost
+ */
 const $ = new Env("东东世界兑换");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
