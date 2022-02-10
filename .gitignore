@@ -330,7 +330,8 @@ jd_super_redrain.js
 jd_lzclient.js
 #自动评价
 jd_Evaluation.py
-
+#幸福小店
+jd_xfxd.js
 
 jd_anjia.js
 jd_senbeans.js
