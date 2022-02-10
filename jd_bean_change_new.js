@@ -95,8 +95,8 @@ if ($.isNode()) {
     }
 
     if ($.isNode() && allMessage != '') {
-        if ((cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum) {
-            console.log(`正在进行最后一次发送通知，发送数量：${(cookiesArr.length - ($.sentNum * args_xh.sendNum))}`)
+        if (($.cookiesArr.length - ($.sentNum * args_xh.sendNum)) < args_xh.sendNum) {
+            console.log(`正在进行最后一次发送通知，发送数量：${($.cookiesArr.length - ($.sentNum * args_xh.sendNum))}`)
             await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
             allMessage = "";
         }

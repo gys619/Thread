@@ -47,9 +47,9 @@ if ($.isNode()) {
   if (process.env.PIGPETSHARECODE) {
     shareId = process.env.PIGPETSHARECODE
   } else{
-    let res = await getAuthorShareCode('https://raw.githubusercontent.com/888888/11111128/main/shareCodes/11111127')
+    let res = await getAuthorShareCode('')
     if (!res) {
-      res = await getAuthorShareCode('https://raw.fastgit.org/888888/11111128/main/shareCodes/11111127')
+      res = await getAuthorShareCode('')
     }
     if (res){
       shareId = res[Math.floor((Math.random() * res.length))];
@@ -77,12 +77,12 @@ if ($.isNode()) {
     }
   }
   console.log(`\n======开始大转盘助力======\n`);
-  $.helpId = await getAuthorShareCode('https://raw.fastgit.org/888888/11111128/main/shareCodes/11111127');
+  $.helpId = await getAuthorShareCode('');
   $.shareCodes = [...$.shareCodes, ...($.helpId || [])]
   for (let j = 0; j < cookiesArr.length; j++) {
     cookie = cookiesArr[j];
     if ($.shareCodes && $.shareCodes.length) {
-      console.log(`\n自己账号内部循环互助，有剩余次数再帮【888888】助力\n`);
+      console.log(`\n自己账号内部循环互助\n`);
       for (let item of $.shareCodes) {
         await pigPetLotteryHelpFriend(item)
         await $.wait(1000)

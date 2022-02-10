@@ -76,15 +76,16 @@ let tasks = [], shareCodes = [], first = true;
 
 async function main() {
   tasks = await detail();
+   console.log('tasks：++++++++++'+tasks);
   for (let i = 0; i < tasks.length; i++) {
     let product_info_vos = []
     let task_vos = tasks[i]
-    switch (i) {
-      case 0:
+    switch (task_vos.task_name) {
+      case '连签得金币':
         if (task_vos.status === '1')
           await do_task(task_vos.simple_record_info_vo.task_token, task_vos.task_id, task_vos.task_type)
         continue
-      case 1:
+      case '邀请好友助力':
         await getShareCode(task_vos.assist_task_detail_vo.task_token)
         await $.wait(1000)
 
@@ -94,22 +95,10 @@ async function main() {
         console.log(`第${$.index}个账号${$.UserName}去助力第${Math.floor(($.index - 1) / 6) + 1}个账号。`)
         await doAssist()
         continue
-      case 2:
-        product_info_vos = task_vos['browse_shop_vo']
-        break
-      case 3:
+      case '去浏览精彩会场': case '去关注特色频道' :
         product_info_vos = task_vos['shopping_activity_vos']
         break
-      case 4:
-        product_info_vos = task_vos['brand_member_vos']
-        continue
-      case 5:
-        product_info_vos = task_vos['product_info_vos']
-        break
-      case 6:
-        product_info_vos = task_vos['shopping_activity_vos']
-        break
-      case 7:
+      case '去关注优质好店':
         product_info_vos = task_vos['follow_shop_vo']
         break
       default:
@@ -329,7 +318,7 @@ function detail() {
     }, (err, resp, data) => {
       if (!err) {
         try {
-          resolve(JSON.parse(data).body.task_vos)
+          resolve(JSON.parse(data).body.task_component.task_vos)
         } catch (e) {
           resolve("黑号")
         } finally {

@@ -1,11 +1,6 @@
-if (process.env.XFXD != "true") {
-    console.log("默认不运行,设置XFXD为true来运行\n需要手动过新手任务后运行\n入口:APP-我的-左上角plus专属-会员店->天天领京豆->幸福小店\n可能黑号")
-    return
-}
 /*
 京东-幸福小店
-cron 18 0 * * * jd_xfxd.js
-
+cron 18 1,21 * * * jd_xfxd.js
 活动入口：京东APP->我的->会员店->天天领京豆->幸福小店
 TG频道：https://t.me/tom_210120
 */
@@ -39,7 +34,7 @@ class UserInfo {
         this.save = ''
         this.nickname = str.match(/pt_pin=(.+?);/)[1]
     }
-    
+
     async getToken() {
         let url = `https://jdjoy.jd.com/saas/framework/encrypt/pin?appId=ef6d90c162ef87d2c0d069ba3543d8ca`
         let body = ``
@@ -56,7 +51,7 @@ class UserInfo {
             console.log(`账号[${this.index}]获取token失败: ${result.errorMessage}`)
         }
     }
-    
+
     async getSaveByToken() {
         let url = `https://jd-plusshop-7goyzspef1de45ca-1307535713.ap-shanghai.app.tcloudbase.com/main`
         let body = `{"method":"save/getSaveByToken","data":{"lkToken":"${this.lkToken}"},"isPre":false}`
@@ -78,8 +73,8 @@ class UserInfo {
             console.log(`账号[${this.index}]获取数据失败: ${result.errorMessage}`)
         }
     }
-            
-    
+
+
     async updateSave() {
         let url = `https://jd-plusshop-7goyzspef1de45ca-1307535713.ap-shanghai.app.tcloudbase.com/main`
         this.save.items.data['101001003'] = 700000 + Math.floor(Math.random()*100000)
@@ -98,7 +93,7 @@ class UserInfo {
         if(!result) return
         //console.log(result)
     }
-    
+
     async sendBean(id) {
         let url = `https://jd-plusshop-7goyzspef1de45ca-1307535713.ap-shanghai.app.tcloudbase.com/main`
         let body = `{"uid":"${this.uid}","method":"lk/sendBean","data":{"lkToken":"${this.lkToken}","beanId":"${id}"},"isPre":false}`
@@ -120,32 +115,32 @@ class UserInfo {
         //console.log('没有重写')
     }else {
         if(!(await checkEnv())) return;
-        
+
         console.log('\n请先手动进游戏过了新手引导再跑脚本\n活动入口：京东APP->我的->会员店->天天领京豆->幸福小店\n目前应该每天只能换20豆和10豆两档了，如果兑换失败的，尝试换IP或者手动兑换吧')
-        
+
         for(let user of userList) {
             console.log(`\n=========== 开始账号 ${user.nickname} ===========`)
-            
-            await user.getToken(); 
+
+            await user.getToken();
             await $.wait(1000);
-        
-            await user.getSaveByToken(); 
+
+            await user.getSaveByToken();
             await $.wait(1000);
-            
+
             if(!user.save) continue;
-            
-            await user.updateSave(); 
+
+            await user.updateSave();
             await $.wait(1000);
-            
+
             for(let id=6; id>0; id--) {
-                await user.sendBean(id); 
+                await user.sendBean(id);
                 await $.wait(1000);
             }
         }
     }
 })()
-.catch((e) => $.logErr(e))
-.finally(() => $.done())
+    .catch((e) => $.logErr(e))
+    .finally(() => $.done())
 
 ///////////////////////////////////////////////////////////////////
 async function checkEnv() {
@@ -162,7 +157,7 @@ async function checkEnv() {
         console.log('未找到京东ck')
         return;
     }
-    
+
     console.log(`共找到${userCount}个账号`)
     return true
 }
@@ -183,7 +178,7 @@ async function showmsg() {
 async function pushDear(str) {
     if(!PushDearKey) return;
     if(!str) return;
-    
+
     console.log('\n============= PushDear 通知 =============\n')
     console.log(str)
     let urlObject = {
