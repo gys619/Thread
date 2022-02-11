@@ -405,6 +405,7 @@ def get_task(cookies,sid,account):
     except Exception as e:
         print (e)
         msg("【账号{0}】浏览任务已全部完成".format(account))
+        return [],[],[]
 
 #获取加购任务信息
 def get_task2(cookies,sid,account):
@@ -550,19 +551,19 @@ def start():
             account = setName (cookie)
             access_token = get_ck(cookie,sid_ck,account)
             cookie = get_Authorization (access_token, account)
-            get_planted_info (cookie,sid)
+            get_planted_info (cookie,sid,account)
             if nowtime > flag_time1 and nowtime < flag_time2:
                 taskName,taskId,taskToken = get_sleep (cookie,sid)
                 do_task(cookie,taskName,taskId,taskToken,sid,account)
-                charge(charge_targe_id,cookie,sid,sid,account)
+                charge(charge_targe_id,cookie,sid,account)
             else:
                 taskName_list,taskId_list,taskToken_list = get_task (cookie,sid,account)
                 for i,j,k in zip(taskName_list,taskId_list,taskToken_list):
                     do_task(cookie,i,j,k,sid,account)
-                taskName, taskId, taskToken_list = get_task2 (cookie, account)
+                taskName, taskId, taskToken_list = get_task2 (cookie,sid, account)
                 for i in taskToken_list:
                     do_task2 (cookie, taskName, taskId, i, sid,account)
-                charge(charge_targe_id,cookie,account)
+                charge(charge_targe_id,cookie,sid,account)
         elif cookies != '':
             for cookie, charge_targe_id in zip (cookies, charge_targe_ids):
                 account = setName (cookie)
@@ -582,7 +583,7 @@ def start():
                         taskName_list, taskId_list, taskToken_list = get_task (cookie, sid,account)
                         for i, j, k in zip (taskName_list, taskId_list, taskToken_list):
                             do_task (cookie, i, j, k, sid,account)
-                        taskName, taskId, taskToken_list = get_task2 (cookie, account)
+                        taskName, taskId, taskToken_list = get_task2 (cookie,sid, account)
                         for i in taskToken_list:
                             do_task2 (cookie, taskName, taskId, i, sid,account)
                     charge (charge_targe_id, cookie,sid, account)
