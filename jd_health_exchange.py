@@ -1,95 +1,79 @@
 #!/bin/env python3
 # -*- coding: utf-8 -*
 '''
-
-感谢CurtinLV提供的其他脚本供我参考
-感谢aburd ch大佬的指导抓包
+感谢Curtin提供的其他脚本供我参考
+感谢aburd ch大佬的指导
 项目名称:jd_health_exchange.py
-Author: 一风一燕
-功能：健康兑换
-Date: 2021-12-19
-cron: 1 0 0 * * * jd_health_exchange.py
-new Env('健康兑换');
-
-2022-1-7 updata:兑换改版，更新脚本
-
-2022-1-9 updata:
-更新多线程兑换，对于exchange_jkd_numb=4的人更加友好。
-
-
-****************滴滴出行APP*******************
-
-
-【教程】：
-
-青龙变量exchange_jkd_numb="1"的话，兑换100健康豆，1福利金
-青龙变量exchange_jkd_numb="2"的话，兑换5000健康豆，50福利金
-青龙变量exchange_jkd_numb="3"的话，兑换10000健康豆，100福利金
-青龙变量exchange_jkd_numb="4"的话，兑换150000健康豆，150福利金
-
-需要自行用手机抓取Didi_jifen_token。
-在青龙变量中添加变量Didi_jifen_token
-多个账号时，Didi_jifen_token，用&隔开，例如Didi_jifen_token="xxxxx&xxxx"
-
-手机抓包后，手动点击多看多赚，签到一次后，查看URL，https://res.xiaojukeji.com/sigma/api/step/sign/v2?wsgsig=
-再查看表头，ticket就是需要抓的变量了
-
-在青龙变量中添加变量Didi_jifen_token="xxxx",xxx就是上面抓的ticker复制下来就OK了
+Author: 一风一扬
+功能：健康社区兑换
+Date: 2021-08-12
+cron: 9 1,15 * * * jd_health_exchange.py
+new Env('JD健康社区兑换');
 
 
 
-cron时间填写：1 0 0 * * *
+教程：本脚本默认兑换20京豆，需要8W积分，默认保留10W积分，有18W积分以上才兑换20京豆
 
+cron时间填写：兑换京豆随意写，如果是其他商品，根据相关时间填写
 
 '''
+#如果不想兑换京豆，ENV设置： export heath_noexchage='x'
+# x填写数字，x对应cookies中第几个账号，如果中间有黑号，黑号不算。多个账号不兑换用&隔开，例如2&3&4
+heath_noexchage='2&3&4'
+
+##############默认保留10W积分，18W积分才兑换20京豆############
+###想保留其他分数，ENV设置： export least='xxx'
+least = '180000'
+
+# 20京豆id为4
+id = '4'
 
 
-Didi_jifen_token = ''
-exchange_jkd_numb = 2
-total_exchange = 5000
-FLJ = 50
-'''
+#每秒点击兑换次数...适当调整，手机会发烫
+#ENV设置： export dd_thread=30
+dd_thread = '30'
 
 
-=================================以下代码不懂不要随便乱动=================================
+
+######################################################以下代码请不要乱改######################################
+
+UserAgent = ''
 
 
-'''
-tokens = ''
-account = 1
-
-try:
-    import requests
-    import json,sys,os,re
-    import time,datetime
-    from urllib.parse import quote, unquote
-    import threading
-except Exception as e:
-    print(e)
+import requests
+import time,datetime
+import requests,re,os,sys,random,json
+from urllib.parse import quote, unquote
+import threading
+import urllib3
+#urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 requests.packages.urllib3.disable_warnings()
 
 
-pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep
-path = pwd + "env.sh"
+
+
 today = datetime.datetime.now().strftime('%Y-%m-%d')
 tomorrow=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+starttime = '23:59:58.00000000'
 
-#开始抢兑时间
-starttime='00:01:00.00000000'
-#结束时间
-endtime='00:01:20.00000000'
+pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep
+path = pwd + "env.sh"
 
-qgtime = '{} {}'.format (today, starttime)
-qgendtime = '{} {}'.format (today, endtime)
+script_name = '健康社区兑换-Python'
 
+jd_host='https://api.m.jd.com/'
 
+functionId=''
+
+body = '{}'
+
+uuid = ''
 
 
 def printT(s):
-    print("[【{0}】]: {1}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), s))
+    print("[{0}]: {1}".format(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), s))
     sys.stdout.flush()
-
 
 def getEnvs(label):
     try:
@@ -111,59 +95,205 @@ def getEnvs(label):
     except:
         return label
 
+
+
+class getJDCookie(object):
+#     # 适配各种平台环境ck
+#
+#     def getckfile(self):
+#         global v4f
+#         curf = pwd + 'JDCookies.txt'
+#         v4f = '/jd/config/config.sh'
+#         ql_new = '/ql/config/env.sh'
+#         ql_old = '/ql/config/cookie.sh'
+#         if os.path.exists(curf):
+#             with open(curf, "r", encoding="utf-8") as f:
+#                 cks = f.read()
+#                 f.close()
+#             r = re.compile(r"pt_key=.*?pt_pin=.*?;", re.M | re.S | re.I)
+#             cks = r.findall(cks)
+#             if len(cks) > 0:
+#                 return curf
+#             else:
+#                 pass
+#         if os.path.exists(ql_new):
+#             printT()("当前环境青龙面板新版")
+#             return ql_new
+#         elif os.path.exists(ql_old):
+#             printT()("当前环境青龙面板旧版")
+#             return ql_old
+#         elif os.path.exists(v4f):
+#             printT()("当前环境V4")
+#             return v4f
+#         return curf
+#
+#     # 获取cookie
+#     def getCookie(self):
+#         global cookies
+#         ckfile = self.getckfile()
+#         try:
+#             if os.path.exists(ckfile):
+#                 with open(ckfile, "r", encoding="utf-8") as f:
+#                     cks = f.read()
+#                     f.close()
+#                 if 'pt_key=' in cks and 'pt_pin=' in cks:
+#                     r = re.compile(r"pt_key=.*?pt_pin=.*?;", re.M | re.S | re.I)
+#                     cks = r.findall(cks)
+#                     if len(cks) > 0:
+#                         if 'JDCookies.txt' in ckfile:
+#                             printT()("当前获取使用 JDCookies.txt 的cookie")
+#                         cookies = ''
+#                         for i in cks:
+#                             if 'pt_key=xxxx' in i:
+#                                 pass
+#                             else:
+#                                 cookies += i
+#                         return
+#             else:
+#                 with open(pwd + 'JDCookies.txt', "w", encoding="utf-8") as f:
+#                     cks = "#多账号换行，以下示例：（通过正则获取此文件的ck，理论上可以自定义名字标记ck，也可以随意摆放ck）\n账号1【Curtinlv】cookie1;\n账号2【TopStyle】cookie2;"
+#                     f.write(cks)
+#                     f.close()
+#             if "JD_COOKIE" in os.environ:
+#                 if len(os.environ["JD_COOKIE"]) > 10:
+#                     cookies = os.environ["JD_COOKIE"]
+#                     printT()("已获取并使用Env环境 Cookie")
+#         except Exception as e:
+#             printT()(f"【getCookie Error】{e}")
+
+    # 检测cookie格式是否正确
+    def getUserInfo(self, ck, pinName, userNum):
+        url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion?orgFlag=JD_PinGou_New&callSource=mainorder&channel=4&isHomewhite=0&sceneval=2&sceneval=2&callback=GetJDUserInfoUnion'
+        headers = {
+            'Cookie': ck,
+            'Accept': '*/*',
+            'Connection': 'close',
+            'Referer': 'https://home.m.jd.com/myJd/home.action',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Host': 'me-api.jd.com',
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1',
+            'Accept-Language': 'zh-cn'
+        }
+        try:
+            resp = requests.get(url=url, verify=False, headers=headers, timeout=60).text
+            r = re.compile(r'GetJDUserInfoUnion.*?\((.*?)\)')
+            result = r.findall(resp)
+            userInfo = json.loads(result[0])
+            nickname = userInfo['data']['userInfo']['baseInfo']['nickname']
+            return ck, nickname
+        except Exception:
+            context = f"账号{userNum}【{pinName}】Cookie 已失效！请重新获取。"
+            printT(context)
+            return ck, False
+
+    def iscookie(self):
+        """
+        :return: cookiesList,userNameList,pinNameList
+        """
+        cookiesList = []
+        userNameList = []
+        pinNameList = []
+        if 'pt_key=' in cookies and 'pt_pin=' in cookies:
+            r = re.compile(r"pt_key=.*?pt_pin=.*?;", re.M | re.S | re.I)
+            result = r.findall(cookies)
+            if len(result) >= 1:
+                printT("您已配置{}个账号".format(len(result)))
+                u = 1
+                for i in result:
+                    r = re.compile(r"pt_pin=(.*?);")
+                    pinName = r.findall(i)
+                    pinName = unquote(pinName[0])
+                    # 获取账号名
+                    ck, nickname = self.getUserInfo(i, pinName, u)
+                    if nickname != False:
+                        cookiesList.append(ck)
+                        userNameList.append(nickname)
+                        pinNameList.append(pinName)
+                    else:
+                        u += 1
+                        continue
+                    u += 1
+                if len(cookiesList) > 0 and len(userNameList) > 0:
+                    return cookiesList, userNameList, pinNameList
+                else:
+                    printT("没有可用Cookie，已退出")
+                    exit(3)
+            else:
+                printT("cookie 格式错误！...本次操作已退出")
+                exit(4)
+        else:
+            printT("cookie 格式错误！...本次操作已退出")
+            exit(4)
+getCk = getJDCookie()
+#getCk.getCookie()
+
+# 获取v4环境 特殊处理
+try:
+    with open(v4f, 'r', encoding='utf-8') as v4f:
+        v4Env = v4f.read()
+    r = re.compile(r'^export\s(.*?)=[\'\"]?([\w\.\-@#&=_,\[\]\{\}\(\)]{1,})+[\'\"]{0,1}$',
+                   re.M | re.S | re.I)
+    r = r.findall(v4Env)
+    curenv = locals()
+    for i in r:
+        if i[0] != 'JD_COOKIE':
+            curenv[i[0]] = getEnvs(i[1])
+except:
+    pass
+
 ##############      在pycharm测试ql环境用，实际用下面的代码运行      #########
-
 # with open(path, "r+", encoding="utf-8") as f:
-#    ck = f.read()
-#    tokens = ck
-#    if "Didi_jifen_token" in ck:
-#        r = re.compile (r'Didi_jifen_token="(.*?)"', re.M | re.S | re.I)
-#        tokens = r.findall(ck)
-#        tokens = tokens[0].split ('&')
-#        if len (tokens) == 1:
-#            Didi_jifen_token = tokens[0]
-#            tokens = ''
-#            # print(tokens)
-#            # tokens = cookies[3]
-#        else:
-#            pass
-#    printT ("已获取并使用ck环境 token")
-
+#     ck = f.read()
+#     if "JD_COOKIE" in ck:
+#         # r = re.compile (r"pt_key=.*?pt_pin=.*?;", re.M | re.S | re.I)
+#         # cookies = r.findall (ck)
+#         # cookies = cookies[0]
+#         # print(cookies)
+#         cookies = ck
+#         printT ("已获取并使用ck环境 Cookie")
 ########################################################################
 
-if "Didi_jifen_token" in os.environ:
-    print(len (os.environ["Didi_jifen_token"]))
-    if len (os.environ["Didi_jifen_token"]) > 319:
-        tokens = os.environ["Didi_jifen_token"]
-        tokens = tokens.split ('&')
-        # tokens = tokens.split ('&')
-        # cookies = temporary[0]
-        printT ("已获取并使用Env环境Didi_jifen_token")
-    else:
-        Didi_jifen_token = os.environ["Didi_jifen_token"]
-else:
-    print("检查变量Didi_jifen_token是否已填写")
 
-if "exchange_jkd_numb" in os.environ:
-    exchange_jkd_numb = os.environ["exchange_jkd_numb"]
-    if exchange_jkd_numb == '1':
-        total_exchange = 100
-        FLJ = 1
-    elif exchange_jkd_numb == '2':
-        total_exchange = 5000
-        FLJ = 50
-    elif exchange_jkd_numb == '3':
-        total_exchange = 10000
-        FLJ = 100
-    elif exchange_jkd_numb == '4':
-        total_exchange = 15000
-        FLJ = 150
+if "JD_COOKIE" in os.environ:
+    if len (os.environ["JD_COOKIE"]) > 1:
+        cookies = os.environ["JD_COOKIE"]
+        cookies = cookies.split ('&')
+        # cookies = temporary[0]
+        printT ("已获取并使用Env环境 Cookie")
+
+if "heath_noexchage" in os.environ:
+    heath_noexchage = os.environ["heath_noexchage"]
+    printT(f"已获取并使用Env环境 heath_noexchage:{heath_noexchage}")
+
+if "least" in os.environ:
+    least = getEnvs(os.environ["least"])
+    printT(f"已获取并使用Env环境 least:{least}")
+
+if "dd_thread" in os.environ:
+    if len (os.environ["dd_thread"]) > 1:
+        dd_thread = getEnvs (os.environ["dd_thread"])
+        printT(f"已获取并使用Env环境 dd_thread:{dd_thread}")
+
+heath_noexchage_list = heath_noexchage.split('&')
+
+def userAgent():
+    """
+    随机生成一个UA
+    :return: jdapp;iPhone;9.4.8;14.3;xxxx;network/wifi;ADID/201EDE7F-5111-49E8-9F0D-CCF9677CD6FE;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone13,4;addressid/2455696156;supportBestPay/0;appBuild/167629;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1
+    """
+    if not UserAgent:
+        uuid = ''.join(random.sample('123456789abcdef123456789abcdef123456789abcdef123456789abcdef', 40))
+        addressid = ''.join(random.sample('1234567898647', 10))
+        iosVer = ''.join(
+            random.sample(["14.5.1", "14.4", "14.3", "14.2", "14.1", "14.0.1", "13.7", "13.1.2", "13.1.1"], 1))
+        iosV = iosVer.replace('.', '_')
+        iPhone = ''.join(random.sample(["8", "9", "10", "11", "12", "13"], 1))
+        ADID = ''.join(random.sample('0987654321ABCDEF', 8)) + '-' + ''.join(
+            random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(
+            random.sample('0987654321ABCDEF', 4)) + '-' + ''.join(random.sample('0987654321ABCDEF', 12))
+        return f'jdapp;iPhone;10.0.4;{iosVer};{uuid};network/wifi;ADID/{ADID};supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone{iPhone},1;addressid/{addressid};supportBestPay/0;appBuild/167629;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS {iosV} like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1'
     else:
-        printT (f"环境变量exchange_jkd_numb填写错误")
-        exit(0)
-    printT (f"已获取并使用Env环境exchange_jkd_numb，兑换{FLJ}福利金，需要{total_exchange}健康豆")
-else:
-    print("变量exchange_jkd_numb未填写，默认兑换500福利金，需要5000健康豆")
+        return UserAgent
 
 ## 获取通知服务
 class msg(object):
@@ -223,141 +353,181 @@ class msg(object):
         ###################
 msg().main()
 
+class TaskThread(threading.Thread):
+    """
+    处理task相关的线程类
+    """
+    def __init__(self, func, args=()):
+        super(TaskThread, self).__init__()
+        self.func = func  # 要执行的task类型
+        self.args = args  # 要传入的参数
 
-#获取xpsid
-def get_xpsid():
+    def run(self):
+        # 线程类实例调用start()方法将执行run()方法,这里定义具体要做的异步任务
+        #print("start func {}".format(self.func.__name__))  # 打印task名字　用方法名.__name__
+        self.result = self.func(*self.args)  # 将任务执行结果赋值给self.result变量   前面加*，表示传入多个参数
+
+    def get_result(self):
+        # 该方法返回task函数的执行结果,方法名不是非要get_result
+        try:
+            return self.result
+        except Exception as ex:
+            print(ex)
+            return "ERROR"
+def listcookie():             #将JDCookies.txt的cookies变成list[]
+    if 'pt_key=' in cookies and 'pt_pin=' in cookies:
+        r = re.compile(r"pt_key=.*?pt_pin=.*?;" ,  re.M | re.S | re.I)         #r"" 的作用是去除转义字符.
+        result = r.findall(cookies)        #输出为list列表
+        if len(result) == 1:
+            return result
+        elif len(result)>1:
+            return result
+        else:
+            print("cookie 格式错误！...本次操作已退出")
+            exit(1)
+    else:
+        print("cookie 格式错误！...本次操作已退出")
+        exit(9)
+
+def setHeaders(cookie):
     try:
-        url = f'https://v.didi.cn/p/DpzAd35?appid=10000&lang=zh-CN&clientType=1&trip_cityid=21&datatype=101&imei=99d8f16bacaef4eef6c151bcdfa095f0&channel=102&appversion=6.2.4&trip_country=CN&TripCountry=CN&lng=113.812538&maptype=soso&os=iOS&utc_offset=480&access_key_id=1&deviceid=99d8f16bacaef4eef6c151bcdfa095f0&phone=UCvMSok42+5+tfafkxMn+A==&model=iPhone11&lat=23.016271&origin_id=1&client_type=1&terminal_id=1&sig=8503d986c0349e40ea10ff360f75d208c78c989a'
-        heards = {
-            "user-agent": f"Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 didi.passenger/6.2.4 FusionKit/1.2.20 OffMode/0",
-        }
-        response = requests.head (url=url, headers=heards, verify=False)    #获取响应请求头
-        result = response.headers['Location']                                  #获取响应请求头
-        # print(result)
-        r = re.compile (r'root_xpsid=(.*?)&appid', re.M | re.S | re.I)
-        xpsid = r.findall (result)
-        xpsid = xpsid[0]
-        print(xpsid)
-        return xpsid
+        r = re.compile(r"pt_pin=(.*?);")    #指定一个规则：查找pt_pin=与;之前的所有字符,但pt_pin=与;不复制。r"" 的作用是去除转义字符.
+        userName = r.findall(cookie)        #查找pt_pin=与;之前的所有字符，并复制给r，其中pt_pin=与;不复制。
+        #print (userName)
+        userName = unquote(userName[0])     #r.findall(cookie)赋值是list列表，这个赋值为字符串
+        #print(userName)
     except Exception as e:
-        print(e)
-        msg("获取xpsid失败，可能是表达式错误")
-
-
-#兑换福利金
-def exchange(Didi_jifen_token,xpsid,account,exchange_jkd_numb):
-    flag2 = 0
-    flag3 = 0
-    url2 = r'https://res.xiaojukeji.com/sigma/api/coin/exchange?wsgsig=dd03-874lYEiaW6E3VTgICTc9U%2FXEkxU6r1QcAIfA%2FhQDkxU5U574bTzeUAtbVME5UTgaGPb2X9XbVxdJkHs0AHDb%2FVm0hO51WOKcDx7AWAvg%2F1FIWTbGDY0fh9vbh69E'
-    url3 = r'https://res.xiaojukeji.com/sigma/api/coin/exchange?wsgsig=dd03-m4G1HNtCTeCohKleO1Nzf3igzlsPlyLbPLKTAvv9zlsO%2FuY3vOsYdJiBoFCO%2FKh9pS%2Bkg3mBoVmyqoEGPHJxA3C2pVDwhoTHRHfud3tevejx%2FNUFzHjTB%2Bvcv%2Fgv'
-    heards = {
-        "Host": "res.xiaojukeji.com",
-        "Accept":"application/json, text/plain, */*",
-        "Content-Type": "application/json",
-        "Origin": "https://page.udache.com",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection":"keep-alive",
-        "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-        "ticket":f"{Didi_jifen_token}",
-        "User-Agent": f"Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 didi.passenger/6.2.4 FusionKit/1.2.20 OffMode/0",
-        "Referer": "https://page.udache.com/",
-        # "Content-Length": "1013"
+        print(e,"cookie格式有误！")
+        exit(2)
+    headers = {
+        'Origin': 'https://h5.m.jd.com',
+        'Cookie': cookie,
+        'Connection': 'keep-alive',
+        'Accept': 'application/json, text/plain, */*',
+        'Referer': 'https://h5.m.jd.com/',
+        #'Host': 'ms.jr.jd.com',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        #'User-Agent': 'jdapp;iPhone;9.4.8;14.3;809409cbd5bb8a0fa8fff41378c1afe91b8075ad;network/wifi;ADID/201EDE7F-5111-49E8-9F0D-CCF9677CD6FE;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone13,4;addressid/2455696156;supportBestPay/0;appBuild/167629;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+        'User-Agent': userAgent(),
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Language': 'zh-cn'
     }
-    data2 = r'{"xbiz":"240300","prod_key":"","xpsid":"6da937105bd14a54a450a08bcdbe7430","dchn":"DpzAd35","xoid":"31685f47-0baa-4c2e-8636-ebff93f65c4a","uid":"281474990465673","xenv":"passenger","xspm_from":"","xpsid_root":"6da937105bd14a54a450a08bcdbe7430","xpsid_from":"409c8422dcdb4449a3598102f1008ca3","xpsid_share":"","version":1,"source_from":"app","city_id":21,"env":{"ticket":"teo9SzpY2n5ivDQiGC0WeayO8BC5UI9gF3vBKuu5bEAkzDmOAkEMQNG7_Nhq2bW5yunkc4cZaJakkEBELe6OaPKntzGVIC-6KMI0woSZCFNVFWYmzOtILRdrPY0szEJYK70WrzkJsxL8_CL8ESD8E6lb8TKGllabZ-FIDGElNh635_2wEvoSTnul7rZXZwLLtWvvzbUhXL7l9cPfAQAA__8=","cityId":"21","longitude":113.81221218532986,"latitude":23.016388346354166,"newAppid":10000,"isHitButton":true,"ddfp":"99d8f16bacaef4eef6c151bcdfa095f0","deviceId":"99d8f16bacaef4eef6c151bcdfa095f0","appVersion":"6.2.4","userAgent":"Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 didi.passenger/6.2.4 FusionKit/1.2.20 OffMode/0","fromChannel":"1"},"type":4,"extra_number":2}'
-    data3 = r'{"xbiz":"240300","prod_key":"ut-walk-bonus","xpsid":"8135e26398034cb1aeede503aef54f26","dchn":"aXxR1oB","xoid":"ba403e62-5f97-4b65-a213-b389f7ed0792","uid":"281474990465673","xenv":"passenger","xspm_from":"","xpsid_root":"8135e26398034cb1aeede503aef54f26","xpsid_from":"43f880c6cfae43d1a77a6ad37bfbea94","xpsid_share":"","version":1,"source_from":"app","city_id":21,"env":{"ticket":"w-8z4gvdnylZ3fDWaIPcqhm3n2fux0T3k8oIR9valmskzDmOAkEMQNG7_Nhq2eVanU4-d5iBZkkKCUTU4u6IJn96G1MJfNFFEaYRJsxEmKqqMJ2wVkaqnq32NFyYmbCah3b3PIRZCH5-Ef4IEP6J1C23PIbmWmpz4UiYCSux8bg974eV0Jdw2i9zbft1JjAvXXuvTSvC5XteP_wdAAD__w==","cityId":"21","longitude":113.81221218532986,"latitude":23.016388346354166,"newAppid":10000,"isHitButton":true,"ddfp":"99d8f16bacaef4eef6c151bcdfa095f0","deviceId":"99d8f16bacaef4eef6c151bcdfa095f0","appVersion":"6.2.4","userAgent":"Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 didi.passenger/6.2.4 FusionKit/1.2.20 OffMode/0","fromChannel":"1"},"type":4,"extra_number":3}'
-    # print(data)
-    printT("抢兑换开始时间为：{}".format (qgtime))
-    printT (f"正在等待兑换时间，请勿终止退出...")
+    return headers,userName
+
+#返回符合条件的ck list
+def checkUser(cookies):
+    global goodsid, mid_time,afternoon_time
+    if isinstance(cookies,list):            #isinstance() 函数来判断一个对象是否是一个已知的类型，类似 type()。此方法为：判断cookies是否为list[]列表，是返回True，否返回False
+        pass
+    elif isinstance(cookies,str):          #判断cookies是否为str字符串，是返回True，否返回False
+        cookies = listcookie()
+    else:
+        print("cookie 类型有误")
+        exit(2)
+    cookieList=[]
+    #print(cookies)
+    user_num=1
+    for i in cookies:
+        headers,userName = setHeaders(i)
+        try:
+            total_exchangePoints = cheak_points('jdhealth_getTaskDetail','{"buildingId":"","taskId":22,"channelId":1}',headers)
+            title,exchangePoints,bizMsg,bizCode = jdhealth_getCommodities('jdhealth_getCommodities','{}',headers)
+            if user_num == 1:
+                printT("您已设置兑换的商品：【{0}豆】 需要{1}积分".format(title, exchangePoints))
+                print("********** 首先检测您是否有钱呀 ********** ")
+            if str(total_exchangePoints) > least:
+                total_exchangePoints = int(total_exchangePoints)
+                if not str(user_num) in heath_noexchage_list:
+                    cookieList.append(i)            #将够钱兑换的账号保存下来给cookieList[]，其余不够钱的账号剔除在外，不执行兑换
+                    printT(f"账号{user_num}:【{userName}】积分:{total_exchangePoints}...yes")
+            else:
+                total_exchangePoints = int (total_exchangePoints)
+                printT(f"账号{user_num}:【{userName}】积分:{total_exchangePoints}...no")
+        except Exception as e:
+            #printT(f"账号{user_num}:【{userName}】，该用户异常，查不到商品关键词【{Coupon}】，或者cookies已过期")
+            msg(f"账号{user_num}:【{userName}】，该用户异常，查不到商品id【{id}】")
+            # if '异常' in msg_info:
+            #     send (script_name, msg_info)
+            #     if len (cookies) == 1:
+            #exit (0)
+        user_num+=1
+    if len (cookieList) > 0:
+        printT ("共有{0}个账号符合兑换条件".format (len (cookieList)))
+        return cookieList
+    else:
+        printT ("没有账号符合兑换要求，退出执行")
+        exit(0)
+#查询总分
+def cheak_points(functionId,body,headers):
+    url = jd_host + '?' +'functionId=' + functionId + '&body=' + body + '&client=wh5&clientVersion=1.0.0&' + 'uuid=' + uuid
     try:
-        while True:
-            nowtime = datetime.datetime.now ().strftime ('%Y-%m-%d %H:%M:%S.%f8')
-            if nowtime > qgtime:
-                if exchange_jkd_numb == '2':
-                    response = requests.post (url=url2, headers=heards,verify=False,data=data2)
-                    # print(response.text)
-                    result = response.json()
-                    print(result)
-                    errmsg = result['errmsg']
-                    if errmsg == 'success':
-                        msg("【账号{0}】已兑换{1}健康豆，获得福利金{2}".format(account,total_exchange,FLJ))
-                        flag2 = 1
-                        break
-                    elif "代币兑换错误" in errmsg:
-                        print("【账号{0}】今日兑换【50】福利金可能已达上限".format(account))
-                        if flag2 == 1:
-                            break
-                elif exchange_jkd_numb == '3':
-                    response = requests.post (url=url3, headers=heards, verify=False, data=data3)
-                    result = response.json ()
-                    print (result)
-                    errmsg = result['errmsg']
-                    if errmsg == 'success':
-                        msg ("【账号{0}】已兑换{1}健康豆，获得福利金{2}".format (account, total_exchange, FLJ))
-                        flag3 = 1
-                        break
-                    elif "代币兑换错误" in errmsg:
-                        print ("【账号{0}】今日兑换【100】福利金可能已达上限".format(account))
-                        if flag3 == 1:
-                            break
-                elif exchange_jkd_numb == '4':
-                    response = requests.post (url=url2, headers=heards, verify=False, data=data2)
-                    result = response.json ()
-                    print (result)
-                    errmsg = result['errmsg']
-                    if errmsg == 'success':
-                        msg ("【账号{0}】已兑换5000健康豆，获得福利金50".format (account))
-                        flag2 = 1
-                    elif "代币兑换错误" in errmsg:
-                        print ("【账号{0}】今日兑换【50福利金】可能已达上限".format(account))
-                    response = requests.post (url=url3, headers=heards, verify=False, data=data3)
-                    result = response.json ()
-                    print (result)
-                    errmsg = result['errmsg']
-                    if errmsg == 'success':
-                        msg ("【账号{0}】已兑换10000健康豆，获得福利金100".format (account))
-                        flag3 = 1
-                    elif "代币兑换错误" in errmsg:
-                        print ("【账号{0}】今日兑换【100福利金】可能已达上限".format(account))
-
-            if nowtime > qgendtime:
-                if flag2 == 0 and flag3 == 0:
-                    msg ("【账号{0}】脚本执行完毕，兑换失败".format (account))
-                    break
-                elif flag2 == 1 and flag3 == 1:
-                    msg("【账号{0}】脚本执行完毕，共获得福利金150".format(account))
-                    break
-                elif flag2 == 0 and flag3 == 1:
-                    msg ("【账号{0}】脚本执行完毕，共获得福利金100".format(account))
-                    break
-                elif flag2 == 1 and flag3 == 0:
-                    msg ("【账号{0}】脚本执行完毕，共获得福利金50".format(account))
-                    break
+        respon = requests.post(url=url, verify=False, headers=headers)
+        result=respon.json()
+        #print(result)
+        total_exchangePoints = result['data']['result']['userScore']   #兑换所需分数
+        return float(total_exchangePoints)
     except Exception as e:
-        print (e)
+            print(e)
 
+#查询
+def jdhealth_getCommodities(functionId,body,headers):
+    url = jd_host + '?' +'functionId=' + functionId + '&body=' + body + '&client=wh5&clientVersion=1.0.0&' + 'uuid=' + uuid
+    try:
+        respon = requests.post(url=url, verify=False, headers=headers)
+        result=respon.json()
+        title = result['data']['result']['jBeans'][3]['title']
+        exchangePoints = result['data']['result']['jBeans'][3]['exchangePoints']    #兑换所需分数
+        bizMsg = result['data']['bizMsg']
+        bizCode = result['data']['bizCode']
+        return title,exchangePoints,bizMsg,bizCode
+    except Exception as e:
+            print(e)
 
+#兑换
+def jdhealth_exchange(functionId,body,headers):
+    url = jd_host + '?' +'functionId=' + functionId + '&body=' + body + '&client=wh5&clientVersion=1.0.0&' + 'uuid=' + uuid
+    try:
+        respon = requests.post(url=url, verify=False, headers=headers)
+        result=respon.json()
+        #title = result['data']['result']['jingBeanNum']
+        #userScore = result['data']['result']['userScore']           #剩余积分
+        bizMsg = result['data']['bizMsg']
+        bizCode = result['data']['bizCode']
+        success = result['data']['success']
+        if bizMsg == 'success' or bizCode == '0' :
+                printT("{0}...恭喜兑换成功！".format(bizMsg))
+                return 0
+        else:
+            printT(f"\t{bizMsg}" + ',兑换失败')          #f 表达式----可以解析任意的数据类型。      \t表示空4格，相当于tab。
+            return 999
+    except Exception as e:
+            print(e)
+
+def start():
+    print (f"###### 启动并发线程 【Thread-{dd_thread}】")
+    # cookiesList, userNameList, pinNameList = getCk.iscookie ()
+    # cookies1 = checkUser (cookiesList)  # 将够钱兑换的账号保存下来给cookies，其余不够钱的账号剔除在外，不执行兑换
+    final = 1
+    while True:
+        print (f"\n【准备开始...】\n")
+        user_num = 1
+        for i in cookies:
+            headers, userName = setHeaders (i)
+            final = jdhealth_exchange ('jdhealth_exchange','{"commodityType":2,"commodityId":"4"}',headers)
+            user_num += 1
+            if final == 0:
+                last_points = cheak_points ('jdhealth_getTaskDetail','{"buildingId":"","taskId":22,"channelId":1}',headers)
+                title, exchangePoints, bizMsg, bizCode = jdhealth_getCommodities ('jdhealth_getCommodities', '{}',headers)
+                # printT (f"账号{user_num}:【{userName}】剩余积分:{last_integration}...")
+                msg (f"账号{user_num}:【{userName}】成功兑换【{title}豆】，剩余积分:{last_points}...")
+
+            elif final == 999:
+                pass
+        if user_num > len(cookies):
+            break
 if __name__ == '__main__':
-    print("============脚本只支持青龙新版=============\n")
-    print("具体教程以文本模式打开文件，查看顶部教程\n")
-    print("============执行滴滴多走多赚兑换脚本==============")
-    # print(Didi_jifen_token)
-    if Didi_jifen_token != '':
-        xpsid = get_xpsid ()
-        exchange (Didi_jifen_token, xpsid, account, exchange_jkd_numb)
-    elif tokens == '' :
-        print("检查变量Didi_jifen_token是否已填写")
-    elif len(tokens) > 1 :
-        account = 1
-        ttt = []
-        for i in tokens:             #同时遍历两个list，需要用ZIP打包
-            xpsid = get_xpsid ()
-            thread = threading.Thread(target=exchange, args=(i, xpsid, account, exchange_jkd_numb))
-            ttt.append (thread)
-            thread.start ()
-            account += 1
-        for thread in ttt:
-            thread.join ()
-    if "已兑换" in msg_info:
-        send("滴滴多走多赚兑换", msg_info)
-    elif "过期" in msg_info:
-        send("滴滴多走多赚兑换", msg_info)
+    print("脚本默认兑换20豆，18W分以上才兑换，具体修改教程可看脚本开头注释")
+    print ("\t\t【{}】".format (script_name))
+    start ()
+    if '成功兑换' in msg_info:
+        send (script_name, msg_info)
