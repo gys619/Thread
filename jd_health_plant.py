@@ -58,7 +58,7 @@ tomorrow=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y-%m-
 nowtime = datetime.datetime.now ().strftime ('%Y-%m-%d %H:%M:%S.%f8')
 
 time1 = '21:00:00.00000000'
-time2 = '23:00:00.00000000'
+time2 = '22:00:00.00000000'
 
 flag_time1 = '{} {}'.format (today, time1)
 flag_time2 = '{} {}'.format (today, time2)
@@ -363,7 +363,7 @@ def get_sleep(cookies,sid):
             taskId = taskToken_list[i]['taskId']
             if "早睡" in taskName:
                 taskToken = taskToken_list[i]['threeMealInfoVos'][0]['taskToken']
-            return taskName,taskId,taskToken
+                return taskName,taskId,taskToken
         except Exception as e:
             print (e)
 
@@ -406,6 +406,7 @@ def get_task(cookies,sid,account):
     except Exception as e:
         print (e)
         msg("【账号{0}】浏览任务已全部完成".format(account))
+        return '', '', ''
 
 #获取加购任务信息
 def get_task2(cookies,sid,account):
@@ -441,7 +442,7 @@ def get_task2(cookies,sid,account):
     except Exception as e:
         print (e)
         msg("【账号{0}】加购任务已全部完成".format(account))
-
+        return '','',''
 
 #做任务
 def do_task(cookies,taskName,taskId,taskToken,sid,account):
@@ -555,7 +556,7 @@ def start():
             if nowtime > flag_time1 and nowtime < flag_time2:
                 taskName,taskId,taskToken = get_sleep (cookie,sid)
                 do_task(cookie,taskName,taskId,taskToken,sid,account)
-                charge(charge_targe_id,cookie,sid,sid,account)
+                charge(charge_targe_id,cookie,sid,account)
             else:
                 taskName_list,taskId_list,taskToken_list = get_task (cookie,sid,account)
                 for i,j,k in zip(taskName_list,taskId_list,taskToken_list):
