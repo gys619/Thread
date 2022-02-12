@@ -7,18 +7,17 @@
 Author: 一风一扬
 功能：健康社区-种植园自动任务
 Date: 2022-1-4
-cron: 23 11,13,21 * * * jd_health_plant.py
+cron: 23 11,13,21 * * * xF_jd_health_plant.py
 new Env('京东健康社区-种植园自动任务');
 
 
 活动入口：20:/#1DouT0KAaKuqv%
 
+教程：该活动与京东的ck通用，但是变量我还是独立出来。
 
-教程：该活动与京东的ck通用，所以只需要填写第几个号运行改脚本就行了。
+青龙变量填写export plant_cookie="xxxx"
 
-青龙变量填写export plant_cookie="1"，代表京东CK的第一个号执行该脚本
-
-多账号用&隔开，例如export plant_cookie="1&2"，代表京东CK的第一、二个号执行该脚本。这样做，JD的ck过期就不用维护两次了，所以做出了更新。
+多账号用&隔开，例如export plant_cookie="xxxx&xxxx"
 
 
 青龙变量export charge_targe_id = 'xxxx'，表示需要充能的id，单账号可以先填写export charge_targe_id = '11111'，运行一次脚本
@@ -143,8 +142,9 @@ if "plant_cookie" in os.environ:
             cookies.append(cookies1[int(i)-1])
         printT ("已获取并使用Env环境plant_cookies")
 else:
-    printT ("变量plant_cookie未填写")
-    exit (0)
+    if cookie == '':
+        printT ("变量plant_cookie未填写")
+        exit (0)
 
 if "charge_targe_id" in os.environ:
     if len (os.environ["charge_targe_id"]) > 8:
@@ -551,7 +551,7 @@ def start():
             account = setName (cookie)
             access_token = get_ck(cookie,sid_ck,account)
             cookie = get_Authorization (access_token, account)
-            get_planted_info (cookie,sid)
+            get_planted_info (cookie, sid,account)
             if nowtime > flag_time1 and nowtime < flag_time2:
                 taskName,taskId,taskToken = get_sleep (cookie,sid)
                 do_task(cookie,taskName,taskId,taskToken,sid,account)
@@ -560,10 +560,10 @@ def start():
                 taskName_list,taskId_list,taskToken_list = get_task (cookie,sid,account)
                 for i,j,k in zip(taskName_list,taskId_list,taskToken_list):
                     do_task(cookie,i,j,k,sid,account)
-                taskName, taskId, taskToken_list = get_task2 (cookie, account)
+                taskName, taskId, taskToken_list = get_task2(cookie,sid,account)
                 for i in taskToken_list:
                     do_task2 (cookie, taskName, taskId, i, sid,account)
-                charge(charge_targe_id,cookie,account)
+                charge(charge_targe_id,cookie,sid, account)
         elif cookies != '':
             for cookie, charge_targe_id in zip (cookies, charge_targe_ids):
                 account = setName (cookie)
@@ -583,7 +583,7 @@ def start():
                         taskName_list, taskId_list, taskToken_list = get_task (cookie, sid,account)
                         for i, j, k in zip (taskName_list, taskId_list, taskToken_list):
                             do_task (cookie, i, j, k, sid,account)
-                        taskName, taskId, taskToken_list = get_task2 (cookie, account)
+                        taskName, taskId, taskToken_list = get_task2 (cookie,sid, account)
                         for i in taskToken_list:
                             do_task2 (cookie, taskName, taskId, i, sid,account)
                     charge (charge_targe_id, cookie,sid, account)
