@@ -346,6 +346,8 @@ jd_jinggengjcq_*.js
 jd_rush_*.js
 #重复的评价
 jd_evaluation.js
+#开卡有礼
+jd_openCard.py
 #发财大赢家助力
 jd_fcdyj.js
 #jd_card_collecting_common_enc.js
