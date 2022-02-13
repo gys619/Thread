@@ -305,7 +305,7 @@ ql repo https://github.com/panghu999/panghu.git "jd_"
 *  [@ccwav](https://github.com/ccwav/QLScript2.git)
 *  [@Zy143L](https://github.com/Zy143L/wskey.git)
 *  [@X1a0He](https://github.com/X1a0He/jd_scripts_fixed)
-*  [@KingRan](https://github.com/KingRan/JDJB)
+*  [@KingRan](https://github.com/KingRan/KR)
 *  [@Aaron-lv](https://github.com/Aaron-lv/sync)
 *  [@zero205](https://github.com/zero205/JD_tencent_scf)
 *  [@mmnvnmm](https://github.com/mmnvnmm/omo.git)
