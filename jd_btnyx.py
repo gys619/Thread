@@ -85,7 +85,7 @@ def randomuserAgent():
         return UserAgent
 
 def JDSignValidator(url):
-    with open('JDSignValidator.js', 'r', encoding='utf-8') as f:
+    with open('JDJRSignValidator.js', 'r', encoding='utf-8') as f:
         jstext = f.read()
     js = execjs.compile(jstext)
     result = js.call('getBody', url)
