@@ -3,11 +3,11 @@
 '''
 感谢Curtin提供的其他脚本供我参考
 感谢aburd ch大佬的指导
-项目名称:xF_jd_health_plant.py
+项目名称:jd_health_plant.py
 Author: 一风一扬
 功能：健康社区-种植园自动任务
 Date: 2022-1-4
-cron: 23 11,13,21 * * * xF_jd_health_plant.py
+cron: 23 11,13,21 * * * jd_health_plant.py
 new Env('京东健康社区-种植园自动任务');
 
 
