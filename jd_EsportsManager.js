@@ -76,7 +76,6 @@ let tasks = [], shareCodes = [], first = true;
 
 async function main() {
   tasks = await detail();
-   console.log('tasks：++++++++++'+tasks);
   for (let i = 0; i < tasks.length; i++) {
     let product_info_vos = []
     let task_vos = tasks[i]
@@ -105,12 +104,14 @@ async function main() {
         ""
     }
     let taskId = task_vos.task_id, taskType = task_vos.task_type;
-    for (let t of product_info_vos) {
-      if (t.status === '1') {
-        console.log(`开始任务：${task_vos.task_name}`)
-        let res = await do_task(t.task_token, taskId, taskType)
-        await $.wait(1000)
-      }
+   if(product_info_vos ！= ){
+     for (let t of product_info_vos) {
+       if (t.status === '1') {
+         console.log(`开始任务：${task_vos.task_name}`)
+         let res = await do_task(t.task_token, taskId, taskType)
+         await $.wait(1000)
+       }
+     }
     }
   }
 }
