@@ -47,10 +47,10 @@ if ($.isNode()) {
       }
       await bean();
       await showMsg();
-      allMessage += `\n今日全部账号收入：${allBean}个京豆 🐶\n`
+
     }
   }
-
+  allMessage += `\n今日全部账号收入：${allBean}个京豆 🐶\n`
   if ($.isNode() && allMessage) {
     await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
   }
