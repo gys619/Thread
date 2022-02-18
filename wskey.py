@@ -435,13 +435,14 @@ def check_port():
             logger.info("使用默认端口5700")
             return 5700
     else:
-        return 5700
+        port = 5700
     if not ql_check(port):
         logger.info(str(port) + "端口检查失败, 如果改过端口, 请在变量中声明端口 \n在config.sh中加入 export QL_PORT=\"端口号\"")
         logger.info("\n如果你很确定端口没错, 还是无法执行, 在GitHub给我发issus\n--------------------\n")
         sys.exit(1)
     else:
         logger.info(str(port) + "端口检查通过")
+        return port
 
 
 if __name__ == '__main__':
