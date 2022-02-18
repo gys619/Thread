@@ -417,7 +417,7 @@ def check_cloud():
             return i
     logger.info("\n云端地址全部失效, 请检查网络!")
     try:
-        send('WSKEY转换', '云端地址失效. 请检查网络.')
+        send('WSKEY转换', '云端地址失效. 请联系作者或者检查网络.')
     except Exception as err:
         logger.debug(str(err))
         logger.info("通知发送失败")
@@ -491,12 +491,12 @@ if __name__ == '__main__':
                     else:
                         if "WSKEY_AUTO_DISABLE" in os.environ:  # 从系统变量中获取 WSKEY_AUTO_DISABLE
                             logger.info(str(wspin) + "账号失效")
-                            text = "账号: {0} WsKey失效".format(wspin)
+                            text = "账号: {0} WsKey疑似失效".format(wspin)
                         else:
                             eid = return_serch[2]
                             logger.info(str(wspin) + "账号禁用")
                             ql_disable(eid)
-                            text = "账号: {0} WsKey失效, 已禁用Cookie".format(wspin)
+                            text = "账号: {0} WsKey疑似失效, 已禁用Cookie".format(wspin)
                         try:
                             send('WsKey转换脚本', text)
                         except Exception as err:
