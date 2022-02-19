@@ -196,7 +196,7 @@
 #京东小魔方
 26 8 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
 #女装盲盒抽京豆
-26 815 * * * node /scripts/jd_openCard.py >> /scripts/logs/jd_OpenCard.log 2>&1
+26 815 * * * node /scripts/jd_OpenCard.py >> /scripts/logs/jd_OpenCard.log 2>&1
 #开卡有礼
 26 815 * * * node /scripts/jd_joyjd_open.js >> /scripts/logs/jd_joyjd_open.log 2>&1
 #通用ID任务

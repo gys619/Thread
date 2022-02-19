@@ -281,8 +281,9 @@ jd_bt6666draw.py
 jd_speedcoupon.js
 #试用通知
 jd_try_notify.js
-
-
+#暂时删除
+jd_syj.js
+jd_jxmc_hb.js
 
 ########过期活动##############
 

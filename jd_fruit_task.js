@@ -253,7 +253,9 @@ async function doDailyTask() {
 async function predictionFruit() {
     console.log('开始预测水果成熟时间\n');
     await initForFarm();
+	await $.wait(2000);
     await taskInitForFarm();
+	await $.wait(2000);
     let waterEveryDayT = $.farmTask.totalWaterTaskInit.totalWaterTaskTimes; //今天到到目前为止，浇了多少次水
     message += `【今日共浇水】${waterEveryDayT}次\n`;
     message += `【剩余 水滴】${$.farmInfo.farmUserPro.totalEnergy}g💧\n`;
@@ -939,8 +941,8 @@ async function gotStageAwardForFarm(type) {
 }
 //浇水API
 async function waterGoodForFarm() {
-    await $.wait(1000);
-    console.log('等待了1秒');
+    await $.wait(2000);
+    console.log('等待了2秒');
 
     const functionId = arguments.callee.name.toString();
     $.waterResult = await request(functionId);
