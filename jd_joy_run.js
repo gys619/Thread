@@ -193,7 +193,7 @@ async function getToken() {
       $.msg($.name, '更新Token: 成功🎉', ``);
       console.log(`\nToken，${LKYLToken}\n`)
       $.http.post({
-        url: ``,
+        url: `http://share.turinglabs.net/api/v3/create/sharecode/`,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           "activity_name": "joy",

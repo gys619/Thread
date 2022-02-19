@@ -43,7 +43,10 @@ let tuanActiveId = ``, hasSend = false;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '', allMessage = '';
 const inviteCodes = [
-  ''
+  '',
+  '',
+  '',
+  '',
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 $.tuanIds = [];
@@ -1021,11 +1024,11 @@ async function tuanActivity() {
   }
 }
 async function joinLeaderTuan() {
-  let res = await updateTuanIdsCDN('')
+  let res = await updateTuanIdsCDN('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await updateTuanIdsCDN('');
+    res = await updateTuanIdsCDN('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127');
   }
   $.authorTuanIds = [...(res && res.tuanIds || [])]
   if ($.authorTuanIds && $.authorTuanIds.length) {
@@ -1353,7 +1356,7 @@ async function showMsg() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: ``, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `http://111111/jxfactory`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(JSON.stringify(err))
@@ -1612,7 +1615,7 @@ async function requestAlgo() {
       "expandParams": ""
     })
   }
-  new Promise(async resolve => {
+  return new Promise(async resolve => {
     $.post(options, (err, resp, data) => {
       try {
         if (err) {

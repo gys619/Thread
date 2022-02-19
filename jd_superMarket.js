@@ -21,7 +21,7 @@ const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', jdSuperMarketShareArr = [], notify, newShareCodes;
-let helpAu = false;//给作者助力 免费拿,省钱大赢家等活动.默认true是,false不助力.
+let helpAu = true;//给作者助力 免费拿,省钱大赢家等活动.默认true是,false不助力.
 helpAu = $.isNode() ? (process.env.HELP_AUTHOR ? process.env.HELP_AUTHOR === 'true' : helpAu) : helpAu;
 let jdNotify = true;//用来是否关闭弹窗通知，true表示关闭，false表示开启。
 let superMarketUpgrade = true;//自动升级,顺序:解锁升级商品、升级货架,true表示自动升级,false表示关闭自动升级
@@ -360,7 +360,7 @@ async function businessCircleActivity() {
     if (joinStatus === 0) {
       if (joinPkTeam === 'true') {
         console.log(`\n注：PK会在每天的七点自动随机加入作者创建的队伍\n`)
-        await updatePkActivityIdCDN('');
+        await updatePkActivityIdCDN('https://cdn.jsdelivr.net/gh/gitupdate/11111128@master/shareCodes/jd_11111128.json');
         console.log(`\nupdatePkActivityId[pkActivityId]:::${$.updatePkActivityIdRes && $.updatePkActivityIdRes.pkActivityId}`);
         console.log(`\n京东服务器返回的[pkActivityId] ${pkActivityId}`);
         if ($.updatePkActivityIdRes && ($.updatePkActivityIdRes.pkActivityId === pkActivityId)) {
@@ -1641,11 +1641,11 @@ async function helpAuthor() {
   await bigWinner();//省钱大赢家
 }
 async function barGain() {
-  let res = await getAuthorShareCode2('')
+  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await getAuthorShareCode2('')
+    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   }
   $.inBargaining = [...(res && res['inBargaining'] || [])]
   $.inBargaining = getRandomArrayElements($.inBargaining, $.inBargaining.length > 3 ? 6 : $.inBargaining.length);
@@ -1672,11 +1672,11 @@ async function barGain() {
 }
 
 async function bigWinner() {
-  let res = await getAuthorShareCode2('')
+  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await getAuthorShareCode2('')
+    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   }
   $.codeList = getRandomArrayElements([...(res || [])], [...(res || [])].length);
   for (let vo of $.codeList) {

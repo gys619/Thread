@@ -3,7 +3,7 @@ author:star
 跳跳乐瓜分京豆脚本
 更新时间：2021-05-21
 活动入口：来客有礼(微信小程序)=>跳跳乐或京东APP=》首页=》母婴馆=》底部中间
-注：默认不做添加物品至购物车任务，守护京东APP最后一片净土。
+注：脚本好像还是会加商品到购物车，慎使用
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ================QuantumultX==================
 [task_local]
@@ -41,14 +41,14 @@ if ($.isNode()) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  console.log(`注：脚本默认不做添加物品至购物车任务,请设置FS_LEVEL为car(加购)或card(开卡加购)。\n`);
+  console.log(`注：脚本好像还是会加商品到购物车，慎使用。\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
-      $.UserName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1])
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
       $.index = i + 1;
       $.isLogin = true;
-      $.nickName = $.UserName;
+      $.nickName = ''
       await TotalBean();
       console.log(`\n*****开始【京东账号${$.index}】${$.nickName || $.UserName}*****\n`);
       if (!$.isLogin) {
@@ -75,7 +75,7 @@ async function jump() {
   $.jumpList = [];
   await getGameList();
   if ($.jumpList.length === 0) {
-    console.log(`获取活动列表失败`);
+    console.log(`获取活动列表失败，请等待下一期活动\n`);
     return;
   }
   await $.wait(1000);
@@ -288,7 +288,7 @@ async function doTask() {
       continue;
     }
     if (oneTask.gridTask === 'add_cart' && oneTask.state === 'unfinish' && addFlag) {
-      if (oneTask.gridTask === 'add_cart' && !['car','card'].includes(process.env.FS_LEVEL)) {
+      if (oneTask.gridTask === 'add_cart') {
         console.log(`不做：【${oneTask.content}】 任务`)
         continue
       }
@@ -451,9 +451,9 @@ function sortNumber(a, b) {
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
-      url: "https://me-api.jd.com/user_new/info/GetJDUserInfoUnion",
+      url: "https://wq.jd.com/user_new/info/GetJDUserInfoUnion?sceneval=2",
       headers: {
-        Host: "me-api.jd.com",
+        Host: "wq.jd.com",
         Accept: "*/*",
         Connection: "keep-alive",
         Cookie: cookie,
@@ -470,15 +470,15 @@ function TotalBean() {
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data['retcode'] === "1001") {
+            if (data['retcode'] === 1001) {
               $.isLogin = false; //cookie过期
               return;
             }
-            if (data['retcode'] === "0" && data.data && data.data.hasOwnProperty("userInfo")) {
+            if (data['retcode'] === 0 && data.data && data.data.hasOwnProperty("userInfo")) {
               $.nickName = data.data.userInfo.baseInfo.nickname;
             }
           } else {
-            $.log('京东服务器返回空数据');
+            console.log('京东服务器返回空数据');
           }
         }
       } catch (e) {

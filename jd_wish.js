@@ -72,16 +72,16 @@ if ($.isNode()) {
     if ($.isNode()) await notify.sendNotify($.name, allMessage);
     $.msg($.name, '', allMessage)
   }
-  let res = await getAuthorShareCode('')
+  let res = await getAuthorShareCode('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
   if (!res) {
-    $.http.get({url: ''}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await getAuthorShareCode('')
+    res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   }
-  let res2 = await getAuthorShareCode('')
+  let res2 = await getAuthorShareCode('https://raw.githubusercontent.com/888888/11111128/main/shareCodes/11111127')
   if (!res2) {
     await $.wait(1000)
-    res2 = await getAuthorShareCode('')
+    res2 = await getAuthorShareCode('https://raw.fastgit.org/888888/11111128/main/shareCodes/11111127')
   }
   $.shareCode = [...$.shareCode, ...(res || []), ...(res2 || [])]
   for (let i = 0; i < cookiesArr.length; i++) {
