@@ -305,6 +305,8 @@ jd_festival.js
 jd_babel_red.js
 #打豆豆
 jd_dadoudou.js
+#萌虎摇摇乐送卡
+jd_mhyyl_sendCard.js
 ############不能跑的################
 # 通用游戏
 jd_game.js

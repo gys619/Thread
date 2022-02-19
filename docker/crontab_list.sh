@@ -192,11 +192,11 @@
 #秒秒币
 30 8 * * * node /scripts/jd_mhyyl_sendCard.js >> /scripts/logs/jd_mhyyl_sendCard.log 2>&1
 #萌虎摇摇乐送卡
-20 419 * * * node /scripts/jd_mofang.js >> /scripts/logs/jd_mofang.log 2>&1
+#20 419 * * * node /scripts/jd_mofang.js >> /scripts/logs/jd_mofang.log 2>&1
 #京东小魔方
 26 8 * * * node /scripts/jd_nzmh.js >> /scripts/logs/jd_nzmh.log 2>&1
 #女装盲盒抽京豆
-26 815 * * * node /scripts/jd_openCard.py >> /scripts/logs/jd_openCard.log 2>&1
+26 815 * * * node /scripts/jd_openCard.py >> /scripts/logs/jd_OpenCard.log 2>&1
 #开卡有礼
 26 815 * * * node /scripts/jd_joyjd_open.js >> /scripts/logs/jd_joyjd_open.log 2>&1
 #通用ID任务
@@ -322,3 +322,20 @@
 #赚金币
 0-59/8 1,2,3 5-7 2 * node /scripts/ jd_freshgoods.js >> /scripts/logs/ jd_freshgoods.js.log 2>&1
 #春节游戏互动
+23 8,9 * * * node /scripts/ jd_productZ4Brand.js >> /scripts/logs/ jd_productZ4Brand.log 2>&1
+#特务z
+58 59 6,9,14,17,20 * * * node /scripts/ jd_5_2.js >> /scripts/logs/ jd_5_2.log 2>&1
+#京东抢全品券5-2
+58 59 6,9,14,17,20 * * * node /scripts/ jd_10_4.js >> /scripts/logs/ jd_10_4.log 2>&1
+#京东抢全品券10-4
+30 6-20/3 * * * node /scripts/ jd_xinruimz.js >> /scripts/logs/ jd_xinruimz.log 2>&1
+#颜究种植园
+30 18 * * * node /scripts/ jd_wq_wxsign.js >> /scripts/logs/ jd_wq_wxsign.log 2>&1
+#微信签到领红包
+
+
+
+
+
+
+
