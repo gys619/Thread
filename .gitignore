@@ -279,6 +279,10 @@ jd_speed_red.js
 jd_bt6666draw.py
 #极速版抢全品券
 jd_speedcoupon.js
+#试用通知
+jd_try_notify.js
+
+
 
 ########过期活动##############
 
