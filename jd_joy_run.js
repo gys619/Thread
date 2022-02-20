@@ -17,44 +17,48 @@ hostname = draw.jdfcloud.com
 
 ===========Surge=================
 [Script]
-宠汪汪邀请助力与赛跑助力 = type=cron,cronexp="15 10 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js
-宠汪汪助力更新Token = type=http-response,pattern=^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code=, requires-body=1, max-size=0, script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js
-宠汪汪助力获取Token = type=http-request,pattern=^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId=, max-size=0, script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js
+宠汪汪邀请助力与赛跑助力 = type=cron,cronexp="15 10 * * *",wake-system=1,timeout=3600,script-path=jd_joy_run.js
+宠汪汪助力更新Token = type=http-response,pattern=^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code=, requires-body=1, max-size=0, script-path=jd_joy_run.js
+宠汪汪助力获取Token = type=http-request,pattern=^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId=, max-size=0, script-path=jd_joy_run.js
 
 ===================Quantumult X=====================
 [task_local]
 # 宠汪汪邀请助力与赛跑助力
-15 10 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js, tag=宠汪汪邀请助力与赛跑助力, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
+15 10 * * * jd_joy_run.js, tag=宠汪汪邀请助力与赛跑助力, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
 [rewrite_local]
 # 宠汪汪助力更新Token
-^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code= url script-response-body https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js
+^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code= url script-response-body jd_joy_run.js
 # 宠汪汪助力获取Token
-^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId= url script-request-header https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js
+^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId= url script-request-header jd_joy_run.js
 
 =====================Loon=====================
 [Script]
-cron "15 10 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js, tag=宠汪汪邀请助力与赛跑助力
-http-response ^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code= script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js, requires-body=true, timeout=10, tag=宠汪汪助力更新Token
-http-request ^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId= script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_run.js, timeout=3600, tag=宠汪汪助力获取Token
+cron "15 10 * * *" script-path=jd_joy_run.js, tag=宠汪汪邀请助力与赛跑助力
+http-response ^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/addUser\?code= script-path=jd_joy_run.js, requires-body=true, timeout=10, tag=宠汪汪助力更新Token
+http-request ^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId= script-path=jd_joy_run.js, timeout=3600, tag=宠汪汪助力获取Token
 */
 const $ = new Env('宠汪汪赛跑');
-const zooFaker = require('./JDJRValidator_Aaron');
+const zooFaker = require('./utils/JDJRValidator_Pure');
 $.get = zooFaker.injectToRequest2($.get.bind($));
 $.post = zooFaker.injectToRequest2($.post.bind($));
 //宠汪汪赛跑所需token，默认读取作者服务器的
 //需自行抓包，宠汪汪小程序获取token，点击`发现`或`我的`，寻找`^https:\/\/draw\.jdfcloud\.com(\/mirror)?\/\/api\/user\/user\/detail\?openId=`获取token
 let jdJoyRunToken = '';
-
+let invoke_key = "RtKLB8euDo7KwsO0";
+try{
+  let hConfig = require('./utils/HConfig.js')
+  invoke_key = hConfig.invokeKey
+}catch(e){}
 const isRequest = typeof $request != "undefined"
 const JD_BASE_API = `https://draw.jdfcloud.com//pet`;
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : {};
 //下面给出好友邀请助力的示例填写规则
-let invite_pins = [',,,,,,,'];
+let invite_pins = ["jd_4d72a07e446a5", "jd_xSwGGPGahqma", "jd_406384360624b", "jd_71f49494f1ba9"];
 //下面给出好友赛跑助力的示例填写规则
-let run_pins = [',,,,,,,'];
+let run_pins = ["jd_4d72a07e446a5", "jd_xSwGGPGahqma", "jd_406384360624b", "jd_71f49494f1ba9"];
 //friendsArr内置太多会导致IOS端部分软件重启,可PR过来(此处目的:帮别人助力可得30g狗粮)
-let friendsArr = ["", "", "", "", "", "", "", ""]
+let friendsArr = ["jd_4d72a07e446a5", "jd_xSwGGPGahqma", "jd_406384360624b", "jd_71f49494f1ba9"];
 
 
 //IOS等用户直接用NobyDa的jd cookie
@@ -114,7 +118,7 @@ async function main() {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
   }
-  const readTokenRes = await readToken();
+  let readTokenRes = await getNetToken('https://raw.githubusercontent.com/11111115/JDHelp/main/joy_run_token.json');
   if (readTokenRes && readTokenRes.code === 200) {
     $.LKYLToken = readTokenRes.data[0] || ($.isNode() ? (process.env.JOY_RUN_TOKEN ? process.env.JOY_RUN_TOKEN : jdJoyRunToken) : ($.getdata('jdJoyRunToken') || jdJoyRunToken));
   } else {
@@ -122,14 +126,13 @@ async function main() {
   }
   console.log(`打印token：${$.LKYLToken ? $.LKYLToken : '暂无token'}\n`)
   if (!$.LKYLToken) {
-    $.msg($.name, '【提示】请先获取来客有礼宠汪汪token', "iOS用户微信搜索'来客有礼'小程序\n点击底部的'发现'Tab\n即可获取Token");
-    // return;
+    $.msg($.name, '【提示】请先获取来客有礼宠汪汪token', "1、开启抓包工具(iOS免费工具商店搜索stream)\n2、微信搜索'来客有礼'小程序\n3、在抓包工具中搜索（请求头）“LKYLToken”\n4、填入环境变量：JOY_RUN_TOKEN");    // return;
   }
   await getFriendPins();
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       $.validate = '';
-      // const zooFaker = require('./JDJRValidator_Aaron');
+      // const zooFaker = require('./utils/JDJRValidator_Pure');
       // $.validate = await zooFaker.injectToRequest()
       if ($.isNode()) {
         if (process.env.JOY_RUN_HELP_MYSELF) {
@@ -145,8 +148,7 @@ async function main() {
           Object.values(jdCookieNode).filter(item => item.match(/pt_pin=([^; ]+)(?=;?)/)).map(item => run_pins.push(decodeURIComponent(item.match(/pt_pin=([^; ]+)(?=;?)/)[1])))
           run_pins = [...new Set(run_pins)];
           let fixPins = run_pins.splice(run_pins.indexOf(''), 1);
-          fixPins.push(...run_pins.splice(run_pins.indexOf('jd_gYZtkBfPpRVv'), 1));
-          fixPins.push(...run_pins.splice(run_pins.indexOf('jd_41df9b41af810'), 1));
+          fixPins.push(...run_pins.splice(run_pins.indexOf(''), 1));
           const randomPins = getRandomArrayElements(run_pins, run_pins.length);
           run_pins = [[...fixPins, ...randomPins].join(',')];
           invite_pins = run_pins;
@@ -255,35 +257,44 @@ async function getToken() {
     $.done()
   }
 }
-function readToken() {
-  return new Promise(resolve => {
-    $.get({
-      url: `https://cdn.nz.lu/gettoken`,
-      headers: {
-        'Host': 'jdsign.cf',
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88'
-      },
-      timeout: 30 * 1000
-    }, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
-        } else {
-          if (data) {
-            // if ($.isNode() && !run_pins[0].includes("被折叠的记忆33")) resolve(null);
-            console.log(`\n\n搬运我脚本修改我内置互助码的，请不要盗取我服务器token\n\n\n`)
-            data = JSON.parse(data);
-          }
+function getNetToken(url) {
+    return new Promise(async resolve => {
+        const options = {
+            "url": `${url}`,
+            "timeout": 10000,
+            "headers": {
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+            }
+        };
+        if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+            const tunnel = require("tunnel");
+            const agent = {
+                https: tunnel.httpsOverHttp({
+                    proxy: {
+                        host: process.env.TG_PROXY_HOST,
+                        port: process.env.TG_PROXY_PORT * 1
+                    }
+                })
+            }
+            Object.assign(options, { agent })
         }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
+        $.get(options, async (err, resp, data) => {
+            try {
+                if (err) {
+                } else {
+                    if (data) data = JSON.parse(data)
+                }
+            } catch (e) {
+                // $.logErr(e, resp)
+            } finally {
+                resolve(data || []);
+            }
+        })
+        await $.wait(10000)
+        resolve();
     })
-  })
 }
+
 
 function showMsg() {
   return new Promise(async resolve => {
@@ -354,16 +365,24 @@ async function invite(invite_pins) {
 function enterRoom(invitePin) {
   return new Promise(resolve => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
+    let lks = $.md5('' + invoke_key + lkt).toString()
     headers['lkt'] = lkt;
     headers['lks'] = lks;
     headers.Cookie = cookie;
     headers.LKYLToken = $.LKYLToken;
     headers['Content-Type'] = "application/json";
-    const url = `https://draw.jdfcloud.com//common/pet/enterRoom/h5?reqSource=weapp&invitePin=${encodeURIComponent(invitePin)}&inviteSource=task_invite&shareSource=weapp&inviteTimeStamp=${Date.now()}&invokeKey=q8DNJdpcfRQ69gIx` + $.validate;
+    let opt = {
+      // url: "//jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5",
+      url: `//draw.jdfcloud.com/common/pet/enterRoom/h5?reqSource=h5&invitePin=${encodeURI(invitePin)}&inviteSource=task_invite&shareSource=weapp&inviteTimeStamp=${Date.now()}&invokeKey=${invoke_key}`,
+      method: "GET",
+      data: {},
+      credentials: "include",
+      header: {"content-type": "application/json"}
+    }
+    const url = "https:"+ taroRequest(opt)['url'] + $.validate;
     const options = {
       url,
-      body: JSON.stringify({}),
+      body: '{}',
       headers
     }
     $.post(options, (err, resp, data) => {
@@ -386,12 +405,20 @@ function enterRoom(invitePin) {
 function helpInviteFriend(friendPin) {
   return new Promise((resolve) => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
+    let lks = $.md5('' + invoke_key + lkt).toString()
     headers['lkt'] = lkt;
     headers['lks'] = lks;
     headers.Cookie = cookie;
     headers.LKYLToken = $.LKYLToken;
-    const url = `https://draw.jdfcloud.com//common/pet/helpFriend?friendPin=${encodeURIComponent(friendPin)}&reqSource=weapp&invokeKey=q8DNJdpcfRQ69gIx` + $.validate;
+    let opt = {
+      // url: "//jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5",
+      url: `//draw.jdfcloud.com/common/pet/helpFriend?friendPin=${encodeURI(friendPin)}&reqSource=h5&invokeKey=${invoke_key}`,
+      method: "GET",
+      data: {},
+      credentials: "include",
+      header: {"content-type": "application/json"}
+    }
+    const url = "https:"+ taroRequest(opt)['url'] + $.validate;
     const options = {
       url,
       headers
@@ -453,12 +480,20 @@ async function run(run_pins) {
 function combatHelp(friendPin) {
   return new Promise(resolve => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
+    let lks = $.md5('' + invoke_key + lkt).toString()
     headers['lkt'] = lkt;
     headers['lks'] = lks;
     headers.Cookie = cookie;
     headers.LKYLToken = $.LKYLToken;
-    const url = `https://draw.jdfcloud.com//common/pet/combat/help?friendPin=${encodeURIComponent(friendPin)}&reqSource=weapp&invokeKey=q8DNJdpcfRQ69gIx` + $.validate;
+    let opt = {
+      // url: "//jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5",
+      url: `//draw.jdfcloud.com//common/pet/combat/help?friendPin=${encodeURI(friendPin)}&invokeKey=${invoke_key}`,
+      method: "GET",
+      data: {},
+      credentials: "include",
+      header: {"content-type": "application/json"}
+    }
+    const url = "https:"+ taroRequest(opt)['url'] + $.validate;
     const options = {
       url,
       headers
@@ -488,12 +523,20 @@ function combatHelp(friendPin) {
 function combatDetail(invitePin) {
   return new Promise(resolve => {
     let lkt = new Date().getTime()
-    let lks = $.md5('' + 'q8DNJdpcfRQ69gIx' + lkt).toString()
+    let lks = $.md5('' + invoke_key + lkt).toString()
     headers['lkt'] = lkt;
     headers['lks'] = lks;
     headers.Cookie = cookie;
     headers.LKYLToken = $.LKYLToken;
-    const url = `https://draw.jdfcloud.com//common/pet/combat/detail/v2?help=true&inviterPin=${encodeURIComponent(invitePin)}&reqSource=weapp&invokeKey=q8DNJdpcfRQ69gIx` + $.validate;
+    let opt = {
+      // url: "//jdjoy.jd.com/common/pet/getPetTaskConfig?reqSource=h5",
+      url: `//draw.jdfcloud.com/common/pet/combat/detail/v2?help=true&inviterPin=${encodeURI(invitePin)}&reqSource=h5&invokeKey=${invoke_key}`,
+      method: "GET",
+      data: {},
+      credentials: "include",
+      header: {"content-type": "application/json"}
+    }
+    const url = "https:"+ taroRequest(opt)['url'] + $.validate;
     const options = {
       url,
       headers
@@ -567,6 +610,113 @@ function getFriendPins() {
 }
 isRequest ? getToken() : main();
 
+
+function taroRequest(e) {
+  const a = $.isNode() ? require('crypto-js') : CryptoJS;
+  const i = "98c14c997fde50cc18bdefecfd48ceb7"
+  const o = a.enc.Utf8.parse(i)
+  const r = a.enc.Utf8.parse("ea653f4f3c5eda12");
+  let _o = {
+    "AesEncrypt": function AesEncrypt(e) {
+      var n = a.enc.Utf8.parse(e);
+      return a.AES.encrypt(n, o, {
+        "iv": r,
+        "mode": a.mode.CBC,
+        "padding": a.pad.Pkcs7
+      }).ciphertext.toString()
+    },
+    "AesDecrypt": function AesDecrypt(e) {
+      var n = a.enc.Hex.parse(e)
+          , t = a.enc.Base64.stringify(n);
+      return a.AES.decrypt(t, o, {
+        "iv": r,
+        "mode": a.mode.CBC,
+        "padding": a.pad.Pkcs7
+      }).toString(a.enc.Utf8).toString()
+    },
+    "Base64Encode": function Base64Encode(e) {
+      var n = a.enc.Utf8.parse(e);
+      return a.enc.Base64.stringify(n)
+    },
+    "Base64Decode": function Base64Decode(e) {
+      return a.enc.Base64.parse(e).toString(a.enc.Utf8)
+    },
+    "Md5encode": function Md5encode(e) {
+      return a.MD5(e).toString()
+    },
+    "keyCode": "98c14c997fde50cc18bdefecfd48ceb7"
+  }
+
+  const c = function sortByLetter(e, n) {
+    if (e instanceof Array) {
+      n = n || [];
+      for (var t = 0; t < e.length; t++)
+        n[t] = sortByLetter(e[t], n[t])
+    } else
+      !(e instanceof Array) && e instanceof Object ? (n = n || {},
+          Object.keys(e).sort().map(function(t) {
+            n[t] = sortByLetter(e[t], n[t])
+          })) : n = e;
+    return n
+  }
+  const s = function isInWhiteAPI(e) {
+    for (var n =  ["gift", "pet"], t = !1, a = 0; a < n.length; a++) {
+      var i = n[a];
+      e.includes(i) && !t && (t = !0)
+    }
+    return t
+  }
+
+  const d = function addQueryToPath(e, n) {
+    if (n && Object.keys(n).length > 0) {
+      var t = Object.keys(n).map(function(e) {
+        return e + "=" + n[e]
+      }).join("&");
+      return e.indexOf("?") >= 0 ? e + "&" + t : e + "?" + t
+    }
+    return e
+  }
+  const l = function apiConvert(e) {
+    for (var n = r, t = 0; t < n.length; t++) {
+      var a = n[t];
+      e.includes(a) && !e.includes("common/" + a) && (e = e.replace(a, "common/" + a))
+    }
+    return e
+  }
+
+  var n = e
+      , t = (n.header,
+      n.url);
+  t += (t.indexOf("?") > -1 ? "&" : "?") + "reqSource=h5";
+  var _a = function getTimeSign(e) {
+    var n = e.url
+        , t = e.method
+        , a = void 0 === t ? "GET" : t
+        , i = e.data
+        , r = e.header
+        , m = void 0 === r ? {} : r
+        , p = a.toLowerCase()
+        , g = _o.keyCode
+        , f = m["content-type"] || m["Content-Type"] || ""
+        , h = ""
+        , u = +new Date();
+    return h = "get" !== p &&
+    ("post" !== p || "application/x-www-form-urlencoded" !== f.toLowerCase() && i && Object.keys(i).length) ?
+        _o.Md5encode(_o.Base64Encode(_o.AesEncrypt("" + JSON.stringify(c(i)))) + "_" + g + "_" + u) :
+        _o.Md5encode("_" + g + "_" + u),
+    s(n) && (n = d(n, {
+      "lks": h,
+      "lkt": u
+    }),
+        n = l(n)),
+        Object.assign(e, {
+          "url": n
+        })
+  }(e = Object.assign(e, {
+    "url": t
+  }));
+  return _a
+}
 // md5
 !function(n){function t(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)<<16|65535&r}function r(n,t){return n<<t|n>>>32-t}function e(n,e,o,u,c,f){return t(r(t(t(e,n),t(u,f)),c),o)}function o(n,t,r,o,u,c,f){return e(t&r|~t&o,n,t,u,c,f)}function u(n,t,r,o,u,c,f){return e(t&o|r&~o,n,t,u,c,f)}function c(n,t,r,o,u,c,f){return e(t^r^o,n,t,u,c,f)}function f(n,t,r,o,u,c,f){return e(r^(t|~o),n,t,u,c,f)}function i(n,r){n[r>>5]|=128<<r%32,n[14+(r+64>>>9<<4)]=r;var e,i,a,d,h,l=1732584193,g=-271733879,v=-1732584194,m=271733878;for(e=0;e<n.length;e+=16){i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],7,-680876936),g,v,n[e+1],12,-389564586),l,g,n[e+2],17,606105819),m,l,n[e+3],22,-1044525330),v=o(v,m=o(m,l=o(l,g,v,m,n[e+4],7,-176418897),g,v,n[e+5],12,1200080426),l,g,n[e+6],17,-1473231341),m,l,n[e+7],22,-45705983),v=o(v,m=o(m,l=o(l,g,v,m,n[e+8],7,1770035416),g,v,n[e+9],12,-1958414417),l,g,n[e+10],17,-42063),m,l,n[e+11],22,-1990404162),v=o(v,m=o(m,l=o(l,g,v,m,n[e+12],7,1804603682),g,v,n[e+13],12,-40341101),l,g,n[e+14],17,-1502002290),m,l,n[e+15],22,1236535329),v=u(v,m=u(m,l=u(l,g,v,m,n[e+1],5,-165796510),g,v,n[e+6],9,-1069501632),l,g,n[e+11],14,643717713),m,l,n[e],20,-373897302),v=u(v,m=u(m,l=u(l,g,v,m,n[e+5],5,-701558691),g,v,n[e+10],9,38016083),l,g,n[e+15],14,-660478335),m,l,n[e+4],20,-405537848),v=u(v,m=u(m,l=u(l,g,v,m,n[e+9],5,568446438),g,v,n[e+14],9,-1019803690),l,g,n[e+3],14,-187363961),m,l,n[e+8],20,1163531501),v=u(v,m=u(m,l=u(l,g,v,m,n[e+13],5,-1444681467),g,v,n[e+2],9,-51403784),l,g,n[e+7],14,1735328473),m,l,n[e+12],20,-1926607734),v=c(v,m=c(m,l=c(l,g,v,m,n[e+5],4,-378558),g,v,n[e+8],11,-2022574463),l,g,n[e+11],16,1839030562),m,l,n[e+14],23,-35309556),v=c(v,m=c(m,l=c(l,g,v,m,n[e+1],4,-1530992060),g,v,n[e+4],11,1272893353),l,g,n[e+7],16,-155497632),m,l,n[e+10],23,-1094730640),v=c(v,m=c(m,l=c(l,g,v,m,n[e+13],4,681279174),g,v,n[e],11,-358537222),l,g,n[e+3],16,-722521979),m,l,n[e+6],23,76029189),v=c(v,m=c(m,l=c(l,g,v,m,n[e+9],4,-640364487),g,v,n[e+12],11,-421815835),l,g,n[e+15],16,530742520),m,l,n[e+2],23,-995338651),v=f(v,m=f(m,l=f(l,g,v,m,n[e],6,-198630844),g,v,n[e+7],10,1126891415),l,g,n[e+14],15,-1416354905),m,l,n[e+5],21,-57434055),v=f(v,m=f(m,l=f(l,g,v,m,n[e+12],6,1700485571),g,v,n[e+3],10,-1894986606),l,g,n[e+10],15,-1051523),m,l,n[e+1],21,-2054922799),v=f(v,m=f(m,l=f(l,g,v,m,n[e+8],6,1873313359),g,v,n[e+15],10,-30611744),l,g,n[e+6],15,-1560198380),m,l,n[e+13],21,1309151649),v=f(v,m=f(m,l=f(l,g,v,m,n[e+4],6,-145523070),g,v,n[e+11],10,-1120210379),l,g,n[e+2],15,718787259),m,l,n[e+9],21,-343485551),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h)}return[l,g,v,m]}function a(n){var t,r="",e=32*n.length;for(t=0;t<e;t+=8){r+=String.fromCharCode(n[t>>5]>>>t%32&255)}return r}function d(n){var t,r=[];for(r[(n.length>>2)-1]=void 0,t=0;t<r.length;t+=1){r[t]=0}var e=8*n.length;for(t=0;t<e;t+=8){r[t>>5]|=(255&n.charCodeAt(t/8))<<t%32}return r}function h(n){return a(i(d(n),8*n.length))}function l(n,t){var r,e,o=d(n),u=[],c=[];for(u[15]=c[15]=void 0,o.length>16&&(o=i(o,8*n.length)),r=0;r<16;r+=1){u[r]=909522486^o[r],c[r]=1549556828^o[r]}return e=i(u.concat(d(t)),512+8*t.length),a(i(c.concat(e),640))}function g(n){var t,r,e="";for(r=0;r<n.length;r+=1){t=n.charCodeAt(r),e+="0123456789abcdef".charAt(t>>>4&15)+"0123456789abcdef".charAt(15&t)}return e}function v(n){return unescape(encodeURIComponent(n))}function m(n){return h(v(n))}function p(n){return g(m(n))}function s(n,t){return l(v(n),v(t))}function C(n,t){return g(s(n,t))}function A(n,t,r){return t?r?s(t,n):C(t,n):r?m(n):p(n)}$.md5=A}(this);
 // prettier-ignore
