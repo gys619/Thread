@@ -40,7 +40,7 @@
 #财富岛兑换红包
 50 820 * * * node /scripts/jd_ckck2.sh >> /scripts/logs/jd_ckck2.log 2>&1
 #ck检测
-10 10 * * * node /scripts/jd_china-joy_card.py >> /scripts/logs/jd_china-joy_card.log 2>&1
+#10 10 * * * node /scripts/jd_china-joy_card.py >> /scripts/logs/jd_china-joy_card.log 2>&1
 #萌虎摇摇乐卡片信息
 15 36 * * * node /scripts/jd_connoisseur.js >> /scripts/logs/jd_connoisseur.log 2>&1
 #内容鉴赏官
