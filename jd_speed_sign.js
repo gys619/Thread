@@ -696,9 +696,9 @@ function invite() {
   let inviterIdArr = [
     "",
     "",
-    "FqQctH+CdGVuNDq25pZvEYrZ0myZ+UMIOhte3wbzw90=",
-    "tr6qVVLzJHVa+qxBBPWJpA==",
-    "3K1knOVUabgEO8ts/GN9gQ=="
+    "",
+    "",
+    "/"
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {
