@@ -71,8 +71,9 @@ $.newShareCode = [];
       subTitle = '';
       option = {};
       await jdPlantBean();
+	  await $.wait(5 * 1000);
 	  await doHelp();
-	  await $.wait(2000);
+	  await $.wait(5 * 1000);
     }
   }
   if ($.isNode() && allMessage) {

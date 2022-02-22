@@ -12,7 +12,7 @@ const $ = new Env('M京东签到')
 $.logic = async function () {
     await signBeanIndex()
     await $.wait(3000, 5000)
-    await cgame();
+    //await cgame();
 }
 $.run({filename: __filename, wait: [1000, 2000], random: true})
 .catch(reason => console.log(reason))

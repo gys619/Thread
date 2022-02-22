@@ -81,6 +81,7 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
             $.retry = 0;
             //await shareCodesFormat();
             await jdFruit();
+			await $.wait(30 * 1000);
         }
 		if ($.isNode()) {
 		process.env.fruit_sleep ? await $.wait(Number(process.env.fruit_sleep)) : ''
