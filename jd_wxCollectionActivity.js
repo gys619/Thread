@@ -7,14 +7,13 @@ TG https://t.me/duckjobs
 
 JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
 JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
-7 7 7 7 * jd_wxCollectionActivity.js
+
 */
 const $ = new Env('加购物车抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let cookiesArr = [], cookie = '', message = '' ;
-let activityIdList = [
-]
+let cookiesArr = [], cookie = '', message = '' ,isPush = false;
+let activityIdList = ['bdacfcba95964d04b3e1cf0cb0e186dd', '6cb3e11671af40f9a8ab461d68995583', '892cb7fbfb844d0098e7f11d69bad6bd', 'cb052bef22334cd29089a39a52dfa1ed', '51de2cce01754429a6a0bc10c369ad8a', 'a1e3fb99b82345738aee4cc907224232', '6818e794a8d143328a819e0a22aced29']
 let lz_cookie = {}
 
 if (process.env.ACTIVITY_ID && process.env.ACTIVITY_ID != "") {
@@ -81,24 +80,24 @@ $.keywordsNum = 0;
                 $.getPrize = null;
                 await addCart();
                 if($.drawInfoName === false || $.getPrize === null){
-                    break
+                    //break
                 } else if($.getPrize != null && !$.getPrize.includes("京豆")){
-                    break
+                    //break
                 }
                 await $.wait(2000)
-                await requireConfig();
-                do {
-                    await getCart_xh();
-                    $.keywordsNum = 0
-                    if($.beforeRemove !== "0"){
-                        await cartFilter_xh(venderCart);
-                        if(parseInt($.beforeRemove) !== $.keywordsNum) await removeCart();
-                        else {
-                            console.log('由于购物车内的商品均包含关键字，本次执行将不删除购物车数据')
-                            break;
-                        }
-                    } else break;
-                } while(isRemoveAll && $.keywordsNum !== $.beforeRemove)
+                // await requireConfig();
+                // do {
+                //     await getCart_xh();
+                //     $.keywordsNum = 0
+                //     if($.beforeRemove !== "0"){
+                //         await cartFilter_xh(venderCart);
+                //         if(parseInt($.beforeRemove) !== $.keywordsNum) await removeCart();
+                //         else {
+                //             console.log('由于购物车内的商品均包含关键字，本次执行将不删除购物车数据')
+                //             break;
+                //         }
+                //     } else break;
+                // } while(isRemoveAll && $.keywordsNum !== $.beforeRemove)
                 if ($.bean > 0) {
                     message += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n       └ 获得 ${$.bean} 京豆。`
                 }
@@ -360,10 +359,6 @@ function random(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 
 }
-function strToJson(str){
-	var json = eval('(' + str + ')');
-	return json;
-}
 function requireConfig(){
     return new Promise(resolve => {
         if($.isNode() && process.env.JD_CART){
@@ -386,7 +381,7 @@ function getCart_xh(){
         }
         $.get(option, async(err, resp, data) => {
             try{
-                data = strToJson(getSubstr(data, "window.cartData = ", "window._PFM_TIMING"));
+                data = JSON.parse(getSubstr(data, "window.cartData = ", "window._PFM_TIMING"));
                 $.areaId = data.areaId;   // locationId的传值
                 $.traceId = data.traceId; // traceid的传值
                 venderCart = data.cart.venderCart;
@@ -482,7 +477,7 @@ function getActivityIdList(url) {
     return new Promise(resolve => {
         const options = {
             url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
             }
         };
         $.get(options, async (err, resp, data) => {
@@ -490,7 +485,7 @@ function getActivityIdList(url) {
                 if (err) {
                     $.log(err)
                 } else {
-                if (data) data = JSON.parse(data)
+                    if (data) data = JSON.parse(data)
                 }
             } catch (e) {
                 $.logErr(e, resp)
