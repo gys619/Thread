@@ -286,6 +286,9 @@ jd_try_notify.js
 #jd_syj.js
 #jd_jxmc_hb.js
 
+#京东金融免息
+ jd_btfree.py
+
 ########过期活动##############
 
 # 运动户外盲盒
