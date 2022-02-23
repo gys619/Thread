@@ -182,9 +182,9 @@
 #盲盒任务抽京豆
 4 10 * * * node /scripts/jd_market_lottery.js >> /scripts/logs/jd_market_lottery.log 2>&1
 #幸运大转盘
-0 0 * * * node /scripts/jd_mall_active.js >> /scripts/logs/jd_mall_active.log 2>&1
+#0 0 * * * node /scripts/jd_mall_active.js >> /scripts/logs/jd_mall_active.log 2>&1
 #逛京东会场
-0 0 * * * node /scripts/jd_mall.js >> /scripts/logs/jd_mall.log 2>&1
+#0 0 * * * node /scripts/jd_mall.js >> /scripts/logs/jd_mall.log 2>&1
 #逛会场任务
 3 0 * * * node /scripts/jd_m_sign.js >> /scripts/logs/jd_m_sign.log 2>&1
 #京东通天塔--签到
