@@ -680,7 +680,7 @@ function taskGetUrl(function_id, body) {
 function invite2() {
   let inviterIdArr = [
     "",
-    "Yvk/fMWJC/6lvcx1iUFnsw==",
+    "/fMWJC/6lvcx1iUFnsw==",
     "E9EvSFNuA1pahSQT0uSsXkW1v0j+QOHQbk8+peJYc0I=",
     "wXX9SjXOdYMWe5Ru/1+x9A==",
     "4AVQao+eH8Q8kvmXnWmkG8ef/fNr5fdejnD9+9Ugbec=",
@@ -713,7 +713,7 @@ function invite() {
   let t = +new Date()
   let inviterIdArr = [
     "",
-    "Yvk/fMWJC/6lvcx1iUFnsw==",
+    "/fMWJC/6lvcx1iUFnsw==",
     "E9EvSFNuA1pahSQT0uSsXkW1v0j+QOHQbk8+peJYc0I=",
     "wXX9SjXOdYMWe5Ru/1+x9A==",
     "4AVQao+eH8Q8kvmXnWmkG8ef/fNr5fdejnD9+9Ugbec=",
