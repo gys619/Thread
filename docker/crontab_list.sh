@@ -332,7 +332,8 @@
 #颜究种植园
 30 18 * * * node /scripts/ jd_wq_wxsign.js >> /scripts/logs/ jd_wq_wxsign.log 2>&1
 #微信签到领红包
-
+5 0 10 * * * node /scripts/ jd_jrmx.py >> /scripts/logs/ jd_jrmx.log 2>&1
+#京东金融分享助力
 
 
 

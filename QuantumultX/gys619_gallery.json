@@ -98,6 +98,7 @@
 	{"config":"58 59 6,9,14,17,20 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_5_2.js, tag=京东抢全品券5-2, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	{"config":"58 59 6,9,14,17,20 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_10_4.js, tag=京东抢全品券10-4, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	{"config":"30 6-20/3 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_xinruimz.js, tag= 颜究种植园, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
-	{"config":"30 18 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_wq_wxsign.js, tag= 微信签到领红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}
+	{"config":"30 18 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_wq_wxsign.js, tag= 微信签到领红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	  {"config":"5 0 10 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_jrmx.py, tag= 京东金融分享助力, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}  
   ]
 }
