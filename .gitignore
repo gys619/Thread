@@ -143,7 +143,8 @@ jd_jx_cashback.js
 jd_sign_validate.js	
 jd_ylynj.js
 jd_speed_signfree_Mod.js
-jd_tyt.js
+#推一推
+#jd_tyt.js
 jd_ttzdq.js
 jd_kk1.js
 jd_fcdyj_help.js
@@ -350,7 +351,8 @@ jd_lzclient.js
 jd_Evaluation.py
 #幸福小店
 jd_xfxd.js
-
+#店铺签到
+jd_shop_sign.js
 jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js

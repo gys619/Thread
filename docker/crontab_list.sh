@@ -258,7 +258,7 @@
 #极速免费签到
 48 922 * * * node /scripts/jd_sign.js >> /scripts/logs/jd_sign.log 2>&1
 #M京东签到
-0 0 * * * node /scripts/jd_shop_sign.js >> /scripts/logs/jd_shop_sign.log 2>&1
+0 0 * * * node /scripts/jd_dpsign.js >> /scripts/logs/jd_dpsign.log 2>&1
 #店铺签到
 10 0 * * * node /scripts/jd_shop.js >> /scripts/logs/jd_shop.log 2>&1
 #进店领豆
@@ -332,9 +332,12 @@
 #颜究种植园
 30 18 * * * node /scripts/ jd_wq_wxsign.js >> /scripts/logs/ jd_wq_wxsign.log 2>&1
 #微信签到领红包
-5 0 10 * * * node /scripts/ jd_jrmx.py >> /scripts/logs/ jd_jrmx.log 2>&1
+ 0 10 * * * node /scripts/ jd_jrmx.py >> /scripts/logs/ jd_jrmx.log 2>&1
 #京东金融分享助力
-
+5 0 10 * * * node /scripts/ jd_farm_automation.js >> /scripts/logs/ jd_farm_automaton.log 2>&1
+#农场自动兑红包种水果
+3 1 * * * node /scripts/jd_tyt.js >> /scripts/logs/jd_tyt.log 2>&1
+#推一推
 
 
 
