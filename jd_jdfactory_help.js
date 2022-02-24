@@ -24,7 +24,7 @@ cron "50 4,17 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/m
 ============小火箭=========
 东东工厂 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_jdfactory_help.js, cronexpr="50 4,17 * * *", timeout=3600, enable=true
  */
-const $ = new Env('东东工厂内部互助互助');
+const $ = new Env('东东工厂内部互助');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -44,6 +44,7 @@ if ($.isNode()) {
 let wantProduct = ``;//心仪商品名称
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = [];
+let lnrun = 0;
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -69,25 +70,33 @@ const inviteCodes = [];
         continue
       }
       //await shareCodesFormat();
-      await jdFactory()
+	  await jdFactory()
+	  await $.wait(1500);
     }
   }
-      console.log(`\n开始账号内互助\n`);
+      console.log(`\n【开始账号内互助】\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
-    cookie = cookiesArr[i];
+    lnrun++; 
+	cookie = cookiesArr[i];
     $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-
-      console.log('开始助力好友')
-
-  console.log(`格式化后的助力码::${JSON.stringify(inviteCodes)}\n`);
-  for (let code of inviteCodes) {
-    if (!code) continue
-    const helpRes = await jdfactory_collectScore(code);
-    if (helpRes.code === 0 && helpRes.data.bizCode === -7) {
-      console.log(`助力机会已耗尽，跳出`);
-      break
+    $.index = i + 1;
+    $.isLogin = true;
+    $.nickName = '';
+	console.log(`\n【京东账号${$.index}（${$.UserName}）开始助力好友】\n`)
+	console.log(`格式化后的助力码::${JSON.stringify(inviteCodes)}\n`);
+	for (let code of inviteCodes) {
+		if (!code) continue
+		const helpRes = await jdfactory_collectScore(code);
+		if (helpRes.code === 0 && helpRes.data.bizCode === -7) {
+		console.log(`助力机会已耗尽，跳出`);
+		break
     }
   }
+  if (lnrun == 5) {
+              console.log(`\n【访问接口次数达到5次，休息一分钟.....】\n`);
+              await $.wait(60 * 1000);
+              lnrun = 0;
+			}
   }
 })()
     .catch((e) => {

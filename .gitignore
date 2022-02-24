@@ -88,7 +88,8 @@ jd_ks_fruit.js
 jdCookie_xh.js
 jd_opencard*.js
 jd_bean_change_xh.js
-jd_bean_change1.js
+#月资产
+#jd_bean_change1.js
 jd_bean_change_pro.js
 jd_fruit?.js
 jd_necklace.js
