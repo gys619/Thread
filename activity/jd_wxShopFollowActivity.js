@@ -1,19 +1,81 @@
 /*
-作者：小埋
-活动链接：https://lzkj-isv.isvjcloud.com//activity/xxx?activityId=xxx
-SHOP_FOLLOW_ID // 活动ID 以逗号分隔
+写脚本不容易
+TG https://t.me/ducktalk
+看脸活动
+https://lzkj-isv.isvjcloud.com//activity/xxx?activityId=xxx
 */
-
 const $ = new Env('关注店铺抽奖');
-const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const notify = $.isNode() ? require('./sendNotify') : '';
+const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const notify = $.isNode() ? require('../sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
-let activityIdList = []
+let activityIdList = [
+    "433d21343fd84405b86fb91eef2b2c25",
+    "4e77b62468c64ac9a0532c0c5669baa4",
+    "308a4cdd92004ecf8d7163460c984781",
+    "e6d5b827e56345efbefbb48856a12f51",
+    "abb65314005d45f5ada3239581393e92",
+    "3267fbd8f5b943ae9dbeb6398a2395de",
+    "6824582589254fb1bf4d604b3296d347",
+    "8713d129696d463ea05c8c16d9b5b624",
+    "d90de2e7cb274f27bf795d54d263eaeb",
+    "bcbf70f0ab344fb88ffd284bae026acc",
+    "9134a013afa7492b993b58b4acbd2264",
+    "4b328b87b2604a138414702df34ed3b5",
+    "972202bd790e4c4a8340ef13e696469a",
+    "bd44226f8e0948e7ba4cf1bb02f1a9cf",
+    "31bfb899ea8b4ff1a263a9ef423b36c7",
+    "a4d66377c92a41b1965719797be6487a",
+    "b2c6413ed65541aabcd39ef70cd51fe9",
+    "a4b34f567ff340bdb44724d8b45a4cb5",
+    "4888ea04703f43018a12d0b894ef49af",
+    "55f2f9965015403c8177550c67ae09b9",
+    "6a5ed847303b4c22a9ef9bf555e5f0e2",
+    "ffb33af060ce46babd515667ea4517ba",
+    "8748d71ed5e3437192799dfed229191d",
+    "acdcaad1620049fabe5294f8b5cff86f",
+    "d14cfdf4a0894d91b890f98843d50377",
+    "a233d16782f74bc388c372d7583e3418",
+    "ea9ee5f3493a42dda17813067d06ac4e",
+    "23b2d4388b4d484899f29da396b4ae74",
+    "64ae9e95cc554e2797057075dcc433d2",
+    "395c68820f5848c7af0b34a0d3cc7e0d",
+    "8ca55a8468f846859e39e30b434c80f9",
+    "265250e5996142c3ba145052c844a074",
+    "c66fac62e85747119fd6042401228797",
+    "aefb118ba160421daa27107c4274d182",
+    "dbec51bd66df4244a3a7a49421790521",
+    "0bdae1c3f2464605a918cc9bb75e4c4f",
+    "cefc161b7e914773a96e6142ff8a804e",
+    "c7ae17ed7fb944c882f56205dc6b1b27",
+    "faab3f6791024d7a9e478afc74ddd06e",
+    "23772fae119d42dc9d4490247a47c135",
+    "1e75fa153a6c4fefa7a430d6c1eef378",
+    "de1cccc1bc224d778a6556e972597af1",
+    "3872200adde340a5aed5ae5ca411bb11",
+    "62b1bb17aaec4447b277f0c3d7bbe842",
+    "6a61985cfb644b1a940fdc258abe1a19",
+    "40c01055dce14952a2725d8369a81e0b",
+    "1c10e6134f1842d196d55a007266b0c6",
+    "54bca808c9ea43cfb8d63e8f496be480",
+    "b652bbd16e3f46d7bbd55b0dd2d999f0",
+    "8b724092aa2149d499eda473d55fa619",
+    "e3115ea3b79540e484a741445e6605bc",
+    "3da2693008094d2d90009f7288301bf4",
+    "190c60f65aea46fb99a14c768009bff2",
+    "9e0ca083814748189050426158c6d811",
+    "9ae156c1572c429da09493f8208ce424",
+    "70a1866902514cff9f582e3e113ec4d4",
+    "1663d5c5107d4824bfed595d76328cb7",
+    "9dfd7845eb7f4b9aafb8fe2ade9919a0",
+    "9dfd7845eb7f4b9aafb8fe2ade9919a0",
+    "c92d074814c94c61bd92ecdbdc2cd775",
+    "9e52aaf6a7a242daa82e8a4017268420",
+    "8d9b4b40f03c43cb9c6bac4943aa81e7",
+    "8ef26b4a6a3a421d85c1e8b0e08e037a",
+    "971472dd55424fe0a38cdf272fa3efce",
+    "24d7658e8f0f48189404c1240de6a150",
+]
 let lz_cookie = {}
-
-if (process.env.SHOP_FOLLOW_ID && process.env.SHOP_FOLLOW_ID != "") {
-    activityIdList = process.env.SHOP_FOLLOW_ID.split(",");
-}
 
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -35,9 +97,9 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    //let activityIdList = await getActivityIdList('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/wxShopFollow.json')
+    console.log("TG https://t.me/ducktalk")
     for(let a in activityIdList){
-        let activityId = activityIdList[a];
+        activityId = activityIdList[a];
         console.log("开起第 "+ a +" 个活动，活动id："+activityId)
         for (let i = 0; i < cookiesArr.length; i++) {
             if (cookiesArr[i]) {
@@ -324,28 +386,6 @@ function random(min, max) {
 
     return Math.floor(Math.random() * (max - min)) + min;
 
-}
-function getActivityIdList(url) {
-    return new Promise(resolve => {
-        const options = {
-            url: `${url}?${new Date()}`, "timeout": 10000, headers: {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-            }
-        };
-        $.get(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    $.log(err)
-                } else {
-                    if (data) data = JSON.parse(data)
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
-    })
 }
 function getUUID(format = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', UpperCase = 0) {
     return format.replace(/[xy]/g, function (c) {
