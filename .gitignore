@@ -378,3 +378,7 @@ jd_jx_mc_zn_exchange.js
 jd_GoldcoinToGift.js
 jd_ftzy.js
 jd_aid_ftzy.js
+
+#京东农场任务重复
+jd_fruit_task.js
+jd_fruit_friend.js
