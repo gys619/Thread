@@ -2,14 +2,14 @@
 
 const axios = require('axios');
 const fs = require("fs");
-// const moment = require("moment");
 const {format} = require("date-fns");
 const notify = require('../sendNotify');
 const jdCookieNode = require('../jdCookie.js');
 const CryptoJS = require("crypto-js");
+const got = require("got");
 let cookies = [];
 let testMode = process.env.TEST_MODE?.includes('on') ? true
-    : __dirname.includes("/home/magic")
+    : __dirname.includes("magic")
 Object.keys(jdCookieNode).forEach((item) => {
     cookies.push(jdCookieNode[item])
 })
@@ -53,13 +53,14 @@ const USER_AGENTS = [
     "jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
 ]
 
-const $ = axios.create({timeout: 4000});
+const $ = axios.create({timeout: 24000});
 $.defaults.headers['Accept'] = '*/*';
 $.defaults.headers['User-Agent'] = USER_AGENTS[randomNumber(0,
     USER_AGENTS.length)];
 $.defaults.headers['Connection'] = 'keep-alive';
 $.defaults.headers['Accept-Language'] = "zh-CN,zh-Hans;q=0.9";
 $.defaults.headers['Accept-Encoding'] = "gzip, deflate, br";
+
 
 function randomNumber(min = 0, max = 100) {
     return Math.min(Math.floor(min + Math.random() * (max - min)), max);
@@ -86,22 +87,18 @@ class Env {
         wait: [1000, 2000],
         bot: false,
         delimiter: '',
-        filename: '',
         o2o: false,
         random: false,
         once: false,
         blacklist: [],
         whitelist: []
     }) {
-        console.log(
-            `${this.now()} ${this.name} ${data?.filename ? data?.filename
-                : ''} 开始运行...`)
-        let start = this.timestamp();
+        this.filename = process.argv[1];
+        console.log(`${this.now()} ${this.name} ${this.filename} 开始运行...`);
+        this.start = this.timestamp();
+        await this.config()
         if (data?.delimiter) {
             this.delimiter = data?.delimiter
-        }
-        if (data?.filename) {
-            this.filename = data.filename;
         }
         if (data?.bot) {
             this.bot = data.bot;
@@ -169,26 +166,31 @@ class Env {
                     await this.logic()
                     if (data?.o2o) {
                         await this.send();
-                        testMode ? this.log(this.msg) : ''
+                        testMode ? this.log(this.msg.join("\n")) : ''
                         this.msg = [];
                     }
                     if (once) {
                         break;
                     }
                 } catch (e) {
-                    this.log('e', e.message)
+                    this.log('捕获异常', e)
                 }
                 if (data?.wait?.length > 0 && this.index !== cookies.length) {
                     await this.wait(data?.wait[0], data?.wait[1])
                 }
             }
         }
+        await this.after()
         console.log(`${this.now()} ${this.name} 运行结束,耗时 ${this.timestamp()
-        - start}ms\n`)
-        testMode && this.msg.length > 0 ? console.log(this.msg) : ''
+        - this.start}ms\n`)
+        testMode && this.msg.length > 0 ? console.log(this.msg.join("\n")) : ''
         if (!data?.o2o) {
             await this.send();
         }
+    }
+
+    async config() {
+
     }
 
     deleteCookie() {
@@ -209,6 +211,9 @@ class Env {
 
     async send() {
         if (this.msg?.length > 0) {
+            this.msg.push(
+                '运行时长：' + ((this.timestamp() - this.start) / 1000).toFixed(2)
+                + 's')
             if (this.bot) {
                 await notify.sendNotify("/" + this.name,
                     this.msg.join(this.delimiter || ''))
@@ -219,22 +224,33 @@ class Env {
     }
 
     async verify() {
+        let fn = this.filename
+
+        function av(s) {
+            return s.trim().match(/([a-z_])*$/)[0];
+        }
+
         let x = '109M95O106F120V95B', y = '99M102F100O', z = '109H99V',
-            j = '102N97I99D116T111G114A121B', k = '';
-        x.concat(y).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+            j = '102N97I99D116T111G114A121B', k = '112C112U',
+            l = '109N95G106B100K95U', m = '119V120M';
+        let reg = /[A-Z]/;
+        x.concat(y).split(reg).map(o => +o).filter(o => o > 0).forEach(
             o => y += String.fromCharCode(o))
-        x.concat(z).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+        x.concat(z).split(reg).map(o => +o).filter(o => o > 0).forEach(
             o => z += String.fromCharCode(o))
-        x.concat(j).split(/[A-Z]/).map(o => +o).filter(o => o > 0).forEach(
+        x.concat(j).split(reg).map(o => +o).filter(o => o > 0).forEach(
             o => j += String.fromCharCode(o))
-        this.appId = this.filename ? this.name.slice(0, 1)
+        x.concat(k).split(reg).map(o => +o).filter(o => o > 0).forEach(
+            o => k += String.fromCharCode(o))
+        l.concat(m).split(reg).map(o => +o).filter(o => o > 0).forEach(
+            o => m += String.fromCharCode(o))
+        this.appId = fn ? this.name.slice(0, 1)
             === String.fromCharCode(77)
-                ? (this.filename.includes(y.trim().match(/([a-z_])*$/)[0]) ? '10032'
-                    :
-                    this.filename.includes(z.trim().match(/([a-z_])*$/)[0])
-                        ? '10028' :
-                        this.filename.includes(j.trim().match(/([a-z_])*$/)[0])
-                            ? 'c0ff1' : '') : ''
+                ? (fn.includes(av(y)) ? '10032' :
+                    fn.includes(av(z)) ? '10028' :
+                        fn.includes(av(j)) ? '10001' :
+                            fn.includes(av(k)) ? '10038' :
+                                fn.includes(av(m)) ? 'wx' : '') : ''
             : '';
         this.appId ? this.algo = await this._algo() : '';
     }
@@ -250,8 +266,23 @@ class Env {
 
     putMsg(msg) {
         this.log(msg)
-        this.bot ? this.msg.push(msg) :
-            this.msg.push(`【当前账号】 ${this.username} ${msg}`)
+        let r = [[' ', ''], ['优惠券', '券'], ['东券', '券'], ['店铺', ''],
+            ['恭喜', ''], ['获得', '']]
+        for (let ele of r) {
+            msg = msg.replace(ele[0], ele[1])
+        }
+        if (this.bot) {
+            this.msg.push(msg)
+        } else {
+            if (this.msg.length > 0 && this.msg[this.msg.length - 1].includes(
+                this.username)) {
+                this.msg[this.msg.length - 1] = this.msg[this.msg.length
+                - 1].split(" ")[0] + ' ' + [this.msg[this.msg.length - 1].split(
+                    " ")[1], msg].join(',')
+            } else {
+                this.msg.push(`【当前账号】${this.username} ${msg}`)
+            }
+        }
     }
 
     md5(str) {
@@ -263,11 +294,26 @@ class Env {
     }
 
     log(...msg) {
-        console.log(`${this.now()} ${this.username}`, ...msg)
+        this.s ? console.log(...msg) : console.log(
+            `${this.now()} ${this.username}`, ...msg)
+    }
+
+    //并
+    union(a, b) {
+        return a.concat(b.filter(o => !a.includes(o)))
+    }
+
+    //交
+    intersection(a, b) {
+        return a.filter(o => b.includes(o))
+    }
+
+    //交
+    different(a, b) {
+        return a.concat(b).filter(o => a.includes(o) && !b.includes(o))
     }
 
     build(url) {
-        debugger
         if (url.match(/&callback=(jsonpCBK(.*))&/)) {
             let cb = url.match(/&callback=(jsonpCBK(.*))&/);
             url = url.replace(cb[1], this.randomCallback(cb[2].length || 0))
@@ -334,7 +380,7 @@ class Env {
     }
 
     getQueryString(url, name) {
-        let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        let reg = new RegExp("(^|[&?])" + name + "=([^&]*)(&|$)");
         let r = url.match(reg);
         if (r != null) {
             return unescape(r[2]);
@@ -403,6 +449,29 @@ class Env {
         return '';
     }
 
+    matchAll(pattern, string) {
+        pattern = (pattern instanceof Array) ? pattern : [pattern];
+        let match;
+        let result = [];
+        for (let p of pattern) {
+            while ((match = p.exec(string)) != null) {
+                let len = match.length;
+                if (len === 1) {
+                    result.push(match);
+                } else if (len === 2) {
+                    result.push(match[1]);
+                } else {
+                    let r = [];
+                    for (let i = 1; i < len; i++) {
+                        r.push(match[i])
+                    }
+                    result.push(r);
+                }
+            }
+        }
+        return result;
+    }
+
     async countdown(s) {
         let date = new Date();
         if (date.getMinutes() === 59) {
@@ -446,6 +515,14 @@ class Env {
         })
     }
 
+    async get2(url, headers) {
+        return new Promise((resolve, reject) => {
+            $.get(url, {headers: headers}).then(
+                data => resolve(data))
+            .catch(e => reject(e))
+        })
+    }
+
     async post(url, body, headers) {
         url = this.appId ? this.build(url) : url
         return new Promise((resolve, reject) => {
@@ -455,8 +532,53 @@ class Env {
         })
     }
 
+    //└
+    async request(url, headers, body) {
+        return new Promise((resolve, reject) => {
+            let __config = headers?.headers ? headers : {headers: headers};
+            (body ? $.post(url, body, __config) : $.get(url, __config))
+            .then(data => {
+                this.__lt(data);
+                resolve(data)
+            })
+            .catch(e => reject(e));
+        })
+    }
+
+    __lt(data) {
+        if (this.appId.length !== 2) {
+            return
+        }
+        let scs = data?.headers['set-cookie'] || data?.headers['Set-Cookie']
+            || ''
+        if (!scs) {
+            if (data?.data?.LZ_TOKEN_KEY && data?.data?.LZ_TOKEN_VALUE) {
+                this.lz = `LZ_TOKEN_KEY=${data.data.LZ_TOKEN_KEY};LZ_TOKEN_VALUE=${data.data.LZ_TOKEN_VALUE};`;
+            }
+            return;
+        }
+        let LZ_TOKEN_KEY = '', LZ_TOKEN_VALUE = ''
+        let sc = typeof scs != 'object' ? scs.split(',') : scs
+        for (let ck of sc) {
+            let name = ck.split(";")[0].trim()
+            if (name.split("=")[1]) {
+                name.includes('LZ_TOKEN_KEY=')
+                    ? LZ_TOKEN_KEY = name.replace(/ /g, '') + ';' : ''
+                name.includes('LZ_TOKEN_VALUE=')
+                    ? LZ_TOKEN_VALUE = name.replace(/ /g, '') + ';' : ''
+            }
+        }
+        if (LZ_TOKEN_KEY && LZ_TOKEN_VALUE) {
+            this.lz = `${LZ_TOKEN_KEY}${LZ_TOKEN_VALUE}`
+        }
+        // testMode ? this.log('lz', this.lz) : ''
+    }
+
     handler(res) {
-        let data = res.data;
+        let data = res?.data || res?.body ||res;
+        if (!data) {
+            return;
+        }
         if (typeof data === 'string') {
             data = data.replace(/[\n\r| ]/g, '');
             if (data.includes("try{jsonpCB")) {
@@ -466,9 +588,11 @@ class Env {
                 let st = data.replace(/[\n\r]/g, '').replace(/jsonpCB.*\({/,
                     '{');
                 data = st.substring(0, st.length - 1)
-            } else if (/try{.*\({/) {
+            } else if (data.match(/try{.*\({/)) {
                 data = data.replace(/try{.*\({/, '{')
                 .replace(/}\)([;])?}catch\(e\){}/, '}')
+            } else if (data.includes("jsonp")) {
+                data = /{(.*)}/g.exec(data)[0]
             } else {
                 testMode ? console.log('例外', data) : ''
             }
@@ -491,11 +615,33 @@ class Env {
         return n
     }
 
+    randomString(e) {
+        return this.uuid()
+    }
+
     uuid(x = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") {
         return x.replace(/[xy]/g, function (x) {
             const r = 16 * Math.random() | 0, n = "x" === x ? r : 3 & r | 8;
             return n.toString(36)
         })
+    }
+
+    async unfollow(shopId) {
+        let url = 'https://api.m.jd.com/client.action?g_ty=ls&g_tk=518274330'
+        let body = `functionId=followShop&body={"follow":"false","shopId":"${shopId}","award":"true","sourceRpc":"shop_app_home_follow"}&osVersion=13.7&appid=wh5&clientVersion=9.2.0&loginType=2&loginWQBiz=interact`
+        let headers = {
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Host': 'api.m.jd.com',
+            'Connection': 'keep-alive',
+            'Accept-Language': 'zh-cn',
+            'Cookie': this.cookie
+        }
+        headers['User-Agent'] = `Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.4(0x1800042c) NetType/4G Language/zh_CN miniProgram`
+        let {data} = await this.request(url, headers, body);
+        this.log(data.msg)
+        return data;
     }
 
     randomCallback(e = 1) {
@@ -520,7 +666,7 @@ class Env {
     }
 
     now(fmt) {
-        return format(new Date(), fmt || 'yyyy-MM-dd HH:mm:ss.SSS')
+        return format(Date.now(), fmt || 'yyyy-MM-dd HH:mm:ss.SSS')
     }
 
     formatDate(date, fmt) {
@@ -548,7 +694,7 @@ class Env {
     }
 
     async get_bean() {
-        let data = await $.post('https://api.m.jd.com/client.action',
+        let {data} = await $.post('https://api.m.jd.com/client.action',
             `functionId=plantBeanIndex&body=${escape(
                 JSON.stringify({
                     version: "9.0.0.1",
@@ -560,11 +706,12 @@ class Env {
                 'Host': "api.m.jd.com",
                 "Cookie": this.cookie
             });
+        debugger
         return data.data.jwordShareInfo.shareUrl.split('Uuid=')[1] ?? ''
     }
 
     async get_farm() {
-        let data = await $.post(
+        let {data} = await $.post(
             'https://api.m.jd.com/client.action?functionId=initForFarm',
             `body=${escape(
                 JSON.stringify({"version": 4}))}&appid=wh5&clientVersion=9.1.0`,
@@ -574,6 +721,7 @@ class Env {
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Cookie": this.cookie
             })
+        debugger
         return data?.farmUserPro?.shareCode ?? ''
     }
 
