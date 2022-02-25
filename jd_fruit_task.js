@@ -132,6 +132,12 @@ async function jdFruit() {
             await getTenWaterAward(); //领取10浇水奖励
             await getWaterFriendGotAward(); //领取为2好友浇水奖励
             await duck();
+            lnrun++;
+            if (lnrun == 10) {
+            console.log(`\n访问接口次数达到10次，休息30秒.....\n`);
+            await $.wait(30 * 1000);
+            lnrun = 0;
+            }
             if (!process.env.DO_TEN_WATER_AGAIN) {
                 console.log('执行再次浇水')
                 await doTenWaterAgain(); //再次浇水
