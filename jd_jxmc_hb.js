@@ -19,7 +19,7 @@ $.inviteCodeList = [];
 $.inviteCodeList_hb = [];
 let flag_hb = true
 let cookiesArr = [];
-$.appId = 10028;
+$.appId = "00df8";
 $.helpCkList = [];
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
