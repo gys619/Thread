@@ -296,6 +296,7 @@ async function doTenWater() {
         for (; waterCount < $.farmTask.totalWaterTaskInit.totalWaterTaskLimit - $.farmTask.totalWaterTaskInit.totalWaterTaskTimes; waterCount++) {
             console.log(`第${waterCount + 1}次浇水`);
             await waterGoodForFarm();
+			await $.wait(2000);
             console.log(`本次浇水结果:   ${JSON.stringify($.waterResult)}`);
             if ($.waterResult.code === '0') {
                 console.log(`剩余水滴${$.waterResult.totalEnergy}g`);
@@ -946,8 +947,8 @@ async function gotStageAwardForFarm(type) {
 }
 //浇水API
 async function waterGoodForFarm() {
-    await $.wait(1000);
-    console.log('等待了1秒');
+    await $.wait(3000);
+    console.log('等待了3秒');
 
     const functionId = arguments.callee.name.toString();
     $.waterResult = await request(functionId);
