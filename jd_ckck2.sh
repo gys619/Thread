@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Build 20220212-002-test
+## Build 20220227-001-Alpha
 
 ## 导入通用变量与函数
 dir_shell=/ql/shell
@@ -129,14 +129,26 @@ ql_update_env_api() {
     local remarks=$4
     local url="http://0.0.0.0:5600/api/envs"
 
-    local api=$(
-        curl -s --noproxy "*" "$url?t=$currentTimeStamp" \
-            -X 'PUT' \
-            -H "Accept: application/json" \
-            -H "Authorization: Bearer $token" \
-            -H "Content-Type: application/json;charset=UTF-8" \
-            --data-raw "{\"name\":\"$name\",\"value\":\"$value\",\"$tmp_id\":\"$id\",\"remarks\":\"$remarks\"}"
-    )
+    if [[ $remarks ]]; then
+        local api=$(
+            curl -s --noproxy "*" "$url?t=$currentTimeStamp" \
+                -X 'PUT' \
+                -H "Accept: application/json" \
+                -H "Authorization: Bearer $token" \
+                -H "Content-Type: application/json;charset=UTF-8" \
+                --data-raw "{\"name\":\"$name\",\"value\":\"$value\",\"$tmp_id\":\"$id\",\"remarks\":\"$remarks\"}"
+        )
+    else
+        local api=$(
+            curl -s --noproxy "*" "$url?t=$currentTimeStamp" \
+                -X 'PUT' \
+                -H "Accept: application/json" \
+                -H "Authorization: Bearer $token" \
+                -H "Content-Type: application/json;charset=UTF-8" \
+                --data-raw "{\"name\":\"$name\",\"value\":\"$value\",\"$tmp_id\":\"$id\"}"
+        )
+    fi
+
     code=$(echo $api | jq -r .code)
     message=$(echo $api | jq -r .message)
     if [[ $code == 200 ]]; then
@@ -264,6 +276,9 @@ pushplus_notify_api() {
     if [[ $code == 200 ]]; then
         echo -e "#$frontcontent pushplus 消息发送成功\n"
     else
+        if [[ $code == 500 ]]; then
+            msg="服务器宕机"
+        fi
         [[ ! $msg ]] && msg="访问 API 超时"
         echo -e "#$frontcontent pushplus 消息发送处理失败(${msg})\n"
     fi
@@ -284,10 +299,13 @@ hxtrip_pushplus_notify_api() {
             --data-raw "{\"token\":\"$token\",\"title\":\"$title\",\"content\":\"$content\"}"
     )
     code=$(echo $api | perl -pe '{s|.*<code>([\d]+)</code>.*|\1|g}')
-    msg=$(echo $api | perl -pe '{s|.*<msg>([\d]+)</msg>.*|\1|g}')
+    msg=$(echo $api | perl -pe '{s|.*<msg>([\S]+)</msg>.*|\1|g}')
     if [[ $code == 200 ]]; then
         echo -e "#$frontcontent hxtrip pushplus 消息发送成功\n"
     else
+        if [[ $code == 500 ]]; then
+            msg="服务器宕机"
+        fi
         [[ ! $msg ]] && msg="访问 API 超时"
         echo -e "#$frontcontent hxtrip pushplus 消息发送处理失败(${msg})\n"
     fi
@@ -309,7 +327,7 @@ Telegram_notify_api() {
         local https_proxy=http://$TG_PROXY_HOST:$TG_PROXY_PORT/
     else
         local https_proxy=""
-    fi        
+    fi
 
     local api=$(
         curl -s --connect-timeout 20 "*" "$url" \
@@ -457,7 +475,7 @@ verify_ck(){
     check_ck(){
         local i=$1
         local j=${pin[i]}
-        local ck_status_chinese ck_process_chinese
+        local ck_status_chinese ck_process_chinese jd_cookie
         status_ori[$j]="$(def_json JD_COOKIE status "pin=$j;")"
         Get_CK_Status ${value[i]}
         if [[ $retcode = 0 ]]; then
@@ -476,7 +494,35 @@ verify_ck(){
             ck_status_chinese="因 API 连接失败跳过检测"
         fi
         echo -n "${full_name[$j]} $ck_status_chinese"
-        [[ ${ck_status[$j]} ]] && [[ ${ck_status[$j]} != ${status_ori[$j]} ]] && ql_process_env_api $(eval echo \${$tmp_id[i]}) ${ck_status[$j]} $ck_process_chinese || echo -e ""
+        if [[ ${ck_status[$j]} = 1 ]]; then
+            if [[ ${wskey_value[$j]} ]]; then
+                jd_cookie=""
+                wsck_to_ck ${wskey_value[$j]}
+                if [[ $jd_cookie ]]; then
+                    unset ck_invalid[i]
+                    ck_status[$j]="0"
+                    ck_valid[i]="${full_name[$j]}\n"
+                    ck_status_chinese="正常"
+                    ck_process_chinese="启用"
+                    echo -n "，JD_WSCK转换"
+                    ql_update_env_api JD_COOKIE "$jd_cookie" $(eval echo \${$tmp_id[i]})
+                else
+                    echo -e "，JD_WSCK失效或转换失败"
+                    wskey_invalid[i]="${full_name[$j]}\n"
+                    if [[ ${ck_status[$j]} != ${status_ori[$j]} ]] && [[ $WSKEY_AUTO_DISABLE ]]; then
+                        ql_process_env_api $(eval echo \${$tmp_id[i]}) ${ck_status[$j]} $ck_process_chinese
+                    else
+                        echo -e ""
+                    fi
+                fi
+            else
+                echo -e ""
+            fi
+        elif [[ ${ck_status[$j]} != ${status_ori[$j]} ]] && [[ ${ck_status[$j]} = 0 ]]; then
+            ql_process_env_api $(eval echo \${$tmp_id[i]}) ${ck_status[$j]} $ck_process_chinese
+        else
+            echo -e ""
+        fi
     }
 
     # JD_WSCK(wskey) 录入情况检查
@@ -584,7 +630,7 @@ verify_ck(){
 
     for i in ${!value[@]}; do
         local j=${pin[i]}
-        ori_value[i]=${value[i]}
+        Checksum_code[i]=${pin[i]}
         echo ""
         Get_Full_Name $i
         check_ck $i
@@ -597,8 +643,83 @@ verify_ck(){
     done
 }
 
-## 检测到失效账号，或还未转换为 JD_COOKIE 的 JD_WSCK(wskey)，则搜索或下载wskey转换脚本进行转换
+## 检测到失效账号，自动使用JD_WSCK(wskey) 转换 JD_COOKIE
 wsck_to_ck(){
+    wskey_sign_api=("http://43.135.90.23/" "https://shizuku.ml/" "https://cf.shizuku.ml/")
+
+    get_UA(){
+        for host in ${wskey_sign_api[@]}; do
+            local url="${host}check_api"
+            local api=$(
+                curl -s -k --connect-timeout 20 --retry 3 --noproxy "*" "$url" \
+                    -H "Authorization: Bearer Shizuku"
+            )
+
+            local code=$(echo $api | jq -r .code)
+            if [[ $code == 200 ]]; then
+                UA=$(echo $api | jq -r '.["User-Agent"]')
+                break
+            fi
+        done
+    }
+
+    get_sign(){
+        local url="https://api.jds.codes/jd/gentoken"
+        local api=$(
+            curl -s -k --connect-timeout 20 --retry 3 --noproxy "*" "${url}" \
+                -H "Content-Type: application/json" \
+                -d '{"url": "https://home.m.jd.com/myJd/newhome.action"}'
+        )
+
+        local code=$(echo $api | jq -r .code)
+        if [[ $code == 200 ]]; then
+            sign=$(echo $api | jq -r .data.sign)
+        fi
+    }
+
+    getJDCookie(){
+        local url="https://un.m.jd.com/cgi-bin/app/appjmp?tokenKey=${tokenKey}&to=https://home.m.jd.com/myJd/newhome.action"
+
+        local api=$(
+            curl -I -s -k --connect-timeout 20 --retry 3 --noproxy "*" "${url}" \
+                -H "Connection: Keep-Alive" \
+                -H "Accept: */*" \
+                -H "User-Agent: $UA" \
+                -H "Accept-Language: zh-Hans-CN;q=1, en-CN;q=0.9" \
+                -H "Content-Type: application/x-www-form-urlencoded"
+        )
+
+        [[ "$api" == *pt_key=app_open* ]] && jd_cookie="$(echo "$api" | grep -Eo 'pt_key=(\S*?);')$(echo "$api" | grep -Eo 'pt_pin=(\S*?);')"
+    }
+
+    get_UA
+    get_sign
+    local wskey=$1
+    local url="https://api.m.jd.com/client.action?functionId=genToken&${sign}"
+    local UA='jdapp;android;10.3.5;;;appBuild/92468;ef/1;ep/{"hdid":"JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw=","ts":1645931844119,"ridx":-1,"cipher":{"sv":"CJS=","ad":"EWS1EJU5ZJOzENO2Yzu5EK==","od":"YtLvCWS0EWVtYJY1ENqyCm==","ov":"CzO=","ud":"EWS1EJU5ZJOzENO2Yzu5EK=="},"ciphertype":5,"version":"1.2.0","appname":"com.jingdong.app.mall"};Mozilla/5.0 (Linux; Android 12; M2102K1C Build/SKQ1.211006.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/97.0.4692.98 Mobile Safari/537.36'
+
+    local api=$(
+        curl -s -k --connect-timeout 20 --retry 3 --noproxy "*" "${url}" \
+            -X 'POST' \
+            -H "Host: api.m.jd.com" \
+            -H "Cookie: $wskey" \
+            -H "Accept: */*" \
+            -H "User-Agent: $UA" \
+            -H "Accept-Language: zh-Hans-CN;q=1, en-CN;q=0.9" \
+            -H "Content-Type: application/x-www-form-urlencoded"
+    )
+
+    local code=$(echo $api | jq -r .code)
+    if [[ $code == 0 ]]; then
+        tokenKey=$(echo $api | jq -r .tokenKey)
+        getJDCookie
+    else
+       echo -e "# JD_WSCK(wskey 已失效)"
+    fi
+}
+
+## 检测到失效账号，或还未转换为 JD_COOKIE 的 JD_WSCK(wskey)，则搜索或下载wskey转换脚本进行转换
+wsck_to_ck_bak(){
     # 主站链接数组
     host_url_array=(
       https://raw.fastgit.org
@@ -733,7 +854,7 @@ content_notify(){
         local process=$2
         local status=$3
         local full_name=$4
-        local content_1 content_2 content_3 content_4 content_5 summary content
+        local content_1 content_2 content_3 content_4 content_5 summary content uid
         if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') ]]; then
             if [[ $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]] && [[ ${Uid[$j]} ]]; then
                 uid="$(echo $MainWP_UID,${Uid[$j]} | perl -pe '{s|^|\"|; s|,|\",\"|g; s|$|\"|}')"
@@ -745,12 +866,13 @@ content_notify(){
             if [[ "$uid" ]]; then
                 content_0="Cookie $process通知<br><br>"
                 content_1="$full_name 账号$status并$process"
-                [[ $wskey_end = 0 ]] && [[ ${wskey_invalid[i]} ]] && content_2="，JD_WSCK(wskey) 已失效"
+                #[[ $wskey_end = 0 ]] && [[ ${wskey_invalid[i]} ]] && content_2="，JD_WSCK(wskey) 失效或转换失败"
+                [[ ${wskey_invalid[i]} ]] && content_2="，JD_WSCK(wskey) 失效或转换失败"
                 [[ ${ck_none_wskey[i]} ]] && content_3="，未录入 JD_WSCK(wskey)"
                 [[ ${ck_undocked_uid[i]} ]] && content_4="，WxPusher 未对接完成"
                 [[ ${ck_no_uid[i]} ]] && content_5="，未录入 WxPusher UID"
                 summary="$content_0$content_1$content_2$content_3$content_4$content_5"
-                content="$content_0$content_top<br><br>$content_1$content_2$content_3$content_4$content_5<br><br><br><br>$content_bot"
+                content="$content_0$content_top$content_1$content_2$content_3$content_4$content_5$content_bot"
                 [[ ${#summary} -gt 100 ]] && summary="${summary: 0: 96} ……"
                 WxPusher_notify_api $WP_APP_TOKEN_ONE "$content" "$summary" "$uid" "$full_name"
             fi
@@ -781,7 +903,7 @@ content_notify(){
             fi
         elif [[ ${final_status[$j]} = 1 ]]; then
             ck_status[$j]="1"
-            [[ $wskey_end = 0 ]] && [[ ${wskey_value[$j]} ]] && wskey_invalid[i]="${full_name[$j]}\n"
+            #[[ $wskey_end = 0 ]] && [[ ${wskey_value[$j]} ]] && wskey_invalid[i]="${full_name[$j]}\n"
             ck_invalid[i]="${full_name[$j]}\n"
             unset ck_valid[i]
             ck_status_chinese="失效"
@@ -817,7 +939,7 @@ content_notify(){
                 status_last[$j]=${status_ori[$j]}
             fi
             final_status[$j]="$(def_json JD_COOKIE status "pin=$j;")"
-            if [[ ori_value[i]=${value[i]} ]]; then
+            if [[ ${Checksum_code[i]} = ${pin[i]} ]]; then
                 [[ ${ck_status[$j]} != 2 ]] && [[ "${final_status[$j]}" == "${status_last[$j]}" ]] && [[ "${final_status[$j]}" == "${ck_status[$j]}" ]] && [[ ${final_status[$j]} = 0 ]] && continue
             fi
             Get_Full_Name $i
@@ -849,7 +971,7 @@ content_notify(){
         [[ $NOTIFY_VALID_TIME = 1 ]] && content_5=$notify_content_validity_lt_1day_all
 
         wskey_invalid_all="$(print_array "${wskey_invalid[*]}")"
-        [[ $wskey_invalid_all ]] && notify_content_wskey_invalid_all="💫💫✨JD_WSCK(wskey)失效的账号(共${#wskey_invalid[@]}个)✨💫💫\n$wskey_invalid_all\n"
+        [[ $wskey_invalid_all ]] && notify_content_wskey_invalid_all="💫💫✨JD_WSCK(wskey)失效或转换失败的账号(共${#wskey_invalid[@]}个)✨💫💫\n$wskey_invalid_all\n"
         [[ $NOTIFY_WSKEY_NO_EXIST = 1 ]] && content_6=$notify_content_wskey_invalid_all
 
         ck_none_wskey_all="$(print_array "${ck_none_wskey[*]}")"
@@ -903,9 +1025,9 @@ content_notify(){
         if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') && $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]] || [[ $QYWX_KEY ]] || [[ $QYWX_AM ]] || [[ $PUSH_PLUS_TOKEN ]] || [[ $PUSH_PLUS_TOKEN_hxtrip ]] || [[ $TG_BOT_TOKEN && $TG_USER_ID ]]; then
             if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') && $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]]; then
                 #local summary="Cookie 状态通知<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')"
-                #local content="Cookie 状态通知<br><br>$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                #local content="Cookie 状态通知<br><br>$content_top$(echo $display_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                 local summary="Cookie 状态通知<br><br>$(echo $content_top | perl -pe '{s|\\n|<br>|g}')"
-                local content="Cookie 状态通知<br><br>$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                local content="Cookie 状态通知<br><br>$content_top$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                 uids="$(echo $MainWP_UID | perl -pe '{s|^|\"|; s|$|\"|}')"
                 WxPusher_notify_api $WP_APP_TOKEN_ONE "$content" "$summary" "$uids"
             fi
@@ -918,20 +1040,20 @@ content_notify(){
                 QYWX_GetToken_api
                 if [[ $? = 0 ]]; then
                     #local summary="$display_content"
-                    #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                    #local content="$content_top$(echo $display_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                     local summary="$notify_content"
-                    local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                    local content="$content_top$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                     QYWX_notify_api "Cookie 状态通知" "$content" "$summary"
                 fi
             fi
             if [[ $PUSH_PLUS_TOKEN ]]; then
-                #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                #local content="$content_top$(echo $display_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
+                local content="$content_top$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                 pushplus_notify_api $PUSH_PLUS_TOKEN "Cookie 状态通知" "$content"
             fi
             if [[ $PUSH_PLUS_TOKEN_hxtrip ]]; then
-                #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
+                #local content="$content_top$(echo $display_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
+                local content="$content_top$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')$content_bot"
                 hxtrip_pushplus_notify_api $PUSH_PLUS_TOKEN_hxtrip "Cookie 状态通知" "$content"
             fi
             if [[ $TG_BOT_TOKEN && $TG_USER_ID ]]; then
@@ -953,7 +1075,6 @@ declare -A remarks_ori remarks_id remarks_name remarks_new wskey_value wskey_id 
 gen_pt_pin_array
 verify_ck
 echo ""
-wsck_to_ck
 content_notify
 
 #[[ $CK_WxPusherUid = 1 ]] && echo -e "$CK_WxPusherUid_Json_content" > $CK_WxPusherUid_dir/$CK_WxPusherUid_file

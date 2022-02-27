@@ -316,6 +316,11 @@ jd_babel_red.js
 jd_dadoudou.js
 #萌虎摇摇乐送卡
 jd_mhyyl_sendCard.js
+#新春击鼓助力
+gua_HappyNewYear_Shares.js
+#头文字
+jd_mpdzcar.js
+jd_mpdzcar_*.js
 ############不能跑的################
 # 通用游戏
 jd_game.js
