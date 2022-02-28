@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Build 20220228-001-test
+## Build 20220228-002-Alpha
 
 ## 导入通用变量与函数
 dir_shell=/ql/shell
@@ -74,7 +74,7 @@ gen_pt_pin_array() {
     sn=($(def_json JD_COOKIE value | awk '{print NR}'))
     pin=($(def_json_total JD_COOKIE value | perl -pe "{s|.*pt_pin=([^; ]+)(?=;?).*|\1|}"))
     pt_pin=($(def_json_total JD_COOKIE value | perl -pe "{s|.*pt_pin=([^; ]+)(?=;?).*|\1|}" | awk 'BEGIN{for(i=0;i<10;i++)hex[i]=i;hex["A"]=hex["a"]=10;hex["B"]=hex["b"]=11;hex["C"]=hex["c"]=12;hex["D"]=hex["d"]=13;hex["E"]=hex["e"]=14;hex["F"]=hex["f"]=15;}{gsub(/\+/," ");i=$0;while(match(i,/%../)){;if(RSTART>1);printf"%s",substr(i,1,RSTART-1);printf"%c",hex[substr(i,RSTART+1,1)]*16+hex[substr(i,RSTART+2,1)];i=substr(i,RSTART+RLENGTH);}print i;}'))
-    wskey_array=($(def_json_total JD_WSCK value))
+    wskey_array=($(def_json_total JD_WSCK value | perl -pe "{s| ||g}"))
 
     CK_WxPusherUid_dir="$dir_scripts"
     CK_WxPusherUid_file="CK_WxPusherUid.json"
