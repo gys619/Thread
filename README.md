@@ -16,7 +16,6 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey"
 推荐定时 0 */4 * * *
 ```
 
-[兜兜风评价助手1.6测试版](https://github.com/gys619/gys/blob/main/doudoufeng/%E5%85%9C%E5%85%9C%E9%A3%8E%E7%9A%84%E4%B8%9C%E4%BA%AC%E8%AF%84%E4%BB%B7%E5%8A%A9%E6%89%8B(%E6%B5%8B%E8%AF%95%E7%89%88)%201.7.exe?raw=true)
 
 [退会：JDMemberCloseAccount](https://github.com/yqchilde/JDMemberCloseAccount)
 
@@ -299,7 +298,8 @@ ql repo https://github.com/panghu999/panghu.git "jd_"
 * [@kangwenhang](https://github.com/kangwenhang)
 * [@smiek2221](https://github.com/smiek2221/scripts.git)
 * [@yuannian1112](https://github.com/yuannian1112/jd_scripts.git)
-*  [@shufflewzc](https://github.com/okyyds/yyds/tree/master)
+*  [@okyyds](https://github.com/okyyds/yyds/tree/master)
+*  [@shufflewzc](https://github.com/shufflewzc/faker2/tree/main)
 *  [@passerby-b](https://github.com/passerby-b/JDDJ.git)
 *  [@he1pu](https://github.com/he1pu/JDHelp.git)
 *  [@ccwav](https://github.com/ccwav/QLScript2.git)
