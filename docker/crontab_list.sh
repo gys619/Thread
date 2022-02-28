@@ -338,7 +338,8 @@
 #农场自动兑红包种水果
 3 1 * * * node /scripts/jd_tyt.js >> /scripts/logs/jd_tyt.log 2>&1
 #推一推
-
+3 1 * * * node /scripts/jd_js_sign.js >> /scripts/logs/jd_js_sign.log 2>&1
+#京东极速版提现
 
 
 
