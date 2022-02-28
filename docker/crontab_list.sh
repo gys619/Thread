@@ -164,11 +164,11 @@
 #京东摇钱树助力
 0 01-23/3 * * * node /scripts/jd_mohe.js >> /scripts/logs/jd_mohe.log 2>&1
 #5G超级盲盒
-26 8 * * * node /scripts/jd_mpdzcar_help.js >> /scripts/logs/jd_mpdzcar_help.log 2>&1
+#26 8 * * * node /scripts/jd_mpdzcar_help.js >> /scripts/logs/jd_mpdzcar_help.log 2>&1
 #头文字J助力
-26 8 * * * node /scripts/jd_mpdzcar_game.js >> /scripts/logs/jd_mpdzcar_game.log 2>&1
+#26 8 * * * node /scripts/jd_mpdzcar_game.js >> /scripts/logs/jd_mpdzcar_game.log 2>&1
 #头文字J游戏
-10 8 * * * node /scripts/jd_mpdzcar.js >> /scripts/logs/jd_mpdzcar.log 2>&1
+#10 8 * * * node /scripts/jd_mpdzcar.js >> /scripts/logs/jd_mpdzcar.log 2>&1
 #头文字J
 30 7 * * * node /scripts/jd_morningSc.js >> /scripts/logs/jd_morningSc.log 2>&1
 #早起赢现金
@@ -332,7 +332,7 @@
 #颜究种植园
 30 18 * * * node /scripts/ jd_wq_wxsign.js >> /scripts/logs/ jd_wq_wxsign.log 2>&1
 #微信签到领红包
- 0 10 * * * node /scripts/ jd_jrmx.py >> /scripts/logs/ jd_jrmx.log 2>&1
+# 0 10 * * * node /scripts/ jd_jrmx.py >> /scripts/logs/ jd_jrmx.log 2>&1
 #京东金融分享助力
 5 0 10 * * * node /scripts/ jd_farm_automation.js >> /scripts/logs/ jd_farm_automaton.log 2>&1
 #农场自动兑红包种水果
