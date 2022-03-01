@@ -143,8 +143,6 @@ jd_jx_cashback.js
 jd_sign_validate.js	
 jd_ylynj.js
 jd_speed_signfree_Mod.js
-#推一推
-#jd_tyt.js
 jd_ttzdq.js
 jd_kk1.js
 jd_fcdyj_help.js
@@ -299,7 +297,7 @@ jd_btfree.py
 jd_UnknownTask5.js
 jd_hwmh.js
 # 惊喜88红包
-jd_jxlhb.js
+#jd_jxlhb.js
 ###开卡
 jd_mt.js
 #京东金融天天试手气
@@ -321,6 +319,8 @@ gua_HappyNewYear_Shares.js
 #头文字
 jd_mpdzcar.js
 jd_mpdzcar_*.js
+#推一推
+jd_tyt.js
 ############不能跑的################
 # 通用游戏
 jd_game.js
