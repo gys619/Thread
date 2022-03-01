@@ -12,6 +12,12 @@
 ``` 
 ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_|sign_graphics_validate|jddj_cookie|function|ql|magic|JDJR|JD" "main"
 ```
+
+##带ccwav大佬通知版
+``` 
+ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey|sendNotify" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_|sign_graphics_validate|jddj_cookie|function|ql|magic|JDJR|JD" "main"
+```
+
 ```
 推荐定时 0 */4 * * *
 ```
@@ -21,15 +27,13 @@ ql repo https://github.com/gys619/jdd.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey"
 
 免责声明: 本仓库项目中所涉及的任何解锁和解密分析脚本，仅用于测试和学习研究，不保证其合法性，准确性，完整性和有效性，请根据情况自行判断。请勿将本项目的任何内容用于商业或非法途径，否则后果由使用者自负。如果您认为该项目的内容可能涉嫌侵犯其权利，请与我联系，我会尽快删除文件。如果您使用或复制了本仓库项目中的任何内容，则视为您已接受此免责声明。
 
-拉不到库是因为版本号没了，需要删了重新拉一下，运行一下下面命令就好了，库不稳，见谅！
+拉不到库，需要删了重新拉一下，运行一下下面命令就好了，库不稳，见谅！
 
 docker exec -it 容器名 bash
 
 cd repo
 
-rm -rf gys619_jdd
-
-##### jd_lzdz1_xxxxx.js开卡脚本取消了，有需要用青蛙的开卡
+rm -rf gys619_Absinthe_main
 
 ### 脚本说明
 <details>
@@ -308,4 +312,4 @@ ql repo https://github.com/panghu999/panghu.git "jd_"
 *  [@KingRan](https://github.com/KingRan/KR)
 *  [@Aaron-lv](https://github.com/Aaron-lv/sync)
 *  [@zero205](https://github.com/zero205/JD_tencent_scf)
-*  [@mmnvnmm](https://github.com/mmnvnmm/omo.git)
+*  [@okyyds_duck](https://github.com/okyyds/duck.git)
