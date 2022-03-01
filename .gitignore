@@ -322,6 +322,9 @@ jd_mpdzcar_*.js
 #推一推
 jd_tyt.js
 ############不能跑的################
+
+#宠汪汪有就兑换
+jd_joy_reward.js
 # 通用游戏
 jd_game.js
 # 通用ID任务
