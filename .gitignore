@@ -366,7 +366,7 @@ jd_anjia.js
 jd_senbeans.js
 jd_cfd_help.js
 wx_*.js
-jd_lzdz1_*.js
+#jd_lzdz1_*.js
 jd_jinggengjcq_*.js
 jd_rush_*.js
 #重复的评价
