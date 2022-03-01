@@ -172,7 +172,9 @@ jd_work_cookie.js
 
 jd_exjxbeans.js
 
-jd_jx_*.js
+#jd_jx_*.js
+jd_jx_factory_automation.js
+jd_jx_factory.js
 
 m_*.js
 ######重复脚本#######
