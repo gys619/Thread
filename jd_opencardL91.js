@@ -158,10 +158,18 @@ async function run() {
     }else{
       console.log('已全部开卡')
     }
-    
-    console.log(`${$.score}值`)
+    $.log("加购: " + $.addSku)
+    if(!$.addSku && !$.outFlag){
+        flag = true
+        await takePostRequest('addSku');
+        await $.wait(parseInt(Math.random() * 1000 + 5000, 10))
+      
+    }
+    if(flag){
+      await takePostRequest('activityContent');
+    }
       $.runFalag = true
-      let count = parseInt($.score/100)
+      let count = parseInt($.score/1)
       console.log(`抽奖次数为:${count}`)
       for(m=1;count--;m++){
         console.log(`第${m}次抽奖`)
@@ -191,7 +199,7 @@ async function run() {
     await $.wait(parseInt(Math.random() * 1000 + 5000, 10))
     if(flag) await $.wait(parseInt(Math.random() * 1000 + 10000, 10))
       if($.index % 3 == 0) console.log('休息1分钟，别被黑ip了\n可持续发展')
-      if($.index % 3 == 0) await $.wait(parseInt(Math.random() * 5000 + 60000, 10))
+      if($.index % 3 == 0) await $.wait(parseInt(Math.random() * 5000 + 30000, 10))
   } catch (e) {
     console.log(e)
   }
@@ -246,7 +254,7 @@ async function takePostRequest(type) {
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
       case 'startDraw':
-        url = `${domain}/joint/order/draw`;
+        url = `${domain}/dingzhi/fashion/union/draw`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}&drawType=1`
         break;
       case 'followShop':
@@ -257,7 +265,7 @@ async function takePostRequest(type) {
       case 'sign':
       case 'addCart':
       case 'browseGoods':
-        url = `${domain}/dingzhi/linkgame/${type}`;
+        url = `${domain}/dingzhi/fashion/union/saveTask`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}`
         if(type == 'browseGoods') body += `&value=${$.visitSkuValue}`
         break;
@@ -274,7 +282,7 @@ async function takePostRequest(type) {
       case 'visitSku':
       case 'toShop':
       case 'addSku':
-        url = `${domain}/dingzhi/opencard/${type}`;
+        url = `${domain}/dingzhi/fashion/union/saveTask`;
         let taskType = ''
         let taskValue = ''
         if(type == 'viewVideo'){
@@ -284,11 +292,11 @@ async function takePostRequest(type) {
           taskType = 5
           taskValue = $.visitSkuValue || 5
         }else if(type == 'toShop'){
-          taskType = 14
-          taskValue = $.toShopValue || 14
+          taskType = 12
+          taskValue = $.toShopValue || 74956 
         }else if(type == 'addSku'){
-          taskType = 2
-          taskValue = $.addSkuValue || 2
+          taskType = 21
+          taskValue = $.addSkuValue || 21
         }else if(type == 'toMainActive'){
           taskType = 12
           taskValue = 3
@@ -308,7 +316,7 @@ async function takePostRequest(type) {
         body = `activityId=${$.activityId}`
         break;
       case '抽奖':
-        url = `${domain}/dingzhi/opencard/draw`;
+        url = `${domain}/dingzhi/fashion/union/draw`;
         body = `activityId=${$.activityId}&actorUuid=${$.actorUuid}&pin=${encodeURIComponent($.Pin)}`
         break;
       default:
@@ -414,7 +422,8 @@ async function dealReturn(type, data) {
           if(res.result && res.result === true){
             $.endTime = res.data.endTime || (res.data.activityVo && res.data.activityVo.endTime) || res.data.activity.endTime || 0
             $.hasEnd = res.data.hasEnd || false
-            $.score = res.data.assistCount || 0
+            $.score = res.data.score || 0
+			$.addSku = res.data.skuAddCart || false
             $.actorUuid = res.data.actorUuid || ''
             $.followShop = res.data.followShopStatus || ''
             $.signStatus = res.data.signStatus || false
