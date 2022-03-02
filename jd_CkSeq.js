@@ -17,9 +17,24 @@ if ($.isNode()) {
 let arrCkPtPin = [];
 let arrEnvPtPin = [];
 let arrEnvStatus = [];
+let arrEnvOnebyOne = [];
 let strCk = "";
 let strNoFoundCk = "";
 let strMessage = "";
+
+const fs = require('fs');
+let TempCKUid = [];
+let strUidFile = '/ql/scripts/CK_WxPusherUid.json';
+let UidFileexists = fs.existsSync(strUidFile);
+if (UidFileexists) {
+    console.log("检测到一对一Uid文件WxPusherUid.json，载入...");
+    TempCKUid = fs.readFileSync(strUidFile, 'utf-8');
+    if (TempCKUid) {
+        TempCKUid = TempCKUid.toString();
+        TempCKUid = JSON.parse(TempCKUid);
+    }
+}
+
 !(async() => {
 
     const envs = await getEnvs();
@@ -28,7 +43,8 @@ let strMessage = "";
             var tempptpin = decodeURIComponent(envs[i].value.match(/pt_pin=([^; ]+)(?=;?)/) && envs[i].value.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
             arrEnvPtPin.push(tempptpin);
             arrEnvStatus.push(envs[i].status);
-
+			var struuid=getuuid(envs[i].remarks,tempptpin)
+			arrEnvOnebyOne.push(struuid);
         }
     }
 
@@ -40,7 +56,11 @@ let strMessage = "";
             if (intSeq != -1) {
                 intSeq += 1;
                 arrCkPtPin.push(tempptpin);
-                strCk += "【"+intSeq + "】" + tempptpin + "\n";
+                strCk += "【"+intSeq + "】" + tempptpin ;
+				if (arrEnvOnebyOne[i]) {
+					strCk += "(账号已启用一对一推送)"
+				}
+				strCk +="\n";
             }
         }
     }
@@ -53,7 +73,10 @@ let strMessage = "";
             if (arrEnvStatus[i] == 1) {
                 strNoFoundCk += "(状态已禁用)"
             }
-			 strNoFoundCk +="\n";
+			if (arrEnvOnebyOne[i]) {
+                strNoFoundCk += "(账号已启用一对一推送)"
+            }
+			strNoFoundCk +="\n";
 
         }
     }
@@ -82,6 +105,37 @@ function inArray(search, array) {
         }
     }
     return parseInt(lnSeq);
+}
+
+function getuuid(strRemark, PtPin) {
+    var strTempuuid = "";
+    if (strRemark) {
+        var Tempindex = strRemark.indexOf("@@");
+        if (Tempindex != -1) {
+            //console.log(PtPin + ": 检测到NVJDC的一对一格式,瑞思拜~!");
+            var TempRemarkList = strRemark.split("@@");
+            for (let j = 1; j < TempRemarkList.length; j++) {
+                if (TempRemarkList[j]) {
+                    if (TempRemarkList[j].length > 4) {
+                        if (TempRemarkList[j].substring(0, 4) == "UID_") {
+                            strTempuuid = TempRemarkList[j];
+                            break;
+                        }
+                    }
+                }
+            }            
+        }
+    }
+    if (!strTempuuid && TempCKUid) {
+        //console.log("正在从CK_WxPusherUid文件中检索资料...");
+        for (let j = 0; j < TempCKUid.length; j++) {
+            if (PtPin == decodeURIComponent(TempCKUid[j].pt_pin)) {
+                strTempuuid = TempCKUid[j].Uid;
+                break;
+            }
+        }
+    }
+    return strTempuuid;
 }
 
 // prettier-ignore
