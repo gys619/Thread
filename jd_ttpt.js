@@ -1,8 +1,7 @@
 /*
 *
-Author：zero205
 Data：2021-09-29
-GitHub：https://github.com/zero205/JD_tencent_scf/tree/main
+GitHub：https://github.com/888888/JD_tencent_scf/tree/main
 
 活动入口：京东金融APP-签到-天天拼图
 
@@ -12,17 +11,17 @@ GitHub：https://github.com/zero205/JD_tencent_scf/tree/main
 ============Quantumultx===============
 [task_local]
 京东金融天天拼图
-20 0,16 * * * https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_ttpt.js, tag=京东金融天天拼图, enabled=true
+20 0,16 * * * https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_ttpt.js, tag=京东金融天天拼图, enabled=true
 
 ================Loon==============
 [Script]
-cron "20 0,16 * * *" script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_ttpt.js,tag=京东金融天天拼图
+cron "20 0,16 * * *" script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_ttpt.js,tag=京东金融天天拼图
 
 ===============Surge=================
-京东金融天天拼图 = type=cron,cronexp="20 0,16 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_ttpt.js
+京东金融天天拼图 = type=cron,cronexp="20 0,16 * * *",wake-system=1,timeout=20,script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_ttpt.js
 
 ============小火箭============
-京东金融天天拼图 = type=cron,script-path=https://raw.githubusercontent.com/zero205/JD_tencent_scf/main/jd_ttpt.js, cronexpr="20 0,16 * * *", timeout=3600, enable=true
+京东金融天天拼图 = type=cron,script-path=https://raw.githubusercontent.com/888888/JD_tencent_scf/main/jd_ttpt.js, cronexpr="20 0,16 * * *", timeout=3600, enable=true
 *
 */
 const $ = new Env('天天拼图');
@@ -49,7 +48,7 @@ if ($.isNode()) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
-  console.log(`\nAuthor：zero205\n活动入口：京东金融APP->签到->天天拼图\n`);
+  // console.log(`\nAuthor：888888\n活动入口：京东金融APP->签到->天天拼图\n`);
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
