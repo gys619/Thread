@@ -685,7 +685,7 @@ function invite2() {
     "/",
     "/",
     "",
-    "/",
+    "m95y+Pagsmn6cXWtNhfrV9ymDN4QK1ivsmbN32lpEHw=",
     "=",
     "",
   ]
@@ -719,7 +719,7 @@ function invite() {
     "/",
     "/",
     "",
-    "/",
+    "m95y+Pagsmn6cXWtNhfrV9ymDN4QK1ivsmbN32lpEHw=",
     "=",
     "",
   ]
