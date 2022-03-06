@@ -52,9 +52,8 @@ if ($.isNode()) {
             $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             authorCodeList = [
                 '283e02eafeb54612ab74c23ff642d48b',
-                '283e02eafeb54612ab74c23ff642d48b',
+                'd4d4426279bb45f98ce036229fc663f8',
                 'af10ccdbffdb4488a090b43dfcb401e8',
-                'a02846cc0dc8486f9fe3308369d8f185',
             ]
             // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
@@ -62,7 +61,7 @@ if ($.isNode()) {
             $.randomCode = random(1000000, 9999999)
             $.activityId = 'uniongame20220303molpd624p'
             $.activityShopId = '1000376431'
-            $.activityUrl = `https://lzdz1-isv.isvjcloud.com/dingzhi/customized/common/activity?activityId=uniongame2022030101goddess&shareUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
+            $.activityUrl = `https://lzdz1-isv.isvjcloud.com/dingzhi/customized/common/activity?activityId=uniongame20220303molpd624p&shareUuid=${encodeURIComponent($.authorCode)}&adsource=null&shareuserid4minipg=null&shopid=${$.activityShopId}&lng=00.000000&lat=00.000000&sid=&un_area=`
             await member();
             // await $.wait(2000)
             if ($.bean > 0) {
