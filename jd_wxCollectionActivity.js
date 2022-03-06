@@ -9,7 +9,7 @@ JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数
 JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
 7 7 7 7 7 jd_wxCollectionActivity.js
 
-活动环境变量参考 ACTIVITY_ID="" 多id & 分开, ACTIVITY_ALL 不判断黑号,默认判断,如果不需要判断 ACTIVITY_ALL = flase
+活动环境变量参考 ACTIVITY_ID="" 多id & 分开, ACTIVITY_ALL 不判断黑号,默认判断,如果不需要判断 ACTIVITY_ALL = false
 
 脚本加密!!!介意别跑!!!
 脚本加密!!!介意别跑!!!
