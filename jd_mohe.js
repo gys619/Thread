@@ -7,11 +7,11 @@
 =================================Quantumultx=========================
 [task_local]
 #5G超级盲盒
-0 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0,1-23/3 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js, tag=5G超级盲盒, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "0 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
+cron "5 0,1-23/3 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js,tag=5G超级盲盒
 
 ===================================Surge================================
 5G超级盲盒 = type=cron,cronexp="0 0,1-23/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_mohe.js
@@ -47,11 +47,9 @@ $.shareId = [];
       '活动地址: https://blindbox5g.jd.com\n' +
       '活动时间：2021-8-2到2021-10-29\n' +
       '更新时间：2021-8-8 19:00');
-//   $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
-//   await $.wait(1000)
-  await updateShareCodesCDN('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
+  $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
   await $.wait(1000)
-  await getShareCode()
+  await updateShareCodesCDN('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -75,7 +73,6 @@ $.shareId = [];
       await Promise.all([
         task0()
       ])
-      $.taskList_limit = 0
       await taskList();
       await getAward();//抽奖
     }
@@ -84,7 +81,7 @@ $.shareId = [];
     if ($.isNode()) await notify.sendNotify($.name, allMessage);
     $.msg($.name, '', allMessage, {"open-url": "https://blindbox5g.jd.com"})
   }
-  $.shareId = [...($.shareId || []), ...($.updatePkActivityIdRes || []), ...($.zero205Code || [])];
+  $.shareId = [...($.shareId || []), ...($.updatePkActivityIdRes || [])];
   for (let v = 0; v < cookiesArr.length; v++) {
     cookie = cookiesArr[v];
     $.index = v + 1;
@@ -95,9 +92,6 @@ $.shareId = [];
       const res = await addShare(item);
       if (res && res['code'] === 2005) {
         console.log(`次数已用完，跳出助力`)
-        break
-      } else if (res && res['code'] === 1002) {
-        console.log(`账号火爆，跳出助力`)
         break
       }
     }
@@ -223,7 +217,6 @@ function getCoin() {
 }
 
 async function taskList() {
-  $.taskList_limit++
   return new Promise(async (resolve) => {
     const body = {"apiMapping":"/active/taskList"}
     $.post(taskurl(body), async (err, resp, data) => {
@@ -261,12 +254,8 @@ async function taskList() {
             console.log('\n\n----taskList的任务全部做完了---\n\n')
             console.log(`分享好友助力 ${task5.finishNum}/${task5.totalNum}\n\n`)
           } else {
-            if ($.taskList_limit >= 15){
-              console.log('触发死循环保护,结束')
-            } else {
-              console.log(`请继续等待,正在做任务,不要退出哦`)
-              await taskList();
-            }
+            console.log(`请继续等待,正在做任务,不要退出哦`)
+            await taskList();
           }
         }
       } catch (e) {
@@ -454,30 +443,6 @@ function updateShareCodesCDN(url) {
     })
   })
 }
-
-function getShareCode() {
-  return new Promise(resolve => {
-    $.get({
-      url: "https://raw.fastgit.org/zero205/11111128/main/shareCodes/11111127",
-      headers: {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      },
-      "timeout": 10000
-    }, async (err, resp, data) => {
-      try {
-        if (err) {
-        } else {
-          $.zero205Code = JSON.parse(data) || []
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve();
-      }
-    })
-  })
-}
-
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
