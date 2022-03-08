@@ -98,6 +98,7 @@
 	{"config":"30 18 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_wq_wxsign.js, tag= 微信签到领红包, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	  {"config":"0 10 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_farm_automation.js, tag= 农场自动兑红包种水果, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
 	  {"config":"3 1 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_tyt.js, tag= 推一推, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
-	  {"config":"3 1 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_js_sign.js, tag=京东极速版提现, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}
+	  {"config":"3 1 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_js_sign.js, tag=京东极速版提现, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"},
+	  {"config":"10 10 * * * https://raw.githubusercontent.com/gys619/jdd/main/jd_plusReward.js, tag=逛plus,抽京豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true", "addons":"https://raw.githubusercontent.com/gys619/jdd/main/QuantumultX/gys619_cookies.conf"}
   ]
 }

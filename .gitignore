@@ -298,7 +298,8 @@ jd_try_notify.js
 jd_btfree.py
 #依赖修复
 jd_scripts_check_dependence.py
-
+#逛plus抽京豆
+jd_plusLottery.js
 
 ########过期活动##############
 

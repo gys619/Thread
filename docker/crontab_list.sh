@@ -340,6 +340,8 @@
 #推一推
 3 1 * * * node /scripts/jd_js_sign.js >> /scripts/logs/jd_js_sign.log 2>&1
 #京东极速版提现
+10 10 * * * node /scripts/jd_plusReward.js >> /scripts/logs/jd_plusReward.log 2>&1
+#逛plus，抽京豆
 
 
 
