@@ -296,6 +296,9 @@ jd_try_notify.js
 
 #京东金融免息
 jd_btfree.py
+#依赖修复
+jd_scripts_check_dependence.py
+
 
 ########过期活动##############
 
