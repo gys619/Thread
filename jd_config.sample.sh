@@ -1,6 +1,6 @@
 ## Version: v2.8.0
 ## Date: 2021-06-20
-## Mod: Build 20220203-002-test
+## Mod: Build 20220302-002-test
 ## Update Content: 可持续发展纲要\n1. session管理破坏性修改\n2. 配置管理可编辑config下文件\n3. 自定义脚本改为查看脚本\n4. 移除互助相关
 
 ## 上面版本号中，如果第2位数字有变化，那么代表增加了新的参数，如果只有第3位数字有变化，仅代表更新了注释，没有增加新的参数，可更新可不更新
@@ -293,6 +293,12 @@ DOWNLOAD_BASIC_JS=""
 ###                ql|JD_DailyBonus                                      两个脚本均不屏蔽仓库文件夹复制替换
 ###                sendNotify@JDHelloWorld_jd_scripts|ccwav_QLScript2    sendNotify.js 不复制到 /ql/scripts/路径下的 JDHelloWorld 和 ccwav 的仓库文件夹。文件夹名称必须精确完整写出，不支持模糊匹配。
 js_deps_replace_envs="ql|JD_DailyBonus&sendNotify|JS_USER_AGENTS|USER_AGENTS@JDHelloWorld_jd_scripts"
+## 12.4 解析活动口令
+### 赋值要求：例如：单口令，例如 JD_CODE="29:/(M2wIg7AVEn)，10"
+###                 多口令：例如 JD_CODE="'29:/(M2wIg7AVEn)，10' '29:/(M2wIg7AVEn)，10'"
+JD_CODE=""
+## 12.5 调用组队活动的脚本文件名的关键词
+ZDJR_SCR="smiek_jd_zdjr.js"
 
 ## 13 Shell 版 Cookie 检测工具 ckck2 环境变量
 ## 13.1 推送失效账号、有效账号
@@ -308,38 +314,34 @@ NOTIFY_SKIP_SAME_CONTENT=""
 ###          填 2 表示只预测不通知账号剩余有效期；
 ###          空值或填其他内容表示不启用该功能。
 NOTIFY_VALID_TIME=""
-## 13.4 JD_WSCK(wskey)相关
-## 13.4.1 检测到失效账号后是否搜索并运行 WSKEY 转换 Cookie 的脚本(需要 /ql/scripts 或其子路径已存在 wskey 转换脚本)
+## 13.4 (失效)JD_WSCK(wskey)相关
+## 13.4.1 (失效)检测到失效账号后是否搜索并运行 WSKEY 转换 Cookie 的脚本(需要 /ql/scripts 或其子路径已存在 wskey 转换脚本)
 ### 赋值要求：填 1 表示启用 WSKEY 转换 Cookie 功能。空值或其他值表示不启用该功能。
-WSKEY_TO_CK=""
-## 13.4.2 自定义调用的 wskey 转换脚本
+### WSKEY_TO_CK=""
+## 13.4.2 (失效)自定义调用的 wskey 转换脚本
 ### 赋值要求：例如 wskey_scr="hyzaw_scripts/ql_refreshCK.py"。空值或其他值表示自动搜索文件名中包含 wskey 的 py 文件。
-diy_wskey_scr=""
-## 13.4.3 当未搜索到 wskey 脚本时下载 wskey 转换脚本，下载路径 /ql/scripts/
+### diy_wskey_scr=""
+## 13.4.3 (失效)当未搜索到 wskey 脚本时下载 wskey 转换脚本，下载路径 /ql/scripts/
 ### 赋值要求：填 1 表示启用下载 wskey 转换脚本功能。空值或其他值表示不启用该功能。
-DOWNLOAD_WSKEY_SCR=""
-## 13.4.4 下载 wskey 转换脚本的 URL 链接
+### DOWNLOAD_WSKEY_SCR=""
+## 13.4.4 (失效)下载 wskey 转换脚本的 URL 链接
 ### 赋值要求：空值，则默认下载 ZL143L 的脚本。非必要留空即可。也可自定义其他链接。
-WSKEY_SCR_URL=""
-## 13.4.5 当检索到下载路径 /ql/scripts/ 存在 wskey 转换脚本时，先行检测更新脚本后再进行 wskey 转换
+### WSKEY_SCR_URL=""
+## 13.4.5 (失效)当检索到下载路径 /ql/scripts/ 存在 wskey 转换脚本时，先行检测更新脚本后再进行 wskey 转换
 ### 赋值要求：填 1 表示启用功能。空值或其他值表示不启用该功能。
-CHECK_UPDATE_WSKEY_SCR=""
+### CHECK_UPDATE_WSKEY_SCR=""
 ## 13.4.6 JD_WSCK(wskey) 未录入情况的检测和通知类型
 ### 赋值要求：填 1 表示检测和通知 JD_WSCK(wskey) 未录入情况；
 ###          填 2 表示只检测不通知 JD_WSCK(wskey) 未录入情况；
 ###          空值或填其他内容表示不启用该功能。
 NOTIFY_WSKEY_NO_EXIST=""
-## 13.5 Zy143L wskey 转换脚本相关
+### 13.5 是否自动重启生效 Cookie/是否自动禁用失效 Cookie
 ### 13.5.1 是否禁用失效 Cookie
-### 赋值要求：任意赋值表示自动禁用，空值表示不自动禁用
-WSKEY_AUTO_DISABLE=""
-### 13.5.2 按时间间隔更新 Cookie
-### 赋值要求：正整数数字，（单位：小时）
-WSKEY_UPDATE_HOUR=""
-### 13.5.3 自动重试
-### 赋值要求：正整数数字，（单位：次）；
-###          空值表示默认值 10 次。
-WSKEY_TRY_COUNT=""
+### 赋值要求：任意赋值表示不自动禁用，空值表示自动禁用
+export WSKEY_AUTO_DISABLE=""
+### 13.5.2 是否重启生效 Cookie
+### 赋值要求：任意赋值表示不自动重启，空值表示自动重启
+export WSKEY_AUTO_ENABLE=""
 ## 13.6 将 JD_COOKIE 的 pt_pin 值的备注名同步 至 JD_WSCK(wskey) 的同 pin 值的备注名
 ### 赋值要求：填 1 表示同步；
 ###          空值或填其他内容表示不启用该功能。
@@ -363,9 +365,27 @@ SCANF_WXPusher_Remarks=""
 ### 格式为 UID_xxxx；查看地址：https://wxpusher.zjiecode.com/admin/main/wxuser/list
 MainWP_UID=""
 ## 13.8 扩展通知
-### 通知内容出现在正文末尾。支持 HTML 语言代码，仅支持 pushplus 、WxPusher 这些 HTML 代码通知的渠道
-### 例如：ExNotify_Content="NoLan服务器：<a href="http://服务器地址:端口?key=HeaderKey">点击访问</a>"
-ExNotify_Content=""
+### 通知内容出现在正文顶部或末尾。支持 HTML 语言代码，仅支持 pushplus 、WxPusher 这些 HTML 代码通知的渠道
+### 例如：ExNotify_Top_Content='<iframe allowtransparency="true" frameborder="0" width="100%" height="auto" scrolling="yes" src="//tianqi.2345.com/plugin/widget/index.htm?s=2&z=1&t=0&v=0&d=5&bd=0&k=&f=&ltf=009944&htf=cc0000&q=1&e=1&a=1&c=54511&w=100%&h=auto&align=center"></iframe>'
+###       ExNotify_Bot_Content='NoLan服务器：<a href="http://服务器地址:端口?key=HeaderKey">点击访问</a>'
+ExNotify_Top_Content=''
+ExNotify_Bot_Content=''
+
+## 14 Shell 版公告 notify2 环境变量(WxPusher、企业微信应用、pushplus、hxtrip pushplus)
+## 14.1 读取 WxPusher UID 的方式
+### 赋值要求：填 1 表示读取青龙面板环境变量中未被禁用的 JD_COOKIE 备注中的 UID；
+###          填 2 表示读取 /ql/scripts/CK_WxPusherUid.json。必须是 ckck2 生成的带有 status 键值的版本。
+WxPusher_UID_src=''
+## 14.2 过滤已被禁用的环境变量
+### 赋值要求：填 true 表示不发送给已被禁用的环境变量；
+###          填 false 表示发送给所有环境变量。
+Filter_Disabled_Variable="true"
+## 14.3 推送通知的标题
+NOTICE_TITLE=''
+## 14.4 推送通知的摘要内容
+NOTICE_SUMMARY=''
+## 14.5 推送通知的正文内容。支持 HTML 语言代码
+NOTICE_CONTENT=''
 
 ## 其他需要的变量，脚本中需要的变量使用 export 变量名= 声明即可
 
@@ -543,11 +563,14 @@ export guaunknownTask_card_All="true"
 export gua_carnivalcity_draw="true"
 export guaopenwait_All="true"
 export guaopencard_draw45="3"
+export guaopencard_compositeCard="true"
 for ((s = 0; s <= 200; s++)); do
   export guaopencard$s="3"
   export guaopencard_draw$s="3"
   export guaopencard_addSku$s="true"
 done
+## 5.1、京豆奖励判断 | 1=邀请 2=开卡 3=关注  | 填1,2,3
+export guaopencard_rewardBean="1,2,3"
 ## 6、开卡新增变量（69之后适配)
 # 京豆奖励判断 | 1=邀请 2=开卡 3=关注  | 填1,2,3
 export guaopencard_rewardBean="1,2,3"
@@ -647,11 +670,11 @@ export BEANCHANGE_PERSENT="" ##10合1
 ### 	 今天天气不错...
 ###
 ### 	 哥斯拉大战金刚....
-export BEANCHANGE_ALLNOTIFY='京东APP-秒杀-秒秒币 1月17过期,记得换哦.
-因为加了购物车抽奖脚本，所有人早上8点半会自动清理购物车。
+export BEANCHANGE_ALLNOTIFY='因为加了购物车抽奖脚本，所有人早上8点半会自动清理购物车。
 活动1：<a href="http://mtw.so/6dtM4K">京东会员权益</a>
 活动2：<a href="https://u.jd.com/YMlLsvu">晚上12点下拉页面签到得20豆</a>
 活动3：<a href="https://u.jd.com/YI7HbhU">连续签到瓜分大奖</a>
+活动4：京东APP->我的->会员店->天天领京豆->幸福小店
 <iframe allowtransparency="true" frameborder="0" width="100%" height="auto" scrolling="yes" src="//tianqi.2345.com/plugin/widget/index.htm?s=2&z=1&t=0&v=0&d=2&bd=0&k=&f=&ltf=009944&htf=cc0000&q=1&e=1&a=1&c=54511&w=100%&h=auto&align=center"></iframe>'
 ### 4. BEANCHANGE_ExJxBeans
 ### 当设定BEANCHANGE_ExJxBeans="true"且时间在17点之后，会自动将临期京豆兑换成喜豆续命.
@@ -804,10 +827,36 @@ export JD_CITY_HELPPOOL="true"
 ## 1、禁用重复脚本
 ### 变量内容为任务关键词，各变量用 & 分隔”。
 ### 例：export RES_SUB="Aaron-lv_sync&smiek2121_scripts& /ql/scripts/jd_zjd.py"有三个变量
-export RES_SUB="ccwav_QLScript2&shufflewzc_faker2&Aaron-lv_sync&smiek2121_scripts"
+export RES_SUB="ccwav_QLScript2&shufflewzc_faker2&Aaron-lv_sync&smiek2121_scripts&chianPLA_xiaoshou&star261_jd_main&gys619"
 ## 2、京东自动评价
 ### true为开启，false为关闭
 export JD_Evaluation="true"
+
+# 小埋
+export XFXD="true"
+export plant_cookie="$JD_COOKIE"
+export ACTIVITY_ID=""
+export WXGAME_ACT_ID=""
+
+## Zy143L wskey 转换脚本相关
+### 1、是否检查 Cookie 有效性
+### 赋值要求：任意赋值表示不检查 Cookie 有效性直接进行 wskey 转换，空值表示 Cookie 失效才进行 wskey 转换
+export WSKEY_DISCHECK=""
+### 2、各个 wskey 转换 Cookie 的间隔时间
+### 赋值要求：正整数数字，（单位：秒）
+###           空值表示默认值 10 秒。
+export WSKEY_SLEEP="0"
+### 3、wskey 转换 Cookie 的周期
+### 赋值要求：正整数数字，（单位：小时）
+###           空值表示默认值 23 小时。
+export WSKEY_UPDATE_HOUR=""
+### 4、自动重试的次数
+### 赋值要求：正整数数字，（单位：次）；
+###           空值表示默认值 1 次。
+export WSKEY_TRY_COUNT=""
+### 4、调试模式
+### 赋值要求：任意赋值开启调试模式，空值表示不启用该功能
+export WSKEY_DEBUG=""
 
 # passerby-b
 ## 1、滴滴橙心果园
