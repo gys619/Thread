@@ -22,9 +22,9 @@ function openCardActivity(activityId, activityUrl, pin, num, againUserIndex) {
       messageTitle = "",
       activityCookie = "";
 
-    if (process.env.jd_zdjr_activityId)
+    if (process.env.jd_wdz_activityId)
       activityId = process.env.jd_wdz_activityId;
-    if (process.env.jd_zdjr_activityUrl)
+    if (process.env.jd_wdz_activityUrl)
       activityUrl = process.env.jd_wdz_activityUrl;
     Object.keys(jdCookieNode).forEach((item) =>
       cookiesArr.push(jdCookieNode[item])
