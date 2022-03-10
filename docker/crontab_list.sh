@@ -14,7 +14,7 @@
 #愤怒的锦鲤
 1 81218 * * * node /scripts/jd_bookshop.js >> /scripts/logs/jd_bookshop.log 2>&1
 #口袋书店
-59 23 * * * node /scripts/jd_blueCoin.py >> /scripts/logs/jd_blueCoin.log 2>&1
+#59 23 * * * node /scripts/jd_blueCoin.py >> /scripts/logs/jd_blueCoin.log 2>&1
 #东东超市商品兑换
 59 23 * * * node /scripts/jd_blueCoin.js >> /scripts/logs/jd_blueCoin.log 2>&1
 #东东超市兑换奖品
