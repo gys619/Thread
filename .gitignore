@@ -350,6 +350,24 @@ jd_ghnsjd.js
 
 
 ############不能跑的###############
+#天天压岁钱
+jx_ttysq.js
+#东东世界兑换
+jd_ddworld_exchange.js
+#通天塔签到共建
+jd_babel_sign.js
+#京东汽车兑换
+jd_car_exchange.js
+#京东金融分享助力
+jd_jrmx.py
+#京东金融每周领取权益活动
+jd_jr_draw.js
+#口袋书店
+jd_bookshop.js
+#天天拼图
+jd_ttpt.js
+#锦鲤
+jd_angryKoi.js
 #东东超市兑换
 jd_blueCoin.js
 #赚金币
