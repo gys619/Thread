@@ -350,7 +350,8 @@ jd_ghnsjd.js
 
 
 ############不能跑的################
-
+#东东超市奖品兑换
+jd_blueCoin.py
 #宠汪汪有就兑换
 jd_joy_reward.js
 # 通用游戏
