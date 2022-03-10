@@ -350,6 +350,21 @@ jd_ghnsjd.js
 
 
 ############不能跑的###############
+#东东超市兑换
+jd_blueCoin.js
+#赚金币
+jd_zjb_help.js
+jd_zjb.js
+#邀请有礼
+jd_yqyl.js
+#5魔方兑换
+jd_xmf_exchange.js
+#东东小窝
+jd_small_home.js
+#qq星系牧场
+jd_qqxing.js
+#京东排行榜
+jd_rankingList.js
 #京东金融分享助力
 jd_jrmx.py
 #京东饭粒
