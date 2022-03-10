@@ -342,7 +342,15 @@
 #京东极速版提现
 10 10 * * * node /scripts/jd_plusReward.js >> /scripts/logs/jd_plusReward.log 2>&1
 #逛plus，抽京豆
-
-
+10 10 * * * node /scripts/jd_fruit_plant.ts >> /scripts/logs/jd_fruit_plant.log 2>&1
+#农场自动收+种
+15 6-18/6 * * * node /scripts/jd_petrw.js >> /scripts/logs/jd_petrw.log 2>&1
+#东东萌宠任务
+15 10 * * * node /scripts/jd_wx_addCart.js >> /scripts/logs/jd_wx_addCart.log 2>&1
+#M加购有礼
+15 10 * * * node /scripts/jd_wx_collectCard.js >> /scripts/logs/jd_wx_collectCard.log 2>&1
+#集卡有礼
+15 10 * * * node /scripts/jd_wx_luckDraw.js >> /scripts/logs/jd_wx_luckDraw.log 2>&1
+#幸运抽奖
 
 
