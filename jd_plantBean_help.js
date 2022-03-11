@@ -76,8 +76,8 @@ let lnruns = 0;
 	  lnrun++;
 	  await doHelp();
 	  if (lnrun == 3) {
-		  console.log(`\n【访问接口次数达到3次，休息半分钟.....】\n`);
-		  await $.wait(30 * 1000);
+		  console.log(`\n【访问接口次数达到3次，休息一分钟.....】\n`);
+		  await $.wait(60 * 1000);
 		  lnrun = 0;
 	  }
 	  await $.wait(3 * 1000);
