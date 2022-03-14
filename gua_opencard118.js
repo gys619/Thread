@@ -79,8 +79,13 @@ let activityCookie =''
     return;
   }
   $.activityId = "2203100041074702"
-  $.shareUuid = "0b040fd16d334886a60c9194ed39e156"
+  $.shareUuid = "76f9a4f1df2e42fd98c05997c0c9bc7d"
   console.log(`入口:\nhttps://lzkjdz-isv.isvjcloud.com/m/1000410747/99/${$.activityId}/?helpUuid=${$.shareUuid}`)
+  let shareUuidArr = [$.shareUuid,"0b040fd16d334886a60c9194ed39e156","76f9a4f1df2e42fd98c05997c0c9bc7d","d52668543e964836af3bcf9b62a908ce","6668e423b315482284cd4dd8c08e85f0","b10938a3b47c451793edbab377e83d5c","5dc7f645b7cb436fb1be649aeb346059","cb09c5068c894ecd8dd83e3a4c0e151f","5899b188f737424197406bbcfefda7a9","23aa9b317397423ebc152277aff1f5d4","2761691b20fb49cbba0b2db2ca6ffcb0","0420d21c7e164d898bb48d7ef3215ce9"]
+  let s = Math.floor((Math.random()*10))
+  let n = 0
+  if(s >= 1 && s<= 5) n = Math.floor((Math.random()*shareUuidArr.length))
+  $.shareUuid = shareUuidArr[n] ? shareUuidArr[n] : $.shareUuid
 
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
@@ -157,12 +162,22 @@ async function run() {
       $.joinVenderId = 1000410747
       await joinShop()
       if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
-        console.log('重新开卡')
+        console.log('第1次 重新开卡')
         await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
         await joinShop()
       }
       if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
-        console.log("开卡失败❌")
+        console.log('第2次 重新开卡')
+        await $.wait(parseInt(Math.random() * 2000 + 4000, 10))
+        await joinShop()
+      }
+      if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
+        console.log('第3次 重新开卡')
+        await $.wait(parseInt(Math.random() * 2000 + 4000, 10))
+        await joinShop()
+      }
+      if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
+        console.log("开卡失败❌ ，重新执行脚本")
       }
       await takePostRequest('activityContent');
     }
