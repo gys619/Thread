@@ -180,6 +180,12 @@ jd_jx_factory.js
 
 m_*.js
 ######重复脚本#######
+#开卡有礼
+jd_opencard.py
+#重复任务优化
+jd_taskop.py
+#京喜商品列表
+jx_products_detail.js
 # 财富岛珍珠兑换
 #jd_cfd_pearl_ex.js
 # he1pu的内置互助
