@@ -1,5 +1,5 @@
 {
-  "name": "Unknown",
+  "name": "111",
   "version": "1.0.0",
   "description": "{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}",
   "main": "AlipayManor.js",
@@ -8,16 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Unknown/jd_scripts.git"
+    "url": "https://github.com/Aaron-lv/sync.git"
   },
   "keywords": [
     "京东薅羊毛工具, 京东水果、宠物、种豆等等"
   ],
-  "author": "Unknown",
+  "author": "111",
   "license": "ISC",
   "dependencies": {
     "crypto-js": "^4.0.0",
-    "dotenv": "^10.0.0",
     "download": "^6.2.5",
     "got": "^11.5.1",
     "http-server": "^0.12.3",
