@@ -1,14 +1,15 @@
+
 /*
- 星推官 
- https://starintroducer.jd.com/#/
-
- ============Quantumultx===============
+以物之名
+更新时间：2021-11-02
+活动入口：京东APP-首页下拉
+脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
+============Quantumultx===============
 [task_local]
-#11.4~11.11 大牌联合 赢大额京豆
-12 3,6 1-11 11 * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_xtg.js, tag=星推官, enabled=true
-
+#以物之名
+10 9,13,15,16,19,20 * * * https://raw.githubusercontent.com/he1pu/JDHelp/main/jd_superBrand2_8.js, tag=以物之名, img-url=https://github.com/58xinian/icon/raw/master/jdgc.png, enabled=true
 */
-const $ = new Env('星推官');
+const $ = new Env('以物之名');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [];
@@ -24,17 +25,12 @@ if ($.isNode()) {
         $.getdata("CookieJD2"),
         ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
-let shareList = [],message = '';
+let shareList = [];
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
         return;
     }
-    if(Date.now() > 1636646400000){
-        console.log(`活动结束`);
-        return;
-    }
-
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
             $.cookie = cookiesArr[i];
@@ -52,16 +48,12 @@ let shareList = [],message = '';
                 continue
             }
             try{
-                await main($.cookie,$.index)
+                await main($.cookie)
             }catch (e) {
                 console.log(JSON.stringify(e))
             }
         }
     }
-    if(message){
-        await notify.sendNotify(`星推官`, message);
-    }
-    //console.log(JSON.stringify(shareList));
     if(shareList.length === 0){return;}
     let allShareList = [];
     for (let i = 0; i < cookiesArr.length; i++) {
@@ -74,26 +66,28 @@ let shareList = [],message = '';
             }
         }
     }
-    console.log(`\n==================开始内部助力===================\n`)
+    await getShareCode()
+    allShareList = [...new Set([...allShareList, ...($.shareCode || [])])]
+    console.log(`\n-----------------------互助----------------------\n`)
     for (let i = 0; i < cookiesArr.length; i++) {
         let cookie = cookiesArr[i];
         let userName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1]);
         let canHelp = true;
-        let helpTime = 0;
-        for (let j = 0; j < allShareList.length && canHelp && helpTime < 5; j++) {
+        for (let j = 0; j < allShareList.length && canHelp; j++) {
             let oneCodeInfo = allShareList[j];
             if(oneCodeInfo.user === userName || oneCodeInfo.need === 0){
                 continue;
             }
-            console.log(`\n${userName}去助力:${oneCodeInfo.user},助力码：${oneCodeInfo.code}`);
-            let doSupport = await takeRequest(cookie,`{"shareId":"${oneCodeInfo.code}","apiMapping":"/api/supportTask/doSupport"}`);
-            if(doSupport.status === 7){
+            console.log(`\n${userName}去助力:${oneCodeInfo.user}`);
+            let doSupport = await takeRequest(cookie,'superBrandDoTask',`{"source":"card","activityId":${oneCodeInfo.activityId},"encryptProjectId":"${oneCodeInfo.encryptProjectId}","encryptAssignmentId":"${oneCodeInfo.encryptAssignmentId}","assignmentType":2,"itemId":"${oneCodeInfo.itemId}","actionType":0}`);
+            if(doSupport.bizCode === '0'){
                 console.log(`助力成功`);
-                oneCodeInfo.need--;
-                helpTime++;
-            }else if(doSupport.status === 5){
+            }else if(doSupport.bizCode === '103'){
+                console.log(`助力已满`);
+                oneCodeInfo.max = true;
+            }else if(doSupport.bizCode === '108'){
                 console.log(`助力次数已用完`);
-                canHelp=false;
+                canHelp = false;
             }
             console.log(`助力结果：${JSON.stringify(doSupport)}`);
             await $.wait(2000);
@@ -105,130 +99,139 @@ let shareList = [],message = '';
     $.done();
 });
 
-async function main(cookie,index) {
+async function main(cookie) {
     let userName = decodeURIComponent(cookie.match(/pt_pin=(.+?);/) && cookie.match(/pt_pin=(.+?);/)[1]);
-    let homePage = await takeRequest(cookie,`{"apiMapping":"/api/index/indexInfo"}`);
-    await takeRequest(cookie,`{"apiMapping":"/api/front/rule"}`);
-    await takeRequest(cookie,`{"apiMapping":"/api/index/groupIndex"}`);
-    let getTaskList = await takeRequest(cookie,`{"apiMapping":"/api/task/getTaskList"}`);
-    let supportInfo = await takeRequest(cookie,`{"apiMapping":"/api/supportTask/getSupportList"}`);
-    if(JSON.stringify(homePage) === '{}' || JSON.stringify(getTaskList) === '{}'){
-        console.log(`\n${userName},获取活动详情失败`);
+    let cardInfo = await takeRequest(cookie,'showSecondFloorCardInfo',`{"source":"card"}`);
+    if( JSON.stringify(cardInfo) === '{}' || !cardInfo || !cardInfo.result || !cardInfo.result.activityBaseInfo){
+        console.log(`${userName},获取活动详情失败1`);
         return ;
     }
-    console.log(`${userName},获取活动详情成功`);
+    let activityBaseInfo = cardInfo.result.activityBaseInfo;
+    let activityId = activityBaseInfo.activityId;
+    let taskListInfo = await takeRequest(cookie,'superBrandTaskList',`{"source":"card","activityId":${activityId},"assistInfoFlag":1}`);
+    if(JSON.stringify(taskListInfo) === '{}' || JSON.stringify(cardInfo) === '{}'){
+        console.log(`${userName},获取活动详情失败2`);
+        return ;
+    }
+    if(!taskListInfo || !taskListInfo.result || !taskListInfo.result.taskList){
+        console.log(`${userName},黑号`);
+        return;
+    }
+    let taskList = taskListInfo.result.taskList || [];
+    console.log(`\n${userName},获取活动详情成功`);
+    let encryptProjectId = activityBaseInfo.encryptProjectId;
+    let activityCardInfo = cardInfo.result.activityCardInfo;
+    if(activityCardInfo.divideTimeStatus === 1 && activityCardInfo.divideStatus === 0 && activityCardInfo.cardStatus === 1){
+        console.log(`${userName},去瓜分`);
+        let lotteryInfo = await takeRequest(cookie,'superBrandTaskLottery',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","tag":"divide"}`);
+        console.log(`结果：${JSON.stringify(lotteryInfo)}`);
+        return ;
+    }else if(activityCardInfo.divideTimeStatus === 1 && activityCardInfo.divideStatus === 1 && activityCardInfo.cardStatus === 1){
+        console.log(`${userName},已瓜分`);
+        return ;
+    }else{
+        console.log(`${userName},未集齐或者未到瓜分时间`);
+    }
     await $.wait(2000);
-    if(homePage.signState !== '1'){
-        console.log(`${userName},去签到`);
-        let sign = await takeRequest(cookie,`{"apiMapping":"/api/task/doSign"}`);
-        console.log(`${userName},执行签到结果：${JSON.stringify(sign)}`);
-    }else{
-        console.log(`${userName},今日已签到`);
-    }
-    let time = 0;
-    let runFlag = false;
-    let freshFlag = false;
-    do {
-        runFlag = false;
-        for (let i = 0; i < getTaskList.length; i++) {
-            let oneTask = getTaskList[i];
-            if(oneTask.totalNum === oneTask.finishNum){
-                console.log(`${userName},任务：${oneTask.taskName},已完成`);
-                continue;
-            }
-            console.log(`${userName},任务：${oneTask.taskName},去执行`);
-            if(oneTask.type === 'JOIN_SHOPPING_CART'){
-                let getReward = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","apiMapping":"/api/task/getReward"}`);
-                console.log(`${userName},执行结果：${JSON.stringify(getReward)}`);
-                await $.wait(2000);
-            }
-            if(oneTask.type === 'BROWSE_TASK' || oneTask.type === 'FOLLOW_CHANNEL_TASK'){
-                let doInfo = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","apiMapping":"/api/task/doTask"}`);
-                let time = 10;
-                if(oneTask.browseTime > 0){
-                    time = oneTask.browseTime;
+    for (let i = 0; i < taskList.length; i++) {
+        let oneTask = taskList[i];
+        if(oneTask.completionFlag){
+            console.log(`任务：${oneTask.assignmentName},已完成`);
+            if(oneTask.assignmentType === 2){
+                let time = oneTask.ext.cardAssistBoxRest || '0';
+                for (let j = 0; j < time; j++) {
+                    console.log(`领取助力奖励`);
+                    let lottery = await takeRequest(cookie,'superBrandTaskLottery',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}"}`);
+                    console.log(`结果：${JSON.stringify(lottery)}`);
+                    await $.wait(3000);
                 }
-                await $.wait(time*1000);
-                let getReward = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","timeStamp":${doInfo.timeStamp},"apiMapping":"/api/task/getReward"}`);
-                console.log(`${userName},执行结果：${JSON.stringify(getReward)}`);
-                await $.wait(1000);
             }
-
-            if( oneTask.type === 'FOLLOW_SHOP_TASK'){
-                let doInfo = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","apiMapping":"/api/task/doTask"}`);
-                if(doInfo.rewardVo === null){
-                    await $.wait(6000);
-                    let getReward = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","timeStamp":${doInfo.timeStamp},"apiMapping":"/api/task/getReward"}`);
-                    console.log(`${userName},执行结果：${JSON.stringify(getReward)}`);
-                }else{
-                    console.log(`${userName},执行结果：${JSON.stringify(doInfo)}`);
+            continue;
+        }
+        if(oneTask.assignmentType === 1){
+            console.log(`任务：${oneTask.assignmentName},去执行,请稍稍`);
+            let itemId = oneTask.ext.shoppingActivity[0].itemId || '';
+            if(!itemId){
+                console.log(`任务：${oneTask.assignmentName},信息异常`);
+            }
+            let doInfo = await takeRequest(cookie,'superBrandDoTask',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","encryptAssignmentId":"${oneTask.encryptAssignmentId}","assignmentType":${oneTask.assignmentType},"itemId":"${itemId}","actionType":0}`);
+            console.log(`执行结果：${JSON.stringify(doInfo)}`);
+            await $.wait(3000);
+        }
+        if(oneTask.assignmentType === 3){
+            console.log(`任务：${oneTask.assignmentName},去执行,请稍稍`);
+            let itemId = oneTask.ext.followShop[0].itemId || '';
+            if(!itemId){
+                console.log(`任务：${oneTask.assignmentName},信息异常`);
+            }
+            let doInfo = await takeRequest(cookie,'superBrandDoTask',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","encryptAssignmentId":"${oneTask.encryptAssignmentId}","assignmentType":${oneTask.assignmentType},"itemId":"${itemId}","actionType":0}`);
+            console.log(`执行结果：${JSON.stringify(doInfo)}`);
+            await $.wait(3000);
+        }
+        if(oneTask.assignmentType === 7){
+            console.log(`任务：${oneTask.assignmentName},去执行,请稍稍`);
+            let itemId = oneTask.ext.brandMemberList[0].itemId || '';
+            if(!itemId){
+                console.log(`任务：${oneTask.assignmentName},信息异常`);
+            }
+            let doInfo = await takeRequest(cookie,'superBrandDoTask',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","encryptAssignmentId":"${oneTask.encryptAssignmentId}","assignmentType":${oneTask.assignmentType},"itemId":"${itemId}","actionType":0}`);
+            console.log(`执行结果：${JSON.stringify(doInfo)}`);
+            await $.wait(3000);
+        }
+        if(oneTask.assignmentType === 5){
+            let signList = oneTask.ext.sign2 || [];
+            if(signList.length === 0){
+                console.log(`任务：${oneTask.assignmentName},信息异常`);
+            }
+            if(oneTask.assignmentName === '首页限时下拉'){
+                for (let j = 0; j < signList.length; j++) {
+                    if(signList[j].status === 1){
+                        console.log(`任务：${oneTask.assignmentName},去执行,请稍稍`);
+                        let itemId = signList[j].itemId;
+                        let doInfo = await takeRequest(cookie,'superBrandDoTask',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","encryptAssignmentId":"${oneTask.encryptAssignmentId}","assignmentType":${oneTask.assignmentType},"itemId":"${itemId}","actionType":0,"dropDownChannel":1}`);
+                        console.log(`执行结果：${JSON.stringify(doInfo)}`);
+                        await $.wait(3000);
+                    }
                 }
-                await $.wait(4000);
-            }
-            runFlag = true;
-            freshFlag = true;
-        }
-        time ++;
-        if(runFlag && time < 30){
-            await $.wait(1000);
-            getTaskList = await takeRequest(cookie,`{"apiMapping":"/api/task/getTaskList"}`);
-        }
-    }while (runFlag && time < 30);
-
-
-    if(freshFlag){
-        homePage = await takeRequest(cookie,`{"apiMapping":"/api/index/indexInfo"}`);
-    }
-    let  myScore = homePage.myScore;
-    let canDraw = Math.floor(myScore/100);
-    console.log(`\n可以抽奖：${canDraw}次`);
-    for (let i = 0; i < canDraw; i++) {
-        console.log(`\n进行第${i+1}次抽奖`)
-        let lotteryInfo = await takeRequest(cookie,`{"apiMapping":"/api/lottery/lottery"}`);
-        console.log(`抽奖结果：${JSON.stringify(lotteryInfo)}`);
-        await $.wait(2000);
-    }
-    if(supportInfo.supportNeedNum !== supportInfo.supportedNum){
-        let needTime = Number(supportInfo.supportNeedNum) - Number(supportInfo.supportedNum);
-        let shareCode = await takeRequest(cookie,`{"apiMapping":"/api/supportTask/getShareId"}`);
-        shareList.push({'user':userName,'code':shareCode,'need':needTime});
-        console.log(`助力码：${shareCode}`);
-    }else{
-        console.log(`助力已满`);
-    }
-    let pageNum = 1;
-    let lotteryList = []
-    do {
-        lotteryList = await takeRequest(cookie,`{"pageNum":${pageNum},"apiMapping":"/api/record/prizeRecord"}`);
-        lotteryList = lotteryList.list
-        for (let i = 0; i < lotteryList.length; i++) {
-            let oneLottery = lotteryList[i];
-            if(oneLottery.prizeType === 2 || oneLottery.prizeType === 3){
-                continue;
-            }
-            console.log(`${userName},奖励：${JSON.stringify(oneLottery)}`);
-            if(oneLottery.prizeType === 1 || oneLottery.addressStatus === false){
-                message +=`第${index}个账号，${userName},抽到了实物：${oneLottery.prizeName}\n`;
+            }else if(oneTask.assignmentName.indexOf('小游戏') !== -1){
+                for (let j = 0; j < signList.length; j++) {
+                    if(signList[j].status === 1){
+                        console.log(`任务：${oneTask.assignmentName},去执行,请稍稍`);
+                        let gameInfo = await takeRequest(cookie,'showSecondFloorGameInfo',`{"source":"card"}`);
+                        let secCode = gameInfo.result.activityGameInfo.gameCurrentRewardInfo.secCode;
+                        let gameEncryptAssignmentId = gameInfo.result.activityGameInfo.gameCurrentRewardInfo.encryptAssignmentId;
+                        await $.wait(3000);
+                        let doInfo = await takeRequest(cookie,'superBrandTaskLottery',`{"source":"card","activityId":${activityId},"encryptProjectId":"${encryptProjectId}","encryptAssignmentId":"${gameEncryptAssignmentId}","secCode":"${secCode}"}`);
+                        console.log(`执行结果：${JSON.stringify(doInfo)}`);
+                        await $.wait(3000);
+                    }
+                }
             }
         }
-        pageNum++;
-        await $.wait(1000);
-    }while (lotteryList.length === 10);
+        if(oneTask.assignmentType === 2){
+            let itemId = oneTask.ext.assistTaskDetail.itemId || '';
+            if(!itemId){
+                console.log(`任务：${oneTask.assignmentName},信息异常`);
+            }
+            shareList.push({'user':userName,'activityId':activityId,'encryptProjectId':encryptProjectId,'encryptAssignmentId':oneTask.encryptAssignmentId,'itemId':itemId,'max':false});
+        }
+    }
 }
-async function takeRequest(cookie,body){
-    let url = 'https://api.m.jd.com/api';
+async function takeRequest(cookie,functionId,bodyInfo){
+    let body = ``
+    let url = `https://api.m.jd.com/?uuid=8888&client=wh5&area=&appid=ProductZ4Brand&functionId=${functionId}&t=${Date.now()}&body=${encodeURIComponent(bodyInfo)}`;
     const headers = {
-        'Origin' : `https://starintroducer.jd.com`,
+        'Origin' : `https://prodev.m.jd.com`,
         'Cookie' : cookie ,
         'Connection' : `keep-alive`,
         'Accept' : `application/json, text/plain, */*`,
-        'Referer' : `https://starintroducer.jd.com/`,
+        'Referer' : `https://prodev.m.jd.com/mall/active/ZskuZGqQMZ2j6L99PM1L8jg2F2a/index.html`,
         'Host' : `api.m.jd.com`,
         'user-agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
         'Accept-Language' : `zh-cn`,
         'Accept-Encoding' : `gzip, deflate, br`
     };
-    let myRequest =  {url: url, headers: headers,body: `appid=china-joy&functionId=star_push_jd_prod&body=${body}&t=${Date.now()}`};
+    let myRequest =  {url: url, headers: headers,body:body};
     return new Promise(async resolve => {
         $.post(myRequest, (err, resp, data) => {
             try {
@@ -242,12 +245,38 @@ async function takeRequest(cookie,body){
                 }
             } catch (e) {
                 console.log(data);
-                $.logErr(e, resp)
+                //$.logErr(e, resp)
             } finally {
                 resolve(data.data || {});
             }
         })
     })
+}
+
+function getShareCode() {
+  return new Promise(resolve => {
+    $.get({
+      url: `https://raw.githubusercontent.com/he1pu/params/main/codes.json?${new Date()}`,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    }, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${JSON.stringify(err)}`);
+          console.log(`${$.name} API请求失败，请检查网路重试`);
+        } else {
+          console.log(`优先账号内部互助，有剩余助力次数再帮作者助力`);
+          let code = JSON.parse(data);
+          $.shareCode = code.tewu;
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+  })
 }
 
 function TotalBean() {
