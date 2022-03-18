@@ -183,95 +183,98 @@ async function run() {
       console.log('获取不到[actorUuid]退出执行，请重新执行')
       return
     }
-    if(($.hasEnd === true || Date.now() > $.endTime) && nowTime > new Date('2022/03/19 00:00:00+08:00').getTime()){
+    if(($.hasEnd === true || Date.now() > $.endTime) && nowTime > new Date('2022/03/20 00:00:00+08:00').getTime()){
       $.activityEnd = true
       console.log('活动结束')
       return
-    }
-    await takePostRequest('drawContent');
-    await $.wait(1000)
-    $.openList = []
-    $.allOpenCard = false
-    await takePostRequest('checkOpenCard');
-    console.log($.actorUuid)
-    // return
-    if($.allOpenCard == false){
-      console.log('开卡任务')
-      for(o of $.openList){
-        $.openCard = false
-        if(o.status == 0){
-          flag = true
-          $.joinVenderId = o.venderId
-          await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
-          await joinShop()
-          await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
-          await takePostRequest('activityContent');
-          await takePostRequest('drawContent');
-          await takePostRequest('checkOpenCard');
-          await $.wait(parseInt(Math.random() * 1000 + 4000, 10))
-        }
+    }else if(nowTime > new Date('2022/03/19 00:00:00+08:00').getTime()){
+      await takePostRequest('getCardInfo');
+      if ($.compositeCardFinishCount >= 1 && nowTime > new Date(activeEndTime).getTime()) {
+        // allMessage += `【京东账号${$.index}】${$.nickName || $.UserName}\n`
+        await takePostRequest('瓜分奖励');
       }
     }else{
-      console.log('已全部开卡')
-    }
-    
-    $.log("关注: " + $.followShop)
-    if(!$.followShop && !$.outFlag){
-      flag = true
-      await takePostRequest('followShop');
-      await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
-    }
-    $.yaoqing = false
-    await takePostRequest('助力');
-    if($.yaoqing){
-      await takePostRequest('邀请');
-    }
-    // await takePostRequest('startDraw');
-
-    if(flag){
-      await takePostRequest('activityContent');
-    }
-    if(guaopencard_draw+"" !== "0"){
-      $.runFalag = true
-      let count = parseInt($.score/100)
-      guaopencard_draw = parseInt(guaopencard_draw, 10)
-      if(count > guaopencard_draw) count = guaopencard_draw
-      console.log(`抽奖次数为:${count}`)
-      for(m=1;count--;m++){
-        console.log(`第${m}次抽奖`)
-        await takePostRequest('抽奖');
-        if($.runFalag == false) break
-        if(Number(count) <= 0) break
-        if(m >= 10){
-          console.log("抽奖太多次，多余的次数请再执行脚本")
-          break
+      await takePostRequest('drawContent');
+      await $.wait(1000)
+      $.openList = []
+      $.allOpenCard = false
+      await takePostRequest('checkOpenCard');
+      console.log($.actorUuid)
+      // return
+      if($.allOpenCard == false){
+        console.log('开卡任务')
+        for(o of $.openList){
+          $.openCard = false
+          if(o.status == 0){
+            flag = true
+            $.joinVenderId = o.venderId
+            await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
+            await joinShop()
+            await $.wait(parseInt(Math.random() * 1000 + 3000, 10))
+            await takePostRequest('activityContent');
+            await takePostRequest('drawContent');
+            await takePostRequest('checkOpenCard');
+            await $.wait(parseInt(Math.random() * 1000 + 4000, 10))
+          }
         }
-        await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
+      }else{
+        console.log('已全部开卡')
       }
-    }else console.log('如需抽奖请设置环境变量[guaopencard_draw115]为"3" 3为次数');
-    
-    await takePostRequest('getCardInfo');
-    if($.drawCardNum && $.compositeCard+"" == "true"){
-      let count = $.drawCardNum
-      for(m=1;count--;m++){
-        console.log(`第${m}次集卡`)
-        await takePostRequest('集卡');
-        await takePostRequest('getCardInfo');
-        if($.runFalag == false || $.compositeCardNum > 0) break
-        if(Number(count) <= 0) break
-        if(m >= 10){
-          console.log("集卡太多次，多余的次数请再执行脚本")
-          break
+      
+      $.log("关注: " + $.followShop)
+      if(!$.followShop && !$.outFlag){
+        flag = true
+        await takePostRequest('followShop');
+        await $.wait(parseInt(Math.random() * 2000 + 3000, 10))
+      }
+      $.yaoqing = false
+      await takePostRequest('助力');
+      if($.yaoqing){
+        await takePostRequest('邀请');
+      }
+      // await takePostRequest('startDraw');
+  
+      if(flag){
+        await takePostRequest('activityContent');
+      }
+      if(guaopencard_draw+"" !== "0"){
+        $.runFalag = true
+        let count = parseInt($.score/100)
+        guaopencard_draw = parseInt(guaopencard_draw, 10)
+        if(count > guaopencard_draw) count = guaopencard_draw
+        console.log(`抽奖次数为:${count}`)
+        for(m=1;count--;m++){
+          console.log(`第${m}次抽奖`)
+          await takePostRequest('抽奖');
+          if($.runFalag == false) break
+          if(Number(count) <= 0) break
+          if(m >= 10){
+            console.log("抽奖太多次，多余的次数请再执行脚本")
+            break
+          }
+          await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
         }
-        await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
+      }else console.log('如需抽奖请设置环境变量[guaopencard_draw115]为"3" 3为次数');
+      
+      await takePostRequest('getCardInfo');
+      if($.drawCardNum && $.compositeCard+"" == "true"){
+        let count = $.drawCardNum
+        for(m=1;count--;m++){
+          console.log(`第${m}次集卡`)
+          await takePostRequest('集卡');
+          await takePostRequest('getCardInfo');
+          if($.runFalag == false || $.compositeCardNum > 0) break
+          if(Number(count) <= 0) break
+          if(m >= 10){
+            console.log("集卡太多次，多余的次数请再执行脚本")
+            break
+          }
+          await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
+        }
       }
-    }
-    for(let c of $.myCardList || []){
-      console.log(`${c.cardName}:${c.cardNum}`)
-    }
-    if ($.compositeCardFinishCount >= 1 && nowTime > new Date(activeEndTime).getTime()) {
-      // allMessage += `【京东账号${$.index}】${$.nickName || $.UserName}\n`
-      await takePostRequest('瓜分奖励');
+      for(let c of $.myCardList || []){
+        console.log(`${c.cardName}:${c.cardNum}`)
+      }
     }
     console.log(`${$.score}值 瓜分:${$.compositeCardFinishCount == 1 && "是" || "否"}`)
     await $.wait(parseInt(Math.random() * 1000 + 2000, 10))
@@ -356,7 +359,7 @@ async function takePostRequest(type) {
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
       case '瓜分奖励':
-        url = `${domain}/collect/card/carveUpPrize`;
+        url = `${domain}/collect/card/getCardStageStatus`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
       case '集卡':
