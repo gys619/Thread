@@ -180,6 +180,10 @@ jd_jx_factory.js
 
 m_*.js
 ######重复脚本#######
+jd_speed_10_4.js
+jd_speed_19_6.js
+jd_speed_29_8.js
+jd_speed_5_2.js
 #开卡有礼
 jd_opencard.py
 #重复任务优化
