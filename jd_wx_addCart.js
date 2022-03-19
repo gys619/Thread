@@ -1,5 +1,5 @@
 let mode = __dirname.includes('magic')
-const {Env} = mode ? require('./function/magic') : require('./function/magic')
+const {Env} = mode ? require('../magic') : require('./magic')
 const $ = new Env('M加购有礼');
 $.lz = 'LZ_TOKEN_KEY=lztokef1eb8494b0af868bd18bdaf8;LZ_TOKEN_VALUE=Aa5RE8RuY4X3zA==;';
 $.activityUrl = process.env.M_WX_ADD_CART_URL
@@ -97,9 +97,6 @@ $.logic = async function () {
     await api('wxActionCommon/getUserInfo', `pin=${$.Pin}`)
     let info = await api(
         `miniProgramShareInfo/getInfo?activityId=${$.activityId}`);
-    if (info.result) {
-        $.shareMpTitle = info.data.shareMpTitle;
-    }
     if (content.needFollow && !content.hasFollow) {
         await api(`wxActionCommon/followShop`,
             `userId=${$.venderId}&activityId=${$.activityId}&buyerNick=${encodeURIComponent(
