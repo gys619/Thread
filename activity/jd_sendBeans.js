@@ -6,14 +6,14 @@
 ============Quantumultx===============
 [task_local]
 #送豆得豆
-45 1,12 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sendBeans.js, tag=送豆得豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+45 1,12 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_sendBeans.js, tag=送豆得豆, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 ================Loon==============
 [Script]
-cron "45 1,12 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sendBeans.js,tag=送豆得豆
+cron "45 1,12 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_sendBeans.js,tag=送豆得豆
 ===============Surge=================
-送豆得豆 = type=cron,cronexp="45 1,12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sendBeans.js
+送豆得豆 = type=cron,cronexp="45 1,12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_sendBeans.js
 ============小火箭=========
-送豆得豆 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_sendBeans.js, cronexpr="45 1,12 * * *", timeout=3600, enable=true
+送豆得豆 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_sendBeans.js, cronexpr="45 1,12 * * *", timeout=3600, enable=true
  */
 const $ = new Env('送豆得豆');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -198,7 +198,7 @@ async function myReward(){
           let canReward = false
           for (let key of Object.keys(data.datas)) {
             let vo = data.datas[key]
-            if (vo.status === 3 && vo.type === 2) {
+            if (vo.status === 3 && [1,2].includes(vo.type)) {
               canReward = true
               $.rewardRecordId = vo.id
               await rewardBean()
@@ -207,7 +207,7 @@ async function myReward(){
           }
           if (!canReward) console.log(`没有可领取奖励`)
         }else{
-          console.log(JSON.stringify(data));
+          console.log(res.data.desc)
         }
       } catch (e) {
         console.log(e);

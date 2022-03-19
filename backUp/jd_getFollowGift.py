@@ -5,10 +5,8 @@
 Author: Curtin
 功能：
 Date: 2021/6/6 上午7:57
-建议cron: 50 8 * * *  python3 jd_getFollowGift.py
-new Env('店铺关注有礼');
-2021-11-08：
-    1、修复cookie检测接口
+建议cron: 0 9 * * *  python3 jd_getFollowGift.py
+new Env('关注有礼');
 '''
 ##################################
 #cookie填写，注意：#ck 优先读取【JDCookies.txt】 文件内的ck  再到 ENV的 变量 JD_COOKIE='ck1&ck2' 最后才到脚本内 cookies=ck
@@ -32,35 +30,15 @@ QYWX_AM = ''
 version = 'v1.0.0 Beta'
 readmes = """
 # JD 关注有礼
-##  目录结构
-    JD-Script/                  #主仓库
-    |-- getFollowGifts                # 主目录
-    |   |-- jd_getFollowGift.py       # 主代码 （必要）
-    |   |-- JDCookies.txt             # 存放JD cookie，一行一个ck
-    |   |-- Readme.md                 # 说明书
-    |   `-- start.sh                  # shell脚本（非必要）
-    `-- README.md
-### `【兼容环境】`
-    1.Python3.6+ 环境
-    2.兼容ios设备软件：Pythonista 3、Pyto(已测试正常跑，其他软件自行测试)   
-    3.Windows exe 
-    安装依赖模块 :
-    pip3 install requests
-    执行：
-    python3 jd_getFollowGift.py
-## `【更新记录】`
-    2021.6.6：（v1.0.0 Beta）
-        * Test
-###### [GitHub仓库 https://github.com/curtinlv/JD-Script](https://github.com/curtinlv/JD-Script) 
-###### [TG频道 https://t.me/TopStyle2021](https://t.me/TopStyle2021)
-###### [TG群 https://t.me/topStyle996](https://t.me/topStyle996)
-###### 关注公众号【TopStyle】
-![TopStyle](https://gitee.com/curtinlv/img/raw/master/gzhcode.jpg)
+
 # 
     @Last Version: %s
+
     @Last Time: 2021-06-06 07:57
+
     @Author: Curtin
-#### **仅以学习交流为主，请勿商业用途、禁止违反国家法律 ，转载请留个名字，谢谢!** 
+#### **仅以学习交流为主，请勿商业用途、禁止违反国家法律!** 
+
 # End.
 [回到顶部](#readme)
 """ % version
@@ -83,7 +61,7 @@ scriptHeader = """
 ║                                      ║
 ════════════════════════════════════════
 @Version: {}""".format(version)
-remarks = '\n\n\tTG交流 : https://t.me/topstyle996\n\n\tTG频道 : https://t.me/TopStyle2021\n\n\t公众号 : TopStyle\n\n\t\t\t--By Curtin\n'
+remarks = ''
 ######JD Cookie (多账号&分隔)
 
 
@@ -147,30 +125,24 @@ class getJDCookie(object):
 
     # 检测cookie格式是否正确
     def getUserInfo(self, ck, pinName, userNum):
-        url = 'https://wq.jd.com/user_new/info/GetJDUserInfoUnion?orgFlag=JD_PinGou_New&callSource=mainorder'
+        url = 'https://me-api.jd.com/user_new/info/GetJDUserInfoUnion'
         headers = {
             'Cookie': ck,
             'Accept': '*/*',
-            'Connection': 'close',
-            'Referer': 'https://home.m.jd.com/myJd/home.action',
+            'Connection': 'keep-alive',
+            'Referer': 'https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&',
             'Accept-Encoding': 'gzip, deflate, br',
-            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Mobile/15E148 Safari/604.1',
-            'Accept-Language': 'zh-cn'
+            'Host': 'me-api.jd.com',
+            'User-Agent': 'jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+            'Accept-Language': 'gzip, deflate, br'
         }
         try:
-            if sys.platform == 'ios':
-                requests.packages.urllib3.disable_warnings()
-                resp = requests.get(url=url, verify=False, headers=headers, timeout=60).json()
-            else:
-                resp = requests.get(url=url, headers=headers, timeout=60).json()
-
-            if resp['retcode'] == 0:
-                nickname = resp['data']['userInfo']['baseInfo']['nickname']
-                return ck, nickname
-            else:
-                context = f"账号{userNum}【{pinName}】Cookie 已失效！请重新获取。"
-                print(context)
-                return ck, False
+            resp = requests.get(url=url, verify=False, headers=headers, timeout=60).text
+            #r = re.compile(r'GetJDUserInfoUnion.*?\((.*?)\)')
+            #result = r.findall(resp)
+            userInfo = json.loads(resp)
+            nickname = userInfo['data']['userInfo']['baseInfo']['nickname']
+            return ck, nickname
         except Exception:
             context = f"账号{userNum}【{pinName}】Cookie 已失效！请重新获取。"
             print(context)
@@ -509,9 +481,9 @@ def isUpdate():
         isEnable = result['isEnable']
         uPversion = result['version']
         info = result['info']
-        readme = result['readme']
+        readme = ""
         pError = result['m']
-        footer = result['footer']
+        footer = ""
         getWait = result['s']
         if isEnable > 50 and isEnable < 150:
             if version != uPversion:

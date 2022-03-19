@@ -1,238 +1,238 @@
 /*
 京东工业品任务
 做完任务有4豆。要跑至少2次。
-cron 13 4,15 * * * https://raw.githubusercontent.com/ickel00/gd_test/main/jd_industrial_task.js
+cron 13 5,16 * * * https://raw.githubusercontent.com/ickel00/gd_test/main/jd_industrial_task.js
  */
 const $ = new Env('京东工业品');
-const notify = $.isNode() ? require('../sendNotify') : '';
-const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const listUrl = `https://prodev.m.jd.com/mall/active/2w43r74mJQjiHmXB3dnsx7mznuMV/index.html`;
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 
 if ($.isNode()) {
-    Object.keys(jdCookieNode).forEach((item) => {
-        cookiesArr.push(jdCookieNode[item])
-    })
-    if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
-    };
+  Object.keys(jdCookieNode).forEach((item) => {
+    cookiesArr.push(jdCookieNode[item])
+  })
+  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
+  };
 } else {
-    cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
+  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const rd_char = "0123456789abcdefghijklmnopqrstuvwxyz"
 !(async () => {
-    if (!cookiesArr[0]) {
-        $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
-        return;
-    }
-    for (let i = 0; i < cookiesArr.length; i++) {
-        if (cookiesArr[i]) {
-            cookie = cookiesArr[i];
-            $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-            $.index = i + 1;
-            $.isLogin = true;
-            $.nickName = '';
-            message = '';
-            $.exit = false;
-            console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
-            if (!$.isLogin) {
-                $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/`, {"open-url": "https://bean.m.jd.com/"});
-                if ($.isNode()) {
-                    await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-                }
-                continue
-            }
-            $.configCode = `f11f0375da524037a3e7e1da6cb4510b`
-            $.eid = randomEid()
-            $.fp = randomString(32,rd_char)
-            if ($.eid !== null || $.eid !== undefined || $.eid !== '') {
-                await get_tasklist($.configCode);
-            }
+  if (!cookiesArr[0]) {
+    $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
+    return;
+  }
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+      message = '';
+      $.exit = false;
+      console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
+      if (!$.isLogin) {
+        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/`, {"open-url": "https://bean.m.jd.com/"});
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
         }
+        continue
+      }
+	  $.configCode = `f11f0375da524037a3e7e1da6cb4510b`
+	  $.eid = randomEid()
+	  $.fp = randomString(32,rd_char)
+	  if ($.eid !== null || $.eid !== undefined || $.eid !== '') {
+		  await get_tasklist($.configCode);
+	  }
     }
+  }
 })()
-    .catch((e) => {
-        $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
-    })
-    .finally(() => {
-        $.done();
-    })
+  .catch((e) => {
+    $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
+  })
+  .finally(() => {
+    $.done();
+  })
 
 //get_tasklist
 function get_tasklist(code) {
-    return new Promise(resolve => {
-        let url = {
-            url: `https://jdjoy.jd.com/module/task/v2/getActivity?configCode=${code}&eid=${$.eid}&fp=${$.fp}`,
-            headers: {
-                'Origin' : `https://prodev.m.jd.com`,
-                'Cookie' : cookie,
-                'Connection' : `keep-alive`,
-                'Content-Type' : `application/json;charset=utf-8`,
-                'Accept' : `application/json, text/plain, */*`,
-                'Referer' : `${listUrl}`,
-                'Host' : `jdjoy.jd.com`,
-                'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-                'Accept-Encoding' : `gzip, deflate, br`,
-                'Accept-Language' : `zh-cn`
-            }
-        };
-        $.get(url, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    if (safeGet(data)) {
-                        const result = JSON.parse(data);
-                        //console.log(`get_tasklist：${JSON.stringify(result)}`)
-                        if (result.success == true) {
-                            console.log(`\n获取活动列表成功!`)
-                            tasklist = result.data.dailyTask.taskList
-                            // console.debug(tasklist)
-                            for (let vo of tasklist) {
-                                taskCount = vo.taskCount
-                                finishCount = vo.finishCount
-                                count = taskCount - finishCount;
-                                itemName = vo.item.itemName
-                                itemId = vo.item.itemId
-                                groupType = vo.groupType
-                                if (groupType == 2 && !['card','car'].includes(process.env.FS_LEVEL)) {
-                                    console.log("默认不加购,请设置通用加购变量FS_LEVEL=car")
-                                    continue
-                                }
-                                console.log(`\n${itemName} 完成状态：${finishCount}/${taskCount}`)
-                                if (count > 0) {
-                                    console.log(`开始做任务 ${itemName} ---`)
-                                    body = `{"groupType":${groupType},"configCode":"${$.configCode}","itemId":"${itemId}","eid":"${$.eid}","fp":"${$.fp}"}`
-                                    await $.wait(10000)
-                                    await do_task(body)
-                                }
-                            }
-                        } else {
-                            console.log(`\n获取活动列表失败：${JSON.stringify(result)}`)
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
+  return new Promise(resolve => {
+	  let url = {
+		  url: `https://jdjoy.jd.com/module/task/v2/getActivity?configCode=${code}&eid=${$.eid}&fp=${$.fp}`,
+		  headers: {
+			  'Origin' : `https://prodev.m.jd.com`,
+			  'Cookie' : cookie,
+			  'Connection' : `keep-alive`,
+			  'Content-Type' : `application/json;charset=utf-8`,
+			  'Accept' : `application/json, text/plain, */*`,
+			  'Referer' : `${listUrl}`,
+			  'Host' : `jdjoy.jd.com`,
+			  'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+			  'Accept-Encoding' : `gzip, deflate, br`,
+			  'Accept-Language' : `zh-cn`
+		  }
+	  };
+	$.get(url, async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            const result = JSON.parse(data);
+			//console.log(`get_tasklist：${JSON.stringify(result)}`)
+			if (result.success == true) {
+				console.log(`\n获取活动列表成功!`)
+				tasklist = result.data.dailyTask.taskList
+        // console.debug(tasklist)
+				for (let vo of tasklist) {
+					taskCount = vo.taskCount
+					finishCount = vo.finishCount
+					count = taskCount - finishCount;
+					itemName = vo.item.itemName
+					itemId = vo.item.itemId
+					groupType = vo.groupType
+           if (groupType == 2 && !['card','car'].includes(process.env.FS_LEVEL)) {
+            console.log("默认不加购,请设置通用加购变量FS_LEVEL=car")
+            continue
+          }
+					console.log(`\n${itemName} 完成状态：${finishCount}/${taskCount}`)
+					if (count > 0) {
+						console.log(`开始做任务 ${itemName} ---`)
+						body = `{"groupType":${groupType},"configCode":"${$.configCode}","itemId":"${itemId}","eid":"${$.eid}","fp":"${$.fp}"}`
+						await $.wait(10000)
+						await do_task(body)
+					}
+				}
+			} else {
+				console.log(`\n获取活动列表失败：${JSON.stringify(result)}`)
+			}
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
     })
+  })
 }
 
 //do_task
 function do_task(body) {
-    return new Promise(resolve => {
-        $.post(taskUrl(body), async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${$.name} API请求失败，请检查网路重试`)
-                } else {
-                    if (safeGet(data)) {
-                        const result = JSON.parse(data);
-                        //console.log(`do_task：${JSON.stringify(result)}`)
-                        if (result.success == true) {
-                            console.log(`做任务成功！`)
-                        }else {
-                            console.log(`做任务失败：${JSON.stringify(result)}`)
-                        }
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            } finally {
-                resolve(data);
-            }
-        })
+  return new Promise(resolve => {
+	$.post(taskUrl(body), async (err, resp, data) => {
+      try {
+        if (err) {
+          console.log(`${$.name} API请求失败，请检查网路重试`)
+        } else {
+          if (safeGet(data)) {
+            const result = JSON.parse(data);
+			//console.log(`do_task：${JSON.stringify(result)}`)
+			if (result.success == true) {
+				console.log(`做任务成功！`)
+			}else {
+				console.log(`做任务失败：${JSON.stringify(result)}`)
+			}
+          }
+        }
+      } catch (e) {
+        $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
     })
+  })
 }
 
 //taskUrl
 function taskUrl(body) {
-    return {
-        url: `https://jdjoy.jd.com/module/task/v2/doTask`,
-        headers: {
-            'Cookie': cookie,
-            'Origin' : `https://prodev.m.jd.com`,
-            'Accept-Encoding' : `gzip, deflate, br`,
-            'Connection' : `keep-alive`,
-            'Content-Type' : `application/json;charset=utf-8`,
-            'Host' : `jdjoy.jd.com`,
-            'Accept' : `application/json, text/plain, */*`,
-            'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-            'Referer' : `${listUrl}`,
-            'Accept-Language': `zh-cn`
-        },
-        body: body
-    }
+  return {
+    url: `https://jdjoy.jd.com/module/task/v2/doTask`,
+    headers: {
+	  'Cookie': cookie,
+	  'Origin' : `https://prodev.m.jd.com`,
+	  'Accept-Encoding' : `gzip, deflate, br`,
+	  'Connection' : `keep-alive`,
+	  'Content-Type' : `application/json;charset=utf-8`,
+	  'Host' : `jdjoy.jd.com`,
+      'Accept' : `application/json, text/plain, */*`,
+      'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+	  'Referer' : `${listUrl}`,
+      'Accept-Language': `zh-cn`
+    },
+	body: body
+  }
 }
 
 //configcode
 function origin() {
-    return {
-        url: listUrl,
-        headers: {
-            'Cookie': cookie,
-            'Accept-Encoding' : `gzip, deflate, br`,
-            'Connection' : `keep-alive`,
-            'Content-Type' : `application/x-www-form-urlencoded`,
-            'Host': `prodev.m.jd.com`,
-            'Accept': `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`,
-            'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
-            'Accept-Language': `zh-cn`
-        }
+  return {
+    url: listUrl,
+    headers: {
+	  'Cookie': cookie,
+	  'Accept-Encoding' : `gzip, deflate, br`,
+	  'Connection' : `keep-alive`,
+	  'Content-Type' : `application/x-www-form-urlencoded`,
+	  'Host': `prodev.m.jd.com`,
+      'Accept': `text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8`,
+      'User-Agent' : $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;10.1.6;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+      'Accept-Language': `zh-cn`
     }
+  }
 }
 
 function randomString(len,char) {
-    let res = ""
-    let a = char.length
-    for (let i = 0; i < len; i++) {
-        res += char.charAt(Math.floor(Math.random() * a));
-    }
-    return res.toString();
+  let res = ""
+  let a = char.length
+  for (let i = 0; i < len; i++) {
+	  res += char.charAt(Math.floor(Math.random() * a));
+  }
+  return res.toString();
 }
 
 function randomEid() {
-    const is_num = '000000110000001010000100000010010010000100010000100100010001101000011001000100000001000000'
-    const eid = []
-    for (const flag of is_num) {
-        eid.push((flag == '1') ? randomString(1,'0123456789'):randomString(1,'ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
-    }
-    return eid.join('')
+  const is_num = '000000110000001010000100000010010010000100010000100100010001101000011001000100000001000000'
+  const eid = []
+  for (const flag of is_num) {
+    eid.push((flag == '1') ? randomString(1,'0123456789'):randomString(1,'ABCDEFGHIJKLMNOPQRSTUVWXYZ'))
+  }
+  return eid.join('')
 }
 
 function safeGet(data) {
-    try {
-        if (typeof JSON.parse(data) == "object") {
-            return true;
-        }
-    } catch (e) {
-        console.log(e);
-        console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
-        return false;
+  try {
+    if (typeof JSON.parse(data) == "object") {
+      return true;
     }
+  } catch (e) {
+    console.log(e);
+    console.log(`京东服务器访问数据为空，请检查自身设备网络情况`);
+    return false;
+  }
 }
 
 function jsonParse(str) {
-    if (typeof str == "string") {
-        try {
-            return JSON.parse(str);
-        } catch (e) {
-            console.log(e);
-            $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
-            return [];
-        }
+  if (typeof str == "string") {
+    try {
+      return JSON.parse(str);
+    } catch (e) {
+      console.log(e);
+      $.msg($.name, '', '不要在BoxJS手动复制粘贴修改cookie')
+      return [];
     }
+  }
 }
 
 function showMsg() {
-    return new Promise(resolve => {
-        $.msg($.name, '', `【京东账号${$.index}】${$.nickName}\n${message}`);
-        resolve()
-    })
+  return new Promise(resolve => {
+    $.msg($.name, '', `【京东账号${$.index}】${$.nickName}\n${message}`);
+    resolve()
+  })
 }
 
 // prettier-ignore

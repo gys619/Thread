@@ -5,20 +5,20 @@
 ==============Quantumult X==============
 [task_local]
 #超级直播间盲盒抽京豆
-1 18,20 * * * https://raw.githubusercontent.com/Aaron-lv/JavaScript/master/Task/jd_super_mh.js, tag=超级直播间盲盒抽京豆, enabled=true
+1 18,20 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_super_mh.js, tag=超级直播间盲盒抽京豆, enabled=true
 ==============Loon==============
 [Script]
-cron "1 18,20 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/JavaScript/master/Task/jd_super_mh.js,tag=超级直播间盲盒抽京豆
+cron "1 18,20 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_super_mh.js,tag=超级直播间盲盒抽京豆
 ================Surge===============
-超级直播间盲盒抽京豆 = type=cron,cronexp="1 18,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/JavaScript/master/Task/jd_super_mh.js
+超级直播间盲盒抽京豆 = type=cron,cronexp="1 18,20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_super_mh.js
 ===============小火箭==========
-超级直播间盲盒抽京豆 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/JavaScript/master/Task/jd_super_mh.js, cronexpr="1 18,20 * * *", timeout=3600, enable=true
+超级直播间盲盒抽京豆 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_super_mh.js, cronexpr="1 18,20 * * *", timeout=3600, enable=true
 */
 const $ = new Env('超级直播间盲盒抽京豆');
 let allMessage = '';
-const notify = $.isNode() ? require('../sendNotify') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
-const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -276,7 +276,7 @@ function TotalBean() {
                 "Connection": "keep-alive",
                 "Cookie": cookie,
                 "Referer": "https://wqs.jd.com/my/jingdou/my.shtml?sceneval=2",
-                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('../USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
+                "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1")
             }
         }
         $.post(options, (err, resp, data) => {

@@ -1,11 +1,13 @@
 /*
 瓜分海尔万元小家电
-cron "27 5,18 * * *"
-https://lzdz4-isv.isvjcloud.com/dingzhi/haier/active/activity/5774784?activityId=dz2109100000178201&shareUuid=58c15e884c934d239d10c58321f303e9
+
+https://lzdz4-isv.isvjcloud.com/dingzhi/haier/active/activity/5774784?activityId=dz2109100000178201&shareUuid=6a7490ab735b408ca9dcf98a412f3106
+
+cron 27 4,18 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_haier.js
 */
 const $ = new Env("瓜分海尔万元小家电");
-const jdCookieNode = $.isNode() ? require('../jdCookie.js') : '';
-const notify = $.isNode() ? require('../sendNotify') : '';
+const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
 let ownCode = null;
 if ($.isNode()) {
@@ -46,7 +48,7 @@ if ($.isNode()) {
                 continue
             }
             authorCodeList = [
-                '6ec85fa0974a4f53ba2b0a167e2b8aad',
+                '6a7490ab735b408ca9dcf98a412f3106',
             ]
             $.bean = 0;
             $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);

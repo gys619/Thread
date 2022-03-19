@@ -1,14 +1,18 @@
+if (!["card","car"].includes(process.env.FS_LEVEL)) {
+    console.log("请设置通用加购/开卡环境变量FS_LEVEL为\"car\"(或\"card\"开卡+加购)来运行加购脚本")
+    return
+}
 /*
 [task_local]
-#2.25-3.8女神节抽奖机活动
-15 7,14 * * * jd_bzlshdgt.js, tag=2.25-3.8女神节抽奖机活动, enabled=true
+#把智能生活带给TA
+10 7 * * * jd_bzlshdgt.js, tag=把智能生活带给TA, enabled=true
  */
-const $ = new Env('2.25-3.8女神节抽奖机活动');
+const $ = new Env('把智能生活带给TA');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-$.configCode = "02f742eb50cc4e2dbf98d6adc53bc492";
+$.configCode = "3d83678471e74b84940b99d16d8848b5";
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -21,7 +25,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 !(async () => {
-	console.log('入口下拉：https://prodev.m.jd.com/mall/active/4ZocDBKbsGTxFHQyPzUfat9S1Sv6/index.html')
+	console.log('入口下拉：https://prodev.m.jd.com/mall/active/3z1Vesrhx3GCCcBn2HgbFR4Jq68o/index.html')
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
