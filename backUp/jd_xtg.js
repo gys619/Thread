@@ -1,6 +1,6 @@
 /**
  星推官
- cron 20 4 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xtg.js
+ cron 22 3,4 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xtg.js
  * */
 const $ = new Env('星推官');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -131,7 +131,7 @@ async function main(cookie,index) {
                 continue;
             }
             console.log(`${userName},任务：${oneTask.taskName},去执行`);
-            if(oneTask.type === 'JOIN_SHOPPING_CART'){
+            if(oneTask.type === 'JOIN_SHOPPING_CART' && ["card","car"].includes(process.env.FS_LEVEL)){
                 let getReward = await takeRequest(cookie,`{"parentId":"${oneTask.parentId}","taskId":"${oneTask.taskId}","apiMapping":"/api/task/getReward"}`);
                 console.log(`${userName},执行结果：${JSON.stringify(getReward)}`);
                 await $.wait(2000);

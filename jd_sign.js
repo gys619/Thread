@@ -1,13 +1,6 @@
-//48 9,22 * * * jd_sign.js
-/*
-[task_local]
-京东签到
-48 9,22 * * * jd_sign.js, tag=京东签到, enabled=true
-================Loon==============
-[Script]
-cron "48 9,22 * * *" script-path=jd_sign.js,tag=京东签到
-*/
-const {Env} = require('./function/magic');
+//48 9,22 * * * m_jd_sign.js
+//问题反馈:https://t.me/Wall_E_Channel
+const {Env} = require('./magic');
 const $ = new Env('M京东签到')
 $.logic = async function () {
     await signBeanIndex()
@@ -44,7 +37,7 @@ async function cgame() {
         'Accept-Encoding': 'gzip, deflate, br',
         'Content-Type': 'application/json',
         'Origin': 'https://pro.m.jd.com',
-        'ActivityId': '7c51826be9f241c1ad9733df34d242c5',
+        'ActivityId': 'a54e9a0a1b6044189753e7eba51aab19',
         'Host': 'cgame-stadium.jd.com',
         'Referer': 'https://pro.m.jd.com/mall/active/dj6us2JJRLMMBb4iDaSK4wxvBMt/index.html',
         'Accept-Language': 'zh-cn',
@@ -57,3 +50,4 @@ async function cgame() {
         $.log(`汽车签到 获得${bean}京豆`)
     }
 }
+
