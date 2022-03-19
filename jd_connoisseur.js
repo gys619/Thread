@@ -7,11 +7,14 @@
 [task_local]
 #内容鉴赏官
 15 3,6 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js, tag=内容鉴赏官, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
 ================Loon==============
 [Script]
 cron "15 3,6 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js,tag=内容鉴赏官
+
 ===============Surge=================
 内容鉴赏官 = type=cron,cronexp="15 3,6 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js
+
 ============小火箭=========
 内容鉴赏官 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_connoisseur.js, cronexpr="15 3,6 * * *", timeout=3600, enable=true
  */
@@ -368,12 +371,10 @@ function interactive_done(type, projectId, assignmentId, itemId, actionType = ''
 }
 async function sign_interactive_done(type, projectId, assignmentId) {
   let functionId = 'interactive_done'
-  let body = JSON.stringify({"assignmentId":assignmentId,"type":type,"projectId":projectId})
-  let uuid = randomString(40)
-  let sign = await getSign(functionId, body, uuid)
-  let url = `${JD_API_HOST}client.action?functionId=${functionId}&client=apple&clientVersion=10.1.0&uuid=${uuid}&${sign}`
+  let body = {"assignmentId":assignmentId,"type":type,"projectId":projectId}
+  let sign = await getSign(functionId, body)
   return new Promise(resolve => {
-    $.post(taskPostUrl(url, body), (err, resp, data) => {
+    $.post(taskPostUrl(functionId, sign), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -438,12 +439,10 @@ function interactive_accept(type, projectId, assignmentId, itemId) {
 }
 async function qryViewkitCallbackResult(encryptProjectId, encryptAssignmentId, itemId) {
   let functionId = 'qryViewkitCallbackResult'
-  let body = JSON.stringify({"dataSource":"babelInteractive","method":"customDoInteractiveAssignmentForBabel","reqParams":`{\"itemId\":\"${itemId}\",\"encryptProjectId\":\"${encryptProjectId}\",\"encryptAssignmentId\":\"${encryptAssignmentId}\"}`})
-  let uuid = randomString(40)
-  let sign = await getSign(functionId, body, uuid)
-  let url = `${JD_API_HOST}client.action?functionId=${functionId}&client=apple&clientVersion=10.1.0&uuid=${uuid}&${sign}`
+  let body = {"dataSource":"babelInteractive","method":"customDoInteractiveAssignmentForBabel","reqParams":`{\"itemId\":\"${itemId}\",\"encryptProjectId\":\"${encryptProjectId}\",\"encryptAssignmentId\":\"${encryptAssignmentId}\"}`}
+  let sign = await getSign(functionId, body)
   return new Promise(resolve => {
-    $.post(taskPostUrl(url, body), (err, resp, data) => {
+    $.post(taskPostUrl(functionId, sign), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -572,10 +571,10 @@ function taskUrl(functionId, body) {
     }
   }
 }
-function taskPostUrl(url, body) {
+function taskPostUrl(functionId, body) {
   return {
-    url,
-    body: `body=${encodeURIComponent(body)}`,
+    url: `${JD_API_HOST}client.action?functionId=${functionId}`,
+    body,
     headers: {
       "Host": "api.m.jd.com",
       "Content-Type": "application/x-www-form-urlencoded",
@@ -590,14 +589,13 @@ function taskPostUrl(url, body) {
     }
   }
 }
-function getSign(functionid, body, uuid) {
+function getSign(functionId, body) {
   return new Promise(async resolve => {
     let data = {
-      "functionId":functionid,
-      "body":body,
-      "uuid":uuid,
+      functionId,
+      body: JSON.stringify(body),
       "client":"apple",
-      "clientVersion":"10.1.0"
+      "clientVersion":"10.3.0"
     }
     let HostArr = ['jdsign.cf', 'signer.11111112']
     let Host = HostArr[Math.floor((Math.random() * HostArr.length))]

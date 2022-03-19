@@ -1,19 +1,15 @@
 /*
-生成注销京东会员卡的链接，需要点链接手动退会
+注销京东会员卡
 是注销京东已开的店铺会员,不是京东plus会员
 查看已开店铺会员入口:我的=>我的钱包=>卡包
-运行一次最多获取10个链接
-https://github.com/11111129/jdpro.git
  */
-const $ = new Env('店铺会员退会链接');
+const $ = new Env('注销京东会员卡');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
-let allMessage = ''
-let message = ''
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -23,43 +19,37 @@ if ($.isNode()) {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 const jdNotify = $.getdata('jdUnbindCardNotify');//是否关闭通知，false打开通知推送，true关闭通知推送
-let cardPageSize = 10;// 运行一次生产多少个链接,一次最多读取10个。
+let cardPageSize = 20;// 运行一次取消多少个会员卡。数字0表示不注销任何会员卡
 let stopCards = `京东PLUS会员`;//遇到此会员卡跳过注销,多个使用&分开
 const JD_API_HOST = 'https://api.m.jd.com/';
 !(async () => {
-  console.log('一次最多生成10个退会链接，在绑定的微信打开退会链接操作！\n')
-  if (process.env.QCARD && process.env.QCARD === 'true') {
-    if (!cookiesArr[0]) {
-      $.msg('【京东账号一】注销京东会员卡失败', '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-    }
-    await requireConfig()
-    for (let i = 0; i < cookiesArr.length; i++) {
-      if (cookiesArr[i]) {
-        cookie = cookiesArr[i];
-        $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-        $.index = i + 1;
-        $.isLogin = true;
-        $.nickName = '';
-        $.unsubscribeCount = 0
-        $.cardList = []
-        await TotalBean();
-        console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
-        if (!$.isLogin) {
-          $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
-    
-          if ($.isNode()) {
-            await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
-          }
-          continue
+  if (!cookiesArr[0]) {
+    $.msg('【京东账号一】注销京东会员卡失败', '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+  }
+  await requireConfig()
+  for (let i = 0; i < cookiesArr.length; i++) {
+    if (cookiesArr[i]) {
+      cookie = cookiesArr[i];
+      $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+      $.index = i + 1;
+      $.isLogin = true;
+      $.nickName = '';
+      $.unsubscribeCount = 0
+      $.cardList = []
+      await TotalBean();
+      console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+      if (!$.isLogin) {
+        $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
+
+        if ($.isNode()) {
+          await notify.sendNotify(`${$.name}cookie已失效 - ${$.UserName}`, `京东账号${$.index} ${$.UserName}\n请重新登录获取cookie`);
         }
-        await jdUnbind();
-        await showMsg();
+        continue
       }
+      await jdUnbind();
+      await showMsg();
     }
-    await notify.sendNotify(`${$.name}`, `${allMessage}`)
-  } else {
-        console.log('默认不执行，请设置变量export QCARD=true')	  
-    }
+  }
 })()
     .catch((e) => {
       $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -72,7 +62,6 @@ async function jdUnbind() {
   await unsubscribeCards()
 }
 async function unsubscribeCards() {
-  message = `【京东账号${$.index}🆔】${$.nickName}\n`;
   let count = 0
   $.pushcardList=[]
   for (let item of $.cardList) {
@@ -84,53 +73,52 @@ async function unsubscribeCards() {
       console.log(`匹配到了您设定的会员卡【${item.brandName}】不再进行取消关注会员卡`)
       continue;
     }
-    console.log(`【${item.brandName}】注销链接`)
+    console.log(`去注销会员卡【${item.brandName}】`)
     let res = await unsubscribeCard(item.brandId);
-    $.pushcardList.push(`【${item.brandName}】注销链接`)
+    $.pushcardList.push(`去注销会员卡【${item.brandName}】`)
     $.pushcardList.push(`https://shopmember.m.jd.com/member/memberCloseAccount?venderId=${item.brandId}`)
-     //if (res['success']) {
-       //if (res['busiCode'] === '200') {
-    count++;
-    $.unsubscribeCount ++
-       //}
-     //}
-     await $.wait(1000)
+    // if (res['success']) {
+    //   if (res['busiCode'] === '200') {
+    //     count++;
+    //     $.unsubscribeCount ++
+    //   }
+    // }
+    // await $.wait(1000)
   }
-
+  
   let push_len = $.pushcardList.length
   let push_lena = parseInt(push_len/20)
   let push_lenb = push_len%20
 
   if (push_lena == 0) {
-    //let message = ''
+    let tg_text = ''
     for (a = 0; a < push_len; a++){
-      message = message + $.pushcardList[a] + '\n'
+      tg_text = tg_text + $.pushcardList[a] + '\n'
     }
-    //await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${message}`);
+    await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${tg_text}`);
   } else {
     let step = 0
     for (step = 0; step < push_lena; step++){
-      //let message = ''
+      let tg_text = ''
       for (a = 0; a < 20; a++){
-        message = message + $.pushcardList[a+step*20] + '\n'
+        tg_text = tg_text + $.pushcardList[a+step*20] + '\n'
       }
-      //await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${message}`);
+      await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${tg_text}`);
     }
 
-    //let message = ''
+    let tg_text = ''
     for (b = 0; b < push_lenb; b++){
-      message = message + $.pushcardList[b+step*20] + '\n'
+      tg_text = tg_text + $.pushcardList[b+step*20] + '\n'
     }
-    //await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${message}`);
+    await notify.sendNotify(`京东会员卡注消链接`, `【京东账号${$.index}】${$.UserName}\n${tg_text}`);
   }
 
 }
 function showMsg() {
   if (!jdNotify || jdNotify === 'false') {
-	allMessage += `${message}`
-    //$.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【本次生成退会链接】${$.cardsTotalNum-$.unsubscribeCount}个\n`);
+    $.msg($.name, ``, `【京东账号${$.index}】${$.nickName}\n【已注销会员卡】${$.unsubscribeCount}个\n【还剩会员卡】${$.cardsTotalNum-$.unsubscribeCount}个\n`);
   } else {
-    //$.log(`\n【京东账号${$.index}】${$.nickName}\n【本次生成退会链接】${$.cardsTotalNum-$.unsubscribeCount}个\n`);
+    $.log(`\n【京东账号${$.index}】${$.nickName}\n【已注销会员卡】${$.unsubscribeCount}个\n【还剩会员卡】${$.cardsTotalNum-$.unsubscribeCount}个\n`);
   }
 }
 function getCards() {
@@ -165,7 +153,7 @@ function getCards() {
       } finally {
         resolve(data);
       }
-      //console.log($.cardList)
+      console.log($.cardList)
     });
   })
 }

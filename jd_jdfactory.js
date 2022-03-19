@@ -12,14 +12,17 @@ Last Modified time: 2020-12-26 22:58:02
 ============Quantumultx===============
 [task_local]
 #东东工厂
-12 * * * * jd_jdfactory.js, tag=东东工厂, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_factory.png, enabled=true
+10 * * * * jd_jdfactory.js, tag=东东工厂, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_factory.png, enabled=true
+
 ================Loon==============
 [Script]
-cron "12 * * * *" script-path=jd_jdfactory.js,tag=东东工厂
+cron "10 * * * *" script-path=jd_jdfactory.js,tag=东东工厂
+
 ===============Surge=================
-东东工厂 = type=cron,cronexp="12 * * * *",wake-system=1,timeout=3600,script-path=jd_jdfactory.js
+东东工厂 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=jd_jdfactory.js
+
 ============小火箭=========
-东东工厂 = type=cron,script-path=jd_jdfactory.js, cronexpr="12 * * * *", timeout=3600, enable=true
+东东工厂 = type=cron,script-path=jd_jdfactory.js, cronexpr="10 * * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东工厂');
 
@@ -41,7 +44,7 @@ if ($.isNode()) {
 }
 let wantProduct = ``;//心仪商品名称
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-const inviteCodes = [''];
+const inviteCodes = ['', '', '', '', '', '', ''];
 !(async () => {
   await requireConfig();
   if (!cookiesArr[0]) {
@@ -614,14 +617,14 @@ function jdfactory_getHomeData() {
 function readShareCode() {
   console.log(`开始`)
   return new Promise(async resolve => {
-    $.get({url: `https://cdn.jsdelivr.net/gh/11111129/11111128@main/shareCodes/jdfactory.json`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `http://111111/ddfactory`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(JSON.stringify(err))
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (data) {
-            //console.log(`随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
+            console.log(`随机取${randomCount}个码放到您固定的互助码后面(不影响已有固定互助)`)
             data = JSON.parse(data);
           }
         }

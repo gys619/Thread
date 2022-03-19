@@ -1,8 +1,8 @@
 
 # 云函数快速部署京东脚本（由于云函数官方升级此方法暂时失效）
 >
-> - 本地安装依赖使用serverless部署，[点这里](tencentscf.md#1-安装-nodejs-环境)
-> - Github Action 部署[点这里](tencentscf.md#github-action-部署)
+> - 本地安装依赖使用serverless部署，[点这里](backUpcf.md#1-安装-nodejs-环境)
+> - Github Action 部署[点这里](backUpcf.md#github-action-部署)
 
 ## 1. 安装 Node.js 环境
 
@@ -42,7 +42,7 @@ let CookieJDs = [
 ]
 ```
 
-> 注：获取京东 cookie 教程参考 [浏览器获取京东cookie教程](https://github.com/zhaozhanzhan/jd_docker/raw/master/backUp/GetJdCookie.md) , [插件获取京东cookie教程](https://github.com/zhaozhanzhan/jd_docker/raw/master/backUp/GetJdCookie2.md)
+> 注：获取京东 cookie 教程参考 [浏览器获取京东cookie教程](https://github.com/LXK9301/jd_scripts/blob/master/backUp/GetJdCookie.md) , [插件获取京东cookie教程](https://github.com/LXK9301/jd_scripts/blob/master/backUp/GetJdCookie2.md)
 
 
 ## 4. 部署到云函数
@@ -113,7 +113,7 @@ triggers:
 目前因为云函数改版升级，原GitHub Action部署云函数方案需要作出相应调整，secret变量新增`SCF_REGION`和`TENCENT_FUNCTION_NAME`。`SCF_REGION`用于控制部署区域的选择，具体参数代码填写可以自行查找官方说明 [地域和可用区](https://cloud.tencent.com/document/product/213/6091) `TENCENT_FUNCTION_NAME`用于控制部署到云函数后函数名的命名。<br>
 
 ## 4. 配置index.js中secrets变量说明
-现在可以通过secret设置自定义index.js中的执行方式，环境变量分别为`TENCENTSCF_SOURCE_TYPE`和`TENCENTSCF_SOURCE_URL`，其中`TENCENTSCF_SOURCE_TYPE`值可以选取`local`、`git`、`custom`具体含义[参考这里](githubAction.md#下方提供使用到的-secrets全集合)。`TENCENTSCF_SOURCE_URL`格式为包含raw的URL，例如：`https://raw.githubusercontent.com/zhaozhanzhan/jd_docker/master/`或`https://gitee.com/zhaozhanzhan520/jd_docker/tree/master/`<br>
+现在可以通过secret设置自定义index.js中的执行方式，环境变量分别为`TENCENTSCF_SOURCE_TYPE`和`TENCENTSCF_SOURCE_URL`，其中`TENCENTSCF_SOURCE_TYPE`值可以选取`local`、`git`、`custom`具体含义[参考这里](githubAction.md#下方提供使用到的-secrets全集合)。`TENCENTSCF_SOURCE_URL`格式为包含raw的URL，例如：`https://raw.githubusercontent.com/LXK9301/jd_scripts/master/`或`https://gitee.com/lxk0301/jd_scripts/raw/master/`<br>
 
 
 ### __重要的说三遍__   
@@ -135,4 +135,4 @@ triggers:
 在左侧栏的日志查询中，可以查看到触发的日志，包括是否打卡成功等。
 
 ![测试函数](https://user-images.githubusercontent.com/6993269/99628053-5a9eea80-2a70-11eb-906f-f1d5ea2bfa3a.png)
-## 6. 设置触发器[看这里](iCloud.md#5设置触发器) 或者看这里的[注释说明](https://github.com/iouAkira/jd_scripts/blob/patch-1/index.js#L4)
+## 6. 设置触发器[看这里](backUpd#5设置触发器) 或者看这里的[注释说明](https://github.com/iouAkira/jd_scripts/blob/patch-1/index.js#L4)

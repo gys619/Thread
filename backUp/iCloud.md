@@ -76,6 +76,8 @@ exports.main_handler = async (event, context, callback) => {
 
 **注意：**<br>
 Ⅰ方案一与方案二不能混合到同一个index.js文件中使用，同一个仓库下，二者只能选择其一。<br>
+Ⅱ感谢[issues#115](https://github.com/LXK9301/jd_scripts/issues/115)中的解决方案，目前云函数连续测试已经可以规避热启动问题了。<br>
+Ⅲ在确保完全按照本教程设置的情况下测试云函数运行情况，对于部分人运行日志中出现某些脚本运行失败其他正常，并且错误提示带有strict字样的，请自行删除index.js中的```'use strict';```，再做测试<br>
 
  **增加cookie**
 
@@ -106,29 +108,29 @@ let CookieJDs = [
 单击左侧导航栏**函数服务**，进入“函数服务”页面。
 在页面上方选择一个地域，最好选择离你常用地区近点的，不至于导致账号异常。单击**新建**。如下图所示：
 
-![iCloud1](../icon/iCloud1.png)
+![iCloud1](icon/iCloud1.png)
 
 在“新建函数”页面填写函数基础信息，单击**下一步**。如下图所示：
 
-![iCloud2](../icon/iCloud2.png)
+![iCloud2](icon/iCloud2.png)
 
 **函数名称**：可以自定义，比如为jd。<br>**运行环境**：选择 “Nodejs 12.16”。<br>**创建方式**：选择 “空白函数”。
 
 确保环境为Nodejs 12.16，执行方法改为：index.main_handler，提交方式建议选本地文件夹，然后从GitHub项目克隆Zip压缩包，解压成文件夹，然后点击这个上传把文件夹上传进来（记得node_modules文件夹一并上传或者将node_modules文件夹上传到“层”，之后选择“函数管理”-“层管理”绑定上传好的层），完了后点击下面的高级设置。
 
-![iCloud3](../icon/iCloud3.png)
+![iCloud3](icon/iCloud3.png)
 
 内存用不了太大，64MB就够了（64M内存，免费时长6,400,000秒，内存与免费时长大致关系可以参看云函数官方说明），超时时间改为最大的900秒，然后点击最下面的完成。
 
-![iCloud4](../icon/iCloud4.png)
+![iCloud4](icon/iCloud4.png)
 
 默认设置下，云函数运行时长最长900s，可以通过设置突破900s限制，**此方法仅适用于新建函数名时设置，已建的无法更改，需要删除后重建**。<br>
 
 新建函数，选择**高级配置**，**执行配置**，启用**异步执行**，之后在**环境配置**下**执行超时时间**，最大可以选择**86400秒**的执行时间。<br>
 
-![iCloud7](../icon/iCloud7.png)
+![iCloud7](icon/iCloud7.png)
 
-![iCloud8](../icon/iCloud7.png)
+![iCloud8](icon/iCloud7.png)
 
 ## 5.设置触发器
 
@@ -142,7 +144,7 @@ let CookieJDs = [
 
 创建触发器
 
-![iCloud6](../icon/iCloud6.png)
+![iCloud6](icon/iCloud6.png)
 
 触发方式默认“**定时触发**”，定时任务名称随便起个名字，触发周期根据自己需要自行设置。
 
@@ -158,8 +160,7 @@ let CookieJDs = [
 |      JavaScript      |         脚本名称          | 活动时间 |  serverless.yml   |
 | :------------------: | :-----------------------: | :------: | :---------------: |
 |    `getJDCookie`     |    扫码获取京东Cookie     |   长期   |         /         |
-|   `jd_bean_month_change`   |       京豆月变动通知        |   长期   |    10 7 1-31/7 * *     |
-|   `jd_bean_day_change`   |       京豆日变动通知        |   长期   |    2 9 * * *     |
+|   `jd_bean_change`   |       京豆变动通知        |   长期   |    30 7 * * *     |
 |    `jd_bean_home`    |      领京豆额外奖励       |   长期   |    30 7 * * *     |
 |    `jd_bean_sign`    |         京豆签到          |   长期   |     0 0 * * *     |
 |     `jd_beauty`      |        美丽研究院         |   长期   | 0 0-16/8,20 * * * |
@@ -209,6 +210,6 @@ let CookieJDs = [
 |   `jd_superMarket`   |         东东超市          |   长期   |   15 */6 * * *    |
 |       `jd_syj`       |          十元街           |   长期   |     3 1 * * *     |
 |   `jd_unsubscribe`   |    取关京东店铺和商品     |   长期   |    10 0 * * *     |
-|      `jd_jxsign`       |         京喜签到          |   长期   |     3 1 * * *     |
+|      `jx_sign`       |         京喜签到          |   长期   |     3 1 * * *     |
 
 点击提交，所有流程就结束了。

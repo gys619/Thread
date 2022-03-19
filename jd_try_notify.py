@@ -1,8 +1,11 @@
+#Source::https://github.com/Hyper-Beast/JD_Scripts
 
 """
-cron: 10 20 * * *
+cron: 20 20 * * *
 new Env('京东试用成功通知');
 """
+
+
 import requests
 import json
 import time
@@ -14,6 +17,8 @@ import string
 import urllib
 
 
+
+#以下部分参考Curtin的脚本：https://github.com/curtinlv/JD-Script
 
 def randomuserAgent():
     global uuid,addressid,iosVer,iosV,clientVersion,iPhone,area,ADID,lng,lat
