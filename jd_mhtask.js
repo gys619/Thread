@@ -1,7 +1,6 @@
 /*
 #盲盒任务抽京豆，自行加入以下环境变量，多个活动用@连接
 export jd_mhurlList=""
-
 即时任务，无需cron
  */
 
@@ -10,7 +9,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message;
+let cookiesArr = [], cookie = '', message, allMessage;
 let jd_mhurlList = '';
 let jd_mhurlArr = [];  
 let jd_mhurl = '';
@@ -27,6 +26,12 @@ if ($.isNode()) {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {"open-url": "https://bean.m.jd.com/"});
     return;
+  }
+
+  if (!jd_mhurlList) {
+    $.log(`本地无活动任务，尝试从远程获取\n`);
+    let mhtmp = await getAcitiveCode('https://gitee.com/dylanote/acid/raw/master/mhtask.json')
+    jd_mhurlList = mhtmp[0]  
   }
   if (!jd_mhurlList) {
     $.log(`暂时没有盲盒任务，改日再来～`);
@@ -53,7 +58,7 @@ if ($.isNode()) {
       let jd_mhurlArr = jd_mhurlList.split("@");
       for (let j = 0; j < jd_mhurlArr.length; j++) {
       jd_mhurl = jd_mhurlArr[j]
-      console.log(`新的盲盒任务已经准备好: ${jd_mhurl}，准备开始薅豆`);
+      console.log(`新的盲盒任务已经准备好: \n${jd_mhurl}\n准备开始`);
         try {
         await jdMh(jd_mhurl)
         } catch (e) {
@@ -102,7 +107,7 @@ function showMsg() {
 }
 
 function getInfo(url) {
-  console.log(`\n盲盒任务url:${url}\n`)
+  //console.log(`\n盲盒任务url:${url}\n`)
   return new Promise(resolve => {
     $.get({
       url,
@@ -259,6 +264,38 @@ function TotalBean() {
         resolve();
       }
     })
+  })
+}
+function getAcitiveCode(url) {
+  return new Promise(async resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    if ($.isNode() && process.env.TG_PROXY_HOST && process.env.TG_PROXY_PORT) {
+      const tunnel = require("tunnel");
+      const agent = {
+        https: tunnel.httpsOverHttp({
+          proxy: {
+            host: process.env.TG_PROXY_HOST,
+            port: process.env.TG_PROXY_PORT * 1
+          }
+        })
+      }
+      Object.assign(options, { agent })
+    }
+    $.get(options, async (err, resp, data) => {
+      try {
+        resolve(JSON.parse(data))
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve();
+      }
+    })
+    await $.wait(10000)
+    resolve();
   })
 }
 

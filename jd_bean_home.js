@@ -41,11 +41,11 @@ if ($.isNode()) {
 const JD_API_HOST = 'https://api.m.jd.com/';
 !(async () => {
   $.newShareCodes = []
-  $.authorCode = await getAuthorShareCode('https://raw.githubusercontent.com/222222/11111128/master/shareCodes/11111127')
+  $.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/11111129/11111128@main/shareCodes/11111127')
   if (!$.authorCode) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+    $.http.get({url: 'https://cdn.jsdelivr.net/gh/11111129/11111128@main/shareCodes/11111127'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
     await $.wait(1000)
-    $.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127') || []
+    $.authorCode = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/11111129/11111128@main/shareCodes/11111127') || []
   }
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -80,7 +80,7 @@ const JD_API_HOST = 'https://api.m.jd.com/';
       $.canHelp = true;
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       if ($.newShareCodes.length > 1) {
-        console.log(`\n【抢京豆】 ${$.UserName} 去助力排名第一的cookie`);
+        console.log(`\n【抢京豆】 ${$.UserName} 去助力第一个cookie`);
         // let code = $.newShareCodes[(i + 1) % $.newShareCodes.length]
         // await help(code[0], code[1])
         let code = $.newShareCodes[0];
@@ -151,12 +151,12 @@ async function jdBeanHome() {
     await $.wait(1000)
     await queryCouponInfo()
     $.doneState = false
-    let num = 0
+    let num = 0	
     do {
       await $.wait(2000)
       await beanTaskList(2)
       num++
-    } while (!$.doneState && num < 5)
+    } while (!$.doneState && num < 5)		
     await $.wait(2000)
     if ($.doneState) await beanTaskList(3)
 

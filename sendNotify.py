@@ -22,7 +22,7 @@ sys.path.append(root_path)
 # 通知服务
 BARK = ''                   # bark服务,自行搜索; secrets可填;
 BARK_PUSH=''                # bark自建服务器，要填完整链接，结尾的/不要
-SCKEY = ''                  # Server酱的SCKEY; secrets可填
+PUSH_KEY = ''                  # Server酱的PUSH_KEY; secrets可填
 TG_BOT_TOKEN = ''           # tg机器人的TG_BOT_TOKEN; secrets可填1407203283:AAG9rt-6RDaaX0HBLZQq0laNOh898iFYaRQ
 TG_USER_ID = ''             # tg机器人的TG_USER_ID; secrets可填 1434078534
 TG_API_HOST=''              # tg 代理api
@@ -45,8 +45,8 @@ if "BARK" in os.environ and os.environ["BARK"]:
     BARK = os.environ["BARK"]
 if "BARK_PUSH" in os.environ and os.environ["BARK_PUSH"]:
     BARK_PUSH = os.environ["BARK_PUSH"]
-if "SCKEY" in os.environ and os.environ["SCKEY"]:
-    SCKEY = os.environ["SCKEY"]
+if "PUSH_KEY" in os.environ and os.environ["PUSH_KEY"]:
+    PUSH_KEY = os.environ["PUSH_KEY"]
 if "TG_BOT_TOKEN" in os.environ and os.environ["TG_BOT_TOKEN"] and "TG_USER_ID" in os.environ and os.environ["TG_USER_ID"]:
     TG_BOT_TOKEN = os.environ["TG_BOT_TOKEN"]
     TG_USER_ID = os.environ["TG_USER_ID"]
@@ -80,7 +80,7 @@ if BARK:
 if BARK_PUSH:
     notify_mode.append('bark')
     # print("BARK 推送打开")
-if SCKEY:
+if PUSH_KEY:
     notify_mode.append('sc_key')
     # print("Server酱 推送打开")
 if TG_BOT_TOKEN and TG_USER_ID:
@@ -140,15 +140,15 @@ def bark(title, content):
 
 def serverJ(title, content):
     print("\n")
-    if not SCKEY:
-        print("server酱服务的SCKEY未设置!!\n取消推送")
+    if not PUSH_KEY:
+        print("server酱服务的PUSH_KEY未设置!!\n取消推送")
         return
     print("serverJ服务启动")
     data = {
         "text": title,
         "desp": content.replace("\n", "\n\n")
     }
-    response = requests.post(f"https://sc.ftqq.com/{SCKEY}.send", data=data).json()
+    response = requests.post(f"https://sc.ftqq.com/{PUSH_KEY}.send", data=data).json()
     if response['errno'] == 0:
         print('推送成功！')
     else:
@@ -372,7 +372,7 @@ def send(title, content):
                 print('未启用 bark')
             continue
         if i == 'sc_key':
-            if SCKEY:
+            if PUSH_KEY:
                 serverJ(title=title, content=content)
             else:
                 print('未启用 Server酱')

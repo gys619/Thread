@@ -6,24 +6,24 @@
 =================================Quantumultx=========================
 [task_local]
 #省钱大赢家之翻翻乐
-20 0,6-23 * * * jd_big_winner.js, tag=省钱大赢家之翻翻乐, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+5 0-5/1 * * * jd_big_winner.js, tag=省钱大赢家之翻翻乐, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 
 =================================Loon===================================
 [Script]
-cron "20 0,6-23 * * *" script-path=jd_big_winner.js,tag=省钱大赢家之翻翻乐
+cron "5 0-5/1 * * *" script-path=jd_big_winner.js,tag=省钱大赢家之翻翻乐
 
 ===================================Surge================================
-省钱大赢家之翻翻乐 = type=cron,cronexp="20 0,6-23 * * *",wake-system=1,timeout=3600,script-path=jd_big_winner.js
+省钱大赢家之翻翻乐 = type=cron,cronexp="5 0-5/1 * * *",wake-system=1,timeout=3600,script-path=jd_big_winner.js
 
 ====================================小火箭=============================
-省钱大赢家之翻翻乐 = type=cron,script-path=jd_big_winner.js, cronexpr="20 0,6-23 * * *", timeout=3600, enable=true
+省钱大赢家之翻翻乐 = type=cron,script-path=jd_big_winner.js, cronexpr="5 0-5/1 * * *", timeout=3600, enable=true
  */
 const $ = new Env('省钱大赢家之翻翻乐');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
-let cookiesArr = [], cookie = '', message = '', linkId = 'PFbUR7wtwUcQ860Sn8WRfw', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
+let cookiesArr = [], cookie = '', message = '', linkId = 'DA4SkG7NXupA9sksI00L0g', fflLinkId = 'YhCkrVusBVa_O2K-7xE6hA';
 const JD_API_HOST = 'https://api.m.jd.com/api';
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -51,13 +51,14 @@ const len = cookiesArr.length;
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
+      await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       await main()
     }
   }
   if (message) {
     $.msg($.name, '', message);
-    //if ($.isNode()) await notify.sendNotify($.name, message);
+    if ($.isNode()) await notify.sendNotify($.name, message);
   }
 })()
     .catch((e) => {
@@ -77,11 +78,12 @@ async function main() {
       console.log(`开始进行翻翻乐拿红包\n`)
       await gambleOpenReward();//打开红包
       if ($.canOpenRed) {
-        let time = 10
-        while (!$.canApCashWithDraw && $.changeReward && time--) {
+        let num = 0;
+        do {
           await openRedReward();
           await $.wait(500);
-        }
+          num++
+        } while (!$.canApCashWithDraw && $.changeReward && num < 20)
         if ($.canApCashWithDraw) {
           //提现
           await openRedReward('gambleObtainReward', $.rewardData.rewardType);
@@ -93,7 +95,50 @@ async function main() {
     $.logErr(e)
   }
 }
-
+function TotalBean () {
+  return new Promise( async resolve => {
+    const options = {
+      url: "https://me-api.jd.com/user_new/info/GetJDUserInfoUnion",
+      headers: {
+        Host: "me-api.jd.com",
+        Accept: "*/*",
+        Connection: "keep-alive",
+        Cookie: cookie,
+        "User-Agent": $.isNode() ? ( process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : ( require( './USER_AGENTS' ).USER_AGENT ) ) : ( $.getdata( 'JDUA' ) ? $.getdata( 'JDUA' ) : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1" ),
+        "Accept-Language": "zh-cn",
+        "Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
+        "Accept-Encoding": "gzip, deflate, br"
+      }
+    }
+    $.get( options, ( err, resp, data ) => {
+      try {
+        if ( err ) {
+          $.logErr( err )
+        } else {
+          if ( data ) {
+            data = JSON.parse( data );
+            if ( data[ 'retcode' ] === "1001" ) {
+              $.isLogin = false; //cookie过期
+              return;
+            }
+            if ( data[ 'retcode' ] === "0" && data.data && data.data.hasOwnProperty( "userInfo" ) ) {
+              $.nickName = data.data.userInfo.baseInfo.nickname;
+            }
+            if ( data[ 'retcode' ] === '0' && data.data && data.data[ 'assetInfo' ] ) {
+              $.beanCount = data.data && data.data[ 'assetInfo' ][ 'beanNum' ];
+            }
+          } else {
+            $.log( '京东服务器返回空数据' );
+          }
+        }
+      } catch ( e ) {
+        $.logErr( e )
+      } finally {
+        resolve();
+      }
+    } )
+  } )
+}
 
 //查询剩余多长时间可进行翻翻乐
 function gambleHomePage() {
@@ -126,7 +171,7 @@ function gambleHomePage() {
               } else {
                 $.time = (data.data.leftTime / (60 * 1000)).toFixed(2);
               }
-              console.log(`\n查询下次翻翻乐剩余时间成功：\n京东账号【${$.UserName}】距开始剩 ${$.time} 分钟`);
+              console.log( `\n查询下次翻翻乐剩余时间成功：\n京东账号【${ $.nickName || $.UserName}】距开始剩 ${$.time} 分钟`);
             } else {
               console.log(`查询下次翻翻乐剩余时间失败：${JSON.stringify(data)}\n`);
             }

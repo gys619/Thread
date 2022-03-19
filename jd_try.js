@@ -48,8 +48,8 @@ $.innerKeyWords =
         "女用", "神油", "足力健", "老年", "老人",
         "宠物", "饲料", "丝袜", "黑丝", "磨脚",
         "脚皮", "除臭", "性感", "内裤", "跳蛋",
-        "安全套", "龟头", "阴道", "阴部", "手机卡",
-        "流量卡", "和田玉", "钢化膜", "手机壳","习题","试卷"
+        "安全套", "龟头", "阴道", "阴部", "手机卡", "电话卡", "流量卡",
+        "玉坠","和田玉","习题","试卷","手机壳","钢化膜"
     ]
 //下面很重要，遇到问题请把下面注释看一遍再来问
 let args_xh = {
@@ -91,7 +91,7 @@ let args_xh = {
      * C商品原价99元，试用价1元，如果下面设置为50，那么C商品将会被加入到待提交的试用组
      * 默认为0
      * */
-    jdPrice: process.env.JD_TRY_PRICE * 1 || 0,
+    jdPrice: process.env.JD_TRY_PRICE * 1 || 20,
     /*
      * 获取试用商品类型，默认为1
      * 下面有一个function是可以获取所有tabId的，名为try_tabList
@@ -249,8 +249,10 @@ let args_xh = {
                             break
                         }
                         await try_apply(trialActivityTitleList[i], trialActivityIdList[i])
-                        console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
-                        await $.wait(args_xh.applyInterval);
+                        //console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
+                        const waitTime = generateRandomInteger(5000, 8000);
+                        console.log(`随机等待${waitTime}ms后继续`);
+                        await $.wait(waitTime);
                     }
                     console.log("试用申请执行完毕...")
                     // await try_MyTrials(1, 1)    //申请中的商品
@@ -685,7 +687,17 @@ function jsonParse(str) {
         }
     }
 }
-
+ const generateRandomInteger = (min, max = 0) => {
+   if (min > max) {
+     let temp = min;
+     min = max;
+     max = temp;
+   }
+   var Range = max - min;
+   var Rand = Math.random();
+   return min + Math.round(Rand * Range);
+ };
+ 
 function Env(name, opts) {
     class Http {
         constructor(env) {

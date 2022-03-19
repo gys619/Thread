@@ -1,7 +1,7 @@
 /*
 [task_local]
 #3.18-3.31小天才联合活动抽奖机
-50 7 * * * jd_xtc.js, tag=3.18-3.31小天才联合活动抽奖机, enabled=true
+50 6,13 * * * jd_xtc.js, tag=3.18-3.31小天才联合活动抽奖机, enabled=true
  */
 const $ = new Env('3.18-3.31小天才联合活动抽奖机');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -100,8 +100,8 @@ async function run() {
             }
             if (vo.taskType == 4) {
                 console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
-                await doTask(vo.taskType, vo.taskItem.itemId, vo.id);
-                await getReward(vo.taskType, vo.taskItem.itemId, vo.id);
+                //await doTask(vo.taskType, vo.taskItem.itemId, vo.id);
+                //await getReward(vo.taskType, vo.taskItem.itemId, vo.id);
             }
             if (vo.taskType == 2) {
                 console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);

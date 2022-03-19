@@ -2,7 +2,6 @@
 脚本：取关主播
 更新时间：2021-07-27
 默认：每运行一次脚本取关所有主播
-
 脚本兼容: Quantumult X, Surge, Loon, JSBox, Node.js, 小火箭
 ==============Quantumult X===========
 [task_local]
@@ -89,10 +88,10 @@ if ($.isNode()) {
             allMessage += '\n'
         }
     }
-    if (allMessage) {
-        allMessage = allMessage.substring(0, allMessage.length - 1)
-        if ($.isNode() && (process.env.CASH_NOTIFY_CONTROL ? process.env.CASH_NOTIFY_CONTROL === 'false' : !!1)) await notify.sendNotify($.name, allMessage);
-    }
+    //if (allMessage) {
+        //allMessage = allMessage.substring(0, allMessage.length - 1)
+        //if ($.isNode() && (process.env.CASH_NOTIFY_CONTROL ? process.env.CASH_NOTIFY_CONTROL === 'false' : !!1)) await notify.sendNotify($.name, allMessage);
+    //}
 })()
     .catch((e) => {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')

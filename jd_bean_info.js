@@ -51,8 +51,9 @@ if ($.isNode()) {
     }
   }
   allMessage += `\n今日全部账号收入：${allBean}个京豆 🐶\n`
+  console.log(`${allMessage}`)
   if ($.isNode() && allMessage) {
-    await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
+    //await notify.sendNotify(`${$.name}`, `${allMessage}`, { url: `https://bean.m.jd.com/beanDetail/index.action?resourceValue=bean` })
   }
 })()
     .catch((e) => {
@@ -64,7 +65,7 @@ if ($.isNode()) {
 async function showMsg() {
   if ($.errorMsg) return
   allMessage += `\n【账号${$.index}：${$.nickName || $.UserName} 京豆详情统计】\n\n`;
-  allMessage += `今日收入：${$.todayIncomeBean}个京豆 🐶\n`
+  allMessage += `今日收入总计：${$.todayIncomeBean}京豆 🐶\n`
   allBean = allBean + parseInt($.todayIncomeBean)
   for (let key of myMap.keys()) {
     allMessage += key + ' ---> ' +myMap.get(key)+'京豆 🐶\n'

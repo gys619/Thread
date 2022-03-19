@@ -50,7 +50,8 @@ let cityid = Math.round(Math.random() * (1500 - 1000) + 1000);
 
         if (!thiscookie) continue;
 
-        thiscookie = await taskLoginUrl(thiscookie);
+        deviceid = _uuid();
+        thiscookie = await taskLoginUrl(deviceid, thiscookie);
 
         await userinfo();
         await $.wait(1000);
@@ -239,53 +240,41 @@ function urlTask(url, body) {
 }
 
 //根据京东ck获取到家ck
-async function taskLoginUrl(thiscookie) {
+async function taskLoginUrl(deviceid, thiscookie) {
     return new Promise(async resolve => {
         try {
-            if (thiscookie.indexOf('deviceid_pdj_jd') > -1) {
-                let arr = thiscookie.split(';');
-                for (const o of arr) {
-                    if (o.indexOf('deviceid_pdj_jd') > -1) {
-                        deviceid = o.split('=')[1];
-                    }
+            let option = {
+                url: encodeURI('https://daojia.jd.com/client?_jdrandom=' + (+new Date()) + '&_funid_=login/treasure&functionId=login/treasure&body={}&lat=&lng=&lat_pos=&lng_pos=&city_id=&channel=h5&platform=6.6.0&platCode=h5&appVersion=6.6.0&appName=paidaojia&deviceModel=appmodel&isNeedDealError=false&traceId=' + deviceid + '&deviceToken=' + deviceid + '&deviceId=' + deviceid + '&_jdrandom=' + (+new Date()) + '&_funid_=login/treasure'),
+                headers: {
+                    "Cookie": 'deviceid_pdj_jd=' + deviceid + ';' + thiscookie + ';',
+                    "Host": "daojia.jd.com",
+                    'Content-Type': 'application/x-www-form-urlencoded;',
+                    "User-Agent": 'jdapp;iPhone;10.0.10;14.1;311fc185ed97a0392e35657dfe2a321664170965;network/wifi;model/iPhone11,6;appBuild/167764;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1'
                 }
-                resolve(thiscookie);
-            }
-            else {
-                deviceid = _uuid();
-                let option = {
-                    url: encodeURI('https://daojia.jd.com/client?_jdrandom=' + (+new Date()) + '&_funid_=login/treasure&functionId=login/treasure&body={}&lat=&lng=&lat_pos=&lng_pos=&city_id=&channel=h5&platform=6.6.0&platCode=h5&appVersion=6.6.0&appName=paidaojia&deviceModel=appmodel&isNeedDealError=false&traceId=' + deviceid + '&deviceToken=' + deviceid + '&deviceId=' + deviceid + '&_jdrandom=' + (+new Date()) + '&_funid_=login/treasure'),
-                    headers: {
-                        "Cookie": 'deviceid_pdj_jd=' + deviceid + ';' + thiscookie + ';',
-                        "Host": "daojia.jd.com",
-                        'Content-Type': 'application/x-www-form-urlencoded;',
-                        "User-Agent": 'jdapp;iPhone;10.0.10;14.1;' + deviceid + ';network/wifi;model/iPhone11,6;appBuild/167764;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1'
-                    }
-                };
-                let ckstr = '';
-                await $.http.get(option).then(async response => {
-                    //console.log(response);
+            };
+            let ckstr = '';
+            await $.http.get(option).then(async response => {
                     let body = JSON.parse(response.body);
                     if (body.code == 0) {
-                        for (const key in response.headers) {
-                            if (key.toLowerCase().indexOf('cookie') > -1) {
-                                ckstr = response.headers[key].toString();
-                            }
+                    for (const key in response.headers) {
+                        if (key.toLowerCase().indexOf('cookie') > -1) {
+                            ckstr = response.headers[key].toString();
                         }
-                        ckstr += ';deviceid_pdj_jd=' + deviceid;
                     }
+                    ckstr += 'deviceid_pdj_jd=' + deviceid;
+                }
                     else {
                         console.log(body.msg);
-                    }
-                });
-                resolve(ckstr);
-            }
+                    }				
+            });
+            resolve(ckstr);
 
         } catch (error) {
             console.log(error);
             resolve('');
         }
     })
+
 }
 
 function _uuid() {

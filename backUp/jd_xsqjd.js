@@ -1,7 +1,7 @@
 /*
 * 活动：APP - 京东超市 - 限时抢京豆
 * 第一个CK助力作者，其他CK助力第一个CK
-cron 23 7,9 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xsljd.js
+cron 23 7,9 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_xsqjd.js
 * */
 const $ = new Env('限时抢京豆');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -32,18 +32,11 @@ let autoCode = '',projectId = '',helpId = '';
         return;
     }
     let res = [];
-    try{res = await getAuthorShareCode('https://raw.githubusercontent.com/lsh26/share_code/main/shop.json');}catch (e) {}
+    try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
     if(!res){
-        try{res = await getAuthorShareCode('https://raw.fastgit.org/lsh26/share_code/main/shop.json');}catch (e) {}
+        try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
         if(!res){res = [];}
     }
-    let res2 = [];
-    try{res2 = await getAuthorShareCode('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/shop.json');}catch (e) {}
-    if(!res2){
-        try{res2 = await getAuthorShareCode('https://raw.fastgit.org/zero205/updateTeam/main/shareCodes/shop.json');}catch (e) {}
-        if(!res2){res2 = [];}
-    }
-    res = [...res,...res2]
     if(res.length > 0){
         autoCode = getRandomArrayElements(res,1)[0];
     }

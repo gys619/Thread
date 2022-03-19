@@ -1,20 +1,19 @@
 /*
-cron 30 6-20/3 * * * jd_xinruimz.js
-TG https://t.me/duckjobs
-Rpeo https://github.com/okyyds
-需要手动选
+cron 38 6-20/3 * * * jd_xinruimz.js
+需要手动选品
 入口: https://xinruimz-isv.isvjcloud.com/plantation
-
 无助力
 */
-
-const $ = new Env("颜究种植园");
+if (process.env.MZYJY != "true") {
+    console.log("默认不运行,容易黑,export MZYJY='true'来运行\n 获取accessToken失败就是黑了，手动进活动看看是不是火爆")
+    return
+}
+const $ = new Env("美丽研究院-种植园");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
 let waternum = 0;
 let exfertilizer = true;
-let xinruimz = false;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -29,9 +28,6 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
-if (process.env.xinruimz && process.env.xinruimz != "") {
-    xinruimz = process.env.xinruimz;
-}
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -39,12 +35,6 @@ if (process.env.xinruimz && process.env.xinruimz != "") {
     }
     UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
     for (let i = 0; i < cookiesArr.length; i++) {
-        if (xinruimz) {
-            console.log('执行颜究种植园')
-        } else {
-            console.log('不执行颜究种植园 请设置环境变量 xinruimz ture')
-            break;
-        }
         UA = `jdapp;iPhone;10.1.6;13.5;${UUID};network/wifi;model/iPhone11,6;addressid/4596882376;appBuild/167841;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`;
         if (cookiesArr[i]) {
             cookie = cookiesArr[i];
@@ -63,6 +53,7 @@ if (process.env.xinruimz && process.env.xinruimz != "") {
                 continue
             }
             await main();
+			await $.wait(10 * 1000);
         }
     }
     if (message !== "") {

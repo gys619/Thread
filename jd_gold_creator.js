@@ -8,14 +8,11 @@
 [task_local]
 #金榜创造营
 13 1,22 * * * jd_gold_creator.js, tag=金榜创造营, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
-
 =====================Loon================
 [Script]
 cron "13 1,22 * * *" script-path=jd_gold_creator.js, tag=金榜创造营
-
 ====================Surge================
 金榜创造营 = type=cron,cronexp="13 1,22 * * *",wake-system=1,timeout=3600,script-path=jd_gold_creator.js
-
 ============小火箭=========
 金榜创造营 = type=cron,script-path=jd_gold_creator.js, cronexpr="13 1,22 * * *", timeout=3600, enable=true
  */

@@ -9,14 +9,11 @@
 [task_local]
 # 京东赚赚
 10 0 * * * jd_jdzz.js, tag=京东赚赚, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzz.png, enabled=true
-
 ================Loon==============
 [Script]
 cron "10 0 * * *" script-path=jd_jdzz.js,tag=京东赚赚
-
 ===============Surge=================
 京东赚赚 = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=jd_jdzz.js
-
 ============小火箭=========
 京东赚赚 = type=cron,script-path=jd_jdzz.js, cronexpr="10 0 * * *", timeout=3600, enable=true
  */
@@ -24,7 +21,7 @@ const $ = new Env('京东赚赚');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-let helpAuthor = true; // 帮助作者
+//let helpAuthor = true; // 帮助作者
 const randomCount = $.isNode() ? 20 : 5;
 let jdNotify = true; // 是否关闭通知，false打开通知推送，true关闭通知推送
 //IOS等用户直接用NobyDa的jd cookie
@@ -40,8 +37,7 @@ if ($.isNode()) {
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const inviteCodes = [
-  ``,
-  ``,
+  ''
 ]
 let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 60 * 1000 + 8 * 60 * 60 * 1000);
 !(async () => {
@@ -68,7 +64,7 @@ let nowTimes = new Date(new Date().getTime() + new Date().getTimezoneOffset() * 
         }
         continue
       }
-      await shareCodesFormat()
+      //await shareCodesFormat()
       await jdWish()
     }
   }
