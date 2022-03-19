@@ -7,13 +7,13 @@ TG https://t.me/duckjobs
 
 JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
 JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
-7 7 7 7 * jd_wxCollectionActivity.js
+
 */
 const $ = new Env('加购物车抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
-let cookiesArr = [], cookie = '', message = '' ;
-let activityIdList = ['fe646b9fda604d40932aab0ccecb0042', '713d25a249554ff1a3940fc1dcb56ac5']
+let cookiesArr = [], cookie = '', message = '' ,isPush = false;
+let activityIdList = ['bdacfcba95964d04b3e1cf0cb0e186dd', '6cb3e11671af40f9a8ab461d68995583', '892cb7fbfb844d0098e7f11d69bad6bd', 'cb052bef22334cd29089a39a52dfa1ed', '51de2cce01754429a6a0bc10c369ad8a', 'a1e3fb99b82345738aee4cc907224232', '6818e794a8d143328a819e0a22aced29']
 let lz_cookie = {}
 
 if (process.env.ACTIVITY_ID && process.env.ACTIVITY_ID != "") {
@@ -34,7 +34,7 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
-let doPush = process.env.DoPush || true; // 设置为 false 每次推送, true 跑完了推送
+let doPush = process.env.DoPush || false; // 设置为 false 每次推送, true 跑完了推送
 let removeSize = process.env.JD_CART_REMOVESIZE || 20; // 运行一次取消多全部已关注的商品。数字0表示不取关任何商品
 let isRemoveAll = process.env.JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置了多少就只删除多少条
 $.keywords = process.env.JD_CART_KEYWORDS || []

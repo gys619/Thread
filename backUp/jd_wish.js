@@ -1,12 +1,12 @@
 /*
 许愿池通用抽奖机脚本
 #许愿池抽奖机任务，自行加入以下环境变量，多个ID用@连接
-export wish_appIdArrList="1E1NXxq0@1FFVQyqw@1F11Vx64"               
-export wish_appNameArrList="众筹许愿池@1111点心动@冰雪闪耀季"
+export wish_appIdArrList="1E1NXxq0@1FFVQyqw"               
+export wish_appNameArrList="众筹许愿池@1111点心动"
 
 cron请根据活动对应的规则设置
  */
-const $ = new Env('众筹许愿池');
+const $ = new Env('许愿池通用抽奖机脚本');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -67,11 +67,11 @@ if ($.isNode()) {
     if ($.isNode()) await notify.sendNotify($.name, allMessage);
     $.msg($.name, '', allMessage)
   }
-  let res = await getAuthorShareCode('http://adguard.ipq.co/wish.json')
+  let res = await getAuthorShareCode('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/wish.json')
   if (!res) {
-    $.http.get({url: 'http://adguard.ipq.co/wish.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    $.http.get({url: 'https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/wish.json'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
     await $.wait(1000)
-    res = await getAuthorShareCode('http://adguard.ipq.co/wish.json')
+    res = await getAuthorShareCode('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/wish.json')
   }
   $.shareCode = [...$.shareCode, ...(res || [])]
   for (let i = 0; i < cookiesArr.length; i++) {

@@ -12,6 +12,12 @@ https://\w+-isv.isvjcloud.com/wxTeam/shopInfo url script-request-body jd_zdjr.js
 
 mitm
 *-isv.isvjcloud.com
+[task_local]
+组队瓜分京豆
+40 11 * * * jd_zdjr.js, tag=组队瓜分京豆, enabled=true
+================Loon==============
+[Script]
+cron "40 11 * * *" script-path=jd_zdjr.js,tag=组队瓜分京豆
 
 */
 
