@@ -1,8 +1,8 @@
 
 # 云函数快速部署京东脚本（由于云函数官方升级此方法暂时失效）
 >
-> - 本地安装依赖使用serverless部署，[点这里](tencentscf.md#1-安装-nodejs-环境)
-> - Github Action 部署[点这里](tencentscf.md#github-action-部署)
+> - 本地安装依赖使用serverless部署，[点这里](backUpcf.md#1-安装-nodejs-环境)
+> - Github Action 部署[点这里](backUpcf.md#github-action-部署)
 
 ## 1. 安装 Node.js 环境
 
@@ -135,4 +135,4 @@ triggers:
 在左侧栏的日志查询中，可以查看到触发的日志，包括是否打卡成功等。
 
 ![测试函数](https://user-images.githubusercontent.com/6993269/99628053-5a9eea80-2a70-11eb-906f-f1d5ea2bfa3a.png)
-## 6. 设置触发器[看这里](iCloud.md#5设置触发器) 或者看这里的[注释说明](https://github.com/iouAkira/jd_scripts/blob/patch-1/index.js#L4)
+## 6. 设置触发器[看这里](backUpd#5设置触发器) 或者看这里的[注释说明](https://github.com/iouAkira/jd_scripts/blob/patch-1/index.js#L4)

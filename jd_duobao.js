@@ -1,6 +1,13 @@
 //40,45 23 * * * m_jd_duobao.js
-//问题反馈:https://t.me/Wall_E_Channel
-const {Env} = require('./magic');
+/*
+[task_local]
+京豆夺宝
+40,45 23 * * * jd_duobao.js, tag=京豆夺宝, enabled=true
+================Loon==============
+[Script]
+cron "40,45 23 * * *" script-path=jd_duobao.js,tag=京豆夺宝
+*/
+const {Env} = require('./utils/magic');
 const $ = new Env('M京豆夺宝');
 $.logic = async function () {
     let ex = await queryexpirejingdou();
