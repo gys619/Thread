@@ -1,6 +1,6 @@
 /*
 写情书抽京豆
-13 1,14 12-25 12 * jd_xqscjd.js
+11 1,14 12-25 12 * jd_xqscjd.js
 未知出处
 */
 const $ = new Env('写情书抽京豆');
@@ -88,7 +88,7 @@ if (cookiesArr.length > 1 && $.shareCoseList.length > 0){
             //助力
             for (let y = 0; y < $.shareCoseList.length; y++){
                 var judge = "";
-                if ($.shareCoseList[y].user === $.UserName || $.shareCoseList[y].seen === true || $.haveSeenId === $.shareCoseList[y].user){
+                if ($.shareCoseList[y].user === $.UserName || $.shareCoseList[y].seen === true || $.haveSeenId === $.shareCoseList[y].user){
                 console.log(`${JSON.stringify($.shareCoseList[y])},${$.haveSeenId}`)
                 }else{
                     console.log(`${$.UserName}去助力${$.shareCoseList[y].user},${$.shareCoseList[y].user_id},${$.shareCoseList[y].code_id}`)
@@ -195,7 +195,7 @@ async function main() {
         }else{
             console.log("不加购,请设置通用加购/开卡环境变量FS_LEVEL为\"car\"(或\"card\"开卡+加购)")
         }
-        
+
         await getUserInfo()
         await $.wait(500)
         console.log(`可抽奖${$.lottery_number}次`)

@@ -1,6 +1,6 @@
 /*
 战队投注
-cron 11 0,23 * * * jd_zd.js
+9 9,12,15 21-31 12 * jd_zd.js
 */
 const $ = new Env('战队投注');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -72,7 +72,7 @@ function tythelp() {
         data = JSON.parse(data);
         // console.log(data)
         if (data.code == 0) {
-          console.log(`返回:${JSON.stringify(data)}`)
+          console.log(`获得:${data.data.prizeValue}豆`)
         } else {
           console.log(data.errMsg)
         }
