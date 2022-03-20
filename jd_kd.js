@@ -3,23 +3,19 @@
 活动入口：https://jingcai-h5.jd.com/#/
 签到领豆,14天内满4次和7次享额外奖励，每天运行一次即可
 更新地址：jd_kd.js
-
 已支持IOS双京东账号, Node.js支持N个京东账号
 脚本兼容: QuantumultX, Surge, Loon, 小火箭，JSBox, Node.js
 ============Quantumultx===============
 [task_local]
 #京东快递签到
-10 0 * * * jd_kd.js, tag=京东快递签到, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_kd.png, enabled=true
-
+23 3 * * *  jd_kd.js, tag=京东快递签到, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_kd.png, enabled=true
 ================Loon==============
 [Script]
-cron "10 0 * * *" script-path=jd_kd.js, tag=京东快递签到
-
+cron "23 3 * * * " script-path=jd_kd.js, tag=京东快递签到
 ===============Surge=================
-京东快递签到 = type=cron,cronexp="10 0 * * *",wake-system=1,timeout=3600,script-path=jd_kd.js
-
+京东快递签到 = type=cron,cronexp="23 3 * * * ",wake-system=1,timeout=3600,script-path=jd_kd.js
 ============小火箭=========
-京东快递签到 = type=cron,script-path=jd_kd.js, cronexpr="10 0 * * *", timeout=3600, enable=true
+京东快递签到 = type=cron,script-path=jd_kd.js, cronexpr="23 3 * * * ", timeout=3600, enable=true
  */
 const $ = new Env('京东快递签到');
 

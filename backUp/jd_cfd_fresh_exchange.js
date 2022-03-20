@@ -11,14 +11,11 @@ export JD_CFD_FRESH_DDW_VIRHB="100"
 [task_local]
 #京喜财富岛合成生鲜兑换
 0 0,12 * * * https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js, tag=京喜财富岛合成生鲜兑换, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxcfd.png, enabled=true
-
 ================Loon==============
 [Script]
 cron "0 0,12 * * *" script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js,tag=京喜财富岛合成生鲜兑换
-
 ===============Surge=================
 京喜财富岛合成生鲜兑换 = type=cron,cronexp="0 0,12 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js
-
 ============小火箭=========
 京喜财富岛合成生鲜兑换 = type=cron,script-path=https://raw.githubusercontent.com/jiulan/platypus/main/scripts/jd_cfd_fresh_exchange.js, cronexpr="0 0,12 * * *", timeout=3600, enable=true
  */
@@ -94,7 +91,7 @@ if ($.isNode()) {
             console.log(`获取变量对应参数 : `,ddwVirHb,"\n")
             let condition = conditionAllList.filter(e => e.ddwVirHb === Number(ddwVirHb))[0];
             if (condition){
-                await exchangePinPinPearl(condition.ddwVirHb,condition.strPool,true);
+                await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
             }else {
                 console.log(`未获取到指定变量对应参数  默认提现最大兑换额度\n`)
                await exchangePinPinPearlStateByMax();
@@ -117,12 +114,11 @@ async function exchangePinPinPearlStateByMax(){
     }));
 
     let condition = conditionList.filter(e => e.ddwVirHb == number)[0];
-    await $.wait(500);
-    await exchangePinPinPearl(condition.ddwVirHb,condition.strPool,false);
+    await exchangePinPinPearl(condition.ddwVirHb,condition.strPool);
 }
 
 // 兑换喜豆
-async function exchangePinPinPearl(ddwVirHb,strPoolName,again) {
+async function exchangePinPinPearl(ddwVirHb,strPoolName) {
     return new Promise(async (resolve) => {
         $.get(taskUrl(`user/ExchangePinPinPearl`, `__t=${Date.now()}&dwIsPP=1&strZone=jxbfd&dwLvl=1&dwIsRandHb=0&ddwVirHb=${ddwVirHb}&strPoolName=${strPoolName}`), async (err, resp, data) => {
             try {
@@ -136,14 +132,7 @@ async function exchangePinPinPearl(ddwVirHb,strPoolName,again) {
                             console.log(`京东账号${$.index} ${$.UserName} 兑换喜豆成功  金额:【`+ddwVirHb+'】\n');
                         }else if (data.iRet === 2046){
                             console.log("余额不足哦 \n")
-                            if (again){
-                                await exchangePinPinPearlStateByMax();
-                            }
-                        }else if (data.iRet === 2013){
-                            console.log("奖品已经发完啦，下次早点来哦 \n")
-                            if (again){
-                                await exchangePinPinPearlStateByMax();
-                            }
+                            await exchangePinPinPearlStateByMax();
                         }else {
                             console.log("兑换失败 ",data,"\n")
                         }

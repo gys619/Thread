@@ -10,20 +10,17 @@ IOS用户支持京东双账号,NodeJs用户支持N个京东账号
 ==========Quantumult X==========
 [task_local]
 #宠汪汪偷好友积分与狗粮
-10 0-21/3 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, tag=宠汪汪偷好友积分与狗粮, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
-
+15 9,13,17 * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, tag=宠汪汪偷好友积分与狗粮, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdcww.png, enabled=true
 =======Loon========
 [Script]
-cron "10 0-21/3 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js,tag=宠汪汪偷好友积分与狗粮
-
+cron "15 9,13,17 * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js,tag=宠汪汪偷好友积分与狗粮
 ========Surge==========
-宠汪汪偷好友积分与狗粮 = type=cron,cronexp="10 0-21/3 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js
-
+宠汪汪偷好友积分与狗粮 = type=cron,cronexp="15 9,13,17 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js
 =======小火箭=====
-宠汪汪偷好友积分与狗粮 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, cronexpr="10 0-21/3 * * *", timeout=3600, enable=true
+宠汪汪偷好友积分与狗粮 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_joy_steal.js, cronexpr="15 9,13,17 * * *", timeout=3600, enable=true
 */
 const $ = new Env('宠汪汪偷好友积分与狗粮');
-const zooFaker = require('./JDJRValidator_Aaron');
+const zooFaker = require('./JDJRValidator_Pure');
 $.get = zooFaker.injectToRequest2($.get.bind($));
 $.post = zooFaker.injectToRequest2($.post.bind($));
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -42,7 +39,7 @@ if ($.isNode()) {
 }
 let message = '', subTitle = '';
 let jdNotify = false;//是否开启静默运行，false关闭静默运行(即通知)，true打开静默运行(即不通知)
-let jdJoyHelpFeed = true;//是否给好友喂食，false为不给喂食，true为给好友喂食，默认给好友喂食
+let jdJoyHelpFeed = false;//是否给好友喂食，false为不给喂食，true为给好友喂食，默认给好友喂食
 let jdJoyStealCoin = true;//是否偷好友积分与狗粮，false为否，true为是，默认是偷
 const JD_API_HOST = 'https://jdjoy.jd.com/pet';
 //是否给好友喂食
@@ -90,7 +87,7 @@ if ($.isNode() && process.env.jdJoyStealCoin) {
       message = '';
       subTitle = '';
       $.validate = '';
-      // const zooFaker = require('./JDJRValidator_Aaron');
+      // const zooFaker = require('./utils/JDJRValidator_Pure');
       // $.validate = await zooFaker.injectToRequest()
       await jdJoySteal();
       await showMsg();
