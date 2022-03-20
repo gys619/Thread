@@ -1,14 +1,9 @@
-/*
-[task_local]
-京喜工厂自动化
-变量：京喜工厂自动化生产(填写需要生产的商品名)
-配合京喜工厂商品列表详情使用
-//export COMMODITY_NAME="芦荟洗手液2瓶"
-*/
-const {Env} = require('./function/magic');
+//20 * * * * m_jx_factory_automation.js
+//问题反馈:https://t.me/Wall_E_Channel
+const {Env} = require('./magic');
 const $ = new Env('M京喜工厂自动化');
 let commodityName = process.env.COMMODITY_NAME ? process.env.COMMODITY_NAME
-    : '还没设置要生产商品的变量COMMODITY_NAME,先运行获取商品任务，例：export COMMODITY_NAME="芦荟洗手液2瓶"'
+    : '你还没设置要生产的变量COMMODITY_NAME'
 
 $.logic = async function () {
     let info = await GetUserInfo();

@@ -1,6 +1,7 @@
 /**
 京东超市年货日历
-33 4,16 * * * jd_year.js
+cron 36 2,13 * * * jd_year.js
+TG频道：https://t.me/sheeplost
 */
 const $ = new Env("京东超市年货日历");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -20,6 +21,9 @@ if ($.isNode()) {
     cookiesArr.push(...[$.getdata('CookieJD2'), $.getdata('CookieJD')]);
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
+}
+function nc(val1, val2) {//nullish coalescing
+  return val1 != undefined ? val1 : val2
 }
 !(async () => {
     if (!cookiesArr[0]) {
@@ -137,8 +141,8 @@ async function main() {
                     }
                 }
                 if ($.index === 1) {
-                    console.log('CK1助力作者')
-                    await taskPost('invite_friend', `inviter_id=61e60fb4a3b7750068&uuid=${$.uuid}&source=shareFriend`);
+                    console.log('助力作者')
+                    await taskPost('invite_friend', `inviter_id=61e577478cfb057339&uuid=${$.uuid}&source=shareFriend`);
                 }
             }
             await task('get_calendar_detail', `uuid=${$.uuid}&source=shareFriend`);
@@ -240,9 +244,9 @@ function taskPostUrl(function_id, res, body) {
         url: `https://xinrui-isv.isvjcloud.com/api/${function_id}?${res}`,
         body: JSON.stringify(body),
         headers: {
-            "t1": $.t1 ?? '',
-            "t2": $.t2 ?? '',
-            "t3": $.t3 ?? '',
+            "t1": nc($.t1, ''),
+            "t2": nc($.t2, ''),
+            "t3": nc($.t3, ''),
             "Host": "xinrui-isv.isvjcloud.com",
             "Accept": "application/json, text/plain, */*",
             "Accept-Language": "zh-cn",
@@ -265,9 +269,9 @@ function taskUrl(function_id, body) {
             "Accept-Encoding": "gzip, deflate, br",
             "Connection": "keep-alive",
             "Accept": "application/json, text/plain, */*",
-            "t1": $.t1 ?? '',
-            "t2": $.t2 ?? '',
-            "t3": $.t3 ?? '',
+            "t1": nc($.t1, ''),
+            "t2": nc($.t2, ''),
+            "t3": nc($.t3, ''),
             "User-Agent": UA,
             "Authorization": `Bearer ${$.accessToken}`,
             "Referer": "https://xinrui-isv.isvjcloud.com/year/logined_jd/",

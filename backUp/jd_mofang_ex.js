@@ -7,14 +7,8 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东小魔方--收集兑换
-31 6 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_ex.js, tag=京东小魔方--收集兑换, enabled=true
-================Loon==============
-[Script]
-cron "31 6 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_ex.js,tag=京东小魔方--收集兑换
-===============Surge=================
-京东小魔方--收集兑换 = type=cron,cronexp="31 6 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_ex.js
-============小火箭=========
-京东小魔方--收集兑换 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_mofang_ex.js, cronexpr="31 6 * * *", timeout=3600, enable=true
+31 8 * * * jd jd_mofang_ex.js, tag=京东小魔方--收集兑换, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+
  */
 const $ = new Env('京东小魔方--收集兑换');
 const notify = $.isNode() ? require('./sendNotify') : '';

@@ -1,17 +1,24 @@
+
 /*
 芥么签到
+
 入口：[微信-芥么小程序]
+
 ============Quantumultx===============
 [task_local]
 #芥么签到
 6 0,9 * * * https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jieMo.js, tag=芥么签到, enabled=true
+
 ================Loon==============
 [Script]
 cron "6 0,9 * * *" script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jieMo.js, tag=芥么签到
+
 ===============Surge=================
 芥么签到 = type=cron,cronexp="6 0,9 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jieMo.js
+
 ============小火箭=========
 芥么签到 = type=cron,script-path=https://raw.githubusercontent.com/11111115/JDHelp/main/jd_jieMo.js, cronexpr="6 0,9 * * *", timeout=3600, enable=true
+
 */
 const $ = new Env('芥么签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
