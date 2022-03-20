@@ -162,7 +162,7 @@ async function jump() {
         case 'follow_channel':
         case 'scan_good':
         case 'add_cart':
-        case 'join_member':
+        //case 'join_member':
         case 'boom':
         case 'road_block':
         case 'follow_shop':

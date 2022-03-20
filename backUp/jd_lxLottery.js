@@ -9,7 +9,7 @@ by:小手冰凉 tg:@chianPLA
 ============Quantumultx===============
 [task_local]
 #京东我的理想家
-10 7 * * * jd jd_lxLottery.js, tag=京东我的理想家, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
+10 3 * * * jd_lxLottery.js, tag=京东我的理想家, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
 
  */
 const $ = new Env('京东我的理想家');
@@ -96,19 +96,17 @@ console.log("开始抽奖");
 async function run() {
   try {
     for (let vo of $.taskinfo) {
-      if (vo.hasFinish === true) {
-        console.log(`任务${vo.taskName}，已完成`);
-        continue;
+      if (vo.taskType !== 4) {
+        if (vo.hasFinish === true) {
+          console.log(`任务${vo.taskName}，已完成`);
+          continue;
+        }
+        console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
+        await doTask(vo.taskType, vo.taskItem.itemId);
+        await $.wait(1000 * vo.viewTime)
+        await getReward(vo.taskType, vo.taskItem.itemId);
+        $.hasFinish = false;
       }
-      if (vo.taskName.includes('加购') && !['card','car'].includes(process.env.FS_LEVEL)) {
-        console.log('默认跳过加购,请设置通用加购/开卡变量FS_LEVEL为car(加购)或card(开卡+加购)')
-        continue
-      }
-      console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
-      await doTask(vo.taskType, vo.taskItem.itemId);
-      await $.wait(1000 * vo.viewTime)
-      await getReward(vo.taskType, vo.taskItem.itemId);
-      $.hasFinish = false;
     }
   } catch (e) {
     console.log(e);

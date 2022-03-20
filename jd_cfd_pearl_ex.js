@@ -21,6 +21,8 @@ if ($.isNode()) {
 }
 $.appId = 10032;
 !(async () => {
+console.log(`\n兑换红包环境变量：export ddwVirHb='1' 请自行设置兑换金额\n`);	
+console.log(`默认红包余额大于0.2元就参与兑换\n`);	
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
@@ -75,9 +77,9 @@ async function perl_auto() {
         if (prize.dwState == 3) {
           flag = false
           console.log(strPrizeName, '已兑换过')
-        }else if (!prize.strPrizeName || prize.ddwVirHb <= (process.env.ddwVirHb || 1) * 100) {
+        }else if (!prize.strPrizeName || prize.ddwVirHb <= (process.env.ddwVirHb || 0.2) * 100) {
           flag = false
-          console.log(strPrizeName, '不大于', (process.env.ddwVirHb || 1), '元 过滤')
+          console.log(strPrizeName, '不大于', (process.env.ddwVirHb || 0.2), '元 过滤')
         } else if (prize.dwState == 1) {
           console.log(strPrizeName, '当前缺货,但依然兑换.')
         } else {
