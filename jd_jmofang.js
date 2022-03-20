@@ -9,7 +9,7 @@ by:小手冰凉 tg:@chianPLA
 ===========================
 [task_local]
 #京东集魔方
-31 1,20 * * * jd_mofang_j.js, tag=京东集魔方, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+31 2,19 * * * jd_jmofang.js, tag=京东集魔方, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
  */
 
 const $ = new Env('京东集魔方');
@@ -396,10 +396,10 @@ function getSign(functionid, body, uuid) {
       "client": "apple",
       "clientVersion": "10.1.0"
     }
-    let HostArr = ['jdsign.cf', 'signer.nz.lu']
+    let HostArr = ['jdsign.cf', 'signer.11111112']
     let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
     let options = {
-      url: `https://cdn.nz.lu/ddo`,
+      url: `https://cdn.11111112/ddo`,
       body: JSON.stringify(data),
       headers: {
         Host,

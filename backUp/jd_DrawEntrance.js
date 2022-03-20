@@ -1,6 +1,6 @@
 /*
 天天优惠大乐透
-活动入口-领券-券后9.9
+活动入口:京东APP首页-领券-券后9.9
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ============Quantumultx===============
 [task_local]
@@ -18,6 +18,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
+let allMessage = ""
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '';
 if ($.isNode()) {
@@ -66,12 +67,15 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
             }
         }
     }
-    if (message !== "") {
+/*    if (message !== "") {
         if ($.isNode()) {
             await notify.sendNotify($.name,message)
         }else{
             $.msg($.name,'',message)
         }
+    }*/
+    if (allMessage) {		
+        if ($.isNode()) await notify.sendNotify($.name, allMessage);		
     }
 })()
     .catch((e) => {
@@ -80,6 +84,7 @@ const JD_API_HOST = 'https://api.m.jd.com/api';
     .finally(() => {
         $.done();
     })
+
 function extend() {
     return new Promise(resolve => {
         $.post(taskUrl("getLuckyDrawResourceConfig", {"platformType":"1"}), async (err, resp, data) => {
@@ -117,10 +122,11 @@ function doLuckDrawEntrance() {
                                 switch (data.result.luckyDrawData.couponType) {
                                     case '2':
                                         console.log(`   成功领取优惠券：${data.result.luckyDrawData.discount}\n   ${data.result.luckyDrawData.quotaDesc}，${data.result.luckyDrawData.prizeName}`)
+                                        allMessage += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n          ${data.result.luckyDrawData.discount}\n   ${data.result.luckyDrawData.quotaDesc}，${data.result.luckyDrawData.prizeName}`//增加通知内容
                                         break;
                                     case '0':
                                         console.log(`   成功领取无门槛红包：${data.result.luckyDrawData.quota}`)
-                                        //message += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n          成功领取无门槛红包：${data.result.luckyDrawData.quota}`//增加通知内容
+                                        allMessage += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n          成功领取无门槛红包：${data.result.luckyDrawData.quota}`//增加通知内容
                                         break;
                                     default:
                                         console.log(JSON.stringify(data))//这边把对象已文本形式输出，避免对象中的属性有数组形式造成不完全打印
@@ -129,6 +135,7 @@ function doLuckDrawEntrance() {
                             } else {
                                 $.noChance = true;
                                 console.log("已经没有次数了");
+                                allMessage += `\n【京东账号${$.index}】${$.nickName || $.UserName} \n          已经没有次数了\n`
                             }
                         }
 
