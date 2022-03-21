@@ -1,19 +1,12 @@
 /*
 京东集魔方
-by:小手冰凉 tg:@chianPLA
-脚本更新时间：2021-12-27 19:20
-脚本兼容: Node.js
-新手写脚本，难免有bug，能用且用。
 ===========================
-大势新品赏-集魔方
-入口：京东APP首页左上角-领京贴
-活动时间：2021年10月27日 – 1月1日24:00
 
-cron:22 0,20 27-31,1 12,1 *
+cron:30 6 * * *
 ============Quantumultx===============
 [task_local]
-#12.27~1.1 集魔方
-22 0,20 27-31,1 12,1 * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_desire.js, tag=12.27~1.1 集魔方, enabled=true
+#集魔方
+30 6 * * * jd_desire.js, tag=集魔方, enabled=true
  */
 
 const $ = new Env('京东集魔方');
@@ -158,7 +151,7 @@ async function getInteractionInfo(type = true) {
 }
 function queryPanamaFloor() {
   return new Promise((resolve) => {
-    $.post(taskPostUrl("qryCompositeMaterials", { "geo": null, "mcChannel": 0, "activityId": "01128912", "pageId": "3279508", "qryParam": "[{\"type\":\"advertGroup\",\"id\":\"06066757\",\"mapTo\":\"advData\",\"next\":[{\"type\":\"productGroup\",\"mapKey\":\"desc\",\"mapTo\":\"productGroup\",\"attributes\":13}]}]", "applyKey": "21new_products_h" }), (err, resp, data) => {
+    $.post(taskPostUrl("qryCompositeMaterials", { "geo": null, "mcChannel": 0, "activityId": "01174675", "pageId": "3455491", "qryParam": "[{\"type\":\"advertGroup\",\"id\":\"06167705\",\"mapTo\":\"advData\",\"next\":[{\"type\":\"productGroup\",\"mapKey\":\"desc\",\"mapTo\":\"productGroup\",\"attributes\":13}]}]", "applyKey": "21new_products_h" }), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
@@ -182,7 +175,7 @@ function queryPanamaFloor() {
 
 function qryCompositeMaterials() {
   return new Promise((resolve) => {
-    $.post(taskPostUrl("qryCompositeMaterials", { "geo": null, "mcChannel": 0, "activityId": "01128912", "pageId": "3195530", "qryParam": "[{\"type\":\"advertGroup\",\"id\":\"06050930\",\"mapTo\":\"advData\",\"next\":[{\"type\":\"productGroup\",\"mapKey\":\"desc\",\"mapTo\":\"productGroup\",\"attributes\":13}]}]", "applyKey": "21new_products_h" }), (err, resp, data) => {
+    $.post(taskPostUrl("qryCompositeMaterials", { "geo": null, "mcChannel": 0, "activityId": "01174675", "pageId": "3455491", "qryParam": "[{\"type\":\"advertGroup\",\"id\":\"06167705\",\"mapTo\":\"advData\",\"next\":[{\"type\":\"productGroup\",\"mapKey\":\"desc\",\"mapTo\":\"productGroup\",\"attributes\":13}]}]", "applyKey": "21new_products_h" }), (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
