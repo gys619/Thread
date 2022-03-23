@@ -2,8 +2,10 @@
 入会开卡领取礼包(通用)
 作者：Dellear
 
+自用，拉库请自行禁用
+
 使用环境变量 VENDER_ID 提供 venderid，多个用&连接
-脚本大部分内容包括加密部分代码提取自 smiek2121 的开卡脚本
+脚本大部分内容包括加密部分代码提取自 11111120 的开卡脚本
 
 变量：
 ## 入会开卡
@@ -24,7 +26,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //IOS等用户直接用NobyDa的jd cookie
 CryptoScripts()
 $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
-
+let joinVenderIdList = '';
 let cookiesArr = [],
     cookie = '';
 if ($.isNode()) {
@@ -39,13 +41,24 @@ if ($.isNode()) {
 allMessage = '';
 message = '';
 !(async () => {
+  console.log("\n\n【由于自动运行会自动开卡，建议禁用】\n【如需使用请自行查找入会ID添加】\n【频道通知有水时再跑，避免浪费】\n【变量：export VENDER_ID='ID'】\n\n")
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/', {
       "open-url": "https://bean.m.jd.com/"
     });
     return;
   }
-
+  if (!joinVenderIdList) {
+    $.log(`没有入会ID，尝试获取远程`);
+    let data = await getData("https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/opencard.json")
+    if (data && data.length) {
+        $.log(`获取到远程且有数据`);
+        joinVenderIdList = data.join('&')
+    }else{
+        $.log(`获取失败或当前无远程数据`);
+        return
+    }
+  }
   for (let i = 0; i < cookiesArr.length; i++) {
     cookie = cookiesArr[i];
     if (cookie) {
@@ -245,7 +258,29 @@ function getshopactivityId() {
     })
   })
 }
-
+function getData(url) {
+  return new Promise(async resolve => {
+    const options = {
+      url: `${url}?${new Date()}`, "timeout": 10000, headers: {
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
+      }
+    };
+    $.get(options, async (err, resp, data) => {
+      try {
+        if (err) {
+        } else {
+          if (data) data = JSON.parse(data)
+        }
+      } catch (e) {
+        // $.logErr(e, resp)
+      } finally {
+        resolve(data);
+      }
+    })
+    await $.wait(10000)
+    resolve();
+  })
+}
 function jsonParse(str) {
   if (typeof str == "string") {
     try {
