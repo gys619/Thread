@@ -99,7 +99,7 @@ async function getFarmShareCode(cookie: string) {
 
 async function requireConfig(check: boolean = false): Promise<string[]> {
   let cookiesArr: string[] = []
-  const jdCookieNode = require('./jdcookie.js')
+  const jdCookieNode = require('../jdCookie.js')
   let keys: string[] = Object.keys(jdCookieNode)
   for (let i = 0; i < keys.length; i++) {
     let cookie = jdCookieNode[keys[i]]
