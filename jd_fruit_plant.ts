@@ -1,7 +1,5 @@
 /**
- * 农场自动收+种4级jdhelloword大佬
-cron: 1
-new Env('农场自动收+种4级');
+ * 农场自动收+种4级
  */
 
 import USER_AGENT, {o2s, requireConfig, wait} from "./TS_USER_AGENTS"
