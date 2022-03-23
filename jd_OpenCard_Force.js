@@ -33,6 +33,7 @@ if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
   })
+  if (process.env.VENDER_ID) joinVenderIdList = process.env.VENDER_ID
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {};
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
@@ -83,7 +84,6 @@ message = '';
 
 async function run() {
   try {
-        const joinVenderIdList = process.env.VENDER_ID.split('&');
         for (let i = 0; i < joinVenderIdList.length; i++) {
             $.joinVenderId = joinVenderIdList[i];
             $.errorJoinShop = '';
