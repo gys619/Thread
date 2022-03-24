@@ -72,7 +72,7 @@ message = '';
 
 async function run() {
   try {
-        const joinVenderIdList = process.env.VENDER_ID.split('&');
+        const joinVenderIdList = process.env.VENDER_ID;
         for (let i = 0; i < joinVenderIdList.length; i++) {
             $.joinVenderId = joinVenderIdList[i];
             $.errorJoinShop = '';
