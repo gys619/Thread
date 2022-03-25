@@ -10,6 +10,8 @@ JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置�
 
 pinBlackLists 黑名单,不跑的ck & 分开
 
+7 7 7 7 7 jd_wxCollectionActivity.js
+
 */
 const $ = new Env('加购物车抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
