@@ -1,7 +1,7 @@
 /*
 cron 30 6-20/3 * * * jd_xinruimz.js
 TG https://t.me/duckjobs
-Rpeo https://github.com/okyyds
+Rpeo https://github.com/11111130
 需要手动选
 入口: https://xinruimz-isv.isvjcloud.com/plantation
 
