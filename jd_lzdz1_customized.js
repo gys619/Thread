@@ -27,7 +27,7 @@ if ($.isNode()) {
     $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/bean/signIndex.action", { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
-  // authorCodeList = await getAuthorCodeList('https://gitee.com/fatelight/code/raw/master/lzdz112.json')
+  // authorCodeList = await getAuthorCodeList('https://raw.githubusercontent.com/okyyds/duck/master/code/lzdz112.json')
   // if ($.getAuthorCodeListerr === false) {
   //     authorCodeList = [
   //         '917746a95cae46618c8f6b0ff55dfbc2',
@@ -58,7 +58,6 @@ if ($.isNode()) {
         "917746a95cae46618c8f6b0ff55dfbc2",
         '670d410c6ebc4b129bd62580d6bf96fc',
         '3902fbcdd6d244f78581c41e8e6f2df6',
-        'ebc32cb3b6f34247842e1db9cb856c2a'
       ];
       // $.authorCode = authorCodeList[random(0, authorCodeList.length)];
       $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]

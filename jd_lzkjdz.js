@@ -30,7 +30,7 @@ console.log("脚本部份加密,不喜欢勿跑!!!,10次抽奖机会,3个助力�
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    authorCodeList = await getAuthorCodeList('https://gitee.com/fatelight/Code/raw/master/lzkjdz.json')
+    authorCodeList = await getAuthorCodeList('https://raw.githubusercontent.com/okyyds/duck/master/code/lzkjdz.json')
     if ($.getAuthorCodeListerr === false) {
         authorCodeList = [
             '44f4b33fb82a41a2a70e700727474ccb',
