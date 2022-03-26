@@ -1,7 +1,7 @@
 version: '2'
 services:
   ql_web:
-    image: whyour/qinglong:latest
+    image: whyour/qinglong:2.11.3
     container_name: ql
     volumes:
       - ./data/config:/ql/config

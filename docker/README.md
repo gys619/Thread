@@ -43,7 +43,7 @@ pip install docker-compose
  `docker-compose restart` 重启容器；  
  `docker-compose down` 停止并删除容器；  
 
-## 青龙一键部署
+## 青龙一键部署（2.11.3版本）
 
 1. 新建一个文件夹，用于存放相关数据
 2. 下载本仓库中的`docker-compose.yml`至本地，或是复制文件内容后在本地自行建立并粘贴内容
