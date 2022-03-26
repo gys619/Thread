@@ -22,6 +22,7 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
+console.log("活动地址 https://lzdz1-isv.isvjcloud.com/dingzhi/yapei/redenvelope/activity/13145?activityId=dz721d61fe736531344021e810179d")
 !(async () => {
     $.getAuthorCodeListerr = false
     if (!cookiesArr[0]) {
