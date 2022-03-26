@@ -24,9 +24,9 @@ const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
 const notify = $.isNode() ? require('./sendNotify') : "";
 let cookiesArr = [], cookie = "", allMessage = "", message;
 const inviteCodes = [
-  `@T018v_hzQhwZ8FbUIRib1ACjVfnoaW5kRrbA`,
-  `@T018v_hzQhwZ8FbUIRib1ACjVfnoaW5kRrbA`,
-  `@T018v_hzQhwZ8FbUIRib1ACjVfnoaW5kRrbA`,
+  ``,
+  ``,
+  ``,
 ]
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
 let reward = process.env.JD_HEALTH_REWARD_NAME ? process.env.JD_HEALTH_REWARD_NAME : ''
