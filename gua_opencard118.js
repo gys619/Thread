@@ -78,11 +78,10 @@ let activityCookie =''
     });
     return;
   }
-  $.assistStatus = false
   $.activityId = "2203100041074702"
   $.shareUuid = "76f9a4f1df2e42fd98c05997c0c9bc7d"
   console.log(`入口:\nhttps://lzkjdz-isv.isvjcloud.com/m/1000410747/99/${$.activityId}/?helpUuid=${$.shareUuid}`)
-  let shareUuidArr = [$.shareUuid,"0b040fd16d334886a60c9194ed39e156","d52668543e964836af3bcf9b62a908ce","6668e423b315482284cd4dd8c08e85f0","b10938a3b47c451793edbab377e83d5c","5dc7f645b7cb436fb1be649aeb346059","cb09c5068c894ecd8dd83e3a4c0e151f","5899b188f737424197406bbcfefda7a9","23aa9b317397423ebc152277aff1f5d4","2761691b20fb49cbba0b2db2ca6ffcb0","0420d21c7e164d898bb48d7ef3215ce9"]
+  let shareUuidArr = [$.shareUuid,"0b040fd16d334886a60c9194ed39e156","76f9a4f1df2e42fd98c05997c0c9bc7d","d52668543e964836af3bcf9b62a908ce","6668e423b315482284cd4dd8c08e85f0","b10938a3b47c451793edbab377e83d5c","5dc7f645b7cb436fb1be649aeb346059","cb09c5068c894ecd8dd83e3a4c0e151f","5899b188f737424197406bbcfefda7a9","23aa9b317397423ebc152277aff1f5d4","2761691b20fb49cbba0b2db2ca6ffcb0","0420d21c7e164d898bb48d7ef3215ce9"]
   let s = Math.floor((Math.random()*10))
   let n = 0
   if(s >= 1 && s<= 5) n = Math.floor((Math.random()*shareUuidArr.length))
@@ -104,28 +103,10 @@ let activityCookie =''
       if($.outFlag || $.activityEnd) break
     }
   }
-  cookie = cookiesArr[0];
-  if (cookie && $.assistStatus && !$.outFlag && !$.activityEnd) {
-    $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
-    $.index = 1;
-    message = ""
-    $.bean = 0
-    $.hotFlag = false
-    $.nickName = '';
-    console.log(`\n\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
-    await $.wait(parseInt(Math.random() * 2000 + 4000, 10))
-    await getUA()
-    await run();
-  }
-  
   if($.outFlag) {
     let msg = '此ip已被限制，请过10分钟后再执行脚本'
     $.msg($.name, ``, `${msg}`);
     if ($.isNode()) await notify.sendNotify(`${$.name}`, `${msg}`);
-  }
-  if(allMessage){
-    $.msg($.name, ``, `${allMessage}`);
-    // if ($.isNode()) await notify.sendNotify(`${$.name}`, `${allMessage}`);
   }
 })()
     .catch((e) => $.logErr(e))
@@ -136,7 +117,6 @@ async function run() {
   try {
     // $.hasEnd = true
     $.endTime = 0
-    $.assistCount = 0
     lz_jdpin_token_cookie = ''
     $.Token = ''
     $.Pin = ''
@@ -198,14 +178,11 @@ async function run() {
       }
       if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
         console.log("开卡失败❌ ，重新执行脚本")
-        allMessage += `【账号${$.index}】开卡失败❌ ，重新执行脚本\n`
-      }else{
-        $.assistStatus = true
       }
       await takePostRequest('activityContent');
     }
     console.log($.openStatus === 1 ? "已开卡" : $.openStatus === 0 ? "未开卡" : "未知-"+$.openStatus)
-    console.log($.helpStatus === 2 ? "助力成功" : $.helpStatus === 3 ? "已助力" : $.helpStatus === 4 ? "助力他人" : $.helpStatus === 1 ? "未助力" : $.helpStatus === 0 ? "不能助力自己" : $.helpStatus === 5 ? "已开卡 无法助力" : "未知-"+$.helpStatus)
+    console.log($.helpStatus === 2 ? "助力成功" : $.helpStatus === 3 ? "已助力" : $.helpStatus === 4 ? "助力他人" : $.helpStatus === 1 ? "未助力" : $.helpStatus === 5 ? "已开卡 无法助力" : "未知-"+$.helpStatus)
     console.log(`【账号${$.index}】助力人数：${$.assistCount}`)
     console.log($.actorUuid)
     console.log(`当前助力:${$.shareUuid}`)
@@ -345,15 +322,11 @@ async function dealReturn(type, data) {
           // console.log(data)
           if(res.result && res.result === true){
             $.actorUuid = res.data.customerId || ''
-            $.helpStatus = res.data.helpStatus || 0
-            $.openStatus = res.data.openStatus || 0
+            $.helpStatus = res.data.helpStatus || ''
+            $.openStatus = res.data.openStatus || ''
             $.assistCount = res.data.assistCount || 0
-            if(res.data.sendBeanNum){
-              console.log(`获得${res.data.sendBeanNum}豆`)
-              allMessage += `【账号${$.index}】获得${res.data.sendBeanNum}豆\n`
-            }
+            if(res.data.sendBeanNum) console.log(`获得${res.data.sendBeanNum}豆`)
           }else if(res.errorMessage){
-            if(res.errorMessage.indexOf("结束") > -1) $.activityEnd = true
             console.log(`${type} ${res.errorMessage || ''}`)
           }else{
             console.log(`${type} ${data}`)

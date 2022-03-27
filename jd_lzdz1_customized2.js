@@ -27,7 +27,7 @@ if ($.isNode()) {
     $.msg($.name, "【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取", "https://bean.m.jd.com/bean/signIndex.action", { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
     return;
   }
-  authorCodeList = await getAuthorCodeList('https://raw.githubusercontent.com/11111130/duck/master/code/lzdz2.json')
+  authorCodeList = await getAuthorCodeList('https://gitee.com/fatelight/Code/raw/master/lzdz2.json')
   if ($.getAuthorCodeListerr === false) {
       authorCodeList = [
           '3f8b04988ff24da59980aa1efb1a4d25',

@@ -110,9 +110,9 @@ if ($.isNode()) {
     await pasture();
     await $.wait(2000);
   }
-  $.res = await getAuthorShareCode('https://raw.githubusercontent.com/11111130/duck/master/code/11111127')
+  $.res = await getAuthorShareCode('https://gitee.com/fatelight/Code/raw/master/11111127')
   if (!$.res) {
-    $.http.get({url: 'https://raw.githubusercontent.com/11111130/duck/master/code/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
+    $.http.get({url: 'https://gitee.com/fatelight/Code/raw/master/11111127'}).then((resp) => {}).catch((e) => console.log('刷新CDN异常', e));
     await $.wait(1000)
     $.res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/222222/11111128@master/shareCodes/11111127')
   }
