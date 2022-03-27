@@ -1,8 +1,6 @@
 /*
 入会开卡领取礼包(通用)
 
-来源：SuperManito工具
-
 自用，拉库请自行禁用
 
 使用环境变量 VENDER_ID 提供 venderid，多个用&连接
