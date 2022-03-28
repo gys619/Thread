@@ -1,23 +1,41 @@
 /* 
-关注 https://t.me/11111130nb
-7 7 7 7 7
-注意控制ck数量
+活动地址为：https://lzkjdz-isv.isvjcloud.com/wxShareActivity/activity/6432842?activityId=xxxxx
+一共有2个变量
+jd_fxyl_activityId  活动ID 必需
+
+
+其他变量：
+OWN_COOKIE_NUM  需要被助力的人数
+HELP_COOKIE_NUM 助力的人数
+
+作者：小埋
+
+cron:1 1 1 1 *
+============Quantumultx===============
+[task_local]
+#LZ分享有礼
+1 1 1 1 * jd_share.js, tag=LZ分享有礼, enabled=true
+
 */
-const $ = new Env("分享有礼");
+const $ = new Env("LZ分享有礼");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [], cookie = '', message = '';
 let authorCodeList = [];
-let ownCookieNum = 4;
+let ownCookieNum = 3;
+let helpCookieNum = 5;
 let isGetAuthorCodeList = true
 let activityId = ''
 let activityShopId = ''
 
-if (process.env.OWN_COOKIE_NUM && process.env.OWN_COOKIE_NUM != 4) {
+if (process.env.HELP_COOKIE_NUM && process.env.HELP_COOKIE_NUM != 5) {
+    helpCookieNum = process.env.HELP_COOKIE_NUM;
+}
+if (process.env.OWN_COOKIE_NUM && process.env.OWN_COOKIE_NUM != 3) {
     ownCookieNum = process.env.OWN_COOKIE_NUM;
 }
-if (process.env.SHARE_ACTIVITY_ID && process.env.SHARE_ACTIVITY_ID != "") {
-    activityId = process.env.SHARE_ACTIVITY_ID;
+if (process.env.jd_fxyl_activityId && process.env.jd_fxyl_activityId != "") {
+    activityId = process.env.jd_fxyl_activityId;
 }
 
 if ($.isNode()) {
@@ -34,13 +52,13 @@ if ($.isNode()) {
     cookiesArr.reverse();
     cookiesArr = cookiesArr.filter(item => !!item);
 }
-console.log("关注 https://t.me/11111130nb")
 !(async () => {
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
     isGetAuthorCodeList = true;
+	console.log(`【入口:\nhttps://lzkjdz-isv.isvjcloud.com/wxShareActivity/activity/activity?activityId=${activityId}】`)
     for (let i = 0; i < ownCookieNum; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i]
@@ -68,13 +86,14 @@ console.log("关注 https://t.me/11111130nb")
             $.activityShopId = ''
             $.activityUrl = `https://lzkjdz-isv.isvjcloud.com/wxShareActivity/activity/${$.authorNum}?activityId=${$.activityId}&friendUuid=${encodeURIComponent($.authorCode)}&shareuserid4minipg=null&shopid=${$.activityShopId}`
             await share();
+			await $.wait(3000)
             activityShopId = $.venderId;
         }
     }
     isGetAuthorCodeList = false;
     console.log('需要助力助力码')
     console.log(authorCodeList)
-    for (let i = 0; i < cookiesArr.length; i++) {
+    for (let i = 0; i < helpCookieNum; i++) {
         if (cookiesArr[i]) {
             cookie = cookiesArr[i]
             originCookie = cookiesArr[i]
@@ -105,6 +124,7 @@ console.log("关注 https://t.me/11111130nb")
                 $.authorCode = authorCodeList[i]
                 console.log('去助力: '+$.authorCode)
                 await share();
+				await $.wait(3000)
             }
         }
     }
@@ -121,6 +141,7 @@ console.log("关注 https://t.me/11111130nb")
             $.activityId = activityId
             $.activityShopId = activityShopId
             await getPrize();
+			await $.wait(3000)
         }
     }
 })()
