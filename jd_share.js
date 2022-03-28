@@ -101,6 +101,7 @@ if ($.isNode()) {
             $.index = i + 1;
             $.isLogin = true;
             $.nickName = '';
+			$.errorMessage = ''
             await checkCookie();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             if (!$.isLogin) {
@@ -124,6 +125,9 @@ if ($.isNode()) {
                 $.authorCode = authorCodeList[i]
                 console.log('去助力: '+$.authorCode)
                 await share();
+                if ($.errorMessage === '活动太火爆，还是去买买买吧') {
+                    break
+                }
 				await $.wait(3000)
             }
         }
@@ -162,6 +166,7 @@ async function share() {
     if ($.token) {
         await getMyPing();
         if ($.secretPin) {
+			await $.wait(2000)
             await task('common/accessLogWithAD', `venderId=${$.activityShopId}&code=25&pin=${encodeURIComponent($.secretPin)}&activityId=${$.activityId}&pageUrl=${$.activityUrl}&subType=app&adSource=null`, 1);
             await task('activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&friendUuid=${encodeURIComponent($.authorCode)}`)
         } else {
@@ -314,7 +319,8 @@ function getMyPing() {
                             $.secretPin = data.data.secretPin;
                             cookie = `${cookie};AUTH_C_USER=${data.data.secretPin}`
                         } else {
-                            $.log(data.errorMessage)
+                            $.errorMessage = data.errorMessage
+                            $.log($.errorMessage)
                         }
                     } else {
                         $.log("京东返回了空数据")
