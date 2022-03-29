@@ -361,6 +361,9 @@ jd_ghnsjd.js
 
 
 ############不能跑的###############
+#领券中心签到
+jd_ccSign.js
+
 #特价翻翻乐
 jd_jdtj_winner.js
 #金榜
