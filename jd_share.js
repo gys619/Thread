@@ -125,10 +125,11 @@ if ($.isNode()) {
                 $.authorCode = authorCodeList[i]
                 console.log('去助力: '+$.authorCode)
                 await share();
+				await $.wait(3000)
                 if ($.errorMessage === '活动太火爆，还是去买买买吧') {
                     break
                 }
-				await $.wait(3000)
+				
             }
         }
     }
@@ -148,6 +149,7 @@ if ($.isNode()) {
 			await $.wait(3000)
         }
     }
+	        await $.wait(2000)
 })()
     .catch((e) => {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
