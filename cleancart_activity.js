@@ -22,6 +22,10 @@ async function clean(ck,url,goodsArr){
       if(!ck) return ''
       if(!jdSignUrl) jdSignUrl = url
       cookie = ck
+      if(jdSignUrl.indexOf("://jd.11111118/") > -1) {
+        resolve(msg)
+        return false
+      }
       let signBody = `{"homeWishListUserFlag":"1","userType":"0","updateTag":true,"showPlusEntry":"2","hitNewUIStatus":"1","cvhv":"049591","cartuuid":"hjudwgohxzVu96krv/T6Hg==","adid":""}`
       let body = await jdSign('cartClearQuery', signBody)
       if(out) return
