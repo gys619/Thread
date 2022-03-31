@@ -76,17 +76,17 @@ if ($.isNode()) {
             await $.wait(1000);
         }
     }
-    console.log(`\n********执行任务抽奖**********\n`);
-    for (let i = 0; i < cookiesArr.length; i++) {
-        $.cookie = cookiesArr[i];
-        $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
-        console.log(`====开始账号${$.UserName}===`)
-        if (rcsArr.includes($.UserName) > 0) {
-            console.log("不让做任务，休息会！");
-            continue;
-        }
-        await drawUserTask();
-    }
+    //console.log(`\n********执行任务抽奖**********\n`);
+    //for (let i = 0; i < cookiesArr.length; i++) {
+    //    $.cookie = cookiesArr[i];
+    //    $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+    //    console.log(`====开始账号${$.UserName}===`)
+    //    if (rcsArr.includes($.UserName) > 0) {
+    //        console.log("不让做任务，休息会！");
+    //        continue;
+    //    }
+    //    await drawUserTask();
+    //}
 
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
 
