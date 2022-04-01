@@ -154,8 +154,9 @@ async function member() {
       // console.log('100 -> ')
       // await getFirstLZCK()
       // await getToken();
-      // await $.wait(2000)
+      await $.wait(2000)
       // await task('linkgame/draw/record', `activityId=${$.activityId}&actorUuid=${$.actorUuid}&pin=${encodeURIComponent($.secretPin)}`);
+      await task('april/springUnion/draw', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}`);
     }
   }
 }
@@ -217,7 +218,7 @@ function task(function_id, body, isCommon = 0, own = 0) {
                 case "interaction/write/writePersonInfo":
                   console.log(data);
                   break;
-                case "linkgame/draw":
+                case "april/springUnion/draw":
                   console.log(data);
                   break;
                 case "linkgame/draw/record":
