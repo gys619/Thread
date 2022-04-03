@@ -61,6 +61,7 @@ if ($.isNode()) {
                 '589f9d512fa4454ba171583d0a605458',
                 'eb81808c61e44aec8b5918ecfdbeffbc',
                 '9a821af0eee646bba0994911bc09a07e',
+                '17293a0476a64f4d84da2553e2d6f1fe'
             ]
             // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
