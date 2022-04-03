@@ -42,6 +42,7 @@ let awardState = '';//上期活动的京豆是否收取
 let randomCount = $.isNode() ? 20 : 5;
 let num;
 $.newShareCode = [];
+let llerror=false;
 let lnrun = 0;
 let lnruns = 0;
 !(async () => {  
@@ -94,11 +95,10 @@ let lnruns = 0;
 
 async function jdPlantBean() {
   try {
-    await plantBeanIndex();
-    if ($.plantBeanIndexResult.errorCode === 'PB101') {
-      console.log(`\n活动太火爆了，还是去买买买吧！\n`)
-      return
-    }
+    console.log(`获取任务及基本信息`)
+    await plantBeanIndex(); 
+    if(llerror)
+		return;
     for (let i = 0; i < $.plantBeanIndexResult.data.roundList.length; i++) {
       if ($.plantBeanIndexResult.data.roundList[i].roundState === "2") {
         num = i
@@ -280,7 +280,39 @@ async function helpShare(plantUuid) {
   //console.log(`助力结果的code:${$.helpResult && $.helpResult.code}`);
 }
 async function plantBeanIndex() {
-  $.plantBeanIndexResult = await request('plantBeanIndex');//plantBeanIndexBody
+	llerror=false;
+    $.plantBeanIndexResult = await request('plantBeanIndex'); //plantBeanIndexBody
+    if ($.plantBeanIndexResult.errorCode === 'PB101') {
+        console.log(`\n活动太火爆了，还是去买买买吧！\n`)
+		llerror=true;
+        return
+    }
+    if ($.plantBeanIndexResult.errorCode) {
+        console.log(`获取任务及基本信息出错，10秒后重试\n`)
+        await $.wait(10000);
+        $.plantBeanIndexResult = await request('plantBeanIndex'); 
+        if ($.plantBeanIndexResult.errorCode === 'PB101') {
+            console.log(`\n活动太火爆了，还是去买买买吧！\n`)
+			llerror=true;
+            return
+        }
+    }
+    if ($.plantBeanIndexResult.errorCode) {
+        console.log(`获取任务及基本信息出错，30秒后重试\n`)
+        await $.wait(30000);
+        $.plantBeanIndexResult = await request('plantBeanIndex'); 
+        if ($.plantBeanIndexResult.errorCode === 'PB101') {
+            console.log(`\n活动太火爆了，还是去买买买吧！\n`)
+			llerror=true;
+            return
+        }
+    }
+    if ($.plantBeanIndexResult.errorCode) {
+        console.log(`获取任务及基本信息失败，活动异常，换个时间再试试吧....`)
+        console.log("错误代码;" + $.plantBeanIndexResult.errorCode)
+		llerror=true;
+        return
+    }
 }
 function requestGet(function_id, body = {}) {
   if (!body.version) {
