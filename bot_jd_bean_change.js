@@ -22,7 +22,6 @@ let cookiesArr = [], cookie = '';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 let intPerSent = 0;
 let i = 0;
-let llShowMonth = false;
 let Today = new Date();
 let strAllNotify="";
 let strSubNotify="";
@@ -178,14 +177,21 @@ if(DisableIndex!=-1){
 	console.log("检测到设定关闭东东萌宠查询");
 	EnableJDPet=false
 }
-
-DisableIndex=strDisableList.findIndex((item) => item === "活动攻略");
+//7天过期京豆
+let EnableOverBean=true;
+DisableIndex=strDisableList.findIndex((item) => item === "过期京豆");
 if(DisableIndex!=-1){
-	console.log("检测到设定关闭活动攻略显示");
-	RemainMessage="";
+	console.log("检测到设定关闭过期京豆查询");
+	EnableOverBean=false
 }
 
-
+//查优惠券
+let EnableChaQuan=true;
+DisableIndex=strDisableList.findIndex((item) => item === "查优惠券");
+if(DisableIndex!=-1){
+	console.log("检测到设定关闭优惠券查询");
+	EnableChaQuan=false
+}
 
 
 !(async() => {
@@ -311,13 +317,6 @@ if(DisableIndex!=-1){
 
         //京豆查询
         await bean();
-
-        if (llShowMonth) {
-            console.log("开始获取月数据，请稍后...");
-            await Monthbean();
-            console.log("月数据获取完毕，暂停10秒防止IP被黑...");
-            await $.wait(10 * 1000);
-        }
 
         //京喜工厂
         if (EnableJxGC)
@@ -648,130 +647,40 @@ async function bean() {
 	$.expenseBean = -$.expenseBean;
 	
 	decExBean =0;
-	await queryexpirejingdou();//过期京豆		
-	await redPacket(); 
-	await getCoupon();
-}
-
-async function Monthbean() {
-	let time = new Date();
-	let year = time.getFullYear();
-	let month = parseInt(time.getMonth()); //取上个月
-	if (month == 0) {
-		//一月份，取去年12月，所以月份=12，年份减1
-		month = 12;
-		year -= 1;
-	}
-
-	//开始时间 时间戳
-	let start = new Date(year + "-" + month + "-01 00:00:00").getTime();
-	console.log(`计算月京豆起始日期:` + GetDateTime(new Date(year + "-" + month + "-01 00:00:00")));
-
-	//结束时间 时间戳
-	if (month == 12) {
-		//取去年12月，进1个月，所以月份=1，年份加1
-		month = 1;
-		year += 1;
-	}
-	let end = new Date(year + "-" + (month + 1) + "-01 00:00:00").getTime();
-	console.log(`计算月京豆结束日期:` + GetDateTime(new Date(year + "-" + (month + 1) + "-01 00:00:00")));
-
-	let allpage = 1,
-	allt = 0,
-	allyesterdayArr = [];
-	do {
-		let response = await getJingBeanBalanceDetail(allpage);
-		await $.wait(1000);
-		// console.log(`第${allpage}页: ${JSON.stringify(response)}`);
-		if (response && response.code === "0") {
-			allpage++;
-			let detailList = response.detailList;
-			if (detailList && detailList.length > 0) {
-				for (let item of detailList) {
-					const date = item.date.replace(/-/g, '/') + "+08:00";
-					if (start <= new Date(date).getTime() && new Date(date).getTime() < end) {
-						//日期区间内的京豆记录
-						allyesterdayArr.push(item);
-					} else if (start > new Date(date).getTime()) {
-						//前天的
-						allt = 1;
-						break;
-					}
-				}
-			} else {
-				$.errorMsg = `数据异常`;
-				$.msg($.name, ``, `账号${$.index}：${$.nickName}\n${$.errorMsg}`);
-				allt = 1;
-			}
-		} else if (response && response.code === "3") {
-			console.log(`cookie已过期，或者填写不规范，跳出`)
-			allt = 1;
-		} else {
-			console.log(`未知情况：${JSON.stringify(response)}`);
-			console.log(`未知情况，跳出`)
-			allt = 1;
-		}
-	} while (allt === 0);
-
-	for (let item of allyesterdayArr) {
-		if (Number(item.amount) > 0) {
-			$.allincomeBean += Number(item.amount);
-		} else if (Number(item.amount) < 0) {
-			$.allexpenseBean += Number(item.amount);
-		}
-	}
-
+	if(EnableOverBean)
+		await queryexpirejingdou();//过期京豆		
+	await redPacket();
+	
+	if(EnableChaQuan)
+		await getCoupon();
 }
 
 async function jdCash() {
-	let functionId = "cash_homePage";
-	/* let body = {};	  
-	console.log(`正在获取领现金任务签名...`);
-	isSignError = false;
-	let sign = await getSign(functionId, body);
-		if (isSignError) {
-			console.log(`领现金任务签名获取失败,等待2秒后再次尝试...`)
-			await $.wait(2 * 1000);
-			isSignError = false;
-			sign =await getSign(functionId, body);
-		}
-		if (isSignError) {
-			console.log(`领现金任务签名获取失败,等待2秒后再次尝试...`)
-			await $.wait(2 * 1000);
-			isSignError = false;
-			sign = await getSign(functionId, body);
-		}
-		if (!isSignError) {
-			console.log(`领现金任务签名获取成功...`)
-		} else {
-			console.log(`领现金任务签名获取失败...`)
-			$.jdCash = 0;
-			return
-		} */
-		let sign = `body=%7B%7D&build=167968&client=apple&clientVersion=10.4.0&d_brand=apple&d_model=iPhone13%2C3&ef=1&eid=eidI25488122a6s9Uqq6qodtQx6rgQhFlHkaE1KqvCRbzRnPZgP/93P%2BzfeY8nyrCw1FMzlQ1pE4X9JdmFEYKWdd1VxutadX0iJ6xedL%2BVBrSHCeDGV1&ep=%7B%22ciphertype%22%3A5%2C%22cipher%22%3A%7B%22screen%22%3A%22CJO3CMeyDJCy%22%2C%22osVersion%22%3A%22CJUkDK%3D%3D%22%2C%22openudid%22%3A%22CJSmCWU0DNYnYtS0DtGmCJY0YJcmDwCmYJC0DNHwZNc5ZQU2DJc3Zq%3D%3D%22%2C%22area%22%3A%22CJZpCJCmC180ENcnCv80ENc1EK%3D%3D%22%2C%22uuid%22%3A%22aQf1ZRdxb2r4ovZ1EJZhcxYlVNZSZz09%22%7D%2C%22ts%22%3A1648428189%2C%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22version%22%3A%221.0.3%22%2C%22appname%22%3A%22com.360buy.jdmobile%22%2C%22ridx%22%3A-1%7D&ext=%7B%22prstate%22%3A%220%22%2C%22pvcStu%22%3A%221%22%7D&isBackground=N&joycious=104&lang=zh_CN&networkType=3g&networklibtype=JDNetworkBaseAF&partner=apple&rfs=0000&scope=11&sign=98c0ea91318ef1313786d86d832f1d4d&st=1648428208392&sv=101&uemps=0-0&uts=0f31TVRjBSv7E8yLFU2g86XnPdLdKKyuazYDek9RnAdkKCbH50GbhlCSab3I2jwM04d75h5qDPiLMTl0I3dvlb3OFGnqX9NrfHUwDOpTEaxACTwWl6n//EOFSpqtKDhg%2BvlR1wAh0RSZ3J87iAf36Ce6nonmQvQAva7GoJM9Nbtdah0dgzXboUL2m5YqrJ1hWoxhCecLcrUWWbHTyAY3Rw%3D%3D`
-		return new Promise((resolve) => {
-			$.post(apptaskUrl(functionId, sign), async (err, resp, data) => {
-				try {
-					if (err) {
-						console.log(`${JSON.stringify(err)}`)
-						console.log(`jdCash API请求失败，请检查网路重试`)
-					} else {
-						if (safeGet(data)) {
-							data = JSON.parse(data);
-							if (data.code === 0 && data.data.result) {
-								$.jdCash = data.data.result.totalMoney || 0;								
-								return
-							}
-						}
-					}
-				} catch (e) {
-					$.logErr(e, resp)
-				}
-				finally {
-					resolve(data);
-				}
-			})
-		})
+    let functionId = "cash_homePage";
+    let sign = `body=%7B%7D&build=167968&client=apple&clientVersion=10.4.0&d_brand=apple&d_model=iPhone13%2C3&ef=1&eid=eidI25488122a6s9Uqq6qodtQx6rgQhFlHkaE1KqvCRbzRnPZgP/93P%2BzfeY8nyrCw1FMzlQ1pE4X9JdmFEYKWdd1VxutadX0iJ6xedL%2BVBrSHCeDGV1&ep=%7B%22ciphertype%22%3A5%2C%22cipher%22%3A%7B%22screen%22%3A%22CJO3CMeyDJCy%22%2C%22osVersion%22%3A%22CJUkDK%3D%3D%22%2C%22openudid%22%3A%22CJSmCWU0DNYnYtS0DtGmCJY0YJcmDwCmYJC0DNHwZNc5ZQU2DJc3Zq%3D%3D%22%2C%22area%22%3A%22CJZpCJCmC180ENcnCv80ENc1EK%3D%3D%22%2C%22uuid%22%3A%22aQf1ZRdxb2r4ovZ1EJZhcxYlVNZSZz09%22%7D%2C%22ts%22%3A1648428189%2C%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22version%22%3A%221.0.3%22%2C%22appname%22%3A%22com.360buy.jdmobile%22%2C%22ridx%22%3A-1%7D&ext=%7B%22prstate%22%3A%220%22%2C%22pvcStu%22%3A%221%22%7D&isBackground=N&joycious=104&lang=zh_CN&networkType=3g&networklibtype=JDNetworkBaseAF&partner=apple&rfs=0000&scope=11&sign=98c0ea91318ef1313786d86d832f1d4d&st=1648428208392&sv=101&uemps=0-0&uts=0f31TVRjBSv7E8yLFU2g86XnPdLdKKyuazYDek9RnAdkKCbH50GbhlCSab3I2jwM04d75h5qDPiLMTl0I3dvlb3OFGnqX9NrfHUwDOpTEaxACTwWl6n//EOFSpqtKDhg%2BvlR1wAh0RSZ3J87iAf36Ce6nonmQvQAva7GoJM9Nbtdah0dgzXboUL2m5YqrJ1hWoxhCecLcrUWWbHTyAY3Rw%3D%3D`
+        return new Promise((resolve) => {
+            $.post(apptaskUrl(functionId, sign), async(err, resp, data) => {
+                try {
+                    if (err) {
+                        console.log(`${JSON.stringify(err)}`)
+                        console.log(`jdCash API请求失败，请检查网路重试`)
+                    } else {
+                        if (safeGet(data)) {
+                            data = JSON.parse(data);
+                            if (data.code === 0 && data.data.result) {
+                                $.jdCash = data.data.result.totalMoney || 0;
+                                return
+                            }
+                        }
+                    }
+                } catch (e) {
+                    $.logErr(e, resp)
+                }
+                finally {
+                    resolve(data);
+                }
+            })
+        })
 }
 function apptaskUrl(functionId = "", body = "") {
   return {
