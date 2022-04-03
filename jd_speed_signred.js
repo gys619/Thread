@@ -61,7 +61,7 @@ if ($.isNode()) {
 
 async function jsRedPacket() {
   try {
-    await getSigns();
+    //await getSigns();
     await sign();//极速版签到提现
     //await reward_query();
     //for (let i = 0; i < 3; i++) {

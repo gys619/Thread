@@ -6,64 +6,88 @@ const {format} = require("date-fns");
 const notify = require('./sendNotify');
 const jdCookieNode = require('./jdcookie.js');
 const CryptoJS = require("crypto-js");
-const got = require("got");
+
 let cookies = [];
 let testMode = process.env.TEST_MODE?.includes('on') ? true
     : __dirname.includes("magic")
+
+let mode = process.env.MODE ? process.env.MODE : "local"
+
+let wxBlackCookiePin = process.env.M_WX_BLACK_COOKIE_PIN
+    ? process.env.M_WX_BLACK_COOKIE_PIN : ''
+
 Object.keys(jdCookieNode).forEach((item) => {
     cookies.push(jdCookieNode[item])
 })
 
-const USER_AGENTS = [
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;android;10.0.2;9;network/4g;Mozilla/5.0 (Linux; Android 9; Mi Note 3 Build/PKQ1.181007.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; GM1910 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; 16T Build/PKQ1.190616.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;13.6;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.6;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.5;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.7;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;13.4;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; MI 6 Build/PKQ1.190118.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;11;network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045511 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;11.4;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79",
-    "jdapp;android;10.0.2;10;;network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045224 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;9;network/wifi;Mozilla/5.0 (Linux; Android 9; MHA-AL00 Build/HUAWEIMHA-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;8.1.0;network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; 16 X Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;8.0.0;network/wifi;Mozilla/5.0 (Linux; Android 8.0.0; HTC U-3w Build/OPR6.170623.013; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;14.0.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; LYA-AL00 Build/HUAWEILYA-AL00L; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;14.2;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.2;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;android;10.0.2;8.1.0;network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; MI 8 Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Premium Edition Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;14.3;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;iPhone;10.0.2;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
-    "jdapp;android;10.0.2;11;network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K20 Pro Premium Edition Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045513 Mobile Safari/537.36",
-    "jdapp;android;10.0.2;10;network/wifi;Mozilla/5.0 (Linux; Android 10; MI 8 Build/QKQ1.190828.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36",
-    "jdapp;iPhone;10.0.2;14.1;network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1",
+const JDAPP_USER_AGENTS = [
+    `jdapp;android;10.0.2;9;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 9; MHA-AL00 Build/HUAWEIMHA-AL00; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;9;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 9; MI 6 Build/PKQ1.190118.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;9;${uuid()};network/4g;Mozilla/5.0 (Linux; Android 9; Mi Note 3 Build/PKQ1.181007.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;9;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 9; 16T Build/PKQ1.190616.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A5010 Build/QKQ1.191014.012; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; ONEPLUS A6000 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045224 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; GM1910 Build/QKQ1.190716.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; LYA-AL00 Build/HUAWEILYA-AL00L; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; Redmi K20 Pro Premium Edition Build/QKQ1.190825.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;11;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K20 Pro Premium Edition Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045513 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;10;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; MI 8 Build/QKQ1.190828.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045227 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;11;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 11; Redmi K30 5G Build/RKQ1.200826.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045511 Mobile Safari/537.36`,
+    `jdapp;iPhone;10.0.2;14.2;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.3;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.2;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;11.4;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15F79`,
+    `jdapp;android;10.0.2;10;;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 10; M2006J10C Build/QP1A.190711.020; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/77.0.3865.120 MQQBrowser/6.2 TBS/045230 Mobile Safari/537.36`,
+    `jdapp;iPhone;10.0.2;14.3;${uuid()};network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.6;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.6;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.5;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.1;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.3;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.7;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.1;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.3;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;13.4;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 13_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.3;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.3;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.3;${uuid()};network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;iPhone;10.0.2;14.1;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;android;10.0.2;8.1.0;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; 16 X Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36`,
+    `jdapp;android;10.0.2;8.0.0;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 8.0.0; HTC U-3w Build/OPR6.170623.013; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/044942 Mobile Safari/537.36`,
+    `jdapp;iPhone;10.0.2;14.0.1;${uuid()};network/wifi;Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+    `jdapp;android;10.0.2;8.1.0;${uuid()};network/wifi;Mozilla/5.0 (Linux; Android 8.1.0; MI 8 Build/OPM1.171019.026; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/6.2 TBS/045131 Mobile Safari/537.36`,
 ]
 
-const $ = axios.create({timeout: 24000});
+//来源于kedaya大佬
+const ISV_OBFUSCATOR = {
+    'lzkj-isv.isvjcloud.com': [
+        'body=%7B%22url%22%3A%22https%3A%2F%2Flzkj-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&uuid=1d9f7760c9ffaad4eb&client=apple&clientVersion=10.0.10&st=1646999134752&sv=112&sign=d14c9517190f8a8b0e253e3dbbdee87a',
+    ],
+    'cjhy-isv.isvjcloud.com': [
+        'body=%7B%22url%22%3A%22https%3A%2F%2Fcjhy-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&uuid=b024526b380d35c9e3&client=apple&clientVersion=10.0.10&st=1646999134786&sv=111&sign=fd9417f9d8e872da6c55102bd69da99f',
+    ],
+    'txzj-isv.isvjcloud.com': [
+        'body=%7B%22url%22%3A%22https%3A%2F%2Ftxzj-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&uuid=f7fc9bef85a8620cdf&client=apple&clientVersion=10.0.10&st=1646999134805&sv=121&sign=bbe137e2f52dbf3a1f10fa2ffe749d05',
+    ],
+    'lzdz1-isv.isvjcloud.com': [
+        'body=%7B%22url%22%3A%20%22https%3A//lzdz1-isv.isvjcloud.com%22%2C%20%22id%22%3A%20%22%22%7D&uuid=72124265217d48b7955781024d65bbc4&client=apple&clientVersion=9.4.0&st=1621796702000&sv=120&sign=14f7faa31356c74e9f4289972db4b988'
+    ],
+    'cjhydz-isv.isvjcloud.com': [
+        'adid=7B411CD9-D62C-425B-B083-9AFC49B94228&area=16_1332_42932_43102&body=%7B%22url%22%3A%22https%3A%5C/%5C/cjhydz-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&build=167541&client=apple&clientVersion=9.4.0&d_brand=apple&d_model=iPhone8%2C1&eid=eidId10b812191seBCFGmtbeTX2vXF3lbgDAVwQhSA8wKqj6OA9J4foPQm3UzRwrrLdO23B3E2wCUY/bODH01VnxiEnAUvoM6SiEnmP3IPqRuO%2By/%2BZo&isBackground=N&joycious=48&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=2f7578cb634065f9beae94d013f172e197d62283&osVersion=13.1.2&partner=apple&rfs=0000&scope=11&screen=750%2A1334&sign=60bde51b4b7f7ff6e1bc1f473ecf3d41&st=1613720203903&sv=110&uts=0f31TVRjBStG9NoZJdXLGd939Wv4AlsWNAeL1nxafUsZqiV4NLsVElz6AjC4L7tsnZ1loeT2A8Z5/KfI/YoJAUfJzTd8kCedfnLG522ydI0p40oi8hT2p2sNZiIIRYCfjIr7IAL%2BFkLsrWdSiPZP5QLptc8Cy4Od6/cdYidClR0NwPMd58K5J9narz78y9ocGe8uTfyBIoA9aCd/X3Muxw%3D%3D&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D&wifiBssid=9cf90c586c4468e00678545b16176ed2'
+    ],
+}
+const $ = axios.create({timeout: 30000});
 $.defaults.headers['Accept'] = '*/*';
-$.defaults.headers['User-Agent'] = USER_AGENTS[randomNumber(0,
-    USER_AGENTS.length)];
 $.defaults.headers['Connection'] = 'keep-alive';
 $.defaults.headers['Accept-Language'] = "zh-CN,zh-Hans;q=0.9";
 $.defaults.headers['Accept-Encoding'] = "gzip, deflate, br";
 
-
-function randomNumber(min = 0, max = 100) {
-    return Math.min(Math.floor(min + Math.random() * (max - min)), max);
+function uuid(x = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") {
+    return x.replace(/[xy]/g, function (x) {
+        const r = 16 * Math.random() | 0, n = "x" === x ? r : 3 & r | 8;
+        return n.toString(36)
+    })
 }
 
 class Env {
@@ -71,16 +95,18 @@ class Env {
         this.name = name
         this.username = '';
         this.cookie = '';
-        this.cookies = [];
+        this.cookies = cookies;
         this.index = '';
         this.ext = [];
         this.msg = [];
         this.delimiter = '';
         this.filename = ''
+        this.lz = ''
         this.appId = '';
         this.algo = {};
         this.bot = false;
         this.expire = false;
+        this.accounts = {};
     }
 
     async run(data = {
@@ -93,9 +119,23 @@ class Env {
         blacklist: [],
         whitelist: []
     }) {
+        console.log('运行参数：', data);
         this.filename = process.argv[1];
         console.log(`${this.now()} ${this.name} ${this.filename} 开始运行...`);
         this.start = this.timestamp();
+        let accounts = "";
+        if (__dirname.includes("magic")) {
+            accounts = this.readFileSync(
+                '/home/magic/Work/wools/doc/account.json')
+        } else {
+            if (fs.existsSync('utils/account.json')) {
+                accounts = this.readFileSync('utils/account.json')
+            } else {
+                accounts = this.readFileSync('account.json')
+            }
+        }
+        accounts ? JSON.parse(accounts).forEach(
+            o => this.accounts[o.pt_pin] = o.remarks) : ''
         await this.config()
         if (data?.delimiter) {
             this.delimiter = data?.delimiter
@@ -103,20 +143,26 @@ class Env {
         if (data?.bot) {
             this.bot = data.bot;
         }
+
+        console.log('原始ck长度', cookies.length)
         if (data?.blacklist?.length > 0) {
-            for (const cki of data.blacklist) {
+            for (const cki of this.__as(data.blacklist)) {
                 delete cookies[cki - 1];
             }
         }
+        this.delBlackCK()
+        console.log('排除黑名单后ck长度', cookies.length)
         if (data?.whitelist?.length > 0) {
             let cks = []
-            for (const cki of data.whitelist) {
+            for (const cki of this.__as(data.whitelist)) {
                 if (cki - 1 < cookies.length) {
                     cks.push(cookies[cki - 1])
                 }
             }
             cookies = cks;
         }
+        console.log('设置白名单后ck长度', cookies.length)
+
         if (data?.random) {
             cookies = this.randomArray(cookies)
         }
@@ -173,7 +219,7 @@ class Env {
                         break;
                     }
                 } catch (e) {
-                    this.log('捕获异常', e)
+                    console.log(e.message || '')
                 }
                 if (data?.wait?.length > 0 && this.index !== cookies.length) {
                     await this.wait(data?.wait[0], data?.wait[1])
@@ -191,6 +237,56 @@ class Env {
 
     async config() {
 
+    }
+
+    delBlackCK() {
+        let strArrTemp = []
+        for (let i = 0; i < cookies.length; i++) {
+            if (cookies[i]) {
+                let cookie = cookies[i]
+                let pt_pin = decodeURIComponent(
+                    cookie.match(/pt_pin=(.+?);/) && cookie.match(
+                    /pt_pin=(.+?);/)[1]);
+                if (wxBlackCookiePin.includes(pt_pin)) {
+                    this.log("剔除黑号CK:" + pt_pin);
+                    continue;
+                }
+                strArrTemp.push(cookie);
+            }
+        }
+        cookies = strArrTemp;
+    }
+
+    me() {
+        return this.ext[this.index - 1]
+    }
+
+    finish() {
+        this.ext[this.index - 1].finish = true
+    }
+
+    __as(es) {
+        console.log(es)
+
+        let b = [];
+        for (let e of es) {
+            if (typeof e === 'string') {
+                let start = e.split('-')[0] * 1
+                let end = e.split('-')[1] * 1
+                if (end - start === 1) {
+                    b.push(start)
+                    b.push(end)
+                } else {
+                    for (let i = start; i <= end; i++) {
+                        b.push(i)
+                    }
+                }
+            } else {
+                b.push(e)
+            }
+        }
+        console.log(b)
+        return b
     }
 
     deleteCookie() {
@@ -212,8 +308,8 @@ class Env {
     async send() {
         if (this.msg?.length > 0) {
             this.msg.push(
-                '运行时长：' + ((this.timestamp() - this.start) / 1000).toFixed(2)
-                + 's')
+                `\n时间：${this.now()} 时长：${((this.timestamp() - this.start)
+                    / 1000).toFixed(2)}s`)
             if (this.bot) {
                 await notify.sendNotify("/" + this.name,
                     this.msg.join(this.delimiter || ''))
@@ -246,16 +342,19 @@ class Env {
             o => m += String.fromCharCode(o))
         this.appId = fn ? this.name.slice(0, 1)
             === String.fromCharCode(77)
-                ? (fn.includes(av(y)) ? '10032' :
-                    fn.includes(av(z)) ? '10028' :
-                        fn.includes(av(j)) ? '10001' :
-                            fn.includes(av(k)) ? '10038' :
-                                fn.includes(av(m)) ? 'wx' : '') : ''
+            ? (fn.includes(av(y)) ? '10032' :
+                fn.includes(av(z)) ? '10028' :
+                    fn.includes(av(j)) ? '10001' :
+                        fn.includes(av(k)) ? '10038' :
+                            fn.includes(av(m)) ? 'wx' : '') : ''
             : '';
         this.appId ? this.algo = await this._algo() : '';
     }
 
     async wait(min, max) {
+        if (min < 0) {
+            return;
+        }
         if (max) {
             return new Promise(
                 (resolve) => setTimeout(resolve, this.random(min, max)));
@@ -265,6 +364,7 @@ class Env {
     }
 
     putMsg(msg) {
+        msg += ''
         this.log(msg)
         let r = [[' ', ''], ['优惠券', '券'], ['东券', '券'], ['店铺', ''],
             ['恭喜', ''], ['获得', '']]
@@ -274,13 +374,15 @@ class Env {
         if (this.bot) {
             this.msg.push(msg)
         } else {
+            let username = this.accounts[this.username] || this.username;
+            username += this.index
             if (this.msg.length > 0 && this.msg[this.msg.length - 1].includes(
-                this.username)) {
+                username)) {
                 this.msg[this.msg.length - 1] = this.msg[this.msg.length
-                - 1].split(" ")[0] + ' ' + [this.msg[this.msg.length - 1].split(
+                - 1].split(" ")[0] + '' + [this.msg[this.msg.length - 1].split(
                     " ")[1], msg].join(',')
             } else {
-                this.msg.push(`【当前账号】${this.username} ${msg}`)
+                this.msg.push(`【${username}】${msg}`)
             }
         }
     }
@@ -295,7 +397,8 @@ class Env {
 
     log(...msg) {
         this.s ? console.log(...msg) : console.log(
-            `${this.now()} ${this.username}`, ...msg)
+            `${this.now()} ${this.accounts[this.username] || this.username}`,
+            ...msg)
     }
 
     //并
@@ -472,15 +575,34 @@ class Env {
         return result;
     }
 
-    async countdown(s) {
-        let date = new Date();
-        if (date.getMinutes() === 59) {
-            let ms = this.now("s.SSS")
-            if (ms < 59) {
-                let st = (60 - ms) * 1000;
-                console.log(` 需要等待时间 ${st / 1000} 秒`);
-                await this.wait(st - (s || 20))
-            }
+    async countdown(mode = 1, s = 200) {
+        let d = new Date();
+        switch (mode) {
+            case 1:
+                d.setHours(d.getHours() + 1);
+                d.setMinutes(0)
+                break
+            case 2:
+                d.setMinutes(30)
+                break
+            case 3:
+                d.setMinutes(15)
+                break
+            case 4:
+                d.setMinutes(10)
+                break
+            case 5:
+                d.setMinutes(5)
+                break
+            default:
+                console.log("不支持")
+        }
+        d.setSeconds(0)
+        d.setMilliseconds(0)
+        let st = d.getTime() - Date.now() - 200
+        if (st > 0) {
+            console.log(`需要等待时间${st / 1000} 秒`);
+            await this.wait(st)
         }
     }
 
@@ -499,7 +621,8 @@ class Env {
     }
 
     random(min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
+        return Math.min(Math.floor(min + Math.random() * (max - min)), max);
+
     }
 
     async notify(text, desc) {
@@ -515,14 +638,6 @@ class Env {
         })
     }
 
-    async get2(url, headers) {
-        return new Promise((resolve, reject) => {
-            $.get(url, {headers: headers}).then(
-                data => resolve(data))
-            .catch(e => reject(e))
-        })
-    }
-
     async post(url, body, headers) {
         url = this.appId ? this.build(url) : url
         return new Promise((resolve, reject) => {
@@ -532,7 +647,6 @@ class Env {
         })
     }
 
-    //└
     async request(url, headers, body) {
         return new Promise((resolve, reject) => {
             let __config = headers?.headers ? headers : {headers: headers};
@@ -557,25 +671,41 @@ class Env {
             }
             return;
         }
-        let LZ_TOKEN_KEY = '', LZ_TOKEN_VALUE = ''
+        let LZ_TOKEN_KEY = '', LZ_TOKEN_VALUE = '', JSESSIONID = '',
+            jcloud_alb_route = '', ci_session = ''
         let sc = typeof scs != 'object' ? scs.split(',') : scs
         for (let ck of sc) {
             let name = ck.split(";")[0].trim()
             if (name.split("=")[1]) {
-                name.includes('LZ_TOKEN_KEY=')
-                    ? LZ_TOKEN_KEY = name.replace(/ /g, '') + ';' : ''
+                name.includes('LZ_TOKEN_KEY=') ? LZ_TOKEN_KEY = name.replace(
+                    / /g, '') + ';' : ''
                 name.includes('LZ_TOKEN_VALUE=')
                     ? LZ_TOKEN_VALUE = name.replace(/ /g, '') + ';' : ''
+                name.includes('JSESSIONID=') ? JSESSIONID = name.replace(/ /g,
+                    '') + ';' : ''
+                name.includes('jcloud_alb_route=')
+                    ? jcloud_alb_route = name.replace(/ /g, '') + ';' : ''
+                name.includes('ci_session=') ? ci_session = name.replace(/ /g,
+                    '') + ';' : ''
             }
         }
-        if (LZ_TOKEN_KEY && LZ_TOKEN_VALUE) {
+        if (JSESSIONID && LZ_TOKEN_KEY && LZ_TOKEN_VALUE) {
+            this.lz = `${JSESSIONID}${LZ_TOKEN_KEY}${LZ_TOKEN_VALUE}`
+        } else if (LZ_TOKEN_KEY && LZ_TOKEN_VALUE) {
             this.lz = `${LZ_TOKEN_KEY}${LZ_TOKEN_VALUE}`
+        } else if (JSESSIONID && jcloud_alb_route) {
+            this.lz = `${JSESSIONID}${jcloud_alb_route}`
+        } else if (JSESSIONID) {
+            this.lz = `${JSESSIONID}`
+        }
+        if (ci_session) {
+            this.lz = `${ci_session}`
         }
         // testMode ? this.log('lz', this.lz) : ''
     }
 
     handler(res) {
-        let data = res?.data || res?.body ||res;
+        let data = res?.data || res?.body || res;
         if (!data) {
             return;
         }
@@ -591,10 +721,9 @@ class Env {
             } else if (data.match(/try{.*\({/)) {
                 data = data.replace(/try{.*\({/, '{')
                 .replace(/}\)([;])?}catch\(e\){}/, '}')
-            } else if (data.includes("jsonp")) {
-                data = /{(.*)}/g.exec(data)[0]
             } else {
                 testMode ? console.log('例外', data) : ''
+                data = /.*?({.*}).*/g.exec(data)[1]
             }
             testMode ? console.log(data) : ''
             testMode ? console.log('----------------分割线--------------------')
@@ -620,15 +749,13 @@ class Env {
     }
 
     uuid(x = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx") {
-        return x.replace(/[xy]/g, function (x) {
-            const r = 16 * Math.random() | 0, n = "x" === x ? r : 3 & r | 8;
-            return n.toString(36)
-        })
+        return uuid(x)
     }
 
-    async unfollow(shopId) {
+    async unfollow(shopId = this.shopId) {
         let url = 'https://api.m.jd.com/client.action?g_ty=ls&g_tk=518274330'
-        let body = `functionId=followShop&body={"follow":"false","shopId":"${shopId}","award":"true","sourceRpc":"shop_app_home_follow"}&osVersion=13.7&appid=wh5&clientVersion=9.2.0&loginType=2&loginWQBiz=interact`
+        let body = `functionId=followShop&body={"follow":"false","shopId":"${shopId
+        || this.shopId}","award":"true","sourceRpc":"shop_app_home_follow"}&osVersion=13.7&appid=wh5&clientVersion=9.2.0&loginType=2&loginWQBiz=interact`
         let headers = {
             'Accept': 'application/json, text/plain, */*',
             'Accept-Encoding': 'gzip, deflate, br',
@@ -642,6 +769,24 @@ class Env {
         let {data} = await this.request(url, headers, body);
         this.log(data.msg)
         return data;
+    }
+
+    async getShopInfo(venderId = this.venderId) {
+        try {
+            let url = `https://wq.jd.com/mshop/QueryShopMemberInfoJson?venderId=${venderId
+            || this.venderId}`
+            let headers = {
+                "Accept": "*/*",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+                "Referer": 'https://h5.m.jd.com/',
+                "User-Agent": `Mozilla/5.0 (Linux; U; Android 10; zh-cn; MI 8 Build/QKQ1.190828.002) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/79.0.3945.147 Mobile Safari/537.36 XiaoMi/MiuiBrowser/13.5.40`,
+                'Cookie': this.cookie
+            }
+            return await this.get(url, headers);
+        } catch (e) {
+            return {}
+        }
     }
 
     randomCallback(e = 1) {
@@ -672,8 +817,15 @@ class Env {
     formatDate(date, fmt) {
         // noinspection JSCheckFunctionSignatures
         return format(typeof date === 'object' ? date : new Date(
-                typeof date === 'string' ? date * 1 : date),
+            typeof date === 'string' ? date * 1 : date),
             fmt || 'yyyy-MM-dd')
+    }
+
+    //yyyy-MM-dd HH:mm:ss
+    parseDate(date) {
+        let d = new Date(Date.parse(date.replace(/-/g, "/")));
+        d.setHours(d.getHours() + 8)
+        return d;
     }
 
     timestamp() {
@@ -693,66 +845,156 @@ class Env {
         return {ts: ts, id: id, tk: tk}
     }
 
-    async get_bean() {
-        let {data} = await $.post('https://api.m.jd.com/client.action',
-            `functionId=plantBeanIndex&body=${escape(
-                JSON.stringify({
-                    version: "9.0.0.1",
-                    "monitor_source": "plant_app_plant_index",
-                    "monitor_refer": ""
-                })
-            )}&appid=ld&client=apple&area=5_274_49707_49973&build=167283&clientVersion=9.1.0`,
-            {
-                'Host': "api.m.jd.com",
-                "Cookie": this.cookie
-            });
-        debugger
-        return data.data.jwordShareInfo.shareUrl.split('Uuid=')[1] ?? ''
+    ua(type = 'jd') {
+        return JDAPP_USER_AGENTS[this.random(0, JDAPP_USER_AGENTS.length)]
     }
 
-    async get_farm() {
-        let {data} = await $.post(
-            'https://api.m.jd.com/client.action?functionId=initForFarm',
-            `body=${escape(
-                JSON.stringify({"version": 4}))}&appid=wh5&clientVersion=9.1.0`,
-            {
-                "origin": "https://home.m.jd.com",
-                "referer": "https://home.m.jd.com/myJd/newhome.action",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Cookie": this.cookie
-            })
-        debugger
-        return data?.farmUserPro?.shareCode ?? ''
+    async sign(fn, body = {}) {
+        let b = {"fn": fn, "body": body};
+        let h = {"key": "fMQ8sw1y5zF4RZgT"}
+        try {
+            let {data} = await this.request(`http://140.238.59.174:17840/sign`,
+                h, b);
+            return {fn: data.fn, sign: data.body};
+        } catch (e) {
+            console.log("sign接口异常")
+            //console.log("请自行配置sign实现")
+        }
+        return {fn: "", sign: ""};
     }
 
     async _algo() {
-        let fp = function () {
-            let e = "0123456789", a = 13, i = ''
-            for (; a--;) {
-                i += e[Math.random() * e.length | 0]
+        if (this.appId.length === 2) {
+            if (this.domain.includes('lzkj') || this.domain.includes('lzdz')
+                || this.domain.includes('cjhy')) {
+                let url = `https://${this.domain}/wxTeam/activity?activityId=${this.activityId}`
+                await this.request(url, {
+                    'Accept-Encoding': 'gzip, deflate, br',
+                    'Connection': 'keep-alive',
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1",
+                    'Accept-Language': 'zh-cn',
+                    'Cookie': this.cookie
+                })
             }
-            return (i + Date.now()).slice(0, 16)
-        }();
-        let data = await this.post(
-            'https://cactus.jd.com/request_algo?g_ty=ajax', JSON.stringify({
-                "version": "1.0",
-                "fp": fp,
-                "appId": this.appId,
-                "timestamp": this.timestamp(),
-                "platform": "web",
-                "expandParams": ''
-            }), {
-                'Authority': 'cactus.jd.com',
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-                'Content-Type': 'application/json',
-                'Origin': 'https://st.jingxi.com',
-                'Referer': 'https://st.jingxi.com/',
-            });
-        return {
-            fp: fp.toString(),
-            tk: data?.data?.result?.tk || data?.result?.tk,
-            em: new Function(
-                `return ${data?.data?.result?.algo || data?.result?.algo}`)()
+            return ''
+        } else {
+            let fp = function () {
+                let e = "0123456789", a = 13, i = ''
+                for (; a--;) {
+                    i += e[Math.random() * e.length | 0]
+                }
+                return (i + Date.now()).slice(0, 16)
+            }();
+            let data = await this.post(
+                'https://cactus.jd.com/request_algo?g_ty=ajax', JSON.stringify({
+                    "version": "1.0",
+                    "fp": fp,
+                    "appId": this.appId,
+                    "timestamp": this.timestamp(),
+                    "platform": "web",
+                    "expandParams": ''
+                }), {
+                    'Authority': 'cactus.jd.com',
+                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+                    'Content-Type': 'application/json',
+                    'Origin': 'https://st.jingxi.com',
+                    'Referer': 'https://st.jingxi.com/',
+                });
+            return {
+                fp: fp.toString(),
+                tk: data?.data?.result?.tk || data?.result?.tk,
+                em: new Function(
+                    `return ${data?.data?.result?.algo
+                    || data?.result?.algo}`)()
+            }
+        }
+    }
+
+    async isvObfuscator() {
+        let url = `https://api.m.jd.com/client.action?functionId=isvObfuscator`
+        let body = ''
+        switch (this.domain) {
+            case 'cjhy-isv.isvjcloud.com':
+            case 'lzkj-isv.isvjcloud.com':
+            case 'txzj-isv.isvjcloud.com':
+            case 'lzdz-isv.isvjcloud.com':
+            case 'cjhydz-isv.isvjcloud.com':
+                body = this.randomArray(ISV_OBFUSCATOR[this.domain], 1)[0]
+                break
+            default:
+                body = 'adid=7B411CD9-D62C-425B-B083-9AFC49B94228&area=16_1332_42932_43102&body=%7B%22url%22%3A%22https%3A%5C/%5C/cjhydz-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&build=167541&client=apple&clientVersion=9.4.0&d_brand=apple&d_model=iPhone8%2C1&eid=eidId10b812191seBCFGmtbeTX2vXF3lbgDAVwQhSA8wKqj6OA9J4foPQm3UzRwrrLdO23B3E2wCUY/bODH01VnxiEnAUvoM6SiEnmP3IPqRuO%2By/%2BZo&isBackground=N&joycious=48&lang=zh_CN&networkType=wifi&networklibtype=JDNetworkBaseAF&openudid=2f7578cb634065f9beae94d013f172e197d62283&osVersion=13.1.2&partner=apple&rfs=0000&scope=11&screen=750%2A1334&sign=60bde51b4b7f7ff6e1bc1f473ecf3d41&st=1613720203903&sv=110&uts=0f31TVRjBStG9NoZJdXLGd939Wv4AlsWNAeL1nxafUsZqiV4NLsVElz6AjC4L7tsnZ1loeT2A8Z5/KfI/YoJAUfJzTd8kCedfnLG522ydI0p40oi8hT2p2sNZiIIRYCfjIr7IAL%2BFkLsrWdSiPZP5QLptc8Cy4Od6/cdYidClR0NwPMd58K5J9narz78y9ocGe8uTfyBIoA9aCd/X3Muxw%3D%3D&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D&wifiBssid=9cf90c586c4468e00678545b16176ed2'
+        }
+        let headers = {
+            "Accept": "*/*",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "zh-cn",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Host": "api.m.jd.com",
+            "Cookie": this.cookie,
+            "User-Agent": this.UA,
+        }
+        let {data} = await this.request(url, headers, body)
+        return data;
+    }
+
+    async api(fn, body) {
+        let url = `https://${this.domain}/${fn}`
+        let ck = `IsvToken=${this.Token};` + this.lz + (this.Pin
+            && "AUTH_C_USER=" + this.Pin + ";" || "")
+        this.domain.includes('cjhy') ? ck += 'APP_ABBR=CJHY;' : ''
+        let headers = {
+            "Host": this.domain,
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate, br",
+            "Accept-Language": "zh-cn",
+            "Connection": "keep-alive",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Origin": `https://${this.domain}`,
+            "Cookie": ck,
+            "Referer": `${this.activityUrl}&sid=&un_area=`,
+            "User-Agent": this.UA
+        }
+        let {data} = await this.request(url, headers, body);
+        return data;
+    }
+
+    async wxStop(err) {
+        let flag = false;
+        if (!err) {
+            return flag
+        }
+        let stopKeywords = ['来晚了', '已发完', '非法操作', '奖品发送失败', '活动还未开始',
+            '发放完', '全部被领取', '余额不足', '已结束']
+        process.env.M_WX_STOP_KEYWORD ? process.env.M_WX_STOP_KEYWORD.split(
+            '@').forEach((item) => stopKeywords.push(item)) : ''
+        for (let e of stopKeywords) {
+            if (err.includes(e)) {
+                flag = true;
+                break
+            }
+        }
+        return flag;
+    }
+
+    async sendMessage(chat_id, text, count = 1) {
+        let url = `https://api.telegram.org/bot${process.env.TG_BOT_TOKEN}/sendMessage`
+        let body = {
+            'chat_id': chat_id,
+            'text': text,
+            'disable_web_page_preview': true
+        }
+        let headers = {
+            'Content-Type': 'application/json',
+            'Cookie': '10089'
+        }
+        let {data} = await this.request(url, headers, body);
+        this.log('发送数据', text)
+        if (!data?.ok && count === 1) {
+            $.log('重试中', text)
+            await $.wait(1000, 2000)
+            await this.sendMessage(chat_id, text, count++);
         }
     }
 }
