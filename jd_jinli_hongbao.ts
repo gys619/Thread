@@ -137,49 +137,30 @@ async function help() {
       //   shareCodes = Array.from(new Set([...shareCodesHW, ...shareCodesSelf]))
       // }
 
-      let remain: number = 1
       for (let code of shareCodes) {
         if (!fullCode.includes(code)) {
-          if (!remain) {
+          UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
+          log = await getLog()
+          let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
+          console.log(`账号${index + 1} ${UserName} 去助力 ${code} ${shareCodesSelf.includes(code) ? '*内部*' : ''}`)
+
+          res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
+          if (res.data.result.status === 0) {
+            console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
             break
-          }
-          for (let i = 0; i < 5; i++) {
-            UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
-            log = await getLog()
-            let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
-            console.log(`账号${index + 1} ${UserName} 去助力 ${code} ${shareCodesSelf.includes(code) ? '*内部*' : ''}`)
-
-            res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
-            // o2s(res, 'jinli_h5assist')
-
-            if (res.rtn_code !== 0) {
-              console.log('log无效')
-            } else {
-              if (res.data.result.status === 0) {
-                console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
-                await wait(45000)
-                remain = 0
-                break
-              } else if (res.data.result.status === 3) {
-                console.log('今日助力次数已满')
-                await wait(45000)
-                remain = 0
-                break
-              } else if (res.data.result.statusDesc === '抱歉，你不能为自己助力哦') {
-                console.log('不能助力自己')
-                remain = 0
-                await wait(45000)
-                break
-              } else {
-                console.log('助力结果：', res.data.result.statusDesc)
-                if (res.data.result.statusDesc === '啊偶，TA的助力已满，开启自己的红包活动吧~') {
-                  fullCode.push(code)
-                }
-              }
+          } else if (res.data.result.status === 3) {
+            console.log('今日助力次数已满')
+            break
+          } else if (res.data.result.statusDesc === '抱歉，你不能为自己助力哦') {
+            console.log('不能助力自己')
+          } else {
+            console.log('助力结果：', res.data.result.statusDesc)
+            if (res.data.result.statusDesc === '啊偶，TA的助力已满，开启自己的红包活动吧~') {
+              fullCode.push(code)
             }
-            await wait(45000)
           }
         }
+        await wait(45000)
       }
     } catch (e) {
       console.log(e)
