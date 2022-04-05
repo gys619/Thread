@@ -23,7 +23,7 @@ if ($.isNode()) {
     cookiesArr = cookiesArr.filter(item => !!item);
 }
 
-console.log("脚本部份加密,不喜欢勿跑!!!,10次抽奖机会,3个助力一次抽奖,入口 https://lzkjdz-isv.isvjcloud.com/esteelauder/inviteNew/activityPage?activityId=2203100037674501")
+console.log("脚本部份加密,不喜欢勿跑!!!,10次抽奖机会,3个助力一次抽奖,入口 https://lzkjdz-isv.isvjcloud.com/esteelauder/inviteNew/activityPage?activityId=2204100037674501")
 !(async () => {
     $.getAuthorCodeListerr = false
     if (!cookiesArr[0]) {
