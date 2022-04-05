@@ -59,6 +59,8 @@ console.log("脚本部份加密,不喜欢勿跑!!!,10次抽奖机会,3个助力�
             $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             authorCodeList = [
                 '24232834152e425c8c7539770d8e2a27',
+                '54f086a80f404c04971a2fa70ac3f2dd',
+                'b78b710b23f145edbc163dcc6eb03dc8'
             ]
             // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
@@ -120,6 +122,7 @@ async function member() {
             } else {
                 await task('inviteNew/activityContent', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&inviterUuid=${encodeURIComponent($.authorCode)}`)
             }
+            await task('inviteNew/convertPrize', `activityId=${$.activityId}&pin=${encodeURIComponent($.secretPin)}&uuid=${$.uuid}`)
         }
     }
 }
@@ -139,6 +142,9 @@ function task(function_id, body, isCommon = 0, own = 0) {
                                     console.log(data)
                                     break;
                                 case 'wxActionCommon/getUserInfo':
+                                    break;
+                                case 'inviteNew/convertPrize':
+                                    console.log(data)
                                     break;
                                 case 'inviteNew/activityContent':
                                     console.log(data.data.userRecord.uuid)
