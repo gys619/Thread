@@ -10,6 +10,7 @@
 import axios from 'axios'
 import {sendNotify} from './sendNotify'
 import {get, getshareCodeHW, o2s, randomString, requireConfig, wait} from "./TS_USER_AGENTS"
+import {Md5} from "ts-md5"
 
 let cookie: string = '', cookiesArr: string[] = [], res: any = '', UserName: string, UA: string = ''
 let shareCodesSelf: string[] = [], shareCodes: string[] = [], shareCodesHW: string[] = [], fullCode: string[] = []
@@ -24,35 +25,6 @@ let log: string = ''
   await help()
   // await open(false)
 })()
-
-async function join() {
-  for (let [index, value] of cookiesArr.entries()) {
-    try {
-      cookie = value
-      UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
-      console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
-      for (let i = 0; i < 5; i++) {
-        try {
-          UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
-          log = await getLog()
-          let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
-          res = await api('h5launch', {"followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
-          console.log('活动初始化：', res.data.result.statusDesc)
-          await wait(1000)
-          if (res.rtn_code !== 403) {
-            break
-          } else {
-          }
-        } catch (e) {
-          console.log('error')
-          await wait(3000)
-        }
-      }
-    } catch (e) {
-      console.log(e)
-    }
-  }
-}
 
 async function getShareCodeSelf() {
   for (let [index, value] of cookiesArr.entries()) {
@@ -70,6 +42,31 @@ async function getShareCodeSelf() {
     }
   }
   o2s(shareCodesSelf)
+}
+
+async function join() {
+  for (let [index, value] of cookiesArr.entries()) {
+    try {
+      cookie = value
+      UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
+      console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
+      for (let i = 0; i < 5; i++) {
+        try {
+          UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
+          log = await getLog()
+          let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
+          res = await api('h5launch', {"followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
+          console.log('活动初始化：', res.data.result.statusDesc)
+          await wait(1000)
+          break
+        } catch (e) {
+          await wait(3000)
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
 }
 
 async function open(autoOpen: boolean = false) {
@@ -137,30 +134,49 @@ async function help() {
       //   shareCodes = Array.from(new Set([...shareCodesHW, ...shareCodesSelf]))
       // }
 
+      let remain: number = 1
       for (let code of shareCodes) {
         if (!fullCode.includes(code)) {
-          UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
-          log = await getLog()
-          let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
-          console.log(`账号${index + 1} ${UserName} 去助力 ${code} ${shareCodesSelf.includes(code) ? '*内部*' : ''}`)
+          if (!remain) {
+            break
+          }
+          for (let i = 0; i < 5; i++) {
+            UA = `jdltapp;iPhone;3.1.0;${Math.ceil(Math.random() * 4 + 10)}.${Math.ceil(Math.random() * 4)};${randomString(40)}`
+            log = await getLog()
+            let random = log.match(/"random":"(\d+)"/)[1], log1 = log.match(/"log":"(.*)"/)[1]
+            console.log(`账号${index + 1} ${UserName} 去助力 ${code} ${shareCodesSelf.includes(code) ? '*内部*' : ''}`)
 
-          res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
-          if (res.data.result.status === 0) {
-            console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
-            break
-          } else if (res.data.result.status === 3) {
-            console.log('今日助力次数已满')
-            break
-          } else if (res.data.result.statusDesc === '抱歉，你不能为自己助力哦') {
-            console.log('不能助力自己')
-          } else {
-            console.log('助力结果：', res.data.result.statusDesc)
-            if (res.data.result.statusDesc === '啊偶，TA的助力已满，开启自己的红包活动吧~') {
-              fullCode.push(code)
+            res = await api('jinli_h5assist', {"redPacketId": code, "followShop": 0, "random": random, "log": log1, "sceneid": "JLHBhPageh5"})
+            // o2s(res, 'jinli_h5assist')
+
+            if (res.rtn_code !== 0) {
+              console.log('log无效')
+            } else {
+              if (res.data.result.status === 0) {
+                console.log('助力成功：', parseFloat(res.data.result.assistReward.discount))
+                await wait(45000)
+                remain = 0
+                break
+              } else if (res.data.result.status === 3) {
+                console.log('今日助力次数已满')
+                await wait(45000)
+                remain = 0
+                break
+              } else if (res.data.result.statusDesc === '抱歉，你不能为自己助力哦') {
+                console.log('不能助力自己')
+                remain = 0
+                await wait(45000)
+                break
+              } else {
+                console.log('助力结果：', res.data.result.statusDesc)
+                if (res.data.result.statusDesc === '啊偶，TA的助力已满，开启自己的红包活动吧~') {
+                  fullCode.push(code)
+                }
+              }
             }
+            await wait(45000)
           }
         }
-        await wait(45000)
       }
     } catch (e) {
       console.log(e)
@@ -171,18 +187,33 @@ async function help() {
 async function api(fn: string, body: object) {
   let {data} = await axios.post(`https://api.m.jd.com/api?appid=jinlihongbao&functionId=${fn}&loginType=2&client=jinlihongbao&clientVersion=10.2.4&osVersion=AndroidOS&d_brand=Xiaomi&d_model=Xiaomi`, `body=${encodeURIComponent(JSON.stringify(body))}`, {
     headers: {
+      "Cookie": cookie,
       "origin": "https://h5.m.jd.com",
       "referer": "https://h5.m.jd.com/babelDiy/Zeus/2NUvze9e1uWf4amBhe1AV6ynmSuH/index.html",
       'Content-Type': 'application/x-www-form-urlencoded',
       "X-Requested-With": "com.jingdong.app.mall",
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36",
-      "Cookie": cookie,
+      "User-Agent": "Mozilla/5.0 (Linux; U; Android 8.0.0; zh-cn; Mi Note 2 Build/OPR1.170623.032) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/61.0.3163.128 Mobile Safari/537.36 XiaoMi/MiuiBrowser/10.1.1",
     }
   })
   return data
 }
 
 async function getLog() {
-  res = await get(`https://api.yuuuu.xyz/newlog.php`)
-  return `"random":"${res.random}","log":"${res.log}"`
+  // let farm: string = await getFarmShareCode(cookie)
+  // await wait(1000)
+  // let bean: string = await getBeanShareCode(cookie)
+  // let pt_pin: string = encodeURIComponent(UserName)
+  // if (farm.length > 0 && bean.length > 0) {
+  //   res = await get(`https://api.jdsharecode.xyz/api/jlhb_log?farm=${farm}&bean=${bean}&pin=${Md5.hashStr(pt_pin)}`)
+  res = await get(`https://api.jdsharecode.xyz/api/jlhb_log?farm=farm&bean=bean&pin=pin`)
+  if (res === 1) {
+    console.log('一致性验证失败，脚本退出')
+    process.exit(0)
+  } else {
+    return res
+  }
+  // } else {
+  //   console.log('获取账号助力码失败，脚本退出')
+  //   process.exit(0)
+  // }
 }
