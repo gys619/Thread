@@ -376,7 +376,7 @@ jd_ddworld_exchange.js
 #通天塔签到共建
 jd_babel_sign.js
 #京东汽车兑换
-#jd_car_exchange.js
+jd_car_exchange.js
 #京东金融分享助力
 jd_jrmx.py
 #京东金融每周领取权益活动
