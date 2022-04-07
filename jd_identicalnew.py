@@ -155,8 +155,11 @@ def disable_duplicate_tasks(ids: list) -> None:
 
 def get_token() -> str or None:
     try:
-        with open("/ql/data/config/auth.json", "r", encoding="utf-8") as f:
-            data = json.load(f)
+        path = '/ql/config/auth.json'  # 设置青龙 auth文件地址
+         if not os.path.isfile(path):
+             path = '/ql/data/config/auth.json'  # 尝试设置青龙 auth 新版文件地址
+         with open(path, "r", encoding="utf-8") as f:
+             data = json.load(f)
     except Exception:
         logger.info(f"❌无法获取 token!!!\n{traceback.format_exc()}")
         send("💔禁用重复任务失败", "无法获取 token!!!")
