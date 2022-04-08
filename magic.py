@@ -20,40 +20,38 @@ if os.path.exists("/ql/config/magic.json"):
     with open("/ql/config/magic.json", 'r', encoding='utf-8') as f:
         BOT = json.load(f)
 
+if os.path.exists("/ql/data/config/magic.json"):
+    platform = "ql2"
+    with open("/ql/data/config/magic.json", 'r', encoding='utf-8') as f:
+        BOT = json.load(f)
+
 api_id = int(BOT['api_id'])
 api_hash = BOT['api_hash']
 my_id = int(BOT['user_id'])
 my_bot_id = int(BOT['bot_token'].split(":")[0])
 base_path = BOT['base_path']
-send =False
-if 'send_log' in BOT:
-    if BOT['send_log']:
-        send = True
-        if 'send_log_to' in BOT:
-            try:
-                send_log_to = int(BOT['send_log_to'])
-            except:
-                send_log_to = my_bot_id
-            print(send_log_to)
-        else:
-            send_log_to = my_bot_id
-
 
 if platform == "v4":
     _ConfigSH = '/jd/config/config.sh'
-else:
+elif platform == 'ql':
     _ConfigSH = '/ql/config/config.sh'
+else:
+    _ConfigSH = '/ql/data/config/config.sh'
 
 if BOT['proxy']:
     proxy = {
         'hostname': BOT['proxy_add'],  # 改成自己的
-        'port': int(BOT['proxy_port'])}
+        'port': int(BOT['proxy_port']),
+        'username': BOT['proxy_username'],
+        'password': BOT['proxy_password']
+    }
     app = Client('magic', api_id, api_hash, proxy=proxy)
 else:
     app = Client('magic', api_id, api_hash)
 
 # 监控的自动车
-monitor_cars = -1001533334185
+car_group_id = int(BOT['car_group_id'])
+
 monitor_flag = 'https://i.walle.com/api?data='
 
 # 你的脚本配置
@@ -61,7 +59,7 @@ car_config = [
     {'name': 'M加购有礼', 'env': 'M_WX_ADD_CART_URL', 'js': 'm_jd_wx_addCart.js', 'cmd': 'now'},
     {'name': 'M幸运抽奖', 'env': 'M_WX_LUCK_DRAW_URL', 'js': 'm_jd_wx_luckDraw.js', 'cmd': 'now'},
     {'name': 'M集卡抽奖', 'env': 'M_WX_COLLECT_CARD_URL', 'js': 'm_jd_wx_collectCard.js', 'cmd': 'now'},
-    {'name': 'M关注有礼', 'env': 'M_FOLLOW_SHOP_ARGV', 'js': 'm_jd_follow_shop.js', 'cmd': 'now'},
+    {'name': 'M关注有礼', 'env': 'M_FOLLOW_SHOP_ARGV', 'js': 'm_jd_follow_shop.js', 'cmd': 'now'}
 ]
 
 
@@ -70,13 +68,15 @@ async def handler(client, message):
     await message.reply("老板啥事！")
 
 
-@app.on_message(filters.chat(monitor_cars) & filters.text)
+@app.on_message(filters.chat(car_group_id) & filters.text)
 async def handler(client, message):
     try:
         if message.entities is None:
             return
         text = message.entities[0]['url']
         if text is None:
+            return
+        if 'i.walle.com' not in text:
             return
         text = urllib.parse.unquote(text.replace(monitor_flag, ''))
         zd = 1
@@ -90,7 +90,8 @@ async def handler(client, message):
         else:
             if cache.get(text) is not None:
                 await client.send_message(my_bot_id, f'跑过 {text}')
-        cache.set(text, text)
+                return
+            cache.set(text, text)
         name = ''
         js = ''
         command = ''
@@ -155,19 +156,18 @@ async def cmd(client, cmd_text):
             stderr=asyncio.subprocess.PIPE)
         res_bytes, res_err = await p.communicate()
         res = res_bytes.decode('utf-8')
-        if send and len(res) > 0:
+        if len(res) > 0:
             if platform == "v4":
                 base = "/jd"
-            else:
+            elif platform == "ql":
                 base = "/ql"
+            else:
+                base = "/ql/data"
             tmp_log = f'{base}/log/bot/{cmd_text.split("/")[-1].split(".js")[0]}-{datetime.datetime.now().strftime("%H-%M-%S.%f")}.log'
             with open(tmp_log, 'w+', encoding='utf-8') as f:
                 f.write(res)
-            await client.send_document(send_log_to, tmp_log)
-            os.remove(tmp_log)
     except Exception as e:
-        await client.send_message(my_bot_id,
-                                  f'something wrong,I\'m sorry\n{str(e)}')
+        await client.send_message(my_bot_id, f'日志目录有误,{str(e)}')
 
 
 # 读写config.sh

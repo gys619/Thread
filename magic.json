@@ -7,8 +7,9 @@
     "proxy": true,
     "proxy_add": "127.0.0.1",
     "proxy_port": 7890,
+    "proxy_username": "",
+    "proxy_password": "",
     "//base_path 填脚本所在目录": 1,
     "base_path": "填脚本所在目录",
-    "send_log": false,
-    "send_log_to": "你要把log发给谁，发给bot填bot_token前半部分,发给收藏夹就填写user_id的值"
+    "car_group_id": -1001533334185
 }
