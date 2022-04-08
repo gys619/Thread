@@ -28,7 +28,7 @@ if not ipport:
     ipport = "localhost:5700"
 else:
     ipport = ipport.lstrip("http://").rstrip("/")
-sub_str = os.getenv("RES_SUB", "gys619_Absinthe")
+sub_str = os.getenv("RES_SUB", "gys619_Absinthe_main")
 sub_list = sub_str.split("&")
 res_only = os.getenv("RES_ONLY", True)
 headers = {
@@ -156,10 +156,10 @@ def disable_duplicate_tasks(ids: list) -> None:
 def get_token() -> str or None:
     try:
         path = '/ql/config/auth.json'  # 设置青龙 auth文件地址
-         if not os.path.isfile(path):
-             path = '/ql/data/config/auth.json'  # 尝试设置青龙 auth 新版文件地址
-         with open(path, "r", encoding="utf-8") as f:
-             data = json.load(f)
+        if not os.path.isfile(path):
+            path = '/ql/data/config/auth.json'  # 尝试设置青龙 auth 新版文件地址
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
     except Exception:
         logger.info(f"❌无法获取 token!!!\n{traceback.format_exc()}")
         send("💔禁用重复任务失败", "无法获取 token!!!")
