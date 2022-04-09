@@ -1,9 +1,9 @@
 /*
 [task_local]
 #4月母婴宝贝趴-文具分会场
-30 5 2-13/3 4 * jd_wjcj.js, tag=4月母婴宝贝趴-文具分会场, enabled=true
+30 10 2-13/3 4 * jd_wjcj.js, tag=4月母婴宝贝趴-文具分会场, enabled=true
  */
-const $ = new Env('4月母婴宝贝趴-文具分会场');
+const $ = new Env('母婴宝贝趴-文具分会场');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -100,8 +100,8 @@ async function run() {
             }
             if (vo.taskType == 4) {
                 console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
-                await doTask(vo.taskType, vo.taskItem.itemId, vo.id);
-                await getReward(vo.taskType, vo.taskItem.itemId, vo.id);
+                // doTask(vo.taskType, vo.taskItem.itemId, vo.id);
+                //await getReward(vo.taskType, vo.taskItem.itemId, vo.id);
             }
             if (vo.taskType == 2) {
                 console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
