@@ -362,6 +362,10 @@ jd_ghnsjd.js
 
 
 ############不能跑的###############
+#内容鉴赏
+jd_connoisseur.js
+jd_10_4.js
+jd_speed_15_8.js
 #领券中心签到
 jd_ccSign.js
 
