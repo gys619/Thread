@@ -61,13 +61,12 @@ if ($.isNode()) {
 
 async function jsRedPacket() {
   try {
-    //await getSigns();
     await sign();//极速版签到提现
-    //await reward_query();
-    //for (let i = 0; i < 3; i++) {
-      //await redPacket();//开红包
-      //await $.wait(2000)
-    //}
+    await reward_query();
+    for (let i = 0; i < 3; i++) {
+      await redPacket();//开红包
+      await $.wait(2000)
+    }
     await getPacketList();//领红包提现
     await signPrizeDetailList();
     await showMsg()
@@ -110,13 +109,13 @@ async function sign() {
             data = $.toObj(data);
             if (data.code === 0) {
               if (data.data.retCode === 0) {
-                message += `极速版签到提现：签到成功\n`;
-                console.log(`极速版签到提现：签到成功\n`);
+                message += `签到提现：签到成功\n`;
+                console.log(`签到提现：签到成功\n`);
               } else {
-                console.log(`极速版签到提现：签到失败:${data.data.retMessage}\n`);
+                console.log(`签到提现：签到失败:${data.data.retMessage}\n`);
               }
             } else {
-              console.log(`极速版签到提现：签到异常:${JSON.stringify(data)}\n`);
+              console.log(`签到提现：签到异常:${JSON.stringify(data)}\n`);
             }
           }
         }
@@ -132,7 +131,7 @@ function reward_query() {
   return new Promise(resolve => {
     $.get(taskGetUrl("spring_reward_query", {
       linkId,
-      "inviter": ["HXZ60he5XxG8XNUF2LSrZg"][Math.floor((Math.random() * 1))]
+      "inviter": ""
     }), async (err, resp, data) => {
       try {
         if (err) {
@@ -158,7 +157,7 @@ function reward_query() {
 }
 async function redPacket() {
   return new Promise(async resolve => {
-    let body = {linkId, "inviter":["HXZ60he5XxG8XNUF2LSrZg"][Math.floor((Math.random() * 1))]}
+    let body = {linkId, "inviter":""}
     body = await getSign("spring_reward_receive", body, true)
     let options = {
       url: `https://api.m.jd.com/?${body}`,
@@ -182,11 +181,13 @@ async function redPacket() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             if (data.code === 0) {
-              if (data.data.received.prizeType !== 1) {
-                message += `获得${data.data.received.prizeDesc}\n`
-                console.log(`获得${data.data.received.prizeDesc}`)
-              } else {
-                console.log("获得优惠券")
+              if (data.data.received.prizeType == 4) {
+                //message += `领红包获得${data.data.received.prizeDesc}`
+                console.log(`领红包获得${data.data.received.prizeDesc}`)
+              } else if (data.data.received.prizeType == 2) {
+			    console.log(`领红包获得${data.data.received.amount}红包`)
+			  } else {
+                console.log("领红包获得优惠券")
               }
             } else {
               console.log(data.errMsg)
@@ -215,8 +216,8 @@ function getPacketList() {
             if (data.code === 0) {
               for (let item of data.data.items.filter(vo => vo.prizeType === 4)) {
                 if (item.state === 0) {
-                  console.log(`去提现${item.amount}微信现金`)
-                  message += `提现${item.amount}微信现金，`
+                  console.log(`\n领红包去提现${item.amount}现金\n`)
+                  message += `领红包提现${item.amount}现金，`
                   await cashOut(item.id, item.poolBaseId, item.prizeGroupId, item.prizeBaseId)
                 }
               }
@@ -248,15 +249,15 @@ function signPrizeDetailList() {
               if (data.data.code === 0) {
                 const list = (data.data.prizeDrawBaseVoPageBean.items || []).filter(vo => vo['prizeType'] === 4 && vo['prizeStatus'] === 0);
                 for (let code of list) {
-                  console.log(`极速版签到提现，去提现${code['prizeValue']}现金\n`);
-                  message += `极速版签到提现，去提现${code['prizeValue']}微信现金，`
+                  console.log(`\n签到提现：去提${code['prizeValue']}现金\n`);
+                  message += `签到提现${code['prizeValue']}，`
                   await apCashWithDraw(code['id'], code['poolBaseId'], code['prizeGroupId'], code['prizeBaseId']);
                 }
               } else {
-                console.log(`极速版签到查询奖品：失败:${JSON.stringify(data)}\n`);
+                console.log(`签到查询：失败:${JSON.stringify(data)}\n`);
               }
             } else {
-              console.log(`极速版签到查询奖品：异常:${JSON.stringify(data)}\n`);
+              console.log(`签到查询：异常:${JSON.stringify(data)}\n`);
             }
           }
         }
@@ -289,16 +290,19 @@ function apCashWithDraw(id, poolBaseId, prizeGroupId, prizeBaseId) {
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (safeGet(data)) {
+            console.log(`签到提现结果：`)
             data = $.toObj(data);
             if (data.code === 0) {
               if (data.data.status === "310") {
-                console.log(`极速版签到提现现金成功！`)
-                message += `极速版签到提现现金成功！`;
+                console.log(`提现成功！\n`)
+                message += `提现成功！\n`;
               } else {
-                console.log(`极速版签到提现现金：失败:${JSON.stringify(data)}\n`);
+                console.log(`提现失败：${data['data']['message']}\n`);
+                message += `提现失败：${data['data']['message']}\n`;
               }
             } else {
-              console.log(`极速版签到提现现金：异常:${JSON.stringify(data)}\n`);
+              console.log(`提现异常:${JSON.stringify(data)}\n`);
+                message += `提现失败！\n`;
             }
           }
         }
@@ -332,15 +336,15 @@ function cashOut(id, poolBaseId, prizeGroupId, prizeBaseId) {
           console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           if (safeGet(data)) {
-            console.log(`提现零钱结果：${data}`)
+            console.log(`领红包提现结果：`)
             data = JSON.parse(data);
             if (data.code === 0) {
               if (data['data']['status'] === "310") {
-                console.log(`提现成功！`)
+                console.log(`提现成功！\n`)
                 message += `提现成功！\n`;
               } else {
-                console.log(`提现失败：${data['data']['message']}`);
-                message += `提现失败：${data['data']['message']}`;
+                console.log(`提现失败：${data['data']['message']}\n`);
+                message += `提现失败：${data['data']['message']}\n`;
               }
             } else {
               console.log(`提现异常：${data['errMsg']}`);
