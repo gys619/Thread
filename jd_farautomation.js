@@ -1,45 +1,71 @@
-//20 8 1 1 * jd_farm_automation.js
-//二次修改by dylan
-//https://github.com/11111129/jdpro.git
-console.log('默认种植4级水果，如需调整请配置 M_JD_FARM_LEVEL\n使用率不高，建议手动运行，指定（用desi）需要领水果的账号运行\n')
+//20 8 10 4 * jd_farm_automation.js
+
+console.log('默认种4级，如需调整请配置 M_JD_FARM_LEVEL\n使用率不高，指定（desi）账号运行\n')
 const {Env} = require('./function/magic');
-const $ = new Env('农场自动兑红包种水果');
+const $ = new Env('农场自动种植兑换');
 let level = process.env.M_JD_FARM_LEVEL ? process.env.M_JD_FARM_LEVEL * 1 : 4
 $.logic = async function () {
-    let info = await api('initForFarm',{"version":11,"channel":3,"babelChannel":0});
-    if (!info?.farmUserPro?.treeState) {
-        $.log('可能还没开通农场')
+    let info = await api('initForFarm',
+        {"version": 11, "channel": 3, "babelChannel": 0});
+    if (info.code !== '0') {
+        $.log('可能没开通农场或者黑透了！！！')
+        return
     }
-    if (info.farmUserPro.treeState === 1) return
+    if (info.farmUserPro.treeState === 1) {
+        return
+    }
     if (info.farmUserPro.treeState === 2) {
         await $.wait(1000, 3000)
-        $.log(`${info.farmUserPro.name},种植时间：${$.formatDate(info.farmUserPro.createTime)}`);
+        $.log(`${info.farmUserPro.name},种植时间：${$.formatDate(
+            info.farmUserPro.createTime)}`);
         //成熟了
-        let coupon = await api('gotCouponForFarm',{"version":11,"channel":3,"babelChannel":0});
+        let coupon = await api('gotCouponForFarm',
+            {"version": 11, "channel": 3, "babelChannel": 0});
         $.log(coupon)
-        info = await api('initForFarm',{"version":11,"channel":3,"babelChannel":0});
+        info = await api('initForFarm',
+            {"version": 11, "channel": 3, "babelChannel": 0});
     }
-    if (info.farmUserPro.treeState !== 3) {return }
-    let hongBao = info.myHongBaoInfo.hongBao;
-    $.putMsg(`\n已兑换红包：${hongBao.discount}，有效期至：${$.formatDate(hongBao.endTime)}`)
-    let element = info.farmLevelWinGoods[level][0];
+    if (info.farmUserPro.treeState === 3) {
+        let hongBao = info.myHongBaoInfo.hongBao;
+        $.putMsg(`${hongBao.discount}红包，${$.formatDate(hongBao.endTime)}过期`)
+    }
+    
+    let element = info.farmLevelWinGoods[level][0] || 0;
     await $.wait(1000, 3000)
-    info = await api('choiceGoodsForFarm',{"imageUrl":'',"nickName":'',"shareCode":'',"goodsType":element.type,"type":"0","version":11,"channel":3,"babelChannel":0});
-    if (info.code*1 === 0) {
-        $.putMsg(`\n再次种植【${info.farmUserPro.name}】成功`)
+    if (element) {
+    info = await api('choiceGoodsForFarm', {
+        "imageUrl": '',
+        "nickName": '',
+        "shareCode": '',
+        "goodsType": element.type,
+        "type": "0",
+        "version": 11,
+        "channel": 3,
+        "babelChannel": 0
+    });
+    if (info.code * 1 === 0) {
+        $.putMsg(`已种【${info.farmUserPro.name}】`)
     }
-    await api('gotStageAwardForFarm',{"type":"4","version":11,"channel":3,"babelChannel":0});
-    await api('waterGoodForFarm',{"type":"","version":11,"channel":3,"babelChannel":0});
-    await api('gotStageAwardForFarm',{"type":"1","version":11,"channel":3,"babelChannel":0});
+    let a = await api('gotStageAwardForFarm',
+        {"type": "4", "version": 11, "channel": 3, "babelChannel": 0});
+    let b = await api('waterGoodForFarm',
+        {"type": "", "version": 11, "channel": 3, "babelChannel": 0});
+    let c = await api('gotStageAwardForFarm',
+        {"type": "1", "version": 11, "channel": 3, "babelChannel": 0}); 
+    }else{
+    $.log('种子已抢完，下次在来!!!\n')
+    } 
 };
 
 $.run({
-    whitelist: [1], blacklist: []
-}).catch(reason => $.log(reason));
+    wait: [20000, 30000], whitelist: ['1-15']
+}).catch(
+    reason => $.log(reason));
 
 // noinspection DuplicatedCode
-async function api(fn,body) {
-    let url = `https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(body)}&client=apple&clientVersion=10.0.4&osVersion=13.7&appid=wh5&loginType=2&loginWQBiz=interact`
+async function api(fn, body) {
+    let url = `https://api.m.jd.com/client.action?functionId=${fn}&body=${JSON.stringify(
+        body)}&client=apple&clientVersion=10.0.4&osVersion=13.7&appid=wh5&loginType=2&loginWQBiz=interact`
 //↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓请求头↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
     let headers = {
         "Cookie": $.cookie,
@@ -54,4 +80,6 @@ async function api(fn,body) {
     await $.wait(1000, 3000)
     return data;
 }
+
+
 
