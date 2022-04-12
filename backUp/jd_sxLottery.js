@@ -9,7 +9,7 @@ by:小手冰凉
 ===========================
 [task_local]
 #京东生鲜每日抽奖
-10 7,20 * * * jd jd_sxLottery.js, tag=京东生鲜每日抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_sxLottery.png, enabled=true
+10 7 * * * jd jd_sxLottery.js, tag=京东生鲜每日抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_sxLottery.png, enabled=true
  */
 const $ = new Env('京东生鲜每日抽奖');
 const notify = $.isNode() ? require('./sendNotify') : '';
