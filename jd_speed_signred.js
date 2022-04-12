@@ -12,6 +12,7 @@ let cookiesArr = [], cookie = '', message;
 const linkIdArr = ["Eu7-E0CUzqYyhZJo9d3YkQ"];
 const signLinkId = '9WA12jYGulArzWS7vcrwhw';
 let linkId;
+let blackfail;
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -28,7 +29,6 @@ if ($.isNode()) {
   }
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
-      console.log(`\n如提示活动火爆,可再执行一次尝试\n`);
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
       $.index = i + 1;
@@ -50,6 +50,7 @@ if ($.isNode()) {
         await jsRedPacket()
       }
     }
+    	await $.wait(1000)
   }
 })()
   .catch((e) => {
@@ -61,13 +62,15 @@ if ($.isNode()) {
 
 async function jsRedPacket() {
   try {
-    await sign();//极速版签到提现
+    await sign();//签到提现
     await reward_query();
-    for (let i = 0; i < 3; i++) {
-      await redPacket();//开红包
-      await $.wait(2000)
+    if(!blackfail){
+      for (let i = 0; i < 3; i++) {
+        await redPacket();//开红包
+        await $.wait(2000)
+      }
+      await getPacketList();//领红包提现
     }
-    await getPacketList();//领红包提现
     await signPrizeDetailList();
     await showMsg()
   } catch (e) {
@@ -112,10 +115,10 @@ async function sign() {
                 message += `签到提现：签到成功\n`;
                 console.log(`签到提现：签到成功\n`);
               } else {
-                console.log(`签到提现：签到失败:${data.data.retMessage}\n`);
+                console.log(`签到失败:${data.data.retMessage}\n`);
               }
             } else {
-              console.log(`签到提现：签到异常:${JSON.stringify(data)}\n`);
+              console.log(`签到异常:${JSON.stringify(data)}\n`);
             }
           }
         }
@@ -140,10 +143,9 @@ function reward_query() {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            if (data.code === 0) {
-
-            } else {
-              console.log(data.errMsg)
+            if (data.code !== 0) {
+              console.log('此账号的领红包黑了，等大赦吧！')
+              blackfail=true
             }
           }
         }
