@@ -9,14 +9,14 @@
 ==============Quantumult X===========
 [task_local]
 #取关京东店铺商品
-55 23 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_unsubscribe.js, tag=取关京东店铺商品, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+55 23 * * * jd_unsubscribe.js, tag=取关京东店铺商品, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 ===========Loon============
 [Script]
-cron "55 23 * * *" script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_unsubscribe.js,tag=取关京东店铺商品
+cron "55 23 * * *" script-path=jd_unsubscribe.js,tag=取关京东店铺商品
 ============Surge=============
-取关京东店铺商品 = type=cron,cronexp="55 23 * * *",wake-system=1,timeout=3600,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_unsubscribe.js
+取关京东店铺商品 = type=cron,cronexp="55 23 * * *",wake-system=1,timeout=3600,script-path=jd_unsubscribe.js
 ===========小火箭========
-取关京东店铺商品 = type=cron,script-path=https://gitee.com/lxk0301/jd_scripts/raw/master/jd_unsubscribe.js, cronexpr="55 23 * * *", timeout=3600, enable=true
+取关京东店铺商品 = type=cron,script-path=jd_unsubscribe.js, cronexpr="55 23 * * *", timeout=3600, enable=true
  */
 const $ = new Env('取关京东店铺和商品');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -64,6 +64,7 @@ const JD_API_HOST = 'https://wq.jd.com/fav';
       await requireConfig();
       await jdUnsubscribe();
       await showMsg();
+	  await $.wait(3 * 1000);
     }
   }
 })()
@@ -84,6 +85,43 @@ async function jdUnsubscribe() {
     getFollowGoods(),
     getFollowShops()
   ])
+}
+
+/**
+ * 
+ * @param {String} src 待匹配的店铺名/商品编号
+ * @param {JSONArray} targets 用户设定的忽略操作的店铺/商品 json数组
+ * @returns {Boolean} 在忽略列表成功匹配到返回true，反之返回false
+ */
+function indexOfIgnore(src, targets) {
+  let isMatched = false;
+  // 1、忽略列表判空，为空直接返回false
+  if(!targets || (targets.length === 1 && targets[0] === '')) {
+    return isMatched;
+  }
+
+  // 2、参数匹配(由于js无法限制function的形参类型，所以要做一下类型判断)
+  if(Array.isArray(targets)) {
+    // 2.1、如果是json数组就开始遍历
+    try{
+      targets.forEach((item) => {
+        if((item && item !== '') && src.indexOf(item.replace(/\s*/g, '')) > -1) {
+          throw new Error("匹配店铺/商品成功")
+        }
+      });
+    } catch(e) {
+      // 2.1.1、因为forEach中无法通过break跳出循环，所以这里通过抛出异常的方式结束循环
+      isMatched = true;
+    }
+  } else {
+    // 2.2、如果是其他类型则转换为String直接进行匹配
+    const singleIgnoreTarget = targets.toString()
+    if(src.indexOf(singleIgnoreTarget.replace(/\s*/g, '')) > -1) {
+      isMatched = true;
+    }
+  }
+
+  return isMatched;
 }
 
 function showMsg() {
@@ -110,13 +148,21 @@ async function goodsMain() {
 
 async function unsubscribeGoods() {
   let followGoods = await getFollowGoods();
+  let stopGoodsArr = [];
+  try {
+    stopGoodsArr = JSON.parse(stopGoods);
+  } catch (e) {
+    console.log(e);
+    stopGoodsArr[0] = stopGoods.toString().replace(/\ufffc|\s*/g, '');
+  }
+
   if (followGoods.iRet === '0') {
     if (followGoods.totalNum > 0) {
       for (let item of followGoods['data']) {
-        console.log(`是否匹配：：${item.commTitle.indexOf(stopGoods.replace(/\ufffc|\s*/g, ''))}`)
-        if (stopGoods && item.commTitle.indexOf(stopGoods.replace(/\ufffc|\s*/g, '')) > -1) {
-          console.log(`匹配到了您设定的商品--${stopGoods}，不在进行取消关注商品`)
-          break;
+        console.log(`是否匹配：${indexOfIgnore(item.commId, stopGoodsArr)}`)
+        if (stopGoodsArr && indexOfIgnore(item.commId, stopGoodsArr)) {
+          console.log(`匹配到了您设定的商品--${item.commTitle}，不在进行取消关注商品`)
+          continue;
         }
         let res = await unsubscribeGoodsFun(item.commId);
         if (res.iRet === 0 && res.errMsg === 'success') {
@@ -214,12 +260,20 @@ async function shopMain() {
 
 async function unsubscribeShops() {
   let followShops = await getFollowShops();
+  let stopShopArr = [];
+  try {
+    stopShopArr = JSON.parse(stopShop);
+  } catch (e) {
+    console.log(e);
+    stopShopArr[0] = stopShop.toString().replace(/\ufffc|\s*/g, '');
+  }
+
   if (followShops.iRet === '0') {
     if (followShops.totalNum > 0) {
       for (let item of followShops.data) {
-        if (stopShop && (item.shopName && item.shopName.indexOf(stopShop.replace(/\s*/g, '')) > -1)) {
+        if (stopShopArr && indexOfIgnore(item.shopName, stopShopArr)) {
           console.log(`匹配到了您设定的店铺--${item.shopName}，不在进行取消关注店铺`)
-          break;
+          continue;
         }
         let res = await unsubscribeShopsFun(item.shopId);
         if (res.iRet === '0') {
