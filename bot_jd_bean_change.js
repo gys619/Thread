@@ -161,15 +161,9 @@ DisableIndex=strDisableList.findIndex((item) => item === "领现金");
 if(DisableIndex!=-1){
 	console.log("检测到设定关闭领现金查询");
 	EnableCash=false;	
-}	
-
-//金融养猪
-let EnablePigPet=true;
-DisableIndex=strDisableList.findIndex((item) => item === "金融养猪");
-if(DisableIndex!=-1){
-	console.log("检测到设定关闭金融养猪查询");
-	EnablePigPet=false;	
 }
+
+
 //东东萌宠
 let EnableJDPet=true;
 DisableIndex=strDisableList.findIndex((item) => item === "东东萌宠");
@@ -256,8 +250,10 @@ if(DisableIndex!=-1){
         $.YunFeiQuanEndTime2 = "";
         TempBaipiao = "";
         strGuoqi = "";
-        await TotalBean();
-        await TotalBean2();
+		await Promise.all([
+		        TotalBean(),
+		        TotalBean2()])
+		
         if (!$.isLogin) {
             await isLoginByX1a0He();
         }
@@ -265,80 +261,20 @@ if(DisableIndex!=-1){
             console.log(`【提示】cookie已失效,\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`);
             return
         }
-
-        //汪汪乐园
-        if (EnableJoyPark)
-            await getJoyBaseInfo();
-
-        //京东赚赚
-        if (EnableJdZZ)
-            await getJdZZ();
-
-        //京东秒杀
-        if (EnableJdMs)
-            await getMs();
-
-        //东东农场
-        if (EnableJdFruit) {
-            llgeterror = false;
-
-            await jdfruitRequest('taskInitForFarm', {
-                "version": 14,
-                "channel": 1,
-                "babelChannel": "120"
-            });
-
-            await getjdfruit();
-            if (llgeterror) {
-                console.log(`东东农场API查询失败,等待10秒后再次尝试...`)
-                await $.wait(10 * 1000);
-                await getjdfruit();
-            }
-            if (llgeterror) {
-                console.log(`东东农场API查询失败,有空重启路由器换个IP吧.`)
-            }
-
-        }
-        //极速金币
-        if (EnableJdSpeed)
-            await cash();
-
-        //京喜牧场
-        if (EnableJxMC) {
-            llgeterror = false;
-            await requestAlgo();
-            if (llgeterror) {
-                console.log(`等待10秒后再次尝试...`)
-                await $.wait(10 * 1000);
-                await requestAlgo();
-            }
-            await JxmcGetRequest();
-        }
-
-        //京豆查询
-        await bean();
-
-        //京喜工厂
-        if (EnableJxGC)
-            await getJxFactory();
-
-        // 京东工厂
-        if (EnableJDGC)
-            await getDdFactoryInfo();
-
-        //领现金
-        if (EnableCash)
-            await jdCash();
-
-        //喜豆查询
-        if (EnableJxBeans) {
-            await GetJxBeanInfo();
-            await jxbean();
-        }
-
-        //金融养猪
-        if (EnablePigPet)
-            await GetPigPetInfo();
+		
+		 await Promise.all([
+		         getJoyBaseInfo(), //汪汪乐园
+		         getJdZZ(), //京东赚赚
+		         getMs(), //京东秒杀
+		         getjdfruitinfo(), //东东农场
+		         cash(), //极速金币
+		         jdJxMCinfo(), //京喜牧场
+		         bean(), //京豆查询
+		         getJxFactory(), //京喜工厂
+		         getDdFactoryInfo(), // 京东工厂
+		         jdCash(), //领现金
+		         GetJxBeaninfo() //喜豆查询		         
+		     ])
 
         await showMsg();        
     }
@@ -356,7 +292,7 @@ async function showMsg() {
 	ReturnMessageTitle="";
 	ReturnMessage = "";
 	var strsummary="";
-	ReturnMessageTitle = `【账号🆔】${$.nickName || $.UserName}\n`;
+	ReturnMessageTitle = `【您的账号🆔${(intcheckckseq+1)}收支情况】\n`;
 
 	if ($.levelName || $.JingXiang){
 		ReturnMessage += `【账号信息】`;
@@ -595,8 +531,7 @@ async function bean() {
 	yesterdayArr = [],
 	todayArr = [];
 	do {
-		let response = await getJingBeanBalanceDetail(page);
-		await $.wait(2000);
+		let response = await getJingBeanBalanceDetail(page);		
 		// console.log(`第${page}页: ${JSON.stringify(response)}`);
 		if (response && response.code === "0") {
 			page++;
@@ -655,7 +590,22 @@ async function bean() {
 		await getCoupon();
 }
 
+async function jdJxMCinfo(){
+    if (EnableJxMC) {
+        llgeterror = false;
+        await requestAlgo();
+        if (llgeterror) {
+            console.log(`等待10秒后再次尝试...`)
+            await $.wait(10 * 1000);
+            await requestAlgo();
+        }
+        await JxmcGetRequest();
+    }
+	return;
+}
 async function jdCash() {
+	if (!EnableCash)
+		return;
     let functionId = "cash_homePage";
     let sign = `body=%7B%7D&build=167968&client=apple&clientVersion=10.4.0&d_brand=apple&d_model=iPhone13%2C3&ef=1&eid=eidI25488122a6s9Uqq6qodtQx6rgQhFlHkaE1KqvCRbzRnPZgP/93P%2BzfeY8nyrCw1FMzlQ1pE4X9JdmFEYKWdd1VxutadX0iJ6xedL%2BVBrSHCeDGV1&ep=%7B%22ciphertype%22%3A5%2C%22cipher%22%3A%7B%22screen%22%3A%22CJO3CMeyDJCy%22%2C%22osVersion%22%3A%22CJUkDK%3D%3D%22%2C%22openudid%22%3A%22CJSmCWU0DNYnYtS0DtGmCJY0YJcmDwCmYJC0DNHwZNc5ZQU2DJc3Zq%3D%3D%22%2C%22area%22%3A%22CJZpCJCmC180ENcnCv80ENc1EK%3D%3D%22%2C%22uuid%22%3A%22aQf1ZRdxb2r4ovZ1EJZhcxYlVNZSZz09%22%7D%2C%22ts%22%3A1648428189%2C%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22version%22%3A%221.0.3%22%2C%22appname%22%3A%22com.360buy.jdmobile%22%2C%22ridx%22%3A-1%7D&ext=%7B%22prstate%22%3A%220%22%2C%22pvcStu%22%3A%221%22%7D&isBackground=N&joycious=104&lang=zh_CN&networkType=3g&networklibtype=JDNetworkBaseAF&partner=apple&rfs=0000&scope=11&sign=98c0ea91318ef1313786d86d832f1d4d&st=1648428208392&sv=101&uemps=0-0&uts=0f31TVRjBSv7E8yLFU2g86XnPdLdKKyuazYDek9RnAdkKCbH50GbhlCSab3I2jwM04d75h5qDPiLMTl0I3dvlb3OFGnqX9NrfHUwDOpTEaxACTwWl6n//EOFSpqtKDhg%2BvlR1wAh0RSZ3J87iAf36Ce6nonmQvQAva7GoJM9Nbtdah0dgzXboUL2m5YqrJ1hWoxhCecLcrUWWbHTyAY3Rw%3D%3D`
         return new Promise((resolve) => {
@@ -763,7 +713,8 @@ function TotalBean() {
 
 						}
 						if (data['retcode'] === '0' && data.data && data.data['assetInfo']) {
-							$.beanCount = data.data && data.data['assetInfo']['beanNum'];
+							if ($.beanCount == 0)
+								$.beanCount = data.data && data.data['assetInfo']['beanNum'];
 						} else {
 							$.errorMsg = `数据异常`;
 						}
@@ -811,7 +762,6 @@ function TotalBean2() {
 								$.nickName = userInfo.petName;
 							if ($.beanCount == 0) {
 								$.beanCount = userInfo.jingBean;
-								$.isPlusVip = 3;
 							}
 							$.JingXiang = userInfo.uclass;
 						}
@@ -1099,6 +1049,7 @@ function getCoupon() {
                 $.todayEndTime = new Date(new Date(new Date().getTime()).setHours(23, 59, 59, 999)).getTime();
                 $.tomorrowEndTime = new Date(new Date(new Date().getTime() + 24 * 60 * 60 * 1000).setHours(23, 59, 59, 999)).getTime();
 				$.platFormInfo="";
+				//console.log(useable);
                 for (let i = 0; i < useable.length; i++) {
 					//console.log(useable[i]);
                     if (useable[i].limitStr.indexOf('全品类') > -1) {
@@ -1108,8 +1059,10 @@ function getCoupon() {
                             $.couponName = useable[i].limitStr;
 							if (useable[i].platFormInfo) 
 								$.platFormInfo = useable[i].platFormInfo;
+							var decquota=parseFloat(useable[i].quota).toFixed(2);
+							var decdisc= parseFloat(useable[i].discount).toFixed(2);
 							
-							$.message += `【全品类券】满${useable[i].quota}减${useable[i].discount}元`;
+							$.message += `【全品类券】满${decquota}减${decdisc}元`;
 							
 							if (useable[i].endTime < $.todayEndTime) {
 								$.message += `(今日过期,${$.platFormInfo})\n`;
@@ -1200,6 +1153,8 @@ function getCoupon() {
 }
 
 function getJdZZ() {
+	if (!EnableJdZZ)
+		return;
 	return new Promise(resolve => {
 		$.get(taskJDZZUrl("interactTaskIndex"), async(err, resp, data) => {
 			try {
@@ -1241,6 +1196,8 @@ function taskJDZZUrl(functionId, body = {}) {
 }
 
 function getMs() {
+	if (!EnableJdMs)
+		return;
 	return new Promise(resolve => {
 		$.post(taskMsPostUrl('homePageV2', {}, 'appid=SecKill2020'), (err, resp, data) => {
 			try {
@@ -1312,6 +1269,35 @@ function jdfruitRequest(function_id, body = {}, timeout = 1000) {
 	})
 }
 
+async function getjdfruitinfo() {
+    if (EnableJdFruit) {
+        llgeterror = false;
+
+        await jdfruitRequest('taskInitForFarm', {
+            "version": 14,
+            "channel": 1,
+            "babelChannel": "120"
+        });
+
+        await getjdfruit();
+        if (llgeterror) {
+            console.log(`东东农场API查询失败,等待10秒后再次尝试...`)
+            await $.wait(10 * 1000);
+            await getjdfruit();
+        }
+        if (llgeterror) {
+            console.log(`东东农场API查询失败,有空重启路由器换个IP吧.`)
+        }
+
+    }
+	return;
+}
+
+async function GetJxBeaninfo() {
+    await GetJxBean(),
+    await jxbean();
+	return;
+}
 
 async function getjdfruit() {
 	return new Promise(resolve => {
@@ -1439,6 +1425,8 @@ function safeGet(data) {
 }
 
 function cash() {
+	if (!EnableJdSpeed)
+		return;
 	return new Promise(resolve => {
 		$.get(taskcashUrl('MyAssetsService.execute', {
 				"method": "userCashRecord",
@@ -1551,6 +1539,8 @@ async function JxmcGetRequest() {
 
 // 惊喜工厂信息查询
 function getJxFactory() {
+	if (!EnableJxGC)
+		return;
 	return new Promise(async resolve => {
 		let infoMsg = "";
 		let strTemp = "";
@@ -1675,6 +1665,8 @@ function GetCommodityDetails() {
 
 // 东东工厂信息查询
 async function getDdFactoryInfo() {
+	if (!EnableJDGC)
+		return;
 	// 当心仪的商品存在，并且收集起来的电量满足当前商品所需，就投入
 	let infoMsg = "";
 	return new Promise(resolve => {
@@ -1755,6 +1747,8 @@ function ddFactoryTaskUrl(function_id, body = {}, function_id2) {
 }
 
 async function getJoyBaseInfo(taskId = '', inviteType = '', inviterPin = '') {
+	if (!EnableJoyPark)
+		return;
 	return new Promise(resolve => {
 		$.post(taskPostClientActionUrl(`body={"taskId":"${taskId}","inviteType":"${inviteType}","inviterPin":"${inviterPin}","linkId":"LsQNxL7iWDlXUs6cFl-AAg"}&appid=activities_platform`), async(err, resp, data) => {
 			try {
@@ -1837,33 +1831,38 @@ function GetJxBeanDetailData() {
       });
   });
 }
-function GetJxBeanInfo() {
-  return new Promise((resolve) => {
-    $.get(taskJxUrl("querybeanamount"), async (err, resp, data) => {
-        try {
-          if (err) {
-            console.log(JSON.stringify(err));
-            console.log(`GetJxBeanInfo请求失败，请检查网路重试`);
-          } else {
-            data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);      
-            if(data){
-				if(data.errcode==0){
-					$.xibeanCount=data.data.xibean;
-					if(!$.beanCount){
-						$.beanCount=data.data.jingbean;
-					}
-				}
-			}
-          }
-        } catch (e) {
-          $.logErr(e, resp);
-        } finally {
-          resolve(data);
-        }
-      });
-  });
+function GetJxBean() {
+    if (!EnableJxBeans)
+        return;
+    return new Promise((resolve) => {
+        $.get(taskJxUrl("querybeanamount"), async(err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(JSON.stringify(err));
+                    console.log(`GetJxBean请求失败，请检查网路重试`);
+                } else {
+                    data = JSON.parse(data.match(new RegExp(/jsonpCBK.?\((.*);*/))[1]);
+                    if (data) {
+                        if (data.errcode == 0) {
+                            $.xibeanCount = data.data.xibean;
+                            if (!$.beanCount) {
+                                $.beanCount = data.data.jingbean;
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp);
+            }
+            finally {
+                resolve(data);
+            }
+        });
+    });
 }
 async function jxbean() {
+	if (!EnableJxBeans)
+        return;
     //前一天的0:0:0时间戳
     const tm = parseInt((Date.now() + 28800000) / 86400000) * 86400000 - 28800000 - (24 * 60 * 60 * 1000);
     // 今天0:0:0时间戳
@@ -1973,6 +1972,7 @@ Date.prototype.Format = function (fmt) {
 }
 
 function decrypt(time, stk, type, url) {
+	$.appId = 10028;
 	stk = stk || (url ? getJxmcUrlData(url, '_stk') : '')
 		if (stk) {
 			const timestamp = new Date(time).Format("yyyyMMddhhmmssSSS");
@@ -2109,58 +2109,6 @@ function timeFormat(time) {
 }
 
 
-function GetPigPetInfo() {
-    return new Promise(async resolve => {
-        const body = {
-            "shareId": "",
-            "source": 2,
-            "channelLV": "juheye",
-            "riskDeviceParam": "{}",
-        }
-        $.post(taskPetPigUrl('pigPetLogin', body), async(err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`)
-                    console.log(`GetPigPetInfo API请求失败，请检查网路重试`)
-                } else {
-                    if (data) {
-                        data = JSON.parse(data);
-                        if (data.resultData.resultData.wished && data.resultData.resultData.wishAward) {
-							$.PigPet=`${data.resultData.resultData.wishAward.name}`                           
-                        }
-                    } else {
-                        console.log(`GetPigPetInfo: 京东服务器返回空数据`)
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp)
-            }
-            finally {
-                resolve();
-            }
-        })
-    })
-}
-
-function taskPetPigUrl(function_id, body) {
-  return {
-    url: `https://ms.jr.jd.com/gw/generic/uc/h5/m/${function_id}?_=${Date.now()}`,
-    body: `reqData=${encodeURIComponent(JSON.stringify(body))}`,
-    headers: {
-      'Accept': `*/*`,
-      'Origin': `https://u.jr.jd.com`,
-      'Accept-Encoding': `gzip, deflate, br`,
-      'Cookie': cookie,
-      'Content-Type': `application/x-www-form-urlencoded;charset=UTF-8`,
-      'Host': `ms.jr.jd.com`,
-      'Connection': `keep-alive`,
-      'User-Agent': UA,
-      'Referer': `https://u.jr.jd.com/`,
-      'Accept-Language': `zh-cn`
-    },
-    timeout: 10000
-  }
-}
 function IsNumber(value) {
     intPerSent = parseInt(value);
     if (!intPerSent)
