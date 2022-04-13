@@ -1,5 +1,5 @@
-//40 5,12,21 * * * m_jd_pet_automation.js
-//问题反馈:https://t.me/Wall_E_Channel
+//20 14 10 4 *  jd_pet_automation.js
+
 const {Env} = require('./magic');
 const $ = new Env('M萌宠自动化');
 let commodityName = process.env.M_JD_PET_COMMODITY
@@ -61,4 +61,3 @@ async function api(fn, body) {
     await $.wait(1000, 3000)
     return data;
 }
-
