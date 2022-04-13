@@ -636,15 +636,18 @@ async function dealReturn(type, data) {
             console.log(`我的奖品：`)
             let num = 0
             let value = 0
+            let dayShareTime = 0
             for(let i in res.data.recordList){
               let item = res.data.recordList[i]
               if(item.infoName == '20京豆' && item.drawStatus == 0){
                 num++
                 value = item.infoName.replace('京豆','')
+                dayShareTime = dayShareTime < item.createTime ? item.createTime : dayShareTime;
               }else{
                 console.log(`${item.infoType != 10 && item.value && item.value +':' || ''}${item.infoName}`)
               }
             }
+            if(dayShareTime > 0) console.log("最新邀请奖励时间:"+$.time("yyyy-MM-dd HH:mm:ss",dayShareTime))
             if(num > 0) console.log(`邀请好友(${num}):${num*parseInt(value, 10) || 30}京豆`)
           }else if(res.errorMessage){
             console.log(`${type} ${res.errorMessage || ''}`)
