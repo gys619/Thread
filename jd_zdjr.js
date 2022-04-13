@@ -6,6 +6,8 @@ jd_zdjr_activityUrl 活动地址 必需
 
 已适配docker
 
+加密脚本
+
 需要配合重写获取=>活动id、活动地址
 
 https://\w+-isv.isvjcloud.com/wxTeam/shopInfo url script-request-body jd_zdjr.js
