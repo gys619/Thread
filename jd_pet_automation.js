@@ -1,6 +1,6 @@
 //20 14 10 4 *  jd_pet_automation.js
 
-const {Env} = require('./magic');
+const {Env} = require('./function/magic');
 const $ = new Env('M萌宠自动化');
 let commodityName = process.env.M_JD_PET_COMMODITY
     ? process.env.M_JD_PET_COMMODITY
