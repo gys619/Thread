@@ -192,7 +192,10 @@ async function run() {
       await takePostRequest('getCardInfo');
       if ($.compositeCardFinishCount >= 1 && nowTime > new Date(activeEndTime).getTime()) {
         // allMessage += `【京东账号${$.index}】${$.nickName || $.UserName}\n`
-        await takePostRequest('瓜分奖励');
+        await takePostRequest('集卡状态');
+        if ([1,2,5].includes($.cardButtonStatus) == true){
+          await takePostRequest('瓜分奖励');
+        }
       }
     }else{
       await takePostRequest('drawContent');
@@ -268,13 +271,15 @@ async function run() {
       }else console.log('如需抽奖请设置环境变量[guaopencard_draw133]为"3" 3为次数');
       
       await takePostRequest('getCardInfo');
-      if($.drawCardNum && $.compositeCard+"" == "true" && $.compositeCardFinishCount < 1){
+      await takePostRequest('集卡状态');
+      if($.drawCardNum && $.compositeCard+"" == "true" && [1,2,5].includes($.cardButtonStatus) == true){
         let count = $.drawCardNum
         for(m=1;count--;m++){
           console.log(`第${m}次集卡`)
           await takePostRequest('集卡');
+          await takePostRequest('集卡状态');
           await takePostRequest('getCardInfo');
-          if($.runFalag == false || $.compositeCardNum > 0 || $.compositeCardFinishCount >= 1) break
+          if($.runFalag == false || $.compositeCardNum > 0 || [2,3,5].includes($.cardButtonStatus) == true) break
           if(Number(count) <= 0) break
           if(m >= 10){
             console.log("集卡太多次，多余的次数请再执行脚本")
@@ -282,14 +287,12 @@ async function run() {
           }
           await $.wait(parseInt(Math.random() * 2000 + 2000, 10))
         }
-      }else if ($.compositeCardFinishCount >= 1){
-        console.log("已集齐所有卡片")
       }
       for(let c of $.myCardList || []){
         console.log(`${c.cardName}:${c.cardNum}`)
       }
     }
-    console.log(`${$.score}值 瓜分:${$.compositeCardFinishCount == 1 && "是" || "否"}`)
+    console.log(`${$.score}值 瓜分:${[2,3,5,6].includes($.cardButtonStatus) == true && "是" || "否"}`)
     await $.wait(parseInt(Math.random() * 1000 + 2000, 10))
     await takePostRequest('getDrawRecordHasCoupon');
     await takePostRequest('getShareRecord');
@@ -371,10 +374,11 @@ async function takePostRequest(type) {
         url = `${domain}/collect/card/getCardInfo`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
-      case '瓜分奖励':
+      case '集卡状态':
         url = `${domain}/collect/card/getCardStageStatus`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
         break;
+      case '瓜分奖励':
       case '集卡':
         url = `${domain}/collect/card/drawCard`;
         body = `activityId=${$.activityId}&pin=${encodeURIComponent($.Pin)}&actorUuid=${$.actorUuid}`
@@ -710,6 +714,15 @@ async function dealReturn(type, data) {
             }else if(type == "合卡"){
               if(res.data.status == 1) console.log('合卡成功')
               else console.log('合卡失败\n'+data)
+            }else if(type == "集卡状态"){
+              $.cardButtonStatus = res.data.cardButtonStatus
+              if($.cardButtonStatus == 3){
+                console.log(`\n已集齐，等待4月26号瓜分京豆`)
+              }else if($.cardButtonStatus == 4){
+                console.log(`\n很遗憾，您没有集齐贺卡，快去参加别的活动吧`)
+              }else if($.cardButtonStatus == 6){
+                console.log(`\n已经瓜分过了~`)
+              }
             }else if(type == "getCardInfo"){
               $.score = res.data.score || 0
               $.myCardList = res.data.myCardList || []
