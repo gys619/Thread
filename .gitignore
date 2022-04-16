@@ -362,8 +362,9 @@ gua_HappyNewYear_Shares.js
 #38节相关脚本
 jd_38qd.js
 jd_ghnsjd.js
-
-
+#组队脚本
+jd_captian_*.js
+jd_april*.js
 
 ############不能跑的###############
 #内容鉴赏
