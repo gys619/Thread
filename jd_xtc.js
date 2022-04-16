@@ -1,14 +1,14 @@
 /*
 [task_local]
-#3.18-3.31小天才联合活动抽奖机
-50 6,13 * * * jd_xtc.js, tag=3.18-3.31小天才联合活动抽奖机, enabled=true
+#4月小天才联合活动
+50 16 16-30/3 4 * jd_xtc.js, tag=4月小天才联合活动, enabled=true
  */
-const $ = new Env('3.18-3.31小天才联合活动抽奖机');
+const $ = new Env('4月小天才联合活动');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-$.configCode = "3ae0da1bf73b4948bf93086711bb4391";
+$.configCode = "3581767cb40d464b908d8dc0e6cc3ccf";
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -21,7 +21,7 @@ if ($.isNode()) {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
 }
 !(async () => {
-	console.log('入口下拉：https://prodev.m.jd.com/mall/active/ZHcWGnwENW2CxwJabr3CXMYSBtN/index.html')
+	console.log('入口下拉：https://pro.m.jd.com/wq/active/23ebsEwajrvYj9qqsqhDJwZprQBo/index.html')
     if (!cookiesArr[0]) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
