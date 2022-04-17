@@ -22,7 +22,7 @@ cron "40 0-20/4 * * *" script-path=jd_big_winner.js,tag=发财大赢家之翻翻
 const $ = new Env('发财大赢家之翻翻乐');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const money = $.isNode() ? (process.env.Openmoney ? process.env.Openmoney : 0.3) : 0.3
+const money = $.isNode() ? (process.env.Openmoney ? process.env.Openmoney : 0.04) : 0.04
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
@@ -82,7 +82,7 @@ message = ""
                     await open("gambleOpenReward")
                     while ($.canOpen && $.canDraw) {
                         await open("gambleChangeReward")
-                        await $.wait(500);
+                        await $.wait(3000);
                     }
                     if ($.canDraw) {
                         console.log("金额已可提现,开始提现...")
@@ -205,6 +205,7 @@ function open(functionid, type) {
                         if (functionid != "gambleObtainReward") {
                             $.reward = data.data
                             if(data.data.rewardValue>money){$.canOpen=false}
+							await $.wait(3000);
                             if (data.data.rewardState === 3) {
                                 console.log("翻倍失败啦...")
                                 $.message += `当前：${data.data.rewardValue} 翻倍失败啦`
