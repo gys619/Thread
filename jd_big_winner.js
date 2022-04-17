@@ -57,6 +57,7 @@ message = ""
                 $.isLogin = true;
                 $.canDraw = true;
                 $.canOpen = true;
+				$.llAPIError = false;
                 $.cash = 0
                 $.prize = 0
                 $.Hb = 0
@@ -80,7 +81,7 @@ message = ""
                 } else {
                     console.log("时间已到,开始开红包")
                     await open("gambleOpenReward")
-                    while ($.canOpen && $.canDraw) {
+                    while ($.canOpen && $.canDraw && $.llAPIError) {
                         await open("gambleChangeReward")
                         await $.wait(3000);
                     }
@@ -94,6 +95,7 @@ message = ""
                         //    await notify.sendNotify(`京东极速版大赢家翻倍红包提现`, `${$.message}`); 
                     }
                 }
+				
             }
         }
         if ($.isNode()) {
@@ -199,13 +201,13 @@ function open(functionid, type) {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`);
                     console.log(`${$.name} API请求失败，请检查网路重试`);
+					$.llAPIError = true
                 } else {
                     data = JSON.parse(data);
                     if (data.code === 0 && data.data) {
                         if (functionid != "gambleObtainReward") {
                             $.reward = data.data
                             if(data.data.rewardValue>money){$.canOpen=false}
-							await $.wait(3000);
                             if (data.data.rewardState === 3) {
                                 console.log("翻倍失败啦...")
                                 $.message += `当前：${data.data.rewardValue} 翻倍失败啦`
@@ -213,12 +215,15 @@ function open(functionid, type) {
                             } else if (data.data.rewardState === 1) {
                                 console.log("翻倍成功啦")
                                 console.log("当前红包：" + data.data.rewardValue + "翻倍次数：" + data.data.changeTimes)
+								
                             } else {
                                 console.log(data.data)
                                 console.log(`状态 ${data.data.rewardState} 还不知道是什么原因嗷`)
                             }
+							
                         } else {
                             console.log(data)
+							
                         }
 
 
