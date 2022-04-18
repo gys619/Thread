@@ -2,7 +2,7 @@
 [task_local]
 #4月小天才联合活动
 31 16 16-30/3 4 * jd_xtclh.js, tag=4月小天才联合活动, enabled=true
-from https://raw.githubusercontent.com/444444/KR/main/jd_opencardty.js
+from https://raw.githubusercontent.com/555555/faker2/main/jd_opencardty.js
  */
 const $ = new Env('4月小天才联合活动');
 const notify = $.isNode() ? require('./sendNotify') : '';
