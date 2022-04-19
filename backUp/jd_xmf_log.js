@@ -28,12 +28,12 @@ let cookiesArr = [], cookie = '';
 var timestamp = Math.round(new Date().getTime()).toString();
 $.shareCodes = [];
 let RabbitUrl = process.env.Rabbit_Url ?? ""; // logurl
-let jdPandaToken = '';
-jdPandaToken = $.isNode() ? (process.env.jdPandaToken ? process.env.jdPandaToken : `${jdPandaToken}`) : ($.getdata('jdPandaToken') ? $.getdata('jdPandaToken') : `${jdPandaToken}`);
-if (!jdPandaToken && !RabbitUrl){
-    console.log(`请填写Panda获取的Token,变量是jdPandaToken 或者填写Rabbit获取的logurl，变量是Rabbit_Url`)
+let jdlogurl = process.env.Jdlog_Url ?? ""; // logurl
+if (!jdlogurl && !RabbitUrl){
+    console.log(`请填写普通获取的logurl,变量是Jdlog_Url 或者填写Rabbit获取的logurl，变量是Rabbit_Url`)
     return;
 }
+
 var logs;
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -146,7 +146,6 @@ async function doInteractiveAssignment(projectId, encryptAssignmentId, itemId, a
   $.xmferr = ''
   logs = await getJinliLogs()
   let random = logs["random"].toString(),log =logs["log"].toString()
-  await $.wait(3000)
   let body = { "encryptProjectId": projectId, "encryptAssignmentId": encryptAssignmentId, "sourceCode": "acexinpin0823", "itemId": itemId, "actionType": actionType, "completionFlag": "", "ext": {},"extParam":{"businessData":{"random":random},"signStr":log,"sceneid":"XMFhPageh5"} }
   return new Promise(resolve => {
     $.post(taskPostUrl("doInteractiveAssignment", body), async (err, resp, data) => {
@@ -244,55 +243,48 @@ function taskPostUrl(function_id, body) {
   }
 }
 function getJinliLogs() {
-    if (jdPandaToken && RabbitUrl){
+    if (jdlogurl && RabbitUrl){
            let nums = Math.floor(Math.random() * 9)+1;
             if (nums<5){
-                console.info('随机从panda接口获取log!')
-                return pandaLogs();
+                console.info('随机从普通接口获取log!')
+                return JdLogs();
             }else {
                 console.info('随机从rabbit接口获取log!')
                 return rabbitLogs();
             }
     }
-    if(jdPandaToken && !RabbitUrl){
-        console.info('进入panda接口获取log!')
-        return pandaLogs();
+    if(jdlogurl && !RabbitUrl){
+        console.info('进入普通接口获取log!')
+        return JdLogs();
     }
-    if(RabbitUrl && !jdPandaToken){
+    if(RabbitUrl && !jdlogurl){
         console.info('进入rabbit接口获取log!')
         return rabbitLogs();
     }
     return '';
 }
-function pandaLogs(){
+function JdLogs(){
     var logs = '';
     return new Promise((resolve) => {
         let url = {
-            url: "https://api.jds.codes/jd/log",
-            followRedirect: false,
-            headers: {
-                'Accept': '*/*',
-                "accept-encoding": "gzip, deflate, br",
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + jdPandaToken
-            },
+            url:`${jdlogurl}`,
             timeout: 30000
         }
         $.get(url, async(err, resp, data) => {
             try {
                 data = JSON.parse(data);
-                if (data && data.code == 200) {
-                    lnrequesttimes = data.request_times;
-                    console.log("连接Panda服务成功，当前Token使用次数为" + lnrequesttimes);
-                    if (data.data)
-                        logs = data.data || '';
+                if (data && data.status == 0) {
+                    logs = {
+                        random: data.random,
+                        log: data.log
+                    }
                     //console.info(logs['random']+"----"+logs['log'])
                     if (logs != '')
                         resolve(logs);
                     else
-                        console.log("签名获取失败,可能Token使用次数上限或被封.");
+                        console.log("log获取失败.");
                 } else {
-                    console.log("签名获取失败.");
+                    console.log("log获取失败.");
                 }
 
             }catch (e) {
@@ -303,6 +295,7 @@ function pandaLogs(){
         })
     })
 }
+
 function rabbitLogs(){
     var logs = '';
     return new Promise((resolve) => {
