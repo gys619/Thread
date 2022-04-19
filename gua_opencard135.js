@@ -611,7 +611,7 @@ async function dealReturn(type, data) {
                 msg = drawData.drawOk == true && drawData.name || ''
               }
               if(title == "抽奖" && msg && msg.indexOf('京豆') == -1){
-                if ($.isNode()) await notify.sendNotify(`${$.name}`, `【京东账号${$.index}】${$.nickName || $.UserName}\n${title}成功,获得 ${msg}\n活动地址: https://3.cn/-106MEjSh`);
+                if ($.isNode()) await notify.sendNotify(`${$.name}`, `【京东账号${$.index}】${$.nickName || $.UserName}\n${title}成功,获得 ${msg}\n活动地址: https://3.cn/10-6NrXF2`);
               }
               if(!msg){
                 msg = '空气💨'
