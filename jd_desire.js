@@ -333,43 +333,6 @@ function randomString(e) {
   return n
 }
 
-function getSign(functionid, body, uuid) {
-  return new Promise(async resolve => {
-    let data = {
-      "functionId": functionid,
-      "body": body,
-      "uuid": uuid,
-      "client": "apple",
-      "clientVersion": "10.1.0"
-    }
-    let HostArr = ['jdsign.cf', 'signer.nz.lu']
-    let Host = HostArr[Math.floor((Math.random() * HostArr.length))]
-    let options = {
-      url: `https://cdn.nz.lu/ddo`,
-      body: JSON.stringify(data),
-      headers: {
-        Host,
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1 Edg/87.0.4280.88"
-      },
-      timeout: 30 * 1000
-    }
-    $.post(options, (err, resp, data) => {
-      try {
-        if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} getSign API请求失败，请检查网路重试`)
-        } else {
-
-        }
-      } catch (e) {
-        $.logErr(e, resp)
-      } finally {
-        resolve(data);
-      }
-    })
-  })
-}
-
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
