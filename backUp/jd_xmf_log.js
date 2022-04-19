@@ -76,8 +76,9 @@ if ($.isNode()) {
 
 async function main() {
   await getInteractionHomeInfo();
-  await $.wait(500)
+  await $.wait(1500)
   await queryInteractiveInfo($.projectId)
+  await $.wait(1500)
   if ($.taskList) {
     for (const vo of $.taskList) {
       $.risk = false
@@ -145,6 +146,7 @@ async function doInteractiveAssignment(projectId, encryptAssignmentId, itemId, a
   $.xmferr = ''
   logs = await getJinliLogs()
   let random = logs["random"].toString(),log =logs["log"].toString()
+  await $.wait(3000)
   let body = { "encryptProjectId": projectId, "encryptAssignmentId": encryptAssignmentId, "sourceCode": "acexinpin0823", "itemId": itemId, "actionType": actionType, "completionFlag": "", "ext": {},"extParam":{"businessData":{"random":random},"signStr":log,"sceneid":"XMFhPageh5"} }
   return new Promise(resolve => {
     $.post(taskPostUrl("doInteractiveAssignment", body), async (err, resp, data) => {
