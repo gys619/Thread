@@ -35,10 +35,6 @@ var timestamp = Math.round(new Date().getTime()).toString();
 let cookiesArr = [], cookie = '', message;
 let RabbitUrl = process.env.Rabbit_Url ?? ""; // logurl
 let jdlogurl = process.env.Jdlog_Url ?? ""; // logurl
-if (!jdlogurl && !RabbitUrl){
-    console.log(`请填写普通获取的logurl,变量是Jdlog_Url 或者填写Rabbit获取的logurl，变量是Rabbit_Url`)
-    return;
-}
 var logs;
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -52,6 +48,10 @@ if ($.isNode()) {
 }
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 !(async () => {
+  if (!jdlogurl && !RabbitUrl){
+    console.log(`请填写普通获取的logurl,变量是Jdlog_Url 或者填写Rabbit获取的logurl，变量是Rabbit_Url`)
+    return;
+  }
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
     return;
