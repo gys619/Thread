@@ -100,7 +100,7 @@ message = ""
         }
         if ($.isNode()) {
             if (message.length!=0) {
-                await notify.sendNotify("翻翻乐提现", `${message}`);
+                //await notify.sendNotify("翻翻乐提现", `${message}`);
             }
         }
 
