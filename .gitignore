@@ -182,6 +182,9 @@ jd_jx_factory.js
 
 m_*.js
 ######重复脚本#######
+#集魔方
+jd_jmofang.js
+bot_*.js
 #清空购物车
 gua_cleancart_ddo.js
 jd_gua_cleancart_Panda.js
