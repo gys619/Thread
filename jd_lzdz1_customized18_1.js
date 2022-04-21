@@ -60,8 +60,8 @@ if ($.isNode()) {
         '671f58b0e1ae44f68154b2b3ee104d1e',
         '3d49aaaf206f43918db9285e09c20b54',
         '4d67eec71b684cb8a49f37e4cabeefa0',
-        'b6f55acd1e3348ec84cef8c53d20b41c',
-        '431e80b3d2cc485d92cd505fb04712a1'
+        // 'b6f55acd1e3348ec84cef8c53d20b41c',
+        // '431e80b3d2cc485d92cd505fb04712a1'
       ];
       // $.authorCode = authorCodeList[random(0, authorCodeList.length)];
       $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]

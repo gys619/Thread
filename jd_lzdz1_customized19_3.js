@@ -58,8 +58,8 @@ if ($.isNode()) {
                 '4738e97117b546eaac691c7d44a7d32c',
                 '9e66b579e26b41489818d5fd759c1753',
                 '27b731b277eb432e8c3f86ecfcb464ef',
-                '80a1014138af46ffb59afa5b90e99182',
-                '86809cf67ba0425c8cf9ae62b9ac028a'
+                // '80a1014138af46ffb59afa5b90e99182',
+                // '86809cf67ba0425c8cf9ae62b9ac028a'
             ]
             // $.authorCode = authorCodeList[random(0, authorCodeList.length)]
             $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
