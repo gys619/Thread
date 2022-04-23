@@ -10,17 +10,16 @@ const $ = new Env('美丽研究院--兑换');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const WebSocket = require('ws');
+const WebSocket =require('ws');
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 $.accountCheck = true;
 $.init = false;
 $.bean = '1'; //兑换多少豆，默认是500
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
+const UA = `jdapp;android;10.5.0;;;appBuild/95837;ef/1;ep/%7B%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22ts%22%3A${(new Date).getTime()}%2C%22ridx%22%3A-1%2C%22cipher%22%3A%7B%22sv%22%3A%22EG%3D%3D%22%2C%22ad%22%3A%22ZJO5CJPsDJK5CtPwYWUzYG%3D%3D%22%2C%22od%22%3A%22%22%2C%22ov%22%3A%22Ctq%3D%22%2C%22ud%22%3A%22ZJO5CJPsDJK5CtPwYWUzYG%3D%3D%22%7D%2C%22ciphertype%22%3A5%2C%22version%22%3A%221.2.0%22%2C%22appname%22%3A%22com.jingdong.app.mall%22%7D;jdSupportDarkMode/0;Mozilla/5.0 (Linux; Android 9; Note9 Build/PKQ1.181203.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/70.0.3538.111 Mobile Safari/537.36`
 if ($.isNode()) {
-  Object.keys(jdCookieNode).forEach((item) => {
-    cookiesArr.push(jdCookieNode[item])
-  })
+  Object.keys(jdCookieNode).forEach((item) => { cookiesArr.push(jdCookieNode[item]) })
   if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
 } else {
   cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
@@ -76,7 +75,23 @@ async function accountCheck() {
     console.log(`\n\n提示：请尝试换服务器ip或者设置"xinruimz-isv.isvjcloud.com"域名直连，或者自定义UA再次尝试(环境变量JD_USER_AGENT)\n\n`)
     process.exit(0);
   }
-  let client = new WebSocket(`wss://xinruimz-isv.isvjcloud.com/wss/?token=${$.token}`);
+  let client = new WebSocket(`wss://xinruimz-isv.isvjcloud.com/wss/?token=${$.token}`, 
+    {
+      headers: {
+        'user-agent': UA,
+        'Host': 'xinruimz-isv.isvjcloud.com',
+        'Connection': 'Upgrade',
+        'Upgrade': 'websocket',
+        'Origin': 'https://xinruimz-isv.isvjcloud.com',
+        'Sec-WebSocket-Version': '13',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'zh-CN,en-US;q=0.9',
+        'Cookie': `IsvToken=${$.token2}; jd-beauty-institute=${$.token}`,
+        'X-Requested-With': 'com.jingdong.app.mall',
+        // 'Sec-WebSocket-Key': 'uy3v+6kUxE58ju54yCc61A==',
+        'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits'
+      }
+    });
   client.onopen = async () => {
     console.log(`美容研究院服务器连接成功`);
     client.send('{"msg":{"type":"action","args":{"source":1},"action":"_init_"}}');
@@ -114,7 +129,23 @@ async function jdBeauty() {
 }
 
 async function mr() {
-  let client = new WebSocket(`wss://xinruimz-isv.isvjcloud.com/wss/?token=${$.token}`)
+  let client = new WebSocket(`wss://xinruimz-isv.isvjcloud.com/wss/?token=${$.token}`, 
+  {
+    headers: {
+      'user-agent': UA,
+      'Host': 'xinruimz-isv.isvjcloud.com',
+      'Connection': 'Upgrade',
+      'Upgrade': 'websocket',
+      'Origin': 'https://xinruimz-isv.isvjcloud.com',
+      'Sec-WebSocket-Version': '13',
+      'Accept-Encoding': 'gzip, deflate',
+      'Accept-Language': 'zh-CN,en-US;q=0.9',
+      'Cookie': `IsvToken=${$.token2}; jd-beauty-institute=${$.token}`,
+      'X-Requested-With': 'com.jingdong.app.mall',
+      // 'Sec-WebSocket-Key': 'uy3v+6kUxE58ju54yCc61A==',
+      'Sec-WebSocket-Extensions': 'permessage-deflate; client_max_window_bits'
+    }
+  });
   client.onopen = async () => {
     console.log(`美容研究院服务器连接成功,开始兑换拉`);
     client.send('{"msg":{"type":"action","args":{"source":1},"action":"_init_"}}');
@@ -150,7 +181,7 @@ async function mr() {
           break;
         case "to_exchange":
           if (vo.data) {
-            console.log(`兑换${vo.data.coins / -1000}京豆成功;${JSON.stringify(vo)}`)
+            console.log(`兑换${vo.data.coins / -10000}京豆成功;${JSON.stringify(vo)}`)
           } else {
             console.log(`兑换京豆失败：${JSON.stringify(vo)}`)
           }
@@ -162,12 +193,12 @@ async function mr() {
 
 function getIsvToken2() {
   let config = {
-    url: 'https://api.m.jd.com/client.action?functionId=isvObfuscator',
-    body: 'body=%7B%22url%22%3A%22https%3A%5C/%5C/xinruimz-isv.isvjcloud.com%22%2C%22id%22%3A%22%22%7D&build=167490&client=apple&clientVersion=9.3.2&openudid=53f4d9c70c1c81f1c8769d2fe2fef0190a3f60d2&osVersion=14.2&partner=apple&rfs=0000&scope=01&sign=6eb3237cff376c07a11c1e185761d073&st=1610161927336&sv=102&uuid=hjudwgohxzVu96krv/T6Hg%3D%3D',
+    url: 'https://api.m.jd.com/client.action?functionId=isvObfuscator&clientVersion=10.5.0&build=95837&client=android&partner=au_jdjlhdqj073&eid=eidA2ff3812378s5jO+hRxVKT1+fRKPdIoWeIozvosdlFjpAs57rgrGmQh8lQmcBbxyf5WdyVKmQMSONUT7ZwpumaAv3Wm7AjvO34FDY7kxGFsUUPShT&sdkVersion=28&lang=zh_CN&harmonyOs=0&networkType=UNKNOWN&uts=0f31TVRjBSuFn8WrRh%2FRQQm7s9wYycB0yZBlyRs9U6aAGDZooQrPfDICs5MTEpEkZ%2BpnKiTSNFE7ki%2FS60mD9EXhFcp%2Fvo8za9Bcs3%2B8%2BR6Au0IMi9SFSzyAM3SxEBmdzZQR7YOyhFRVtoFXc6sNfWcIcFdC0f5jcCNnd5EqQr95RK3w%2FWK%2F7kidccbZ3T7vYCPGM1l1vYRG9tfG%2Fsih8Q%3D%3D&uemps=0-2&ext=%7B%22prstate%22%3A%220%22%2C%22pvcStu%22%3A%221%22%7D&ef=1&ep=%7B%22hdid%22%3A%22JM9F1ywUPwflvMIpYPok0tt5k9kW4ArJEU3lfLhxBqw%3D%22%2C%22ts%22%3A1650626876714%2C%22ridx%22%3A-1%2C%22cipher%22%3A%7B%22d_model%22%3A%22Jw90ZJu%3D%22%2C%22wifiBssid%22%3A%22dW5hbw93bq%3D%3D%22%2C%22osVersion%22%3A%22EG%3D%3D%22%2C%22d_brand%22%3A%22bWVfoxU%3D%22%2C%22screen%22%3A%22CtO5DMenCNqm%22%2C%22uuid%22%3A%22ZJO5CJPsDJK5CtPwYWUzYG%3D%3D%22%2C%22aid%22%3A%22ZJO5CJPsDJK5CtPwYWUzYG%3D%3D%22%7D%2C%22ciphertype%22%3A5%2C%22version%22%3A%221.2.0%22%2C%22appname%22%3A%22com.jingdong.app.mall%22%7D&st=1650647094217&sign=3dd47e69c15aae7322d8023e27761afe&sv=100',
+    body: 'body=%7B%22id%22%3A%22%22%2C%22url%22%3A%22https%3A%2F%2Fxinruimz-isv.isvjcloud.com%22%7D&',
     headers: {
       'Host': 'api.m.jd.com',
       'accept': '*/*',
-      'user-agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+      'user-agent': UA,
       'accept-language': 'zh-Hans-JP;q=1, en-JP;q=0.9, zh-Hant-TW;q=0.8, ja-JP;q=0.7, en-US;q=0.6',
       'content-type': 'application/x-www-form-urlencoded',
       'Cookie': cookie
@@ -198,7 +229,7 @@ function getIsvToken2() {
 function getToken() {
   let config = {
     url: 'https://xinruimz-isv.isvjcloud.com/api/auth',
-    body: JSON.stringify({ "token": $.token2, "source": "01" }),
+    body: JSON.stringify({ "token": $.token2, "source": "01", "channel": "meizhuangguandibudaohang" }),
     headers: {
       'Host': 'xinruimz-isv.isvjcloud.com',
       'Accept': 'application/x.jd-school-island.v1+json',
@@ -206,7 +237,7 @@ function getToken() {
       'Accept-Language': 'zh-cn',
       'Content-Type': 'application/json;charset=utf-8',
       'Origin': 'https://xinruimz-isv.isvjcloud.com',
-      'User-Agent': `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
+      'User-Agent': UA,
       'Referer': 'https://xinruimz-isv.isvjcloud.com/logined_jd/',
       'Authorization': 'Bearer undefined',
       'Cookie': `IsvToken=${$.token2};`
@@ -237,46 +268,38 @@ function getToken() {
 function TotalBean() {
   return new Promise(async resolve => {
     const options = {
-      "url": `https://m.jingxi.com/user/info/GetJDUserBaseInfo?_=${Date.now()}&sceneval=2`,
-      "headers": {
-        "Accept": "application/json,text/plain, */*",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Accept-Encoding": "gzip, deflate, br",
+      url: "https://wq.jd.com/user_new/info/GetJDUserInfoUnion?sceneval=2",
+      headers: {
+        Host: "wq.jd.com",
+        Accept: "*/*",
+        Connection: "keep-alive",
+        Cookie: cookie,
+        "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
         "Accept-Language": "zh-cn",
-        "Connection": "keep-alive",
-        "Host": "m.jingxi.com",
-        "Cookie": cookie,
-        "Referer": "https://st.jingxi.com/my/userinfo.html?sceneval=2&ptag=7205.12.4",
-        "User-Agent": `jdapp;iPhone;9.5.4;13.6;${$.UUID};network/wifi;ADID/${$.ADID};model/iPhone10,3;addressid/0;appBuild/167668;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 13_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1`,
-        "deviceOS": "android",
-        "deviceOSVersion": 10,
-        "deviceName": "WeiXin"
+        "Referer": "https://home.m.jd.com/myJd/newhome.action?sceneval=2&ufc=&",
+        "Accept-Encoding": "gzip, deflate, br"
       }
     }
-    $.post(options, (err, resp, data) => {
+    $.get(options, (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} API请求失败，请检查网路重试`)
+          $.logErr(err)
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data["retcode"] === 13) {
+            if (data['retcode'] === 1001) {
               $.isLogin = false; //cookie过期
-              console.log("1");
               return;
             }
-            if (data["retcode"] === 0) {
-              $.nickName = (data.nickname) || $.UserName;
-            } else {
-              $.nickName = $.UserName;
+            if (data['retcode'] === 0 && data.data && data.data.hasOwnProperty("userInfo")) {
+              $.nickName = data.data.userInfo.baseInfo.nickname;
             }
           } else {
-            console.log(`京东服务器返回空数据`)
+            console.log('京东服务器返回空数据');
           }
         }
       } catch (e) {
-        $.logErr(e, resp)
+        $.logErr(e)
       } finally {
         resolve();
       }
@@ -318,13 +341,13 @@ function randomString(e) {
 
 function getUUID(format = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', UpperCase = 0) {
   return format.replace(/[xy]/g, function (c) {
-      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      if (UpperCase) {
-          uuid = v.toString(36).toUpperCase();
-      } else {
-          uuid = v.toString(36)
-      }
-      return uuid;
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    if (UpperCase) {
+      uuid = v.toString(36).toUpperCase();
+    } else {
+      uuid = v.toString(36)
+    }
+    return uuid;
   });
 }
 // prettier-ignore
