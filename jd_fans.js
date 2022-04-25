@@ -5,7 +5,7 @@
  环境变量：RUHUI,是否自动入会，开卡算法已失效，默认不开卡
  环境变量：RUNCK,执行多少CK，默认全执行，设置RUNCK=10，则脚本只会运行前10个CK
 * */
-const $ = new Env('粉丝互动');
+const $ = new Env('粉丝互动-加密');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const RUHUI = '888'

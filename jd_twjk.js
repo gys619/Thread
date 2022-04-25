@@ -3,7 +3,7 @@
  脚本没有自动开卡，会尝试领取开卡奖励
 10 10,18,20 21-30 4 * jd_twjk.js
 * */
-const $ = new Env('特务集卡');
+const $ = new Env('特务集卡-加密');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let cookiesArr = [];
 if ($.isNode()) {
