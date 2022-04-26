@@ -10,24 +10,14 @@
 ============Quantumultx===============
 [task_local]
 #京东极速版
-21 3,8 * * * https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js, tag=京东极速版, img-url=https://raw.githubusercontent.com/Orz-3/task/master/jd.png, enabled=true
+5 0,8 * * * jd_speed_sign.js
 
-================Loon==============
-[Script]
-cron "21 3,8 * * *" script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js,tag=京东极速版
-
-===============Surge=================
-京东极速版 = type=cron,cronexp="21 3,8 * * *",wake-system=1,timeout=33600,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js
-
-============小火箭=========
-京东极速版 = type=cron,script-path=https://raw.githubusercontent.com/222222/sync/jd_scripts/jd_speed_sign.js, cronexpr="21 3,8 * * *", timeout=33600, enable=true
 */
 const $ = new Env('京东极速版');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let cookiesArr = [], cookie = '', message;
-let IPError = false; // 403 ip黑
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -63,10 +53,6 @@ const JD_API_HOST = 'https://api.m.jd.com/', actCode = 'visa-card-001';
       }
       await jdGlobal()
       await $.wait(2*1000)
-      if (IPError){
-        console.log(`403 黑IP了，请换个IP`);
-        break;
-      }
     }
   }
 })()
@@ -201,10 +187,6 @@ async function taskList() {
                 } else {
                   console.log(`${task.taskInfo.mainTitle}已完成`)
                 }
-                if (IPError){
-                  console.error('API请求失败，停止执行')
-                  break
-                }
               }
             }
           }
@@ -227,7 +209,6 @@ async function doTask(taskId) {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
-          IPError = true
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
@@ -323,7 +304,6 @@ async function queryItem(activeType = 1) {
             } else {
               console.log(`商品任务开启失败，${data.message}`)
               $.canStartNewItem = false
-              IPError = true
             }
           }
         }
@@ -352,7 +332,6 @@ async function startItem(activeId, activeType) {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`${$.name} API请求失败，请检查网路重试`)
-          IPError = true
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
@@ -680,14 +659,9 @@ function taskGetUrl(function_id, body) {
 function invite2() {
   let inviterIdArr = [
     "",
-    "//",
-    "",
     "/",
     "/",
-    "",
-    "",
-    "",
-    "",
+    ""
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {
@@ -714,20 +688,8 @@ function invite() {
   let t = +new Date()
   let inviterIdArr = [
     "",
-    "//",
-    "",
     "/",
-    "/",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "/",
-    "",
+    ""
   ]
   let inviterId = inviterIdArr[Math.floor((Math.random() * inviterIdArr.length))]
   let options = {
