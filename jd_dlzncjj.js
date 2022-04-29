@@ -1,7 +1,7 @@
 /*
 [task_local]
 #大力智能品牌联合活动抽奖机
-30 3,18 30,1-8/2 4 * jd_bzlshdgt.js, tag=大力智能品牌联合活动抽奖机, enabled=true
+30 3,18 30,1-8/2 4,5 * jd_bzlshdgt.js, tag=大力智能品牌联合活动抽奖机, enabled=true
  */
 const $ = new Env('4.30-5.8大力智能品牌联合活动抽奖机');
 const notify = $.isNode() ? require('./sendNotify') : '';
