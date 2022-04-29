@@ -57,7 +57,6 @@ message = ""
                 $.isLogin = true;
                 $.canDraw = true;
                 $.canOpen = true;
-				$.llAPIError = false;
                 $.cash = 0
                 $.prize = 0
                 $.Hb = 0
@@ -81,7 +80,7 @@ message = ""
                 } else {
                     console.log("时间已到,开始开红包")
                     await open("gambleOpenReward")
-                    while ($.canOpen && $.canDraw && $.llAPIError) {
+                    while ($.canOpen && $.canDraw) {
                         await open("gambleChangeReward")
                         await $.wait(3000);
                     }
@@ -201,7 +200,6 @@ function open(functionid, type) {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`);
                     console.log(`${$.name} API请求失败，请检查网路重试`);
-					$.llAPIError = true
                 } else {
                     data = JSON.parse(data);
                     if (data.code === 0 && data.data) {
