@@ -22,7 +22,7 @@ cron "40 0-20/4 * * *" script-path=jd_big_winner.js,tag=发财大赢家之翻翻
 const $ = new Env('发财大赢家之翻翻乐');
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-const money = $.isNode() ? (process.env.Openmoney ? process.env.Openmoney : 0.04) : 0.04
+const money = $.isNode() ? (process.env.Openmoney ? process.env.Openmoney : 0.32) : 0.32
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
@@ -56,6 +56,7 @@ message = ""
                 $.index = i + 1;
                 $.isLogin = true;
                 $.canDraw = true;
+				$.canReward = true;
                 $.canOpen = true;
                 $.cash = 0
                 $.prize = 0
@@ -80,7 +81,7 @@ message = ""
                 } else {
                     console.log("时间已到,开始开红包")
                     await open("gambleOpenReward")
-                    while ($.canOpen && $.canDraw) {
+                    while ($.canOpen && $.canDraw && $.canReward) {
                         await open("gambleChangeReward")
                         await $.wait(3000);
                     }
@@ -200,16 +201,20 @@ function open(functionid, type) {
                 if (err) {
                     console.log(`${JSON.stringify(err)}`);
                     console.log(`${$.name} API请求失败，请检查网路重试`);
+					$.canReward = false;
                 } else {
                     data = JSON.parse(data);
                     if (data.code === 0 && data.data) {
                         if (functionid != "gambleObtainReward") {
                             $.reward = data.data
-                            if(data.data.rewardValue>money){$.canOpen=false}
+                            if(data.data.rewardValue>money){
+								$.canOpen=false
+								}
                             if (data.data.rewardState === 3) {
                                 console.log("翻倍失败啦...")
                                 $.message += `当前：${data.data.rewardValue} 翻倍失败啦`
                                 $.canDraw = false
+								$.canReward = false;
                             } else if (data.data.rewardState === 1) {
                                 console.log("翻倍成功啦")
                                 console.log("当前红包：" + data.data.rewardValue + "翻倍次数：" + data.data.changeTimes)
@@ -227,6 +232,7 @@ function open(functionid, type) {
 
                     } else {
                         $.canDraw = false
+						$.canReward = false;
                         console.log(data.errMsg)
                         $.message += data.errMsg + "\n"
                     }
