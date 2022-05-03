@@ -372,6 +372,7 @@ jd_captian_*.js
 jd_april*.js
 
 ############不能跑的###############
+jd_cash.ts
 #内容鉴赏
 jd_connoisseur.js
 jd_10_4.js
