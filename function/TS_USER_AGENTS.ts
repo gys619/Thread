@@ -56,6 +56,7 @@ function TotalBean(cookie: string) {
 }
 
 function getRandomNumberByRange(start: number, end: number) {
+  end <= start && (end = start + 100)
   return Math.floor(Math.random() * (end - start) + start)
 }
 
@@ -212,6 +213,18 @@ function getJxToken(cookie: string, phoneId: string = '') {
   }
 }
 
+function exceptCookie(filename: string = 'x.ts') {
+  let except: any = []
+  if (existsSync('./utils/exceptCookie.json')) {
+    try {
+      except = JSON.parse(readFileSync('./utils/exceptCookie.json').toString() || '{}')[filename] || []
+    } catch (e) {
+      console.log('./utils/exceptCookie.json JSON格式错误')
+    }
+  }
+  return except
+}
+
 function randomString(e: number, word?: number) {
   e = e || 32
   let t = word === 26 ? "012345678abcdefghijklmnopqrstuvwxyz" : "0123456789abcdef", a = t.length, n = ""
@@ -272,31 +285,38 @@ async function jdpingou() {
   return `jdpingou;iPhone;5.19.0;${version};${randomString(40)};network/wifi;model/${device};appBuild/100833;ADID/;supportApplePay/1;hasUPPay/0;pushNoticeIsOpen/0;hasOCPay/0;supportBestPay/0;session/${getRandomNumberByRange(10, 90)};pap/JA2019_3111789;brand/apple;supportJDSHWK/1;Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148`
 }
 
-function get(url: string, prarms?: string, headers?: any) {
-  return axios.get(url, {
-    params: prarms,
-    headers: headers
-  })
-    .then(res => {
-      if (typeof res.data === 'string' && res.data.match(/^jsonpCBK/)) {
-        return JSON.parse(res.data.match(/jsonpCBK.?\(([\w\W]*)\);/)[1])
+function get(url: string, headers?: any): Promise<any> {
+  return new Promise((resolve, reject) => {
+    axios.get(url, {
+      headers: headers
+    }).then(res => {
+      if (typeof res.data === 'string' && res.data.includes('jsonpCBK')) {
+        resolve(JSON.parse(res.data.match(/jsonpCBK.?\(([\w\W]*)\);?/)[1]))
       } else {
-        return res.data
+        resolve(res.data)
       }
+    }).catch(err => {
+      reject({
+        code: err?.response?.status || -1,
+        msg: err?.response?.statusText || err.message || 'error'
+      })
     })
-    .catch(err => {
-      console.log(err?.response?.status, err?.response?.statusText)
-    });
+  })
 }
 
 function post(url: string, prarms?: string | object, headers?: any): Promise<any> {
-  return axios.post(url, prarms, {
-    headers: headers
+  return new Promise((resolve, reject) => {
+    axios.post(url, prarms, {
+      headers: headers
+    }).then(res => {
+      resolve(res.data)
+    }).catch(err => {
+      reject({
+        code: err?.response?.status || -1,
+        msg: err?.response?.statusText || err.message || 'error'
+      })
+    })
   })
-    .then(res => res.data)
-    .catch(err => {
-      console.log(err?.response?.status, err?.response?.statusText)
-    });
 }
 
 export default USER_AGENT
