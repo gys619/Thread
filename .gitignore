@@ -182,6 +182,7 @@ jd_jx_factory.js
 
 m_*.js
 ######重复脚本#######
+jd_??-?.js
 #集魔方
 jd_jmofang.js
 bot_*.js
