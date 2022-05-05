@@ -1,14 +1,12 @@
 /**
-汪汪乐园-跑步+组队
-默认翻倍到0.04红包结束,修改请设置变量
-export JD_JOY_PARK_RUN_ASSETS="0.04"
-20 0-23/2 * * * jd_joy_park_run.ts
-new Env('极速版汪汪赛跑');
+ * 汪汪乐园-跑步+组队
+ * 默认翻倍到0.04红包结束
+ * export JD_JOY_PARK_RUN_ASSETS="0.04"
+ * cron: 20 * * * *
+ */
 
-**/
-
-import {get, post, requireConfig, wait} from './function/TS_USER_AGENTS'
-import {H5ST} from "./function/h5st"
+import {get, post, requireConfig, wait} from './TS_USER_AGENTS'
+import {H5ST} from "./utils/h5st"
 import {existsSync, readFileSync} from "fs";
 import {getDate} from "date-fns";
 
@@ -18,7 +16,13 @@ let assets: number = 0.04, captainId: string = '', h5stTool: H5ST = new H5ST('b6
 !(async () => {
   let cookiesArr: string[] = await requireConfig()
   let account: { pt_pin: string, joy_park_run: number }[] = []
-
+  if (existsSync('./utils/account.json')) {
+    try {
+      account = JSON.parse(readFileSync('./utils/account.json').toString())
+    } catch (e) {
+      console.log('./utils/account.json 加载出错')
+    }
+  }
 
   for (let [index, value] of cookiesArr.entries()) {
     cookie = value

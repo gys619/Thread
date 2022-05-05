@@ -4,14 +4,14 @@
 ============Quantumultx===============
 [task_local]
 #极速版抢卷
-58 59 9,17,22,23 * * * https://raw.githubusercontent.com/444444/KR/main/jd_19_6.js, tag=极速版抢卷, enabled=true
+58 59 9,17,22,23 * * * https://raw.githubusercontent.com/555555/faker2/main/jd_19_6.js, tag=极速版抢卷, enabled=true
 ================Loon==============
 [Script]
-cron "58 59 9,17,22,23 * * *" script-path=https://raw.githubusercontent.com/444444/KR/main/jd_19_6.js,tag=极速版抢卷
+cron "58 59 9,17,22,23 * * *" script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_19_6.js,tag=极速版抢卷
 ===============Surge=================
-极速版抢卷 = type=cron,cronexp="58 59 9,17,22,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_19_6.js
+极速版抢卷 = type=cron,cronexp="58 59 9,17,22,23 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_19_6.js
 ============小火箭=========
-极速版抢卷 = type=cron,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_19_6.js, cronexpr="58 59 9,17,22,23 * * *", timeout=3600, enable=true
+极速版抢卷 = type=cron,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_19_6.js, cronexpr="58 59 9,17,22,23 * * *", timeout=3600, enable=true
  */
 const $ = new Env('抢极速版全品卷19-5');
 const moment = require('moment');
