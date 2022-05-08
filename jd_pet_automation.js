@@ -5,7 +5,7 @@ const $ = new Env('M萌宠自动化');
 let commodityName = process.env.M_JD_PET_COMMODITY
     ? process.env.M_JD_PET_COMMODITY
     : ''
-$.log('默认4级商品，生产指定商品请自行配置 M_JD_PET_COMMODITY')
+$.log('默认5级商品，生产指定商品请自行配置 M_JD_PET_COMMODITY')
 $.logic = async function () {
     let info = await api('initPetTown', {"version": 1});
     $.log(JSON.stringify(info));
@@ -28,7 +28,7 @@ $.logic = async function () {
         info = await api('goodsInfoList', {"type": 2})
         let goods = commodityName ? info.result.goodsList.filter(
             o => o.goodsName.includes(commodityName))[0]
-            : info.result.goodsList.filter(o => o.exchangeMedalNum === 4)[0];
+            : info.result.goodsList.filter(o => o.exchangeMedalNum === 5)[0];
         if (!goods) {
             $.putMsg(`没找到你要生产的 ${commodityName}`)
             return
