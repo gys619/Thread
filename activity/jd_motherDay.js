@@ -2,7 +2,7 @@
 * 蚊子腿活动，一天跑2次
 * 入口：11:/￥N5AleF6WnrlF￥，母亲节抽奖
 * 活动结束日期 22.5.8
-cron 23 5,9 6-8 5 * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_motherDay.js
+cron 23 5,9 6-8 5 * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_motherDay.js
 * * */
 const $ = new Env('我和妈妈的幸福合拍');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
