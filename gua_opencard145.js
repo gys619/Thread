@@ -37,6 +37,7 @@ cron:30 3 12-20 5 *
 #臻爱陪伴 助力成长
 30 3 12-20 5 * https://raw.githubusercontent.com/11111120/scripts/master/gua_opencard145.js, tag=臻爱陪伴 助力成长, enabled=true
 
+new Env('臻爱陪伴 助力成长')
 */
 let guaopencard_addSku = 'false'
 let guaopencard = 'false'
