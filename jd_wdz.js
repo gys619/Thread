@@ -2,13 +2,13 @@
  * 微定制瓜分京豆
  * @author gua的代码修改而来.
  * @description 代码加密有啥意思？大家一起玩才有意思..下面三个id是今天活动。.
- * @param activityId 活动id
- * @param activityUrl 活动url
+ * @param wdz_activityId 活动id
+ * @param wdz_activityUrl 活动url
  * @param pin 用户名
  * @param num 跑多少ck
  * @param againUserIndex 需要重新跑的ck
  * @returns {Promise<unknown>}
-1 1 1 1 * jd_wdz.js
+1 1 12 5 * jd_wdz.js
  */
 
 function openCardActivity(activityId, activityUrl, pin, num, againUserIndex) {
@@ -23,8 +23,8 @@ function openCardActivity(activityId, activityUrl, pin, num, againUserIndex) {
       messageTitle = "",
       activityCookie = "";
 
-    if (process.env.jd_zdjr_activityId)
-      activityId = process.env.jd_zdjr_activityId;
+    if (process.env.wdz_activityId)
+      activityId = process.env.wdz_activityId;
     if (process.env.jd_zdjr_activityUrl)
       activityUrl = process.env.jd_zdjr_activityUrl;
     Object.keys(jdCookieNode).forEach((item) =>
@@ -44,7 +44,7 @@ function openCardActivity(activityId, activityUrl, pin, num, againUserIndex) {
 
     !(async () => {
       if (!activityId) {
-        $.msg($.name, "", "活动id不存在，请设置变量jd_zdjr_activityId");
+        $.msg($.name, "", "活动id不存在，请设置变量wdz_activityId");
         $.done();
         return;
       }
