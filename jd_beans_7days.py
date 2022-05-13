@@ -1,6 +1,6 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Modify : 2022/13/05
+# Modify : 2022/5/13
 # 京豆近7天输出表格统计
 # 用不着每天跑,定时自行设置吧，配合desi可指定账号
 # https://raw.githubusercontent.com/6dylan6/jdpro/main/jd_beans_7days.py
@@ -44,6 +44,11 @@ def gen_body(page):
 def printf(text):
     print(text)
     sys.stdout.flush()
+
+def column_pad(*columns):
+  max_len = max([len(x) for x in columns])
+  for y in columns:
+      y.extend(['NaN']*(max_len-len(y)))
 
 class getJDCookie(object):
 
@@ -243,13 +248,17 @@ def get_bean_data(i,ck):
         print(str(e))
 
 def query():
-    global cookiesList, userNameList, pinNameList, ckNum, beanCount, userCount
-    cookiesList, userNameList, pinNameList = getCk.iscookie()
-    for i,ck,user,pin in zip(range(1,len(cookiesList)+1),cookiesList,userNameList,pinNameList):
-       printf(f"\n****** [账号{i}]-{user} ******")
-       res=get_bean_data(i,ck)
-       creat_bean_count(res['data'][3], res['data'][0], res['data'][1], res['data'][2][1:])
-       time.sleep(2)
+    try:
+        global cookiesList, userNameList, pinNameList, ckNum, beanCount, userCount
+        cookiesList, userNameList, pinNameList = getCk.iscookie()
+        for i,ck,user,pin in zip(range(1,len(cookiesList)+1),cookiesList,userNameList,pinNameList):
+           printf(f"\n****** [账号{i}]-{user} ******")
+           res=get_bean_data(i,ck)
+           if res['data'][2][1:] != []:
+               creat_bean_count(res['data'][3], res['data'][0], res['data'][1], res['data'][2][1:])
+           time.sleep(2)
+    except Exception as e:
+        printf(str(e))  
 
 
 if __name__ == "__main__":
