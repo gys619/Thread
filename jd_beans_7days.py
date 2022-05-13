@@ -1,12 +1,12 @@
 # !/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# @Time : 2022/04/04
-# 京豆7天趋势统计
-# 用不着每天跑，配合desi指定账号
-# https://github.com/6dylan6/jdpro
+# Modify : 2022/13/05
+# 京豆近7天输出表格统计
+# 用不着每天跑,定时自行设置吧，配合desi可指定账号
+# https://raw.githubusercontent.com/6dylan6/jdpro/main/jd_beans_7days.py
 '''
 new Env('豆子7天统计');
-1 15 1 4 * jd_beans_7days.py
+1 8 13 5 * jd_beans_7days.py
 '''
 
 import requests
@@ -183,7 +183,7 @@ def get_beans_7days(ck):
             page = page + 1
             resp = session.get(url, params=gen_params(page), headers=headers, timeout=100).text
             res = json.loads(resp)
-            if res['resultCode'] == 0:
+            if res['resultCode'] == 0 and res['data']['list'] != []:
                 for i in res['data']['list']:
                     for date in days:
                         if str(date) in i['createDate'] and i['amount'] > 0:
@@ -195,7 +195,8 @@ def get_beans_7days(ck):
                     if i['createDate'].split(' ')[0] not in str(days):
                         day_7 = False
             else:
-                return {'code': 400, 'data': res}
+                print("未获取到数据，原因未知！！\n")
+                return {'code': 400}
         return {'code': 200, 'data': [beans_in, beans_out, days]}
     except Exception as e:
         print(str(e))
