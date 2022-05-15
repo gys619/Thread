@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-## Build 20220212-002-test
+## Build 20220201001-test
 
 ## 导入通用变量与函数
 dir_shell=/ql/shell
@@ -166,165 +166,9 @@ WxPusher_notify_api() {
     code=$(echo $api | jq -r .code)
     msg=$(echo $api | jq -r .msg)
     if [[ $code == 1000 ]]; then
-        echo -e "#$frontcontent WxPusher 消息发送成功(${uids})\n"
+        echo -e "#$frontcontent WxPusher 一对一消息发送成功\n"
     else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent WxPusher 消息发送处理失败(${msg})\n"
-    fi
-}
-
-## 企业微信机器人通知 API
-QYWX_Bot_notify_api() {
-    local content=$1
-    local frontcontent=$2
-    local url="https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=${QYWX_KEY}"
-
-    local api=$(
-        curl -s --noproxy "*" "$url" \
-            -X 'POST' \
-            -H "Content-Type: application/json" \
-            --data-raw "{\"msgtype\":\"text\",\"text\":{\"content\":\"$content\"}}"
-    )
-    code=$(echo $api | jq -r .errcode)
-    msg=$(echo $api | jq -r .errmsg)
-    if [[ $code == 0 ]]; then
-        echo -e "#$frontcontent 企业微信机器人消息发送成功\n"
-    else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent 企业微信机器人消息发送处理失败(${msg})\n"
-    fi
-}
-
-## 企业微信应用通知 API
-QYWX_GetToken_api() {
-    local corpid="$(echo $QYWX_AM | awk -F ',' '{print $1}')"
-    local corpsecret="$(echo $QYWX_AM | awk -F ',' '{print $2}')"
-    local url="https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=${corpid}&corpsecret=${corpsecret}"
-
-    local api=$(
-        curl -s --noproxy "*" "$url"
-    )
-
-    code=$(echo $api | jq -r .errcode)
-    msg=$(echo $api | jq -r .errmsg)
-    access_token=$(echo $api | jq -r .access_token)
-    if [[ $code == 0 ]]; then
-        ACCESS_TOKEN=${access_token}
-    fi
-}
-
-QYWX_notify_api() {
-    local corpid="$(echo $QYWX_AM | awk -F ',' '{print $1}')"
-    local corpsecret="$(echo $QYWX_AM | awk -F ',' '{print $2}')"
-    local userId="$(echo $QYWX_AM | awk -F ',' '{print $3}')"
-    local agentid="$(echo $QYWX_AM | awk -F ',' '{print $4}')"
-    local thumb_media_id="$(echo $QYWX_AM | awk -F ',' '{print $5}')"
-    local title=$1
-    local content=$2
-    local digest=$3
-    local frontcontent=$4
-    local url="https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=${ACCESS_TOKEN}"
-
-    if [[ $thumb_media_id ]]; then
-        local api=$(
-            curl -s --noproxy "*" "$url" \
-                -X 'POST' \
-                -H "Content-Type: application/json" \
-                --data-raw "{\"touser\":\"$userId\",\"msgtype\":\"mpnews\",\"agentid\":\"$agentid\",\"mpnews\":{\"articles\":[{\"title\":\"$title\",\"thumb_media_id\":\"$thumb_media_id\",\"author\":\"ckck2\",\"content\":\"$content\",\"digest\":\"$digest\"}]}}"
-        )
-    fi
-
-    code=$(echo $api | jq -r .errcode)
-    msg=$(echo $api | jq -r .errmsg)
-    if [[ $code == 0 ]]; then
-        echo -e "#$frontcontent 企业微信应用消息发送成功\n"
-    else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent 企业微信应用消息发送处理失败(${msg})\n"
-    fi
-}
-
-## pushplus 通知 API
-pushplus_notify_api() {
-    local token=$1
-    local title=$2
-    local content=$3
-    local frontcontent=$4
-    local url="http://www.pushplus.plus/send"
-
-    local api=$(
-        curl -s --noproxy "*" "$url" \
-            -X 'POST' \
-            -H "Content-Type: application/json" \
-            --data-raw "{\"token\":\"$token\",\"title\":\"$title\",\"content\":\"$content\"}"
-    )
-
-    code=$(echo $api | jq -r .code)
-    msg=$(echo $api | jq -r .msg)
-    if [[ $code == 200 ]]; then
-        echo -e "#$frontcontent pushplus 消息发送成功\n"
-    else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent pushplus 消息发送处理失败(${msg})\n"
-    fi
-}
-
-## hxtrip pushplus 通知 API
-hxtrip_pushplus_notify_api() {
-    local token=$1
-    local title=$2
-    local content=$3
-    local frontcontent=$4
-    local url="http://pushplus.hxtrip.com/send"
-
-    local api=$(
-        curl -s --noproxy "*" "$url" \
-            -X 'POST' \
-            -H "Content-Type: application/json" \
-            --data-raw "{\"token\":\"$token\",\"title\":\"$title\",\"content\":\"$content\"}"
-    )
-    code=$(echo $api | perl -pe '{s|.*<code>([\d]+)</code>.*|\1|g}')
-    msg=$(echo $api | perl -pe '{s|.*<msg>([\d]+)</msg>.*|\1|g}')
-    if [[ $code == 200 ]]; then
-        echo -e "#$frontcontent hxtrip pushplus 消息发送成功\n"
-    else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent hxtrip pushplus 消息发送处理失败(${msg})\n"
-    fi
-}
-
-## Telegram 通知 API
-Telegram_notify_api() {
-    local token=$1
-    local chat_id=$2
-    local title=$3
-    local content=$4
-    local frontcontent=$5
-    [[ ! $TG_API_HOST ]] && TG_API_HOST="api.telegram.org"
-    local url="https://${TG_API_HOST}/bot${token}/sendMessage"
-
-    if [[ $TG_PROXY_HOST && $TG_PROXY_PORT && $TG_PROXY_AUTH ]]; then
-        local https_proxy=http://$TG_PROXY_AUTH@$TG_PROXY_HOST:$TG_PROXY_PORT/
-    elif [[ $TG_PROXY_HOST && $TG_PROXY_PORT ]]; then
-        local https_proxy=http://$TG_PROXY_HOST:$TG_PROXY_PORT/
-    else
-        local https_proxy=""
-    fi        
-
-    local api=$(
-        curl -s --connect-timeout 20 "*" "$url" \
-            -X 'POST' \
-            -H "Content-Type: application/json" \
-            --data-raw "{\"chat_id\":\"${chat_id}\",\"text\":\"${title}\n\n${content}\",disable_web_page_preview:true}"
-    )
-
-    code=$(echo $api | jq -r .ok)
-    msg=$(echo $api | jq -r .description)
-    if [[ $code == true ]]; then
-        echo -e "#$frontcontent Telegram 消息发送成功\n"
-    else
-        [[ ! $msg ]] && msg="访问 API 超时"
-        echo -e "#$frontcontent Telegram 消息发送处理失败(${msg})\n"
+        echo -e "#$frontcontent WxPusher 一对一消息发送处理失败(${msg})\n"
     fi
 }
 
@@ -390,7 +234,19 @@ Get_CK_Status() {
             -H "Referer: https://home.m.jd.com/myJd/home.action"
     )
 
-    retcode=$(echo $api | jq -r .retcode)
+    local retcode=$(echo $api | jq -r .retcode)
+    if [[ "$retcode" == 0 ]]; then
+        return 0
+    else
+        local retcode=$(echo $api | jq -r .retcode)
+        if [[ "$retcode" == 0 ]]; then
+            return 0
+        elif [[ ! "$retcode" || "$retcode" = "null" ]]; then
+            return 2
+        else
+            return 1
+        fi
+    fi
 }
 
 # 名称处理
@@ -460,18 +316,18 @@ verify_ck(){
         local ck_status_chinese ck_process_chinese
         status_ori[$j]="$(def_json JD_COOKIE status "pin=$j;")"
         Get_CK_Status ${value[i]}
-        if [[ $retcode = 0 ]]; then
+        if [[ $? = 0 ]]; then
             ck_status[$j]="0"
             ck_valid[i]="${full_name[$j]}\n"
             ck_status_chinese="正常"
             ck_process_chinese="启用"
-        elif [[ $retcode = 1001 ]]; then
+        elif [[ $? = 1 ]]; then
             ck_status[$j]="1"
             ck_invalid[i]="${full_name[$j]}\n"
             ck_status_chinese="失效"
             ck_process_chinese="禁用"
-        else
-            ck_status[$j]="2"
+        elif [[ $? = 2 ]]; then
+            ck_status[$j]=""
             ck_unknown_state[i]="${full_name[$j]}\n"
             ck_status_chinese="因 API 连接失败跳过检测"
         fi
@@ -502,7 +358,7 @@ verify_ck(){
         up_timestamp[$j]=$(date -d "$tmp_timestamp" +%s)
         if [[ ${ck_status[$j]} = 0 ]]; then
             cur_sys_timestamp=`date '+%s'`
-            [[ ${value[i]} == *app_open* ]] && total_validity_period=$((24*3600)) || total_validity_period=$((30*24*3600))
+            total_validity_period=$((30*24*3600))
             remain_validity_period=$((total_validity_period-cur_sys_timestamp+up_timestamp[$j]))
             if [[ $remain_validity_period -ge 86400 ]]; then
                 valid_time="$((remain_validity_period/86400))天"
@@ -514,8 +370,7 @@ verify_ck(){
                 elif [[ $remain_validity_period -ge 1 ]]; then
                     valid_time="$remain_validity_period秒"
                 fi
-                [[ ! ${value[i]} =~ app_open ]] && ck_validity_lt_1day[i]="${full_name[$j]}\n"
-                #ck_validity_lt_1day[i]="${full_name[$j]}\n"
+                ck_validity_lt_1day[i]="${full_name[$j]}\n"
             fi
             if [[ $NOTIFY_VALID_TIME = 1 || $NOTIFY_VALID_TIME = 2 ]]; then
                 ck_validity[i]="${full_name[$j]} 剩余有效期$valid_time\n"
@@ -540,10 +395,8 @@ verify_ck(){
             [[ ! $timestamp_s ]] && timestamp_s=$(echo $[$(date +%s%N)/1000000])
             remarks_new[$j]="${remarks_id[$j]}@@$timestamp_s@@${Uid[$j]}"
             if [[ ! ${tmp_Uid_1[$j]} ]] || [[ ! $ori_timestamp_s ]]; then
-                if [[ $SCANF_WXPusher_Remarks = 1 ]]; then
-                    echo -n "${full_name[$j]} "
-                    ql_update_env_api JD_COOKIE "${value[i]}" $(eval echo \${$tmp_id[i]}) "${remarks_new[$j]}"
-                fi
+                echo -n "${full_name[$j]} "
+                ql_update_env_api JD_COOKIE "${value[i]}" $(eval echo \${$tmp_id[i]}) "${remarks_new[$j]}"
             fi
         fi
         [[ ! ${Uid[$j]} ]] && ck_no_uid[i]="${full_name[$j]}\n" && [[ $notify = on ]] && [[ $CK_WxPusherUid = 1 || $CK_WxPusherUid = 2 ]] && echo -e "${full_name[$j]} 未录入WxPusher UID"
@@ -582,9 +435,8 @@ verify_ck(){
         fi
     }
 
-    for i in ${!value[@]}; do
+    for i in $@; do
         local j=${pin[i]}
-        ori_value[i]=${value[i]}
         echo ""
         Get_Full_Name $i
         check_ck $i
@@ -604,7 +456,7 @@ wsck_to_ck(){
       https://raw.fastgit.org
       https://raw.githubusercontent.com
     )
-
+    
     # 筛选主站链接
     define_url(){
         for i in $@; do
@@ -616,22 +468,22 @@ wsck_to_ck(){
             [[ $code == 200 || $code == 301 ]] && echo "$url" && break
         done
     }
-
+    
     ## 文件下载工具
     download_file(){
         get_remote_filesize(){
             local url="$1"
             curl -sI --connect-timeout 30 --retry 3 --noproxy "*" "$url" | grep -i Content-Length | awk '{print $2}'
         }
-
+    
         get_local_filesize(){
            stat -c %s $1
         }
-
+    
         get_md5(){
             md5sum $1 | cut -d ' ' -f1
         }
-
+    
         local url="$1"
         local file_path="$2"
         file="${url##*/}"
@@ -656,7 +508,7 @@ wsck_to_ck(){
             echo "无法链接下载链接，请稍后再试！"
         fi
     }
-
+    
     ## 选择python3还是node
     define_program() {
         local first_param=$1
@@ -674,19 +526,9 @@ wsck_to_ck(){
     }
 
     progress_wskey_scr(){
-        if [[ $diy_wskey_scr ]]; then
-            [[ $diy_wskey_scr =~ $dir_scripts ]] && wskey_scr="$diy_wskey_scr" || wskey_scr="$dir_scripts/$diy_wskey_scr"
-        else
-            wskey_scr="$(find $dir_scripts -type f -name *wskey*.py | head -1)"
-        fi
-        [[ ! $WSKEY_SCR_URL ]] && host_url="$(define_url ${host_url_array[@]})" && WSKEY_SCR_URL="$host_url/Zy143L/wskey/main/wskey.py"
+        wskey_scr="$(find $dir_scripts -type f -name *wskey*.py | head -1)"
         if [[ -f $wskey_scr ]]; then
-            if [[ "$wskey_scr" = "$dir_scripts/wskey.py" && $CHECK_UPDATE_WSKEY_SCR = 1 ]]; then
-                echo -e "# 已检索到 wskey.py ，开始检查更新 wskey 转换脚本 ..."
-                download_file "$WSKEY_SCR_URL" $dir_scripts >/dev/null 2>&1
-            else
-                echo -e "# 已搜索到 wskey 转换脚本，开始执行 wskey 转换 ..."
-            fi
+            echo -e "# 已搜索到 wskey 转换脚本，开始执行 wskey 转换 ..."
             define_program $wskey_scr
             $which_program $wskey_scr
             wskey_end="0"
@@ -694,6 +536,7 @@ wsck_to_ck(){
         else
             if [[ $DOWNLOAD_WSKEY_SCR = 1 ]]; then
                 echo -e "# 未搜索到脚本，开始下载 wskey 转换脚本 ..."
+                [[ ! $WSKEY_SCR_URL ]] && host_url="$(define_url ${host_url_array[@]})" && WSKEY_SCR_URL="$host_url/Zy143L/wskey/main/wskey.py"
                 download_file "$WSKEY_SCR_URL" $dir_scripts >/dev/null 2>&1
                 wskey_scr="$file"
                 if [[ -f "$dir_scripts/$wskey_scr" ]]; then
@@ -713,14 +556,13 @@ wsck_to_ck(){
         fi
     }
 
-    if [[ $WSKEY_TO_CK = 1 ]]; then
-        if [[ ${#wskey_value[@]} -gt 0 ]] && [[ ${#ck_invalid[@]} -gt 0 ]]; then
+    if [[ $WSKEY_TO_CK = 1 ]] && [[ ${#wskey_value[@]} -gt 0 ]]; then
+        if [[ ${#ck_invalid[@]} -gt 0 ]]; then
             echo -e "# 检测到失效账号，开始搜索 wskey 转换脚本 ..."
-            progress_wskey_scr
         elif [[ ${#wskey_array[@]} -gt 0 ]]; then
             echo -e "# 检测到还未转换 JD_COOKIE 的 JD_WSCK(wskey)，开始搜索 wskey 转换脚本 ..."
-            progress_wskey_scr
         fi
+        progress_wskey_scr
     fi
 }
 
@@ -743,14 +585,13 @@ content_notify(){
                 uid="$(echo $MainWP_UID | perl -pe '{s|^|\"|; s|$|\"|}')"
             fi
             if [[ "$uid" ]]; then
-                content_0="Cookie $process通知<br><br>"
-                content_1="$full_name 账号$status并$process"
+                content_1="Cookie $process通知<br><br>$full_name 账号$status并$process"
                 [[ $wskey_end = 0 ]] && [[ ${wskey_invalid[i]} ]] && content_2="，JD_WSCK(wskey) 已失效"
                 [[ ${ck_none_wskey[i]} ]] && content_3="，未录入 JD_WSCK(wskey)"
                 [[ ${ck_undocked_uid[i]} ]] && content_4="，WxPusher 未对接完成"
                 [[ ${ck_no_uid[i]} ]] && content_5="，未录入 WxPusher UID"
-                summary="$content_0$content_1$content_2$content_3$content_4$content_5"
-                content="$content_0$content_top<br><br>$content_1$content_2$content_3$content_4$content_5<br><br><br><br>$content_bot"
+                summary="$content_1$content_2$content_3$content_4$content_5"
+                content="$summary<br><br><br>$ExNotify_Content"
                 [[ ${#summary} -gt 100 ]] && summary="${summary: 0: 96} ……"
                 WxPusher_notify_api $WP_APP_TOKEN_ONE "$content" "$summary" "$uid" "$full_name"
             fi
@@ -773,7 +614,7 @@ content_notify(){
                 ck_status_chinese="生效"
                 ck_process_chinese="添加"
                 log_one_to_one $i "$ck_process_chinese" "$ck_status_chinese" " ${full_name[$j]}"
-            elif [[ ${final_status[$j]} != ${status_last[$j]} && ${status_last[$j]} = 1 ]]; then
+            elif [[ ${final_status[$j]} != ${status_last[$j]} ]]; then
                 ck_enabled[i]="${full_name[$j]}\n"
                 ck_status_chinese="生效"
                 ck_process_chinese="重启"
@@ -786,7 +627,7 @@ content_notify(){
             unset ck_valid[i]
             ck_status_chinese="失效"
             ck_process_chinese="禁用"
-            if [[ ${final_status[$j]} != ${status_last[$j]} && ${status_last[$j]} = 0 ]]; then
+            if [[ ${final_status[$j]} != ${status_last[$j]} ]]; then
                 ck_disabled[i]="${full_name[$j]}\n"
                 log_one_to_one $i "$ck_process_chinese" "$ck_status_chinese" " ${full_name[$j]}"
             fi
@@ -801,8 +642,6 @@ content_notify(){
         }
 
         echo -e "# 正在整理通知内容，请耐心等待 ...\n"
-        content_top=$(echo "$ExNotify_Top_Content" | perl -pe '{s|(\")|'\\'\\1|g; s|\n|<br>|g}')
-        content_bot=$(echo "$ExNotify_Bot_Content" | perl -pe '{s|(\")|'\\'\\1|g; s|\n|<br>|g}')
         gen_pt_pin_array
         for i in ${!value[@]}; do
             local j=${pin[i]}
@@ -817,9 +656,7 @@ content_notify(){
                 status_last[$j]=${status_ori[$j]}
             fi
             final_status[$j]="$(def_json JD_COOKIE status "pin=$j;")"
-            if [[ ori_value[i]=${value[i]} ]]; then
-                [[ ${ck_status[$j]} != 2 ]] && [[ "${final_status[$j]}" == "${status_last[$j]}" ]] && [[ "${final_status[$j]}" == "${ck_status[$j]}" ]] && [[ ${final_status[$j]} = 0 ]] && continue
-            fi
+            [[ "${final_status[$j]}" == "${status_last[$j]}" ]] && [[ "${final_status[$j]}" == "${ck_status[$j]}" ]] && [[ ${final_status[$j]} = 0 ]] && continue
             Get_Full_Name $i
             export_valid_result $i
             check_wskey $i
@@ -872,6 +709,8 @@ content_notify(){
         [[ $validity_all ]] && notify_content_validity="💫💫✨预测账号有效期(共${#ck_validity[@]}条)✨💫💫\n$validity_all\n"
         [[ $NOTIFY_VALID_TIME = 1 ]] && content_11=$notify_content_validity
 
+        content_12=$ExNotify_Content
+
         CK_WxPusherUid_Json_All="$(print_array "${CK_WxPusherUid_Json[*]}" | perl -pe '{s|,\\n$|\\n|g; s|{\\n|  {\\n|g; s|\\n}|\\n  }|g}')"
         CK_WxPusherUid_Json_content="[\n$CK_WxPusherUid_Json_All]"
 
@@ -898,52 +737,13 @@ content_notify(){
     # 推送通知
     sort_notify_content
     echo -e "$display_content"
-    #if [[ $display_content ]]; then
-    if [[ $notify_content ]]; then
-        if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') && $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]] || [[ $QYWX_KEY ]] || [[ $QYWX_AM ]] || [[ $PUSH_PLUS_TOKEN ]] || [[ $PUSH_PLUS_TOKEN_hxtrip ]] || [[ $TG_BOT_TOKEN && $TG_USER_ID ]]; then
-            if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') && $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]]; then
-                #local summary="Cookie 状态通知<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')"
-                #local content="Cookie 状态通知<br><br>$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                local summary="Cookie 状态通知<br><br>$(echo $content_top | perl -pe '{s|\\n|<br>|g}')"
-                local content="Cookie 状态通知<br><br>$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                uids="$(echo $MainWP_UID | perl -pe '{s|^|\"|; s|$|\"|}')"
-                WxPusher_notify_api $WP_APP_TOKEN_ONE "$content" "$summary" "$uids"
-            fi
-            if [[ $QYWX_KEY ]]; then
-                #local content="$display_content"
-                local content="$notify_content"
-                QYWX_Bot_notify_api "$content"
-            fi
-            if [[ $QYWX_AM ]]; then
-                QYWX_GetToken_api
-                if [[ $? = 0 ]]; then
-                    #local summary="$display_content"
-                    #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                    local summary="$notify_content"
-                    local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                    QYWX_notify_api "Cookie 状态通知" "$content" "$summary"
-                fi
-            fi
-            if [[ $PUSH_PLUS_TOKEN ]]; then
-                #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                pushplus_notify_api $PUSH_PLUS_TOKEN "Cookie 状态通知" "$content"
-            fi
-            if [[ $PUSH_PLUS_TOKEN_hxtrip ]]; then
-                #local content="$content_top<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                local content="$content_top<br><br>$(echo $notify_content | perl -pe '{s|\\n|<br>|g}')<br><br><br><br>$content_bot"
-                hxtrip_pushplus_notify_api $PUSH_PLUS_TOKEN_hxtrip "Cookie 状态通知" "$content"
-            fi
-            if [[ $TG_BOT_TOKEN && $TG_USER_ID ]]; then
-                #local content="$display_content"
-                local content="$notify_content"
-                Telegram_notify_api $TG_BOT_TOKEN $TG_USER_ID "Cookie 状态通知" "$content"
-            fi
-        else
-            #echo -e "# 推送通知..." && notify "Cookie 状态通知" "$display_content"
-            echo -e "# 推送通知..." && notify "Cookie 状态通知" "$notify_content" >/dev/null 2>&1
-        fi
-    fi
+    [[ $notify_content ]] && echo -e "# 推送通知..." && notify "Cookie 状态通知" "$notify_content\n\n$ExNotify_Content" >/dev/null 2>&1
+    #if [[ $(echo $WP_APP_TOKEN_ONE|grep -Eo 'AT_(\w{32})') ]] && [[ $(echo $MainWP_UID|grep -Eo 'UID_\w{28}') ]]; then
+    #    local summary="Cookie 状态通知<br><br>$(echo $display_content | perl -pe '{s|\\n|<br>|g}')"
+    #    local content="$summary<br><br><br>$ExNotify_Content"
+    #    uids="$(echo $MainWP_UID | perl -pe '{s|^|\"|; s|$|\"|}')"
+    #    WxPusher_notify_api $WP_APP_TOKEN_ONE "$content" "$summary" "$uids"
+    #fi
 }
 
 echo -e ""
@@ -951,7 +751,7 @@ echo -n "# 开始检查账号有效性"
 [[ $NOTIFY_VALID_TIME = 1 || $NOTIFY_VALID_TIME = 2 ]] && echo -e "，预测账号有效期谨供参考 ..." || echo -e " ..."
 declare -A remarks_ori remarks_id remarks_name remarks_new wskey_value wskey_id wskey_remarks tmp_Uid_1 tmp_Uid_2 Uid NickName full_name status_ori ck_status status_last final_status up_timestamp
 gen_pt_pin_array
-verify_ck
+verify_ck ${!value[@]}
 echo ""
 wsck_to_ck
 content_notify
