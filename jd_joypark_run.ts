@@ -28,7 +28,7 @@ let assets: number = 0, captainId: string = '', h5stTool: H5ST = null
 
   
 
-    assets = parseFloat(process.env.JD_JOY_PARK_RUN_ASSETS || '0.08')
+    assets = parseFloat(process.env.JD_JOY_PARK_RUN_ASSETS || '0.04')
     let rewardAmount: number = 0
     try {
       h5stTool = new H5ST('448de', 'jdltapp;', fp_448de)
