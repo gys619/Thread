@@ -67,10 +67,9 @@ async function jdsign() {
     await $.wait(2000)
     await getInfo("https://pro.m.jd.com/mall/active/kPM3Xedz1PBiGQjY4ZYGmeVvrts/index.html");//陪伴
     await $.wait(2000)
-    await getInfo("https://pro.m.jd.com/mall/active/3SC6rw5iBg66qrXPGmZMqFDwcyXi/index.html");//京东图书
+    await getInfo("https://prodev.m.jd.com/mall/active/2BspupMr6qenk9JUWpbAnepLHjwy/index.html");//女装馆6.30
     await $.wait(2000)
-    await getInfo("https://prodev.m.jd.com/mall/active/412SRRXnKE1Q4Y6uJRWVT6XhyseG/index.html");//京东服装
-//     await getInfo("https://pro.m.jd.com/mall/active/ZrH7gGAcEkY2gH8wXqyAPoQgk6t/index.html");//箱包签到
+    await getInfo("https://prodev.m.jd.com/mall/active/2FzVtkSfUtvU8YoiTeALkJ68PxAs/index.html");//医疗馆 12.31结束	
 //     await $.wait(1000)
 //     await getInfo("https://pro.m.jd.com/mall/active/4RXyb1W4Y986LJW8ToqMK14BdTD/index.html");//鞋靴馆签到
 
@@ -106,7 +105,7 @@ async function getInfo(url) {
 // 签到
 async function doInteractiveAssignment(encryptProjectId, AssignmentId) {
   return new Promise(async (resolve) => {
-    $.post(taskUrl("doInteractiveAssignment", { "encryptProjectId": encryptProjectId, "encryptAssignmentId": AssignmentId, "sourceCode": "aceaceqingzhan", "itemId": "1", "actionType": "", "completionFlag": "true", "ext": {} }), async (err, resp, data) => {
+    $.post(taskUrl("doInteractiveAssignment", { "encryptProjectId": encryptProjectId, "encryptAssignmentId": AssignmentId, "sourceCode": "acetttsign", "itemId": "1", "actionType": "", "completionFlag": "true", "ext": {} }), async (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

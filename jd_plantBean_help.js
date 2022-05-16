@@ -10,17 +10,17 @@
 
 =====================================Quantumult X=================================
 [task_local]
-40 4,17 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_plantBean_help.js, tag=种豆得豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzd.png, enabled=true
+40 4,17 * * * https://raw.githubusercontent.com/555555/faker2/main/jd_plantBean_help.js, tag=种豆得豆, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdzd.png, enabled=true
 
 =====================================Loon================================
 [Script]
-cron "40 4,17 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_plantBean_help.js,tag=京东种豆得豆
+cron "40 4,17 * * *" script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_plantBean_help.js,tag=京东种豆得豆
 
 ======================================Surge==========================
-京东种豆得豆 = type=cron,cronexp="40 4,17 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_plantBean_help.js
+京东种豆得豆 = type=cron,cronexp="40 4,17 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_plantBean_help.js
 
 ====================================小火箭=============================
-京东种豆得豆 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_plantBean_help.js, cronexpr="40 4,17 * * *", timeout=3600, enable=true
+京东种豆得豆 = type=cron,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_plantBean_help.js, cronexpr="40 4,17 * * *", timeout=3600, enable=true
 
 */
 const $ = new Env('种豆得豆内部互助');
@@ -74,6 +74,14 @@ let lnruns = 0;
       option = {};
       await jdPlantBean();
 	  await $.wait(2 * 1000);
+	  lnrun++;
+	  await doHelp();
+	  if (lnrun == 3) {
+		  console.log(`\n【访问接口次数达到3次，休息一分钟.....】\n`);
+		  await $.wait(60 * 1000);
+		  lnrun = 0;
+	  }
+	  await $.wait(3 * 1000);
     }
   }
   if ($.isNode() && allMessage) {
@@ -110,14 +118,6 @@ async function jdPlantBean() {
       awardState = roundList[num - 1].awardState;
       $.taskList = $.plantBeanIndexResult.data.taskList;
       subTitle = `【京东昵称】${$.plantBeanIndexResult.data.plantUserInfo.plantNickName}`;
-	  lnrun++;
-	  await doHelp();
-		if (lnrun == 3) {
-		console.log(`\n【访问接口次数达到3次，休息半分钟.....】\n`);
-		await $.wait(30 * 1000);
-		lnrun = 0;
-		}
-	    await $.wait(3 * 1000);
     } else {
       console.log(`种豆得豆-初始失败:  ${JSON.stringify($.plantBeanIndexResult)}`);
     }
@@ -125,7 +125,7 @@ async function jdPlantBean() {
     $.logErr(e);
     const errMsg = `京东账号${$.index} ${$.nickName || $.UserName}\n任务执行异常，请检查执行日志 ‼️‼️`;
     // if ($.isNode()) await notify.sendNotify(`${$.name}`, errMsg);
-    //$.msg($.name, '', `${errMsg}`)
+    $.msg($.name, '', `${errMsg}`)
   }
 }
 //助力好友
