@@ -366,16 +366,14 @@ function dotask(task) {
 
 // 宝箱
 function bxdraw() {
-  let functionId, body;
+  let body;
   if ($.signhb_source === '5') {
-    functionId = "signhb/bxdraw_jxpp"
     body = `ispp=1&sqactive=${$.sqactive}&tk=`
   } else {
-    functionId = "signhb/bxdraw"
     body = `ispp=0&sqactive=&tk=`
   }
   return new Promise((resolve) => {
-    $.get(taskUrl(functionId, body), async (err, resp, data) => {
+    $.get(taskUrl("signhb/bxdraw", body), async (err, resp, data) => {
       try {
         if (err) {
           console.log(JSON.stringify(err));
