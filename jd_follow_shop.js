@@ -1,5 +1,8 @@
+/*
+7 7 7 7 7 m_jd_follow_shop.js
+*/
 let mode = __dirname.includes('magic')
-const {Env} = mode ? require('./function/magic') : require('./function/magic')
+const {Env} = mode ? require('./magic') : require('./magic')
 const $ = new Env('M关注有礼');
 $.followShopArgv = process.env.M_FOLLOW_SHOP_ARGV
     ? process.env.M_FOLLOW_SHOP_ARGV
@@ -119,3 +122,4 @@ async function getShopHomeActivityInfo() {
     let {status, data} = await $.request(url, headers, newVar.sign);
     return data;
 }
+
