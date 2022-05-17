@@ -164,11 +164,13 @@ async function run(){
 		console.log('查询是否可以制作......');
 		if($.score3>=10){
 			console.log('开始制作燕麦牛奶......');
+			await $.wait(parseInt(Math.random()*2000+2000,10));
 			await takePostRequest('燕麦牛奶');
 			await $.wait(parseInt(Math.random()*2000+2000,10));
 		}
 		if($.score2>=15){
 			console.log('开始制作原浆豆乳......');
+			await $.wait(parseInt(Math.random()*2000+2000,10));
 			await takePostRequest('豆乳');
 			await $.wait(parseInt(Math.random()*2000+2000,10));
 		}
@@ -176,11 +178,13 @@ async function run(){
 		await takePostRequest('activityContent');
 		if($.score5>=1){
 			console.log('开始售卖燕麦牛奶......');
+			await $.wait(parseInt(Math.random()*2000+2000,10));
 			await takePostRequest('卖燕麦牛奶');
 			await $.wait(parseInt(Math.random()*2000+2000,10));
 		}
 		if($.score4>=1){
 			console.log('开始售卖原浆豆乳......');
+			await $.wait(parseInt(Math.random()*2000+2000,10));
 			await takePostRequest('卖豆乳');
 			await $.wait(parseInt(Math.random()*2000+2000,10));
 		}
