@@ -1,7 +1,7 @@
 /*
  特务集卡
  脚本没有自动开卡，会尝试领取开卡奖励
-10 10,18,20 * * * https://github.com/11111129/jdpro/jd_twjk.js
+10 10,18,20 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_twjk.js
 * */
 const $ = new Env('特务集卡');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -18,14 +18,16 @@ if ($.isNode()) {
         $.getdata("CookieJD2"),
         ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
-console.log('\n活动地址：首页下拉，需要开卡才能100%集齐，没有开卡的手动开，集齐晚上8点后瓜分\n')
+console.log('\n活动地址：首页下拉，18点后还没集齐就做开卡任务吧，集齐晚上8点后瓜分\n')
 let shareList=[];
+$.flag = false
 !(async()=>{
 	if(!cookiesArr[0]){
 		$.msg($.name,'【提示】请先获取京东账号一cookie直接使用NobyDa的京东签到获取','https://bean.m.jd.com/bean/signIndex.action',{'open-url':'https://bean.m.jd.com/bean/signIndex.action'});
 		return;
 	}
 	for(let _0x44559b=0;_0x44559b<cookiesArr.length;_0x44559b++){
+        if ($.flag) return;
 		if(cookiesArr[_0x44559b]){
 			$.cookie=cookiesArr[_0x44559b];
 			$.UserName=decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/)&&$.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
@@ -40,7 +42,9 @@ let shareList=[];
 				}
 				continue;
 			}try{
+                
 				await main($.cookie);
+
 			}catch(_0x282ca){
 				console.log(JSON.stringify(_0x282ca));
 			}
@@ -94,7 +98,8 @@ async function main(_0x14f2ac){
 	let _0xc6f9d4=decodeURIComponent(_0x14f2ac.match(/pt_pin=(.+?);/)&&_0x14f2ac.match(/pt_pin=(.+?);/)[1]);
 	let _0x43a9de=await takeRequest(_0x14f2ac,'showSecondFloorCardInfo','{"source":"card"}');
 	if(JSON.stringify(_0x43a9de)==='{}'||!_0x43a9de||!_0x43a9de.result||!_0x43a9de.result.activityBaseInfo){
-		console.log(_0xc6f9d4+',获取活动详情失败1');
+		console.log('本期活动结束，等待下期。。。');
+        $.flag = true
 		return;
 	}
 	let _0x215414=_0x43a9de.result.activityBaseInfo;
