@@ -1,5 +1,6 @@
 /*
 五月宠爱季 和你在一起
+7 7 7 7 7 jd_lzdz1_customized5_18.js
 */
 const $ = new Env("五月宠爱季 和你在一起");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
@@ -58,8 +59,6 @@ if ($.isNode()) {
         '7dd1468579244d55a45af7a6a5ef51c1',
         'ad712ab8ddfd4c62908b50cc438e6f9f',
         '12795868bf034968b53039dce7d8a260',
-        '42df88ffaf5a4822956b2d86c23add81',
-        '74fd7cb699c14eacbdf4ad1c3ba4f1d9'
       ];
       // $.authorCode = authorCodeList[random(0, authorCodeList.length)];
       $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]

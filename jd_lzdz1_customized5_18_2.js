@@ -1,8 +1,8 @@
 /*
-情暖五月 以爱之名
-7 7 7 7 7 jd_lzdz1_customized5_16.js
+一见倾芯 天长地久
+7 7 7 7 7 jd_lzdz1_customized5_18_2.js
 */
-const $ = new Env("情暖五月 以爱之名");
+const $ = new Env("一见倾芯 天长地久");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
 const notify = $.isNode() ? require("./sendNotify") : "";
 let cookiesArr = [], cookie = "", message = "";
@@ -56,16 +56,16 @@ if ($.isNode()) {
       $.ADID = getUUID("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 1);
       $.UUID = getUUID("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
       authorCodeList = [
-        // 'cc358f6a41914e97ae423ba79da8f2bd',
-        '9438549386c944f6a72349b449449772',
-        // 'c0aef4c799ee443c829204bfd3b3b31f',
+        '161743cf4e3645ba86671e3f4504d4fb',
+        'f1c4f0d03a8e480aaaffe0093d3590bc',
+        '9b785de5825649cda88f574d3ac57ec5',
       ];
       // $.authorCode = authorCodeList[random(0, authorCodeList.length)];
       $.authorCode = ownCode ? ownCode : authorCodeList[random(0, authorCodeList.length)]
       $.authorNum = `${random(1000000, 9999999)}`;
       $.randomCode = random(1000000, 9999999);
-      $.activityId = "dzlhkk17e740478a664c23f2c5580a";
-      $.activityShopId = "1000384442";
+      $.activityId = "dzlhkk0c046a602d347bea3e27b82f5";
+      $.activityShopId = "1000072521";
       $.activityUrl = `https://lzdz1-isv.isvjcloud.com/dingzhi/customized/common/activity/${$.authorNum}?activityId=${$.activityId}&shareUuid=${encodeURIComponent($.authorCode)}&adsource=SD&shareuserid4minipg=${encodeURIComponent($.secretPin)}&shopid=undefined&lng=00.000000&lat=00.000000&sid=&un_area=`;
       await member();
       // await $.wait(1000);
@@ -124,7 +124,8 @@ async function member() {
           await getToken();
           if (vo.status == 0) {
             await getShopOpenCardInfo({ venderId: `${vo.venderId}`, channel: "401" }, vo.venderId);
-            await bindWithVender({ venderId: `${vo.venderId}`, bindByVerifyCodeFlag: 1, registerExtend: {}, writeChildFlag: 0, activityId: $.openCardActivityId, channel: 401 }, vo.venderId);
+            console.log($.openCardActivityId)
+            await bindWithVender({ venderId: `${vo.venderId}`, bindByVerifyCodeFlag: 1, registerExtend: {}, writeChildFlag: 0, activityId: 2329491, channel: 401 }, vo.venderId);
             await $.wait(500);
           } else {
             $.log(`>>> 已经是会员`);

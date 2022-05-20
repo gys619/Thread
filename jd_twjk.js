@@ -29,7 +29,6 @@ $.flag = false
 		return;
 	}
 	for(let _0x44559b=0;_0x44559b<cookiesArr.length;_0x44559b++){
-        if (_0x44559b == 0 && $.flag) return;
 		if(cookiesArr[_0x44559b]){
 			$.cookie=cookiesArr[_0x44559b];
 			$.UserName=decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/)&&$.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
@@ -46,7 +45,7 @@ $.flag = false
 			}try{
                 
 				await main($.cookie);
-
+                if (_0x44559b == 0 && $.flag) return;
 			}catch(_0x282ca){
 				console.log(JSON.stringify(_0x282ca));
 			}
