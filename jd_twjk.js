@@ -5,6 +5,7 @@
 * */
 const $ = new Env('特务集卡');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const notify = $.isNode() ? require('./sendNotify') : '';
 let cookiesArr = [];
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
@@ -18,7 +19,7 @@ if ($.isNode()) {
         $.getdata("CookieJD2"),
         ...$.toObj($.getdata("CookiesJD") || "[]").map((item) => item.cookie)].filter((item) => !!item);
 }
-console.log('\n活动地址：首页下拉，18点后还没集齐就做开卡任务吧，集齐晚上8点后瓜分\n')
+console.log('\n活动地址：首页下拉，18点后还没集齐就做开卡任务吧，集齐晚上8点后自动瓜分\n')
 let shareList=[];
 $.flag = false
 !(async()=>{
@@ -85,7 +86,7 @@ $.flag = false
 				console.log('助力次数已用完');
 				_0x4ce29d=false;
 			}
-			console.log('助力结果：'+JSON.stringify(_0x224f8e));
+			console.log('助力结果：'+_0x224f8e.bizMsg);
 			await $.wait(2000);
 		}
 	}
@@ -143,31 +144,31 @@ async function main(_0x14f2ac){
 			console.log('任务：'+_0x4a424c.assignmentName+',已完成');
 			continue;
 		}if(_0x4a424c.assignmentType===1){
-			console.log('任务：'+_0x4a424c.assignmentName+',去执行,请稍稍');
+			console.log('任务：'+_0x4a424c.assignmentName+',去执行');
 			let _0x3c7f29=_0x4a424c.ext.shoppingActivity[0].itemId||'';
 			if(!_0x3c7f29){
 				console.log('任务：'+_0x4a424c.assignmentName+',信息异常');
 			}
 			let _0x2d2e7c=await takeRequest(_0x14f2ac,'superBrandDoTask','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","encryptAssignmentId":"'+_0x4a424c.encryptAssignmentId+'","assignmentType":'+_0x4a424c.assignmentType+',"itemId":"'+_0x3c7f29+'","actionType":0}');
-			console.log('执行结果：'+JSON.stringify(_0x2d2e7c));
+			console.log('执行结果：'+_0x2d2e7c.bizMsg);
 			await $.wait(3000);
 		}if(_0x4a424c.assignmentType===3){
-			console.log('任务：'+_0x4a424c.assignmentName+',去执行,请稍稍');
+			console.log('任务：'+_0x4a424c.assignmentName+',去执行');
 			let _0x440f46=_0x4a424c.ext.followShop[0].itemId||'';
 			if(!_0x440f46){
 				console.log('任务：'+_0x4a424c.assignmentName+',信息异常');
 			}
 			let _0x2d2e7c=await takeRequest(_0x14f2ac,'superBrandDoTask','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","encryptAssignmentId":"'+_0x4a424c.encryptAssignmentId+'","assignmentType":'+_0x4a424c.assignmentType+',"itemId":"'+_0x440f46+'","actionType":0}');
-			console.log('执行结果：'+JSON.stringify(_0x2d2e7c));
+			console.log('执行结果：'+_0x2d2e7c.bizMsg);
 			await $.wait(3000);
 		}if(_0x4a424c.assignmentType===7){
-			console.log('任务：'+_0x4a424c.assignmentName+',去执行,请稍稍');
+			console.log('任务：'+_0x4a424c.assignmentName+',去执行');
 			let _0x25a600=_0x4a424c.ext.brandMemberList[0].itemId||'';
 			if(!_0x25a600){
 				console.log('任务：'+_0x4a424c.assignmentName+',信息异常');
 			}
 			let _0x2d2e7c=await takeRequest(_0x14f2ac,'superBrandDoTask','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","encryptAssignmentId":"'+_0x4a424c.encryptAssignmentId+'","assignmentType":'+_0x4a424c.assignmentType+',"itemId":"'+_0x25a600+'","actionType":0}');
-			console.log('执行结果：'+JSON.stringify(_0x2d2e7c));
+			console.log('执行结果：'+_0x2d2e7c.bizMsg);
 			await $.wait(3000);
 		}if(_0x4a424c.assignmentType===5){
 			let _0x1e4481=_0x4a424c.ext.sign2||[];
@@ -176,23 +177,23 @@ async function main(_0x14f2ac){
 			}if(_0x4a424c.assignmentName==='首页限时下拉'){
 				for(let _0x5d0f56=0;_0x5d0f56<_0x1e4481.length;_0x5d0f56++){
 					if(_0x1e4481[_0x5d0f56].status===1){
-						console.log('任务：'+_0x4a424c.assignmentName+',去执行,请稍稍');
+						console.log('任务：'+_0x4a424c.assignmentName+',去执行');
 						let _0x25a600=_0x1e4481[_0x5d0f56].itemId;
 						let _0x2d2e7c=await takeRequest(_0x14f2ac,'superBrandDoTask','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","encryptAssignmentId":"'+_0x4a424c.encryptAssignmentId+'","assignmentType":'+_0x4a424c.assignmentType+',"itemId":"'+_0x25a600+'","actionType":0,"dropDownChannel":1}');
-						console.log('执行结果：'+JSON.stringify(_0x2d2e7c));
+						console.log('执行结果：'+_0x2d2e7c.bizMsg);
 						await $.wait(3000);
 					}
 				}
 			}else if(_0x4a424c.assignmentName.indexOf('小游戏')!==-1){
 				for(let _0x5d0f56=0;_0x5d0f56<_0x1e4481.length;_0x5d0f56++){
 					if(_0x1e4481[_0x5d0f56].status===1){
-						console.log('任务：'+_0x4a424c.assignmentName+',去执行,请稍稍');
+						console.log('任务：'+_0x4a424c.assignmentName+',去执行');
 						let _0x5e4237=await takeRequest(_0x14f2ac,'showSecondFloorGameInfo','{"source":"card"}');
 						let _0x5bc621=_0x5e4237.result.activityGameInfo.gameCurrentRewardInfo.secCode;
 						let _0x4e6eb7=_0x5e4237.result.activityGameInfo.gameCurrentRewardInfo.encryptAssignmentId;
 						await $.wait(3000);
 						let _0x2d2e7c=await takeRequest(_0x14f2ac,'superBrandTaskLottery','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","encryptAssignmentId":"'+_0x4e6eb7+'","secCode":"'+_0x5bc621+'"}');
-						console.log('执行结果：'+JSON.stringify(_0x2d2e7c));
+						console.log('执行结果：'+_0x2d2e7c.bizMsg);
 						await $.wait(3000);
 					}
 				}
@@ -204,6 +205,25 @@ async function main(_0x14f2ac){
 			}
 			shareList.push({'user':_0xc6f9d4,'activityId':_0x23add7,'encryptProjectId':_0x5add38,'encryptAssignmentId':_0x4a424c.encryptAssignmentId,'itemId':_0x282818,'max':false});
 		}
+	}
+	await $.wait(2000);
+	let myaward = await takeRequest(_0x14f2ac,'superBrandShowMyAward','{"source":"card","activityId":'+_0x23add7+'}');
+	let rewardList = myaward.result.rewardList;
+	let y='';
+	let x='';
+	for(let i=0; i< rewardList.length; i++){
+		if(rewardList[i]['rewardType']===3){
+			x+=rewardList[i].rewardValue+'\n';
+		}else if(rewardList[i]['rewardType']===7){
+			x+=rewardList[i].rewardName+' '+rewardList[i].useRange+'\n';
+		}else{
+			x+=rewardList[i].rewardValue+'\n';
+			y+=(rewardList[i].rewardValue+';');
+		}
+	}if(x){
+		console.log('\n已获得奖励：\n'+x);
+	}if(y){
+		await notify.sendNotify('特务集卡','京东账号'+_0xc6f9d4+'可能获得实物奖励\n'+y);
 	}
 }
 async function takeRequest(_0x419790,_0x5a318a,_0x10cedb){
