@@ -1,6 +1,7 @@
 /*
  特务集卡
  脚本没有自动开卡，会尝试领取开卡奖励
+ 第一个CK黑号会退出
 10 10,18,20 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_twjk.js
 * */
 const $ = new Env('特务集卡');
@@ -28,7 +29,7 @@ $.flag = false
 		return;
 	}
 	for(let _0x44559b=0;_0x44559b<cookiesArr.length;_0x44559b++){
-        if ($.flag) return;
+        if (_0x44559b == 0 && $.flag) return;
 		if(cookiesArr[_0x44559b]){
 			$.cookie=cookiesArr[_0x44559b];
 			$.UserName=decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/)&&$.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
