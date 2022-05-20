@@ -6,6 +6,7 @@ JD_CART_REMOVEALL || true;    //是否清空，如果为false，则上面设置�
 RUN_CAR=ture 才运行脚本
 10 10 * * * 
 ACTIVITY_ID || "";  //活动ID  以逗号分隔  111,22,33
+2 10 20 5 * jd_wxCollectionActivity.js
 */
 const $ = new Env('加购物车抽奖');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
