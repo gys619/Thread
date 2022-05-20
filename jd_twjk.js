@@ -138,7 +138,7 @@ async function main(_0x14f2ac){
 			for(let _0x5d0f56=0;_0x5d0f56<_0x2ec90c;_0x5d0f56++){
 				console.log('领取助力奖励');
 				let _0x9b8d5a=await takeRequest(_0x14f2ac,'superBrandTaskLottery','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'"}');
-				console.log('结果：'+JSON.stringify(_0x9b8d5a));
+				console.log('领取结果：'+_0x9b8d5a.bizMsg);
 				await $.wait(3000);
 			}
 		}if(_0x4a424c.completionFlag){
