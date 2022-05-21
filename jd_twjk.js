@@ -121,7 +121,7 @@ async function main(_0x14f2ac){
 	if((_0x34eeb3.divideTimeStatus===1)&&(_0x34eeb3.divideStatus===0)&&_0x34eeb3.cardStatus===1){
 		console.log(_0xc6f9d4+',去瓜分');
 		let _0x2a25b6=await takeRequest(_0x14f2ac,'superBrandTaskLottery','{"source":"card","activityId":'+_0x23add7+',"encryptProjectId":"'+_0x5add38+'","tag":"divide"}');
-		console.log('结果：'+JSON.stringify(_0x2a25b6));
+		console.log('瓜分结果：'+_0x2a25b6.result.userAwardInfo.beanNum+'豆\n');
 		return;
 	}else if(_0x34eeb3.divideTimeStatus===1&&_0x34eeb3.divideStatus===1&&(_0x34eeb3.cardStatus===1)){
 		console.log(_0xc6f9d4+',已瓜分');
