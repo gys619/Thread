@@ -10,7 +10,7 @@ if (process.env.JD_19E != "true") {
 */
 
 const CryptoJS = require("crypto-js");
-const $ = new Env('热爱奇旅互助版');
+const $ = new Env('热爱奇旅互助版-部分加密');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 let cookiesArr = [], cookie = '', message, helpCodeArr = [], helpPinArr = [], wxCookie = "";
@@ -40,7 +40,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-	console.log(`\n自行测试\n`);
+	console.log(`\n自行测试,部分加密\n来源于其他作者,自行衡量是否跑不跑！\n`);
     const helpSysInfoArr = []
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
