@@ -2,6 +2,13 @@ if (process.env.JD_19E != "true") {
     console.log('\n默认不运行,设置变量export JD_19E="true"来运行\n')
     return
 }
+/*
+
+建议手动先点开一次
+33 0,6-23/3 * * * jd_19E_help.js
+
+*/
+
 const CryptoJS = require("crypto-js");
 const $ = new Env('热爱奇旅互助版');
 const notify = $.isNode() ? require('./sendNotify') : '';
