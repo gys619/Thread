@@ -99,16 +99,6 @@ async function run() {
                 await $.wait(500)
                 await joinShop()
             }
-			if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
-                console.log('第4次 重新开卡')
-                await $.wait(500)
-                await joinShop()
-            }
-			if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
-                console.log('第5次 重新开卡')
-                await $.wait(500)
-                await joinShop()
-            }
             if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
                 console.log("开卡失败❌ ，重新执行脚本")
                 allMessage += `【账号${$.index}】${$.UserName}开卡失败❌ ，请重新执行脚本\n`

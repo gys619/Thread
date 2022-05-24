@@ -2,8 +2,6 @@
 [task_local]
 #4月京东国际联合活动
 31 1 10-18/3 4 * jd_gjlh.js, tag=4月京东国际联合活动, enabled=true
-
-from https://github.com/444444/KR/blob/main/jd_gjlh.js
  */
 const $ = new Env('4月京东国际联合活动');
 const notify = $.isNode() ? require('./sendNotify') : '';
