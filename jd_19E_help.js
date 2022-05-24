@@ -1,5 +1,5 @@
 if (process.env.JD_19E != "true") {
-    console.log('\n默认不运行,设置变量export JD_19E="true"来运行\n')
+    console.log('\n默认不运行,安全性自行衡量,设置变量export JD_19E="true"来运行\n')
     return
 }
 /*
