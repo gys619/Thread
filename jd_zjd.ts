@@ -1,18 +1,16 @@
 /**
- * const $ = new Env('赚喜豆-TS版');
+ * v0.2
  * cron: 15,30,45 0 * * *
- * 修改自HW大佬，默认开团前7，需要请自行修改
- * 修改自HW大佬，纯内部助力，定时请自行修改，频繁跑火爆黑IP
- * 修改自HW大佬，建议使用原作者版本，衰仔，明白了吗？
+ * CK1 优先助力HW.ts
  */
 
 import axios from "axios";
-import {zjdInit, zjdH5st} from "./function/zjdtool.js";
-import {o2s, wait, requireConfig} from "./function/TS_USER_AGENTS";
+import {zjdInit, zjdH5st} from "./utils/jd_zjd_tool.js";
+import {o2s, wait, requireConfig, getshareCodeHW} from "./TS_USER_AGENTS";
 import {SHA256} from "crypto-js";
 
 let cookie: string = '', res: any = '', UserName: string
-let shareCodeSelf: Tuan[] = [], shareCode: Tuan[] = []
+let shareCodeSelf: Tuan[] = [], shareCode: Tuan[] = [], shareCodeHW: any = []
 
 interface Tuan {
   activityIdEncrypted: string, // id
@@ -21,13 +19,11 @@ interface Tuan {
 }
 
 !(async () => {
-  let cookiesArr: string[] = await requireConfig(false)
+  let cookiesArr: string[] = await requireConfig()
   for (let [index, value] of cookiesArr.entries()) {
-	if(index < 7){
-	try {
+    try {
       await zjdInit()
       cookie = value
-
       UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
       console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
 
@@ -77,26 +73,33 @@ interface Tuan {
       } else if (!res.data.canStartNewAssist) {
         console.log('不可开团')
       }
-	await wait(1000)
     } catch (e) {
       continue
     }
-	}
+    await wait(1000)
   }
 
-  console.log('内部助力：', shareCodeSelf)
+  o2s(shareCodeSelf)
+  await wait(2000)
+
   for (let [index, value] of cookiesArr.entries()) {
-	try {
-	cookie = value
+    if (shareCodeHW.length === 0) {
+      shareCodeHW = await getshareCodeHW('zjd');
+    }
+    shareCode = index === 0
+      ? Array.from(new Set([...shareCodeHW, ...shareCodeSelf]))
+      : Array.from(new Set([...shareCodeSelf, ...shareCodeHW]))
+
+    cookie = value
     UserName = decodeURIComponent(cookie.match(/pt_pin=([^;]*)/)![1])
     console.log(`\n开始【京东账号${index + 1}】${UserName}\n`)
-	shareCode = Array.from(new Set([...shareCodeSelf]))
 
     await zjdInit()
     for (let code of shareCode) {
       try {
         console.log(`账号${index + 1} ${UserName} 去助力 ${code.assistedPinEncrypted.replace('\n', '')}`)
         res = await api('vvipclub_distributeBean_assist', {"activityIdEncrypted": code.activityIdEncrypted, "assistStartRecordId": code.assistStartRecordId, "assistedPinEncrypted": code.assistedPinEncrypted, "channel": "FISSION_BEAN", "launchChannel": "undefined"})
+
         if (res.resultCode === '9200008') {
           console.log('不能助力自己')
         } else if (res.resultCode === '2400203' || res.resultCode === '90000014') {
@@ -118,9 +121,6 @@ interface Tuan {
       await wait(2000)
     }
     await wait(2000)
-    } catch (e) {
-      console.log(e)
-    }
   }
 })()
 

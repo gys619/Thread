@@ -1,6 +1,7 @@
 import axios from "axios"
 import {format} from "date-fns"
-import * as CryptoJS from 'crypto-js'
+
+const CryptoJS = require("crypto-js")
 
 class H5ST {
   tk: string;
@@ -50,7 +51,7 @@ class H5ST {
     this.enc = data.data.result.algo.match(/algo\.(.*)\(/)[1]
   }
 
-  __genKey(tk: string, fp: string, ts: string, ai: string, algo: object) {
+  __genKey(tk, fp, ts, ai, algo) {
     let str = `${tk}${fp}${ts}${ai}${this.rd}`;
     return algo[this.enc](str, tk)
   }
@@ -58,8 +59,8 @@ class H5ST {
   __genH5st(body: object) {
     let y = this.__genKey(this.tk, this.fp, this.timestamp, this.appId, CryptoJS).toString(CryptoJS.enc.Hex)
     let s = ''
-    for (let key of Object.keys(body)) {
-      key === 'body' ? s += `${key}:${CryptoJS.SHA256(body[key]).toString(CryptoJS.enc.Hex)}&` : s += `${key}:${body[key]}&`
+    for (let i in body) {
+      i === 'body' ? s += `${i}:${CryptoJS.SHA256(body[i]).toString(CryptoJS.enc.Hex)}&` : s += `${i}:${body[i]}&`
     }
     s = s.slice(0, -1)
     s = CryptoJS.HmacSHA256(s, y).toString(CryptoJS.enc.Hex)

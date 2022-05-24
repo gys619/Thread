@@ -2,6 +2,9 @@
 [task_local]
 #4月蒙牛春日音乐节抽奖机
 31 14 9-21/3 4 * jd_mncryyj.js, tag=4月蒙牛春日音乐节抽奖机, enabled=true
+
+from https://github.com/444444/KR/blob/main/jd_mncryyj.js
+
  */
 const $ = new Env('4月蒙牛春日音乐节抽奖机');
 const notify = $.isNode() ? require('./sendNotify') : '';
