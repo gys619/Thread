@@ -1,14 +1,14 @@
 /*
 [task_local]
-#618个护抽奖机
-10 7 * * * jd_618cj.js, tag=618个护抽奖机, enabled=true
+#健康医疗618抽奖机活动
+10 7 * * * jd_618jk.js, tag=健康医疗618抽奖机活动, enabled=true
  */
-const $ = new Env('618个护抽奖机');
+const $ = new Env('健康医疗618抽奖机活动');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-$.configCode = "bcc0b70305f649a580f310d8a3efc255";
+$.configCode = "7ffe9da85d77410bac51a99ea9528296";
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
