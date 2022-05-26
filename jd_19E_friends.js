@@ -9,7 +9,7 @@ if (process.env.JD_19E != "true") {
 */
 
 
-const $ = new Env('热爱奇旅助力组队升级');
+const $ = new Env('热爱奇旅组队升级');
 
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
@@ -35,7 +35,7 @@ let groups = []
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    console.log('\n仅助力+组队+升级，快速跑完\n')
+    console.log('\n仅组队+升级，快速跑完\n')
     await getUA()
     for (let i = 0; i < cookiesArr.length; i++) {
         if (cookiesArr[i]) {
@@ -98,19 +98,19 @@ let groups = []
 				}
                  await $.wait(1000)
                  let res
-				 for (let s = 0; s < inviteId.length; s++) {
-                     console.log(`\n开始助力 【${inviteId[s]}】`)
-                     res = await help(inviteId[s])
-                     if ( res['data']['bizCode'] === 0) {
-                             console.log('助力成功,获得：', parseFloat(res.data.result.acquiredScore), '金币')
-                               if (res.data.result?.redpacket?.value)
-                                 console.log('🧧', parseFloat(res.data.result?.redpacket?.value))
-                                  //console.log('助力结果：'+res.data.bizMsg)
-                     } else if (res.data.bizMsg === '助力次数用完啦~') { console.log(res.data.bizMsg);break}
-                    else if (res.data.bizMsg === '好友人气爆棚，不需要助力啦~') { console.log(res.data.bizMsg)}
-                    else {console.log(res.data.bizMsg)}
-                     await $.wait(1000)
-                 }  
+				 // for (let s = 0; s < inviteId.length; s++) {
+                     // console.log(`\n开始助力 【${inviteId[s]}】`)
+                     // res = await help(inviteId[s])
+                     // if ( res['data']['bizCode'] === 0) {
+                             // console.log('助力成功,获得：', parseFloat(res.data.result.acquiredScore), '金币')
+                               // if (res.data.result?.redpacket?.value)
+                                 // console.log('🧧', parseFloat(res.data.result?.redpacket?.value))
+                                  console.log('助力结果：'+res.data.bizMsg)
+                     // } else if (res.data.bizMsg === '助力次数用完啦~') { console.log(res.data.bizMsg);break}
+                    // else if (res.data.bizMsg === '好友人气爆棚，不需要助力啦~') { console.log(res.data.bizMsg)}
+                    // else {console.log(res.data.bizMsg)}
+                     // await $.wait(1000)
+                 // }  
 
                  res = await promote_pk_getHomeData()
                  if (res.data.result.groupInfo.memberList) {
