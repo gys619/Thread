@@ -149,6 +149,9 @@ function jdApi(functionId,body) {
             if(res.mainTitle) console.log(res.mainTitle)
             if(res.resultCode == 0){
               resolve(res);
+            }else if (res.tips && res.tips.includes("正在努力加载")){
+              console.log("请求太快，ip被限制了")
+              out = true
             }
           }
         } catch (e) {
