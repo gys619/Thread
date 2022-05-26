@@ -4,7 +4,8 @@
 活动入口：美食馆-右侧悬浮
 活动时间：5月17-6月16
 宝箱陆续开放
-31 0,13 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_tanwei.js
+来自：11111129/jdpro
+31 0,13 26-31,1-16 5,6 * jd_tanwei.js
  */
 
 const $ = new Env('探味奇遇记');
