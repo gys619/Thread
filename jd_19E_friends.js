@@ -105,7 +105,7 @@ let groups = []
                              // console.log('助力成功,获得：', parseFloat(res.data.result.acquiredScore), '金币')
                                // if (res.data.result?.redpacket?.value)
                                  // console.log('🧧', parseFloat(res.data.result?.redpacket?.value))
-                                  console.log('助力结果：'+res.data.bizMsg)
+                                 // console.log('助力结果：'+res.data.bizMsg)
                      // } else if (res.data.bizMsg === '助力次数用完啦~') { console.log(res.data.bizMsg);break}
                     // else if (res.data.bizMsg === '好友人气爆棚，不需要助力啦~') { console.log(res.data.bizMsg)}
                     // else {console.log(res.data.bizMsg)}
