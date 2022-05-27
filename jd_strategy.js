@@ -4,7 +4,7 @@
 活动入口：京东电器
 活动时间：5月23-5月28 8:0:0
 只有今晚了
-0 20 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_strategy.js
+0 20 * * * jd_strategy.js
 移植HW佬
  */
 
