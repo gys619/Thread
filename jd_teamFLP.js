@@ -9,17 +9,17 @@
  ============Quantumultx===============
  [task_local]
  #飞利浦组队
- 50 0,12,22 * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_teamFLP.js, tag=飞利浦组队, enabled=true
+ 50 0,12,22 * * * https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js, tag=飞利浦组队, enabled=true
 
  ================Loon==============
  [Script]
- cron "50 0,12,22 * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_teamFLP.js, tag=飞利浦组队
+ cron "50 0,12,22 * * *" script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js, tag=飞利浦组队
 
  ===============Surge=================
- 飞利浦组队 = type=cron,cronexp="50 0,12,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_teamFLP.js
+ 飞利浦组队 = type=cron,cronexp="50 0,12,22 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js
 
  ============小火箭=========
- 飞利浦组队 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_teamFLP.js, cronexpr="50 0,12,22 * * *", timeout=3600, enable=true
+ 飞利浦组队 = type=cron,script-path=https://raw.githubusercontent.com/444444/JDJB/main/jd_teamFLP.js, cronexpr="50 0,12,22 * * *", timeout=3600, enable=true
 
 */
 const $ = new Env("飞利浦组队");
@@ -46,7 +46,7 @@ if ($.isNode()) {
         $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
         return;
     }
-    authorCodeList = await getAuthorCodeList('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/flp.json')
+    authorCodeList = await getAuthorCodeList('https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/flp.json')
     if(authorCodeList === '404: Not Found'){
         authorCodeList = [
             '1259ded5bc5a4b2f8a6efac9ad189e77',
