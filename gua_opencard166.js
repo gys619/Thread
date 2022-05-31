@@ -27,11 +27,11 @@ All变量适用
 过10分钟再执行
 
 
-cron:30 1 1-8/3 6 *
+cron:
 ============Quantumultx===============
 [task_local]
 #6.1~6.18 618 陪伴让爱升级
-30 1 1-8/3 6 * https://raw.githubusercontent.com/11111120/scripts/master/gua_opencard166.js, tag=6.1~6.18 618 陪伴让爱升级, enabled=true
+ https://raw.githubusercontent.com/11111120/scripts/master/gua_opencard166.js, tag=6.1~6.18 618 陪伴让爱升级, enabled=true
 
 */
 let guaopencard_addSku = 'false'
