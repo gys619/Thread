@@ -4,15 +4,11 @@
 整点跑 红包几率大点
 https://u.jd.com/JMku2FH
 跳转到app 可查看助力情况
-返利变量：618RedCode，若需要返利给自己，请自己修改环境变量[618RedCode]
-JMku2FH换成自己的返利
-export RedCode="XXXXXX"
+返利变量：RedCode，若需要返利给自己，请自己修改环境变量[RedCode]
+JMku2FH换成自己的返利Code
+export RedCode="JMku2FH"
 
-如需助力指定账号pin
-如：【京东账号2】pin是jd_12332123  【京东账号5】pin是jd_edc
-pin1换成对应的pin值 用,分开
-如只助力2个 满了脚本自动从ck1开始替换未满的
-export RedPin="jd_6958b63bf4e05,jd_edc"
+
 */
 
 let rebateCodes = ''
