@@ -1,5 +1,6 @@
 /*
 酒水会员盛典
+7 7 7 7 7 jd_lzdz1_customized612.js
 */
 const $ = new Env("酒水会员盛典");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
