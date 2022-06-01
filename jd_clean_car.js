@@ -57,15 +57,15 @@ if ($.isNode()) {
                 cookie = cookiesArr[i];
                 $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
                 $.index = i + 1;
+                $.isLogin = true;
+                $.nickName = '';
+                $.error = false;
+                await TotalBean();
                 console.log(`****开始【京东账号${$.index}】${$.nickName || $.UserName}****`);
                 if (args_xh.except.includes($.UserName)) {
                     console.log(`跳过账号：${$.nickName || $.UserName}`)
                     continue
                 }
-                $.isLogin = true;
-                $.nickName = '';
-                $.error = false;
-                await TotalBean();
                 if (!$.isLogin) {
                     $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {
                         "open-url": "https://bean.m.jd.com/bean/signIndex.action"
@@ -87,7 +87,7 @@ if ($.isNode()) {
                             break;
                         }
                     } else break;
-                } while (!$.error || $.keywordsNum !== $.beforeRemove)
+                } while (!$.error && $.keywordsNum !== parseInt($.beforeRemove))
             }
         }
     } else {
@@ -111,11 +111,7 @@ function getCart_xh() {
         }
         $.get(option, async (err, resp, data) => {
             try {
-                data = getSubstr(data, "window.cartData = ", "window._PFM_TIMING");
-                data = data.replace(' ;', '');
-                data = data.replace(/\s+/g,'');
-                data = JSON.parse(data);
-
+                data = JSON.parse(data.match(/window\.cartData = ([^;]*)/)[1])
                 $.areaId = data.areaId;   // locationId的传值
                 $.traceId = data.traceId; // traceid的传值
                 venderCart = data.cart.venderCart;
@@ -202,13 +198,6 @@ function removeCart() {
             }
         });
     })
-}
-
-function getSubstr(str, leftStr, rightStr) {
-    let left = str.indexOf(leftStr);
-    let right = str.indexOf(rightStr, left);
-    if (left < 0 || right < left) return '';
-    return str.substring(left + leftStr.length, right);
 }
 
 function TotalBean() {
