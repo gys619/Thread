@@ -6,7 +6,7 @@ export RedCode="JMku2FH"
 多个请用@分割
 export RedCode="JMku2FH@JMku2FH"
 建议禁用，避免其他问题 需要的请填写自己的码子，
-0 0,10,20 * * * jd_618Red.js
+定时自定义吧
 */
 
 const $ = new Env('618红包-算法加密');
