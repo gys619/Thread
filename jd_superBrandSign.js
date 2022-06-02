@@ -18,7 +18,7 @@ const notify = $.isNode() ? require('./sendNotify') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
 if ($.isNode()) {
-    Object.keys(jdCookieNode).forEach((item) => { cookiesArr.push(jdCookieNode[item])})
+    Object.keys(jdCookieNode).forEach((item) => { cookiesArr.push(jdCookieNode[item]) })
     if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => { };
 } else {
     cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
@@ -65,8 +65,9 @@ if ($.isNode()) {
                     console.log("今日已签到");
                 }
             }
+            await getid("showSecondFloorSignInfo", "sign")
             if ($.callNumber >= 300) {
-                await superBrandTaskLottery("sign", $.encryptProjectId, $.activitySign1Info.encryptAssignmentId)
+                await superBrandTaskLottery("sign", $.encryptProjectId, 'D2bsHLsAAPxoUhfKtHU3TvMpWrw')
             }
         }
     }
