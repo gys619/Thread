@@ -1199,14 +1199,15 @@ Load_sign_cache(){
 
 Get_UA(){
     # 获取 User-Agent
-    wskey_sign_api=("http://43.135.90.23/" "https://shizuku.ml/" "https://cf.shizuku.ml/")
+    wskey_sign_api=("http://api.momoe.ml/" "https://api.momoe.ml/" "https://api.iliya.cf/")
     ran_sub="$(random 0 $[${#wskey_sign_api[*]}-1])"
     for sub in $ran_sub; do
         host=${wskey_sign_api[sub]}
-        local url="${host}check_api"
+        local url="${host}api/check_api"
         local api=$(
             curl -s -k --connect-timeout 20 --retry 3 --noproxy "*" "$url" \
-                -H "Authorization: Bearer Shizuku"
+                -H "Authorization: Bearer Shizuku" \
+                -H "User-Agent: python_shizuku"
         )
 
         if [[ $api =~ \"code\" ]]; then
@@ -1226,7 +1227,7 @@ Get_UA(){
 # 获取 Sign 参数(jds 接口)
 Get_Sign_jds(){
     # 获取 Sign 参数
-    local url="https://api.jds.codes/jd/gentoken"
+    local url="https://api.zhezhe.cf/jd/gentoken"
     local api=$(
         curl -s -k --connect-timeout 20 --retry 3 --noproxy "*" "${url}" \
             -H "Content-Type: application/json" \
@@ -1251,7 +1252,7 @@ Get_Sign_jds(){
 Get_Sign_Zy143L(){
     if [[ $UA ]]; then
         local functionId clientVersion build client partner oaid sdkVersion lang harmonyOs networkType uemps ext ef ep st sv
-        wskey_sign_api=("http://43.135.90.23/" "https://shizuku.ml/" "https://cf.shizuku.ml/")
+        wskey_sign_api=("http://api.momoe.ml/" "https://api.momoe.ml/" "https://api.iliya.cf/")
         ran_sub="$(random 0 $[${#wskey_sign_api[*]}-1])"
         for sub in $ran_sub; do
             host=${wskey_sign_api[sub]}
