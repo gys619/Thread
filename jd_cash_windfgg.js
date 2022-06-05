@@ -45,7 +45,7 @@ let allMessage = '';
 let jdWindfggToken = '';
 jdWindfggToken = $.isNode() ? (process.env.WindfggToken ? process.env.WindfggToken : `${jdWindfggToken}`) : ($.getdata('WindfggToken') ? $.getdata('WindfggToken') : `${jdWindfggToken}`);
 if (!jdWindfggToken) {
-    console.log('请填写Windfgg获取的Token,变量是WindfggToken');
+    console.log('\n请前往 https://t.me/wind_fgg   获取Token\n请填写Windfgg获取的Token,变量是WindfggToken');
 	return;
 }
 
