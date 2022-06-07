@@ -11,7 +11,7 @@ cron "1 1 1 1 1" jd_m_wx_luckDraw.js
 */
 
 let mode = __dirname.includes('./magic')
-const {Env} = mode ? require('../magic') : require('./utils/magic')
+const {Env} = mode ? require('../magic') : require('./function/magic')
 const $ = new Env('M幸运抽奖');
 $.whitelist = process.env.M_WX_WHITELIST
     ? process.env.M_WX_WHITELIST
