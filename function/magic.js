@@ -3,18 +3,15 @@
 const axios = require('axios');
 const fs = require("fs");
 const {format} = require("date-fns");
-const notify = require('../sendNotify');
-const jdCookieNode = require('../jdCookie.js');
+const notify = require('./sendNotify');
+const jdCookieNode = require('./jdcookie.js');
 const CryptoJS = require("crypto-js");
 
 let cookies = [];
 let testMode = process.env.TEST_MODE?.includes('on') ? true
     : __dirname.includes("magic")
-let sendNotifyON = process.env.M_WX_SENDNOTIFYON ? process.env.M_WX_SENDNOTIFYON : 'true'
-let mode = process.env.MODE ? process.env.MODE : "local"
 
-let apiToken = process.env.M_API_TOKEN ? process.env.M_API_TOKEN : ""
-let apiSignUrl = process.env.M_API_SIGN_URL ? process.env.M_API_SIGN_URL : "http://158.101.153.139:19840/sign"
+let mode = process.env.MODE ? process.env.MODE : "local"
 
 let wxBlackCookiePin = process.env.M_WX_BLACK_COOKIE_PIN
     ? process.env.M_WX_BLACK_COOKIE_PIN : ''
@@ -120,12 +117,11 @@ class Env {
         random: false,
         once: false,
         blacklist: [],
-        whitelist: [],
-        sendON:false
+        whitelist: []
     }) {
-        //console.log('运行参数：', data);
+        console.log('运行参数：', data);
         this.filename = process.argv[1];
-        //console.log(`${this.now()} ${this.name} ${this.filename} 开始运行...`);
+        console.log(`${this.now()} ${this.name} ${this.filename} 开始运行...`);
         this.start = this.timestamp();
         let accounts = "";
         if (__dirname.includes("magic")) {
@@ -148,17 +144,14 @@ class Env {
             this.bot = data.bot;
         }
 
-        if (data?.sendON) {
-            sendNotifyON = data.sendON;
-        }
-        //console.log(`推送状态：${sendNotifyON}\n原始ck长度`, cookies.length)
+        console.log('原始ck长度', cookies.length)
         if (data?.blacklist?.length > 0) {
             for (const cki of this.__as(data.blacklist)) {
                 delete cookies[cki - 1];
             }
         }
         this.delBlackCK()
-        //console.log('排除黑名单后ck长度', cookies.length)
+        console.log('排除黑名单后ck长度', cookies.length)
         if (data?.whitelist?.length > 0) {
             let cks = []
             for (const cki of this.__as(data.whitelist)) {
@@ -168,7 +161,7 @@ class Env {
             }
             cookies = cks;
         }
-        //console.log('设置白名单后ck长度', cookies.length)
+        console.log('设置白名单后ck长度', cookies.length)
 
         if (data?.random) {
             cookies = this.randomArray(cookies)
@@ -215,7 +208,6 @@ class Env {
                     cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
                 $.defaults.headers['Cookie'] = this.cookie;
                 this.index = i + 1;
-                console.log('\n你好，' + this.username);
                 try {
                     await this.logic()
                     if (data?.o2o) {
@@ -235,7 +227,7 @@ class Env {
             }
         }
         await this.after()
-        console.log(`\n[${this.now()}] - ${this.name} 运行结束，用时${this.timestamp()
+        console.log(`${this.now()} ${this.name} 运行结束,耗时 ${this.timestamp()
         - this.start}ms\n`)
         testMode && this.msg.length > 0 ? console.log(this.msg.join("\n")) : ''
         if (!data?.o2o) {
@@ -274,7 +266,7 @@ class Env {
     }
 
     __as(es) {
-        //console.log(es)
+        console.log(es)
 
         let b = [];
         for (let e of es) {
@@ -293,7 +285,7 @@ class Env {
                 b.push(e)
             }
         }
-        //console.log(b)
+        console.log(b)
         return b
     }
 
@@ -315,14 +307,14 @@ class Env {
 
     async send() {
         if (this.msg?.length > 0) {
-            //this.msg.push(
-            //    `\n时间：${this.now()} 时长：${((this.timestamp() - this.start)
-            //        / 1000).toFixed(2)}s`)
+            this.msg.push(
+                `\n时间：${this.now()} 时长：${((this.timestamp() - this.start)
+                    / 1000).toFixed(2)}s`)
             if (this.bot) {
-                sendNotifyON == 'true' ? await notify.sendNotify("/" + this.name,
-                    this.msg.join(this.delimiter || '')) : ''
+                await notify.sendNotify("/" + this.name,
+                    this.msg.join(this.delimiter || ''))
             } else {
-                sendNotifyON == 'true' ? await notify.sendNotify(this.name, this.msg.join("\n")) : ''
+                await notify.sendNotify(this.name, this.msg.join("\n"))
             }
         }
     }
@@ -383,7 +375,7 @@ class Env {
             this.msg.push(msg)
         } else {
             let username = this.accounts[this.username] || this.username;
-            //username += this.index
+            username += this.index
             if (this.msg.length > 0 && this.msg[this.msg.length - 1].includes(
                 username)) {
                 this.msg[this.msg.length - 1] = this.msg[this.msg.length
@@ -405,7 +397,7 @@ class Env {
 
     log(...msg) {
         this.s ? console.log(...msg) : console.log(
-            //`${this.accounts[this.username] || this.username}`,
+            `${this.now()} ${this.accounts[this.username] || this.username}`,
             ...msg)
     }
 
@@ -859,13 +851,14 @@ class Env {
 
     async sign(fn, body = {}) {
         let b = {"fn": fn, "body": body};
-        let h = {"token": apiToken}
+        let h = {"key": "fMQ8sw1y5zF4RZgT"}
         try {
-            let {data} = await this.request(apiSignUrl, h, b);
-            console.log(data)
+            let {data} = await this.request(`http://140.238.59.174:17840/sign`,
+                h, b);
             return {fn: data.fn, sign: data.body};
         } catch (e) {
             console.log("sign接口异常")
+            //console.log("请自行配置sign实现")
         }
         return {fn: "", sign: ""};
     }
@@ -973,7 +966,7 @@ class Env {
             return flag
         }
         let stopKeywords = ['来晚了', '已发完', '非法操作', '奖品发送失败', '活动还未开始',
-            '发放完', '已发完', '全部被领取', '余额不足', '已结束']
+            '发放完', '全部被领取', '余额不足', '已结束']
         process.env.M_WX_STOP_KEYWORD ? process.env.M_WX_STOP_KEYWORD.split(
             '@').forEach((item) => stopKeywords.push(item)) : ''
         for (let e of stopKeywords) {
