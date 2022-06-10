@@ -2,7 +2,7 @@
 #2.11.3版本青龙一键安装并添加拉库任务
 #部署路径在/root/ql目录，容器名qinglong
 #端口5500
-#modify 2022-6-6
+#modify 2022-6-9
 
 Green="\033[32;1m"
 Red="\033[31m"
@@ -135,12 +135,17 @@ else
 fi
 }
 
+ql_fix() {
+  docker exec -it qinglong /bin/bash -c "grep -lr 'cdn.jsde' /ql/dist/|xargs  sed -i  's#cdn.*.net/npm/#unpkg.com/#g'"
+  docker exec -it qinglong /bin/bash -c "grep -lr 'unpkg.com' /ql/dist/ | xargs -I {} sh -c \"gzip -c {} > {}.gz\""
+}
 
 ing "开始部署青龙并创建拉库任务，速度根据您的网速决定，请耐心等待....."
 read -p "按任意键开始部署。。。"
 docker_install
 docker_compose
 ql_run
+ql_fix
 read -p "已初始化并登陆青龙了，那按任意键继续！"
 add_repo
 sleep 2

@@ -3,14 +3,14 @@
 ============Quantumultx===============
 [task_local]
 #店铺签到
-15 2,14 * * * https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js, tag=店铺签到, enabled=true
+15 2,14 * * * https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js, tag=店铺签到, enabled=true
 ===========Loon============
 [Script]
-cron "15 2,14 * * *" script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js,tag=店铺签到
+cron "15 2,14 * * *" script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js,tag=店铺签到
 ============Surge=============
-店铺签到 = type=cron,cronexp="15 2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js
+店铺签到 = type=cron,cronexp="15 2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js
 ===========小火箭========
-店铺签到 = type=cron,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.jss, cronexpr="15 2,14 * * *", timeout=3600, enable=true
+店铺签到 = type=cron,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.jss, cronexpr="15 2,14 * * *", timeout=3600, enable=true
 */
 const $ = new Env('店铺签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -25,29 +25,26 @@ let vender=''
 let num=0
 let shopname=''
 const token = [
-  "35BA76ED53A953E03F77EE5379C28BE5",
+  "FD7F0E88F2555A9A7254AA00D6DDA1F6",
   "4BE1B58FE1360409A5967CAD1127B5A8",
-  "60454759577C6664C8AAAFEEBE25B7A1",
+  "E9885E4C06000433BBB4221A04D44C36",
   "3B27B2B9E70249C339D66F27B7E133F0",
-  "C031053EDBD2C047C072C53F80D82577",
+  "70E81DD8CF06D043FE1FD2DB60B59987",
   "572B5331C2303ABFF034700EDDFE2B41",
   "979F3F329012E8BE0D64DA1B7D6F024B",
-  "3B864BF96848A44E170A26D2791E0AE3",
   "1C963AA3BBBD0396784BD0CA527BCDF8",
   "C5FD1482A207F2CC65570F8FBC492C9A",
   "5CF1A3455369BDB3D1153D9FC974CAFA",
   "E29627AF30D59CF7FE7B01C63BD9A975",
   "5B43A702C5CC14509CD8FB6F725326FC",
-  "451389BCDC4E8B258DD3F21CDB827589",
-  "57970BD464D679B43A7A0F5585F42677",
-  "8029DFB0D9ADF5C6E96AF7D542B3E715",
+  "22E454E7DA34CBA96DFAB150C2882193",
+  "EBC1F95B42459D9F27E2025E11E1F7C6",
+  "05FE7C8117A8CF6FA8BAD56C6E776CD7",
   "7C54AE28BAEDCBB8C927768AE71CA0EF",
-  "3B864BF96848A44E170A26D2791E0AE3",
-  "4706B9DB78BBCC66BCB76862EB147AD2",
-  "F96D0FC8CC217B855988CA26E2A8BE74",
   "809569E3816B2C76210BFF8DB3F2766E",
-  "21CEF5FF054814ADC61753FFFF417F03",
 	"3B864BF96848A44E170A26D2791E0AE3",
+  "0CB602BF5179A3A4670621F3F83C494E",
+	"174F67A03DD7EF31096C0F35EFF45702",
   "85B78F013645D1EC53D5F3974528654A"
 ]
 

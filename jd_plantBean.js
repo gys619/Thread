@@ -93,14 +93,15 @@ async function jdPlantBean() {
       console.log(`\n活动太火爆了，还是去买买买吧！\n`)
       return
     }
-    for (let i = 0; i < $.plantBeanIndexResult.data.roundList.length; i++) {
-      if ($.plantBeanIndexResult.data.roundList[i].roundState === "2") {
-        num = i
-        break
-      }
-    }
-    // console.log(plantBeanIndexResult.data.taskList);
     if ($.plantBeanIndexResult && $.plantBeanIndexResult.code === '0' && $.plantBeanIndexResult.data) {
+      // console.log(plantBeanIndexResult.data.taskList);
+      for (let i = 0; i < $.plantBeanIndexResult.data.roundList.length; i++) {
+        if ($.plantBeanIndexResult.data.roundList[i].roundState === "2") {
+          num = i
+          break
+        }
+      }
+
       const shareUrl = $.plantBeanIndexResult.data.jwordShareInfo.shareUrl
       $.myPlantUuid = getParam(shareUrl, 'plantUuid')
       console.log(`\n【京东账号${$.index}（${$.UserName}）的${$.name}好友互助码】${$.myPlantUuid}\n`);
@@ -163,7 +164,7 @@ async function doGetReward() {
 }
 async function doCultureBean() {
   await plantBeanIndex();
-  if ($.plantBeanIndexResult && $.plantBeanIndexResult.code === '0') {
+  if ($.plantBeanIndexResult && $.plantBeanIndexResult.code === '0' && $.plantBeanIndexResult.data) {
     const plantBeanRound = $.plantBeanIndexResult.data.roundList[num]
     if (plantBeanRound.roundState === '2') {
       //收取营养液
@@ -392,12 +393,16 @@ async function doTask() {
 function showTaskProcess() {
   return new Promise(async resolve => {
     await plantBeanIndex();
-    $.taskList = $.plantBeanIndexResult.data.taskList;
-    if ($.taskList && $.taskList.length > 0) {
-      console.log("     任务   进度");
-      for (let item of $.taskList) {
-        console.log(`[${item["taskName"]}]  ${item["gainedNum"]}/${item["totalNum"]}   ${item["isFinished"]}`);
+    if ($.plantBeanIndexResult && $.plantBeanIndexResult.code === '0' && $.plantBeanIndexResult.data) {
+      $.taskList = $.plantBeanIndexResult.data.taskList;
+      if ($.taskList && $.taskList.length > 0) {
+        console.log("     任务   进度");
+        for (let item of $.taskList) {
+          console.log(`[${item["taskName"]}]  ${item["gainedNum"]}/${item["totalNum"]}   ${item["isFinished"]}`);
+        }
       }
+    } else {
+      console.log(`plantBeanIndexResult:${JSON.stringify($.plantBeanIndexResult)}`)
     }
     resolve()
   })
@@ -412,7 +417,7 @@ async function doHelp() {
       continue
     }
     await helpShare(plantUuid);
-    if ($.helpResult && $.helpResult.code === '0' && !$.helpResult.errorCode) {
+    if ($.helpResult && $.helpResult.code === '0' && $.helpResult.data) {
       // console.log(`助力好友结果: ${JSON.stringify($.helpResult.data.helpShareRes)}`);
       if ($.helpResult.data.helpShareRes) {
         if ($.helpResult.data.helpShareRes.state === '1') {
