@@ -69,7 +69,7 @@ async function main() {
     let vo = queryInteractiveInfo.assignmentList[key]
     if (vo.userVerificationInfo.userQulification) {
       if (vo.assignmentType === 1 && vo.assignmentTimesLimit === 3) {
-        console.log(`1去做【${vo.assignmentName}】`)
+        console.log(`去做【${vo.assignmentName}】`)
 				for (let key of Object.keys(vo.ext.shoppingActivity)) {
 				let exttt = vo.ext.shoppingActivity[key]
         if (exttt.status !== 2) {
@@ -86,7 +86,7 @@ async function main() {
         }
 				}
       } else if (vo.assignmentType === 3 && vo.assignmentTimesLimit === 12) {
-        console.log(`2去做【${vo.assignmentName}】`)
+        console.log(`去做【${vo.assignmentName}】`)
 				for (let key of Object.keys(vo.ext.followShop)) {
 				let exttt = vo.ext.followShop[key]
         if (exttt.status !== 2) {
@@ -103,7 +103,7 @@ async function main() {
         }
 				}
       } else if (vo.assignmentType === 1 && vo.assignmentTimesLimit === 5) {
-        console.log(`3去做【${vo.assignmentName}】`)
+        console.log(`去做【${vo.assignmentName}】`)
 				for (let key of Object.keys(vo.ext.productsInfo)) {
 				let exttt = vo.ext.productsInfo[key]
         if (exttt.status !== 2) {
@@ -120,7 +120,7 @@ async function main() {
         }
 				}
       } else if (vo.assignmentType === 4 && vo.assignmentTimesLimit === 20) {
-        console.log(`4去做【${vo.assignmentName}】`)
+        console.log(`去做【${vo.assignmentName}】`)
 				for (let key of Object.keys(vo.ext.addCart)) {
 				let exttt = vo.ext.addCart[key]
         if (exttt.status !== 2) {
@@ -154,18 +154,7 @@ async function main() {
     console.log(`\n可以抽奖${lotteryNum}次`)
     for (let i = lotteryNum; i > 0; i--) {
       let doInteractiveAssignment = await doApi("doInteractiveAssignment", {"encryptProjectId":"4JunHE2T1pctxbv3AoPYmRW7cfWK","encryptAssignmentId":encryptAssignmentId,"completionFlag":true,"ext":{"exchangeNum":1},"sourceCode":"acerwq20220316"})
-      if (doInteractiveAssignment.subCode === "0") {
-        for (let key of Object.keys(doInteractiveAssignment.rewardsInfo.successRewards)) {
-          let successRewards = doInteractiveAssignment.rewardsInfo.successRewards[key]
-          if (key === "3") {
-            console.log(`获得${successRewards[0].quantity}京豆`);
-          } else {
             console.log(JSON.stringify(doInteractiveAssignment));
-          }
-        }
-      } else {
-        console.log(JSON.stringify(doInteractiveAssignment));
-      }
       await $.wait(2000)
     }
   }
