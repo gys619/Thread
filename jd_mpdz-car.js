@@ -20,7 +20,7 @@ allMessage='';
 message='';
 $.hotFlag=false;
 $.outFlag=false;
-let shareUuidArr=['WoDXSUOIZFZbWchg5qcDb14tLNYA4seuA67MOIYQxEk3Vl9+AVo4NF+tgyeIc6A6kdK3rLBQpEQH9V4tdrrh0w==','3KtP4oQOaF9hH0uFesDKL14tLNYA4seuA67MOIYQxEk3Vl9+AVo4NF+tgyeIc6A6kdK3rLBQpEQH9V4tdrrh0w==','OsiH6Sic/uTxioPBG6hh5K9AMkY4oJ31vhy6nI5LWbOiIw7XUQOP/Btn03/M1TYH','8AIkpPYAb4jMiUQb+YijkcjNhNaYFy2HteErE6izlhTf9nrGY7gBkCdGU4C6z/xD'];
+let shareUuidArr=['B2s863iFzsHJxGtOlrCXxsjNhNaYFy2HteErE6izlhTf9nrGY7gBkCdGU4C6z/xD','WoDXSUOIZFZbWchg5qcDb14tLNYA4seuA67MOIYQxEk3Vl9+AVo4NF+tgyeIc6A6kdK3rLBQpEQH9V4tdrrh0w==','3KtP4oQOaF9hH0uFesDKL14tLNYA4seuA67MOIYQxEk3Vl9+AVo4NF+tgyeIc6A6kdK3rLBQpEQH9V4tdrrh0w==','OsiH6Sic/uTxioPBG6hh5K9AMkY4oJ31vhy6nI5LWbOiIw7XUQOP/Btn03/M1TYH','8AIkpPYAb4jMiUQb+YijkcjNhNaYFy2HteErE6izlhTf9nrGY7gBkCdGU4C6z/xD'];
 let n=0;
 n=Math.floor(Math.random()*shareUuidArr.length);
 let shareUuid=shareUuidArr[n]||'';
@@ -80,10 +80,11 @@ async function run(){
 			console.log('获取mixnick失败');
 			return;
 		}
+        console.log(`助力码：${$.MixNick}\n`);
         if($.hotFlag) return
 		await takePostRequest('taskList');
 		console.log('开始日常任务。。。');
-        for (let i = 0; i<$.taskLists.length;i++){
+        for (let i = 0; i < $.taskLists.length; i++){
             $.missionType  = $.taskLists[i].type
             if (!$.taskLists[i].isComplete){
             switch($.missionType){
@@ -122,20 +123,23 @@ async function run(){
             }
             }
         }
-		console.log('\n开始游戏。。。');
-		for(let i = 0;i < $.remainChance; i++){
-			await takePostRequest('playGame');
-			await $.wait(parseInt(Math.random()*2000+5000));
-			await takePostRequest('sendGameAward');
-			await $.wait(parseInt(Math.random()*2000+1000));
-		}
-		await takePostRequest('助力');
-		await $.wait(500);
+        if ($.remainChance){
+		    console.log('\n开始游戏。。。');
+            await takePostRequest('getCarInfo');
+		    for(let i = 0;i < $.remainChance; i++){
+		    	await takePostRequest('playGame');
+		    	await $.wait(parseInt(Math.random()*2000+5000));
+		    	await takePostRequest('sendGameAward');
+		    	await $.wait(parseInt(Math.random()*2000+1000));
+		    }
+        }else{console.log('开始游戏：没有游戏币了，明天再来！')}
 		await takePostRequest('activity_load');
-		console.log(`当前能量值：${$.totalPoint}`);
+        await $.wait(1000);
+		console.log(`当前能量值：${$.totalPoint}\n`);
 		await takePostRequest('missionInviteList');
-		console.log($.MixNick);
-		console.log(`当前助力：${$.inviteNick}`);
+        await $.wait(1000);
+        console.log(`去助力：${$.inviteNick}`);
+		await takePostRequest('助力'); 
 		if($.index==1){
 			$.inviteNick=$.MixNick;
 			console.log(`后面的号都会助力：${$.inviteNick}`);
@@ -204,7 +208,7 @@ async function takePostRequest(type){
 			break;
 		case 'playGame':
 			url=`${domain}/dm/front/jdCardRunning/game/playGame?open_id=&mix_nick=${$.MixNick}`;
-			admJson={'actId':$.actId,'carId':1,'carName':'电瓶车','userId':10299171,'buyerNick':$.inviteNick};
+			admJson={'actId':$.actId,'carId':$.usecar.id,'carName':$.usecar.carName,'userId':10299171,'buyerNick':$.inviteNick};
 			body=taskPostUrl('/jdCardRunning/game/playGame',admJson);
 			break;
 		case 'sendGameAward':
@@ -217,6 +221,10 @@ async function takePostRequest(type){
 			admJson={'actId':$.actId,'userId':10299171,'missionType':'shareAct','inviteNum':1,'buyerNick':$.MixNick};
 			body=taskPostUrl('/jdCardRunning/customer/inviteList',admJson);
 			break;
+		case 'getCarInfo':
+		    url=`${domain}/dm/front/jdCardRunning/carInfo/getCarInfo?open_id=&mix_nick=${$.MixNick}`;
+			body=taskPostUrl('/jdCardRunning/cusShop/getCusShop',{});
+            break;
 		default:
 			console.log('错误'+type);
 	}
@@ -316,6 +324,23 @@ async function dealReturn(type,data){
 					console.log(data);
 				}
 				break;
+			case 'getCarInfo':
+				if(typeof res=='object'){
+					if(res.success&&res.success===true&&res.data){
+					if(res.data.status&&res.data.status==200){
+						$.carlist=res.data.data||[];
+						$.usecar = $.carlist.reverse().find(item => item.isUnlock === true)
+                        console.log(`使用我最牛X的${$.usecar.carName}进行游戏！`)
+					}
+				}else if(res.message){
+					console.log(`${type} ${res.message}`)
+				}else{
+					console.log(data);
+				}
+				}else{
+					console.log(data);
+				}
+				break;			
 			case 'playGame':
 				if(typeof res=='object'){
 					if(res.success&&res.success===true&&res.data){
@@ -335,7 +360,7 @@ async function dealReturn(type,data){
 			case 'sendGameAward':
 				if(typeof res=='object'){
 					if(res.success&&res.data){
-					console.log('游戏完成，获得100能量!');
+					console.log('游戏完成，获得能量!');
 				}else if(res.message){
 					console.log(`${type} ${res.message}`)
 				}else{
@@ -375,7 +400,7 @@ async function dealReturn(type,data){
 								$.remainChance = res.data.missionCustomer.remainChance|| 0;
 							}
 						}else if(type=='missionInviteList'){
-							console.log(`今日已邀请(${res.data.total}/10)`);
+							console.log(`今日被助力(${res.data.total}/10)`);
 						}
 					}else if(res.data.msg){
 						console.log(res.data.msg);
