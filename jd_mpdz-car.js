@@ -132,7 +132,7 @@ async function run(){
 		    	await takePostRequest('sendGameAward');
 		    	await $.wait(parseInt(Math.random()*2000+1000));
 		    }
-        }else{console.log('开始游戏：没有游戏币了，明天再来！')}
+        }else{console.log('\n开始游戏：没有游戏币了，明天再来！')}
 		await takePostRequest('activity_load');
         await $.wait(1000);
 		console.log(`当前能量值：${$.totalPoint}\n`);
@@ -213,7 +213,7 @@ async function takePostRequest(type){
 			break;
 		case 'sendGameAward':
 			url=`${domain}/dm/front/jdCardRunning/game/sendGameAward?open_id=&mix_nick=${$.MixNick}`;
-			admJson={'actId':$.actId,'point':100,'gameLogId':$.gameLogId,'userId':10299171,'buyerNick':$.inviteNick};
+			admJson={'actId':$.actId,'point':$.point.point,'gameLogId':$.gameLogId,'userId':10299171,'buyerNick':$.inviteNick};
 			body=taskPostUrl('/jdCardRunning/game/sendGameAward',admJson);
 			break;
 		case 'missionInviteList':
@@ -331,6 +331,8 @@ async function dealReturn(type,data){
 						$.carlist=res.data.data||[];
 						$.usecar = $.carlist.reverse().find(item => item.isUnlock === true)
                         console.log(`使用我最牛X的${$.usecar.carName}进行游戏！`)
+                        let pointArr = [{id:1,point:100},{id:2,ponit:150},{id:3,point:200},{id:4,ponit:300}]
+                        $.point = pointArr.find(a => a.id === $.usecar.id)
 					}
 				}else if(res.message){
 					console.log(`${type} ${res.message}`)
@@ -360,7 +362,7 @@ async function dealReturn(type,data){
 			case 'sendGameAward':
 				if(typeof res=='object'){
 					if(res.success&&res.data){
-					console.log('游戏完成，获得能量!');
+					console.log(`游戏完成，获得${$.point.point}能量!`);
 				}else if(res.message){
 					console.log(`${type} ${res.message}`)
 				}else{
@@ -457,7 +459,8 @@ function randomString(e) {
     for (i = 0; i < e; i++)
       n += t.charAt(Math.floor(Math.random() * a));
     return n
-  }
+}
+
 function jsonParse(str) {
     if (typeof str == "string") {
       try {

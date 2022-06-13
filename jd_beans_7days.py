@@ -201,7 +201,7 @@ def get_beans_7days(ck):
                         day_7 = False
             else:
                 print("未获取到数据，原因未知！！\n")
-                return {'code': 400}
+                return {'code': 400, 'data': res}
         return {'code': 200, 'data': [beans_in, beans_out, days]}
     except Exception as e:
         print(str(e))
@@ -254,6 +254,9 @@ def query():
         for i,ck,user,pin in zip(range(1,len(cookiesList)+1),cookiesList,userNameList,pinNameList):
            printf(f"\n****** [账号{i}]-{user} ******")
            res=get_bean_data(i,ck)
+           if res['code'] != 200:
+                printf(res['data'])
+                continue
            if res['data'][2][1:] != []:
                creat_bean_count(res['data'][3], res['data'][0], res['data'][1], res['data'][2][1:])
            time.sleep(2)
