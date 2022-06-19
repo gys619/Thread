@@ -380,6 +380,10 @@ jd_captian_*.js
 jd_april*.js
 
 ############不能跑的###############
+jd_cash_Mod_Panda.js	
+#panda签到领现金
+jd_joy_park_Mod.js
+#养joy
 jd_cash.ts
 #内容鉴赏
 jd_connoisseur.js
