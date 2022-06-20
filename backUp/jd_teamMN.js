@@ -7,14 +7,14 @@ IOS等用户直接用NobyDa的jd cookie
 ============Quantumultx===============
 [task_local]
 #组队分豆-蒙牛
-18 20 * * * https://raw.githubusercontent.com/444444/KR/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
+18 20 * * * https://raw.githubusercontent.com/KingRan/KR/main/jd_mengniu.js, tag=组队分豆-蒙牛, enabled=true
 ================Loon==============
 [Script]
-cron "18 20 * * *" script-path=https://raw.githubusercontent.com/444444/KR/main/jd_mengniu.js,tag=组队分豆-蒙牛
+cron "18 20 * * *" script-path=https://raw.githubusercontent.com/KingRan/KR/main/jd_mengniu.js,tag=组队分豆-蒙牛
 ===============Surge=================
-组队分豆-蒙牛 = type=cron,cronexp="18 20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_mengniu.js
+组队分豆-蒙牛 = type=cron,cronexp="18 20 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/KR/main/jd_mengniu.js
 ============小火箭=========
-组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_mengniu.js, cronexpr="18 20 * * *", timeout=3600, enable=true
+组队分豆-蒙牛 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/KR/main/jd_mengniu.js, cronexpr="18 20 * * *", timeout=3600, enable=true
 */
 const $ = new Env("组队分豆-蒙牛");
 
