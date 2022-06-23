@@ -1,5 +1,5 @@
-## 适配了qqbot、quanx和loon
 # 说明
+ * 对仓库不放心的，建议使用faker，yyds等仓库。
  * 发现脚本重复的可以提pr到.gitignore文件，欢迎多提PR。
  * 因为仓库本身是脚本自己同步，有的仓库名字不一样难免又很多重复的。
  * 有互助码没删干净的可以提醒我一下，感谢！
@@ -10,7 +10,7 @@
 ### [TG频道](https://t.me/jddfruit)
 ## 青龙拉取链接(sendNotify需要放到/ql/deps目录下)
 ``` 
-ql repo https://github.com/gys619/Absinthe.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_|sign_graphics_validate|jddj_cookie|function|ql|magic|JDJR|JD|sendNotify" "main"
+ql repo https://github.com/gys619/Absinthe.git "jd_|jx_|jddj_|gua_|getJDCookie|wskey" "activity|backUp" "^jd[^_]|USER|utils|ZooFaker_Necklace|JDJRValidator_|sign_graphics_validate|jddj_cookie|function|ql|magic|JDJR|JD|sendNotify|depend" "main"
 ```
 
 ## 带ccwav大佬通知版(不需要放/ql/deps目录下)
