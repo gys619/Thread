@@ -1,0 +1,19 @@
+{
+	"name": "jsjiami-v6-decryptor",
+	"version": "2.7.2",
+	"description": "A decryptor for JsjiamiV6.",
+	"keywords": ["javascript", "decryptor", "jsjiami", "v6"],
+	"homepage": "https://github.com/NXY666/JsjiamiV6-Decryptor",
+	"bugs": {
+		"url": "https://github.com/NXY666/JsjiamiV6-Decryptor/issues"
+	},
+	"license": "AGPL-3.0",
+	"author": "NXY666",
+	"main": "Decryptor.js",
+	"optionalDependencies": {
+		"vm2": "^3.9.9"
+	},
+	"scripts": {
+		"decrypt": "node Decryptor.js"
+	}
+}

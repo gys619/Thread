@@ -13,7 +13,7 @@
  * ##是否自动提现，默认false不自动提现
  * export ksjsbjbdh="false"
  * ##是否提现前自动兑换金币，默认false不兑换
- * export ksjsbapitoken="ceshi_hr368h98fh39nhb6c2387n98v239b7628367nv2837b6dh82d4b872"
+ * export ksjsbapitoken="t.me/+LAa0uB94uIMzMGFl"
  * ##填写token，必填,就是发你的所谓卡密
  * export kstx="true"
  * ##true=自动提现，false=不自动提现，默认不自动提现

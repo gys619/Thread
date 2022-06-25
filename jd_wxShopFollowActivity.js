@@ -1,7 +1,7 @@
 /*
 活动名称：LZ关注店铺有礼
 活动链接：https://lzkj-isv.isvjcloud.com/wxShopFollowActivity/activity/entry.html?activityId=xxx
-环境变量：SHOP_FOLLOW_ID // 活动ID 以逗号分隔
+环境变量：jd_wxShopFollowActivity_activityId // 活动ID 以逗号分隔
 
 作者：SuperManito
 内部脚本，不得外泄！
@@ -17,8 +17,8 @@ let cookiesArr = [],
 let activityIdList = []
 let lz_cookie = {}
 
-if (process.env.SHOP_FOLLOW_ID && process.env.SHOP_FOLLOW_ID != "") {
-    activityIdList = process.env.SHOP_FOLLOW_ID.split(",");
+if (process.env.jd_wxShopFollowActivity_activityId && process.env.jd_wxShopFollowActivity_activityId != "") {
+    activityIdList = process.env.jd_wxShopFollowActivity_activityId.split(",");
 }
 
 if ($.isNode()) {
@@ -204,7 +204,7 @@ function task(function_id, body, isCommon = 0) {
                                                     console.log(`🗑️ 垃圾专享价`);
                                                     break;
                                                 case 9:
-                                                    console.log(`🗑️ 店铺积分 🎟️`);
+                                                    console.log(`🗑️ ` + data.data.drawInfo.name + ' 🎟️');
                                                     break;
                                                 case 13:
                                                     console.log(`🎉 恭喜获得` + data.data.drawInfo.name + ' 🎁');
