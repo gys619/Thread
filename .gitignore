@@ -389,6 +389,9 @@ jd_captian_*.js
 jd_april*.js
 
 ############不能跑的###############
+#注销京东会员卡
+jd_unbind.js
+
 jd_cash_Mod_Panda.js	
 #panda签到领现金
 jd_joy_park_Mod.js
