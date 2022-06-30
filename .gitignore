@@ -185,7 +185,9 @@ jd_jx_factory.js
 m_*.js
 ######重复脚本#######
 #组队
-jd_team*.js
+jd_teamMN.js
+jd_teamFLP.js
+jd_teamXAY.js
 jd_sevenDay_info.js 
 
 jd_plantBean_Mod.js
