@@ -58,7 +58,6 @@ console.log("脚本部份加密,不喜欢勿跑!!!,10次抽奖机会,3个助力�
             $.ADID = getUUID('xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', 1);
             $.UUID = getUUID('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             authorCodeList = [
-                '936dbc5776e94d2c8133a6557a646986',
                 'c91d6b6e8a77410a9eaa9b9eef5a77ca',
                 'b944f14bb5084596892bc9483e90ea87',
                 'a498a629176a49e4876029aad45d7189',
