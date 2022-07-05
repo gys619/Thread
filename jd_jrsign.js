@@ -1,6 +1,6 @@
 /*
 金融签到
-5 0 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_jrsign.js
+50 0 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_jrsign.js
 * */
 
 const $=new Env('金融签到-加密');
