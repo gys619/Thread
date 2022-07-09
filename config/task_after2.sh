@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #赋值通知文件到deps目录下
 cp /ql/data/repo/gys619_Absinthe_main/sendNotify.js /ql/data/deps/sendNotify.js
-cp /ql/data/repo/gys619_Absinthe_main/sendNotify.js /ql/data/scripts/gys619_Absinthe/sendNotify.js 
+cp /ql/data/repo/gys619_Absinthe_main/sendNotify.js /ql/data/scripts/gys619_Absinthe_main/sendNotify.js 
 #在log目录下创建个code文件夹，不然互助马获取不到
 cd /ql/data/log
 kadir code
