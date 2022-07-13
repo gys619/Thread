@@ -1,7 +1,7 @@
 /*
 入口：京喜-我的-一元兑好礼
 任务+开宝箱
-23 5,14 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jx_one2shopping.js
+23 9,14 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jx_one2shopping.js
 updateTime:2022-07-12 By Dylan
 */
 const $ = new Env("京喜一元兑好礼");
