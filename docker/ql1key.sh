@@ -70,11 +70,12 @@ EOF
         error "** 错误：容器创建失败，请翻译以上英文报错，Google/百度尝试解决问题！"
     else
         sleep 30
-        ok "青龙面板已启动，请去浏览器访问http://ip:5500进行初始化并登陆进去，完成后回来继续！"
+        ok "青龙面板已启动，请去浏览器访问http://ip:5500进行初始化并登陆进去，完成后回来继续下一步！"
     fi
 
 else
-    error "已有qinglong名称的容器启动了，不需创建了！"
+    error "已有qinglong名称的容器在运行，不能重复创建！"
+	exit 1
 fi
 }
 
@@ -93,6 +94,7 @@ docker_install() {
             ing  "开始安装 docker 环境..."
             curl -sSL https://get.daocloud.io/docker | sh
 	    sleep 2
+		    if [ -x "$(command -v docker)" ]; then
             mkdir /etc/docker
             cat > /etc/docker/daemon.json <<EOF
 {
@@ -103,6 +105,10 @@ EOF
             ok "安装 docker 环境...完成!"
             systemctl enable docker
             systemctl restart docker
+			else
+			error "docker安装失败，请排查原因或手动完成安装在重新运行"
+			exit 2
+			fi
         fi
     fi
 }
@@ -146,7 +152,7 @@ docker_install
 docker_compose
 ql_run
 ql_fix
-read -p "已初始化并登陆青龙了，那按任意键继续！"
+read -p "已初在浏览器始化并登陆青龙了?，那就按任意键继续！"
 add_repo
 sleep 2
 ok "已部署完成，2.11.3版本青龙，部署路径为/root/ql，容器名qinglong，访问地址http://ip:5500"
