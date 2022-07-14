@@ -5,7 +5,7 @@
 VENDER_ID // venderId或vendorId的值，多个用&或@连接，但是不要混用
 OPENCARD_BEAN // 最小入会京豆
 
-作者：SuperManito
+作者：11111132
 内部脚本，不得外泄！
 
 */
