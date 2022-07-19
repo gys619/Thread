@@ -52,7 +52,7 @@ const inviteCodes = [
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const 11111134=process.env.11111134?process.env.11111134:"11111135";
+const  =process.env. ?process.env. :" ";
 $.tuanIds = [];
 $.appId = 10001;
 $.newShareCode = [];
@@ -1377,9 +1377,9 @@ async function showMsg() {
   })
 }
 function readShareCode() {
-  console.log(`当前使用助力池${11111134}`);
+  console.log(`当前使用助力池${ }`);
   return new Promise(async resolve => {
-    $.get({url: `${11111134}/jxfactory`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `${ }/jxfactory`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

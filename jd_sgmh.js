@@ -30,7 +30,7 @@ let appId = '1EFRXxg' , homeDataFunPrefix = 'interact_template', collectScoreFun
 let lotteryResultFunPrefix = homeDataFunPrefix, browseTime = 6
 const inviteCodes = ['','','','','',''].sort(() => 0.5 - Math.random()).splice(0,3)
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const 11111134=process.env.11111134?process.env.11111134:"11111135";
+const  =process.env. ?process.env. :" ";
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
@@ -329,10 +329,10 @@ function shareCodesFormat() {
 }
 
 function readShareCode() {
-  console.log(`当前使用助力池${11111134}`);
+  console.log(`当前使用助力池${ }`);
   return new Promise(async resolve => {
     $.get({
-      url: `${11111134}/sgmh`,
+      url: `${ }/sgmh`,
       'timeout': 10000
     }, (err, resp, data) => {
       try {

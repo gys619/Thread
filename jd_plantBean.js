@@ -42,7 +42,7 @@ let shareCodes = [ // IOS本地脚本用户这个列表填入你要助力的好�
   '',
 ]
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const 11111134=process.env.11111134?process.env.11111134:"11111135";
+const  =process.env. ?process.env. :" ";
 let allMessage = ``;
 let currentRoundId = null;//本期活动id
 let lastRoundId = null;//上期id
@@ -565,9 +565,9 @@ async function plantBeanIndex() {
   $.plantBeanIndexResult = await request('plantBeanIndex');//plantBeanIndexBody
 }
 function readShareCode(code) {
-  console.log(`当前使用助力池${11111134}`)
+  console.log(`当前使用助力池${ }`)
   return new Promise(async resolve => {
-    $.get({ url: 11111134 +`/bean?code=`+code, timeout: 10000}, (err, resp, data) => {
+    $.get({ url:   +`/bean?code=`+code, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)
