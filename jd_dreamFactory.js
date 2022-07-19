@@ -52,7 +52,7 @@ const inviteCodes = [
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const  =process.env. ?process.env. :" ";
+const JD_ZLC_URL=process.env.JD_ZLC_URL?process.env.JD_ZLC_URL:"http://zlc1.chaoyi996.com:8880";
 $.tuanIds = [];
 $.appId = 10001;
 $.newShareCode = [];
@@ -1377,9 +1377,9 @@ async function showMsg() {
   })
 }
 function readShareCode() {
-  console.log(`当前使用助力池${ }`);
+  console.log(`当前使用助力池${JD_ZLC_URL}`);
   return new Promise(async resolve => {
-    $.get({url: `${ }/jxfactory`, 'timeout': 10000}, (err, resp, data) => {
+    $.get({url: `${JD_ZLC_URL}/jxfactory`, 'timeout': 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

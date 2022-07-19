@@ -56,7 +56,7 @@ const inviteCodes = [''];
 let myInviteCode;
 $.newShareCode = [];
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const  =process.env. ?process.env. :" ";
+const JD_ZLC_URL=process.env.JD_ZLC_URL?process.env.JD_ZLC_URL:"http://zlc1.chaoyi996.com:8880";
 !(async () => {
   if (!process.env.JD_JOIN_ZLC) {
     console.log(`【注意】本脚本默认会给助力池进行助力！\n如需加入助力池请添加TG群：https://t.me/jd_zero_205\n如不加入助力池互助，可添加变量名称：JD_JOIN_ZLC，变量值：false\n`)
@@ -671,9 +671,9 @@ function jdfactory_getHomeData() {
   })
 }
 function readShareCode() {
-  console.log(`当前使用助力池${ }`);
+  console.log(`当前使用助力池${JD_ZLC_URL}`);
   return new Promise(async resolve => {
-    $.get({url: `${ }/ddfactory`, timeout: 10000}, (err, resp, data) => {
+    $.get({url: `${JD_ZLC_URL}/ddfactory`, timeout: 10000}, (err, resp, data) => {
       try {
         if (err) {
           console.log(`${JSON.stringify(err)}`)

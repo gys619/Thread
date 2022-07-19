@@ -30,7 +30,7 @@ let appId = '1EFRXxg' , homeDataFunPrefix = 'interact_template', collectScoreFun
 let lotteryResultFunPrefix = homeDataFunPrefix, browseTime = 6
 const inviteCodes = ['','','','','',''].sort(() => 0.5 - Math.random()).splice(0,3)
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
-const  =process.env. ?process.env. :" ";
+const JD_ZLC_URL=process.env.JD_ZLC_URL?process.env.JD_ZLC_URL:"http://zlc1.chaoyi996.com:8880";
 const randomCount = $.isNode() ? 20 : 5;
 const notify = $.isNode() ? require('./sendNotify') : '';
 let merge = {}
@@ -329,10 +329,10 @@ function shareCodesFormat() {
 }
 
 function readShareCode() {
-  console.log(`当前使用助力池${ }`);
+  console.log(`当前使用助力池${JD_ZLC_URL}`);
   return new Promise(async resolve => {
     $.get({
-      url: `${ }/sgmh`,
+      url: `${JD_ZLC_URL}/sgmh`,
       'timeout': 10000
     }, (err, resp, data) => {
       try {
