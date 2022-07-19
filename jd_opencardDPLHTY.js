@@ -33,7 +33,7 @@
 #大牌联合通用开卡
 1 1 1 1 * jd_opencardDPLHTY.js, tag=大牌联合通用开卡, enabled=true
 */
-let opencard_toShop = "false"
+let opencard_toShop = "true"
 const $ = new Env("大牌联合通用开卡");
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
