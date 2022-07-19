@@ -30,7 +30,7 @@ const inviteCodes = [
 ]
 const ZLC = !(process.env.JD_JOIN_ZLC && process.env.JD_JOIN_ZLC === 'false')
 let reward = process.env.JD_HEALTH_REWARD_NAME ? process.env.JD_HEALTH_REWARD_NAME : ''
-const JD_ZLC_URL=process.env.JD_ZLC_URL?process.env.JD_ZLC_URL:"http://zlc1.chaoyi996.com:8880";
+const 11111134=process.env.11111134?process.env.11111134:"11111135";
 const randomCount = $.isNode() ? 20 : 5;
 function oc(fn, defaultVal) {//optioanl chaining
   try {
@@ -336,10 +336,10 @@ function safeGet(data) {
 }
 
 function readShareCode() {
-  console.log(`当前使用助力池${JD_ZLC_URL}`);
+  console.log(`当前使用助力池${11111134}`);
   return new Promise(async resolve => {
     $.get({
-      url: `${JD_ZLC_URL}/health`,
+      url: `${11111134}/health`,
       'timeout': 10000
     }, (err, resp, data) => {
       try {
