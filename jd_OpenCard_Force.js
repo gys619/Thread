@@ -9,13 +9,19 @@
 变量：
 ## 入会开卡
 //export VENDER_ID=""
-## 最小入会值 （默认5）
-1 1 1 1 1 1 jd_OpenCard_Force.js, tag=入会开卡领取礼包(通用), enabled=true
+## 最小入会值 （默认10）
+//export OPENCARD_BEAN=""
+
+cron:6 6 6 6 *
+============Quantumultx===============
+[task_local]
+#入会开卡领取礼包(通用)
+1 1 1 1 * jd_OpenCard_Force.js, tag=入会开卡领取礼包(通用), enabled=true
 
 
 */
 
-const $ = new Env('入会开卡领取礼包');
+const $ = new Env('入会开卡领取礼包通用');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
 //IOS等用户直接用NobyDa的jd cookie
@@ -23,7 +29,7 @@ CryptoScripts()
 $.CryptoJS = $.isNode() ? require('crypto-js') : CryptoJS;
 var timestamp = new Date().getTime()
 const VENDER_ID = process.env.VENDER_ID || "";
-const OPENCARD_BEAN = process.env.OPENCARD_BEAN || "5";
+const OPENCARD_BEAN = process.env.OPENCARD_BEAN || "10";
 
 let cookiesArr = [],
     cookie = '';
@@ -53,7 +59,7 @@ message = '';
       $.index = i + 1;
       message = '';
       $.nickName = '';
-      await TotalBean();
+      //await TotalBean();
       $.UserName = $.nickName || $.UserName;
       console.log(`\n******开始【京东账号${$.index}】${$.UserName}*********\n`);
       await getUA()
@@ -90,6 +96,16 @@ async function run() {
             }
             if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
                 console.log('第3次 重新开卡')
+                await $.wait(500)
+                await joinShop()
+            }
+			if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
+                console.log('第4次 重新开卡')
+                await $.wait(500)
+                await joinShop()
+            }
+			if($.errorJoinShop.indexOf('活动太火爆，请稍后再试') > -1){
+                console.log('第5次 重新开卡')
                 await $.wait(500)
                 await joinShop()
             }

@@ -1,5 +1,5 @@
 /*
-cron "30 * * * *" jd_CheckCK.js, tag:京东CK检测by-ccwav
+cron "30 2-22/2 * * *" jd_CheckCK.js, tag:京东CK检测by-ccwav
  */
 //详细说明参考 https://github.com/ccwav/QLScript2.
 const $ = new Env('京东CK检测');
@@ -194,7 +194,7 @@ if ($.isNode() && process.env.CHECKCK_ALLNOTIFY) {
                 ReturnMessageTitle = `【账号${IndexAll}🆔】${$.UserName2}`;
             }
 
-            await TotalBean();
+            //await TotalBean();
             if ($.NoReturn) {
                 console.log(`接口1检测失败，尝试使用接口2....\n`);
                 await isLoginByX1a0He();

@@ -3,14 +3,14 @@
 ============Quantumultx===============
 [task_local]
 #店铺签到
-15 2,14 * * * https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js, tag=店铺签到, enabled=true
+15 2,14 * * * https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js, tag=店铺签到, enabled=true
 ===========Loon============
 [Script]
-cron "15 2,14 * * *" script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js,tag=店铺签到
+cron "15 2,14 * * *" script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js,tag=店铺签到
 ============Surge=============
-店铺签到 = type=cron,cronexp="15 2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.js
+店铺签到 = type=cron,cronexp="15 2,14 * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.js
 ===========小火箭========
-店铺签到 = type=cron,script-path=https://raw.githubusercontent.com/555555/faker2/main/jd_shop_sign.jss, cronexpr="15 2,14 * * *", timeout=3600, enable=true
+店铺签到 = type=cron,script-path=https://raw.githubusercontent.com/444444/KR/main/jd_shop_sign.jss, cronexpr="15 2,14 * * *", timeout=3600, enable=true
 */
 const $ = new Env('店铺签到');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -43,9 +43,9 @@ const token = [
 	"833CE1B5158A097598C07D4B2B5B314E",
 	"37D0FAA99892A9E613A1B46E5A55973B",
 	"D35923E942C11178C38BD29E783695B8",
-	"921478C146E5C60F2444E3978AC8E94F",
+	"BAA79A7D2FCE5AB8D844A9CA384A7D03",
 	"DB872465EDEB653BB501819F9B9DD326",
-	"D4BE8025929E6D662FBCB9F946BF4215",
+	"532A161D5F27365E3BA5D0BB0A9FB8BA",
 	"BC28601FD2C5B9A5D50038825C842358"
 ]
 

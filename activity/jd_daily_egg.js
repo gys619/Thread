@@ -6,17 +6,17 @@
 ============Quantumultx===============
 [task_local]
 #天天提鹅
-10 * * * * https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_daily_egg.js, tag=天天提鹅, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdte.png, enabled=true
+10 * * * * https://raw.githubusercontent.com/KingRan/JDJB/main/jd_daily_egg.js, tag=天天提鹅, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jdte.png, enabled=true
 
 ================Loon==============
 [Script]
-cron "10 * * * *" script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_daily_egg.js,tag=天天提鹅
+cron "10 * * * *" script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_daily_egg.js,tag=天天提鹅
 
 ===============Surge=================
-天天提鹅 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_daily_egg.js
+天天提鹅 = type=cron,cronexp="10 * * * *",wake-system=1,timeout=3600,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_daily_egg.js
 
 ============小火箭=========
-天天提鹅 = type=cron,script-path=https://raw.githubusercontent.com/Aaron-lv/sync/jd_scripts/jd_daily_egg.js, cronexpr="10 * * * *", timeout=3600, enable=true
+天天提鹅 = type=cron,script-path=https://raw.githubusercontent.com/KingRan/JDJB/main/jd_daily_egg.js, cronexpr="10 * * * *", timeout=3600, enable=true
  */
 const $ = new Env('天天提鹅');
 let cookiesArr = [], cookie = '';
@@ -28,6 +28,13 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const { JSDOM } = $.isNode() ? require('jsdom') : '';
 const { window } = new JSDOM(``, { url: dailyEggUrl, runScripts: "outside-only", pretentToBeVisual: true, resources: "usable" })
 const Faker = require('./utils/JDSignValidator.js')
+function oc(fn, defaultVal) {//optioanl chaining
+  try {
+    return fn()
+  } catch (e) {
+    return undefined
+  }
+}
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
     cookiesArr.push(jdCookieNode[item])
@@ -63,7 +70,8 @@ if ($.isNode()) {
       const fakerBody = Faker.getBody(dailyEggUrl)
       $.fp = fakerBody.fp
       $.eid = await getClientData(fakerBody)
-      $.token = (await downloadUrl("https://gia.jd.com/m.html")).match(/var\s*?jd_risk_token_id\s*?=\s*["`'](\S*?)["`'];?/)?.[1] || ""
+      const temp = (await downloadUrl("https://gia.jd.com/m.html")).match(/var\s*?jd_risk_token_id\s*?=\s*["`'](\S*?)["`'];?/)
+      $.token = oc(() => temp[1]) || ""
       await jdDailyEgg();
     }
   }
@@ -90,7 +98,8 @@ async function doTask(funcMissionId = null) {
   errMissionID = [...errMissionID, ...errMissionID.map(x => x.toString())]
   const taskWaitTime = 15
   let res
-  let taskList = (await doApi("queryGooseTaskList", false))?.data ?? []
+  const temp = await doApi("queryGooseTaskList", false)
+  let taskList = oc(() => temp.data) || []
   taskList = taskList.filter(x => [-1, 0, 1].includes(x.status) && !errMissionID.includes(x.missionId))
   if (funcMissionId) taskList = taskList.filter(x => x.missionId === funcMissionId)
   for (let task of taskList) {
@@ -131,7 +140,7 @@ async function doTask(funcMissionId = null) {
         break
       // 领奖状态
       case 1:
-        awards = awards[0] ?? awards
+        awards = awards[0] || awards
         let { awardRealNum, awardName } = awards
         let msg = []
         msg.push(funcMissionId ? `做任务'${name}'结果：成功！` : `任务'${name}'已可领奖。`)
@@ -229,9 +238,9 @@ function toDailyHome() {
               console.log($.name + `（${arguments.callee.name}）` + "：" + data.resultData.msg)
               return
             }
-            let shareUuid = data?.resultData?.data?.shareUuid
+            let shareUuid = oc(() => data.resultData.data.shareUuid)
             if (!$.shareUuid && typeof shareUuid === 'string') Object.assign($, { shareUuid })
-            let isFirstLogin = data?.resultData?.data?.isFristLogin
+            let isFirstLogin = oc(() => data.resultData.data.isFristLogin)
             if (typeof isFirstLogin === 'string') {
               $.isFirstLogin = (() => { try { return JSON.parse(isFirstLogin) } catch (e) { return false } })()
             } else if (typeof isFirstLogin === 'boolean') {
@@ -261,7 +270,7 @@ async function doApi(functionId = "", withSign = false, preBody = {}, preUrl = "
     case "receiveGooseTask":
       body = {
         missionId: preBody.missionId.toString(),
-        shareUuid: $.inviteId ?? "",
+        shareUuid: $.inviteId || "",
         riskDeviceInfo: $.riskDeviceInfo,
         channelLv: "yxjh",
         environment: "jrApp",
@@ -304,7 +313,7 @@ async function doApi(functionId = "", withSign = false, preBody = {}, preUrl = "
             if (data.resultCode !== 0) {
               console.log($.name + `（${functionId}）` + "：" + data.resultMsg)
             } else {
-              Object.assign(res, data?.resultData ?? {})
+              Object.assign(res, oc(() => data.resultData) || {})
             }
           } else {
           }

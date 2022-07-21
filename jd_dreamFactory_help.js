@@ -43,6 +43,9 @@ let tuanActiveId = ``, hasSend = false;
 const jxOpenUrl = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://wqsd.jd.com/pingou/dream_factory/index.html%22%20%7D`;
 let cookiesArr = [], cookie = '', message = '', allMessage = '', jdDreamFactoryShareArr = [];
 const newShareCodes = [
+  '',
+  '',
+  '',
   ''
 ];
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -78,7 +81,7 @@ if ($.isNode()) {
       $.pickFriendEle = 0;
       $.friendList = [];
       $.canHelpFlag = true;//能否助力朋友(招工)
-      await TotalBean();
+      //await TotalBean();
       console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });

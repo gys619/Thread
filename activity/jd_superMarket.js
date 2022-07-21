@@ -1,6 +1,7 @@
 /*
 东东超市
-Last Modified time: 2021-3-4 21:22:37
+Last Modified time: 2021-09-04 19:42:00
+Modified By X1a0He
 活动入口：京东APP首页-京东超市-底部东东超市
 Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_superMarket.py
 东东超市兑换奖品请使用此脚本 jd_blueCoin.js
@@ -8,14 +9,14 @@ Some Functions Modified From https://github.com/Zero-S1/JD_tools/blob/master/JD_
 =================QuantumultX==============
 [task_local]
 #东东超市
-11 * * * * jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
+11 0-22/4 * * * jd_superMarket.js, tag=东东超市, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jxc.png, enabled=true
 ===========Loon===============
 [Script]
-cron "11 * * * *" script-path=jd_superMarket.js,tag=东东超市
+cron "11 0-22/4 * * *" script-path=jd_superMarket.js,tag=东东超市
 =======Surge===========
-东东超市 = type=cron,cronexp="11 * * * *",wake-system=1,timeout=3600,script-path=jd_superMarket.js
+东东超市 = type=cron,cronexp="11 0-22/4 * * *",wake-system=1,timeout=3600,script-path=jd_superMarket.js
 ==============小火箭=============
-东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 * * * *", timeout=3600, enable=true
+东东超市 = type=cron,script-path=jd_superMarket.js, cronexpr="11 0-22/4 * * *", timeout=3600, enable=true
  */
 const $ = new Env('东东超市');
 //Node.js用户请在jdCookie.js处填写京东ck;
@@ -887,12 +888,12 @@ function smtg_sellMerchandise(body) {
   })
 }
 //新版东东超市
-function updatePkActivityId(url = 'https://raw.githubusercontent.com/xxx/updateTeam/master/jd_updateTeam.json') {
+function updatePkActivityId(url = '') {
   return new Promise(resolve => {
     $.get({url}, async (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
+          //console.log(`${JSON.stringify(err)}`)
           // console.log(`${$.name} API请求失败，请检查网路重试`)
         } else {
           $.updatePkActivityIdRes = JSON.parse(data);
@@ -1581,11 +1582,11 @@ function TotalBean() {
 function getTeam() {
   return new Promise(async resolve => {
     $.getTeams = [];
-    $.get({url: `http://jd.turinglabs.net/api/v2/jd/supermarket/read/100000/`, timeout: 100000}, (err, resp, data) => {
+    $.get({url: ``, timeout: 100000}, (err, resp, data) => {
       try {
         if (err) {
-          console.log(`${JSON.stringify(err)}`)
-          console.log(`${$.name} supermarket/read/ API请求失败，请检查网路重试`)
+          //console.log(`${JSON.stringify(err)}`)
+          //console.log(`${$.name} supermarket/read/ API请求失败，请检查网路重试`)
         } else {
           data = JSON.parse(data);
           $.getTeams = data && data['data'];
@@ -1637,47 +1638,42 @@ function jsonParse(str) {
 }
 //==========================以下是给作者助力 免费拿,省钱大赢家等活动======================
 async function helpAuthor() {
-  await barGain();//免费拿
+  //await barGain();//免费拿
   await bigWinner();//省钱大赢家
 }
-async function barGain() {
-  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/jd_barGain.json')
-  if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_barGain.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-    await $.wait(1000)
-    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/jd_barGain.json')
-  }
-  $.inBargaining = [...(res && res['inBargaining'] || [])]
-  $.inBargaining = getRandomArrayElements($.inBargaining, $.inBargaining.length > 3 ? 6 : $.inBargaining.length);
-  for (let item of $.inBargaining) {
-    if (!item['activityId']) continue;
-    const options = {
-      url: `https://api.m.jd.com/client.action`,
-      headers: {
-        'Host': 'api.m.jd.com',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Origin': 'https://h5.m.jd.com',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Cookie': cookie,
-        'Connection': 'keep-alive',
-        'Accept': 'application/json, text/plain, */*',
-        'User-Agent': 'jdapp;iPhone;9.4.0;14.3;;network/wifi;ADID/;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone10,3;addressid/;supportBestPay/0;appBuild/167541;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
-        'Referer': `https://h5.m.jd.com/babelDiy/Zeus/4ZK4ZpvoSreRB92RRo8bpJAQNoTq/index.html`,
-        'Accept-Language': 'zh-cn',
-      },
-      body: `functionId=cutPriceByUser&body={"activityId": ${item['activityId']},"userName":"","followShop":1,"shopId": ${item['shopId']},"userPic":""}&client=wh5&clientVersion=1.0.0`
-    };
-    await $.post(options, (err, ersp, data) => {})
-  }
-}
+// async function barGain() {
+//   let res = await getAuthorShareCode2('https://raw.githubusercontent.com/zero205/updateTeam/main/shareCodes/jd_barGain.json')
+//   if (!res) {
+//     $.http.get({url: 'https://purge.jsdelivr.net/gh/zero205/updateTeam@main/shareCodes/jd_barGain.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
+//     await $.wait(1000)
+//     res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/zero205/updateTeam@main/shareCodes/jd_barGain.json')
+//   }
+//   $.inBargaining = [...(res && res['inBargaining'] || [])]
+//   $.inBargaining = getRandomArrayElements($.inBargaining, $.inBargaining.length > 3 ? 6 : $.inBargaining.length);
+//   for (let item of $.inBargaining) {
+//     if (!item['activityId']) continue;
+//     const options = {
+//       url: `https://api.m.jd.com/client.action`,
+//       headers: {
+//         'Host': 'api.m.jd.com',
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//         'Origin': 'https://h5.m.jd.com',
+//         'Accept-Encoding': 'gzip, deflate, br',
+//         'Cookie': cookie,
+//         'Connection': 'keep-alive',
+//         'Accept': 'application/json, text/plain, */*',
+//         'User-Agent': 'jdapp;iPhone;9.4.0;14.3;;network/wifi;ADID/;supportApplePay/0;hasUPPay/0;hasOCPay/0;model/iPhone10,3;addressid/;supportBestPay/0;appBuild/167541;jdSupportDarkMode/0;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+//         'Referer': `https://h5.m.jd.com/babelDiy/Zeus/4ZK4ZpvoSreRB92RRo8bpJAQNoTq/index.html`,
+//         'Accept-Language': 'zh-cn',
+//       },
+//       body: `functionId=cutPriceByUser&body={"activityId": ${item['activityId']},"userName":"","followShop":1,"shopId": ${item['shopId']},"userPic":""}&client=wh5&clientVersion=1.0.0`
+//     };
+//     await $.post(options, (err, ersp, data) => {})
+//   }
+// }
 
 async function bigWinner() {
-  let res = await getAuthorShareCode2('https://raw.githubusercontent.com/Aaron-lv/updateTeam/master/shareCodes/bigWinner.json')
-  if (!res) {
-    $.http.get({url: 'https://purge.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/bigWinner.json'}).then((resp) => {}).catch((e) => $.log('刷新CDN异常', e));
-    await $.wait(1000)
-    res = await getAuthorShareCode2('https://cdn.jsdelivr.net/gh/Aaron-lv/updateTeam@master/shareCodes/bigWinner.json')
-  }
+  let res = await getAuthorShareCode2('https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/fcdyj.json')
   $.codeList = getRandomArrayElements([...(res || [])], [...(res || [])].length);
   for (let vo of $.codeList) {
     if (!vo['inviter']) continue

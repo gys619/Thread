@@ -92,7 +92,7 @@ async function main() {
                     let title = surveyItem.title
                     let subTitle = surveyItem.subTitle
                     let answerUrl = surveyItem.answerUrl
-                    msg += `${index+1}.【${title}】 ${subTitle}\n点击以下链接直达问卷\n${answerUrl}\n`
+                    msg += `${index+1}.【${title}】 ${subTitle}\n<a href="${answerUrl}">点击这里开启问卷</a>\n`
                 }
             }
 			if ($.isNode() && WP_APP_TOKEN_ONE) {
