@@ -1361,7 +1361,7 @@ function tgBotNotify(text, desp) {
           } else {
             data = JSON.parse(data);
             if (data.ok) {
-              console.log('Telegram发送通知消息成功�。\n')
+              console.log('Telegram发送通知消息成功🎉\n')
             } else if (data.error_code === 400) {
               console.log('请主动给bot发送一条消息并检查接收用户ID是否正确。\n')
             } else if (data.error_code === 401) {
