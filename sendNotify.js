@@ -1,20 +1,27 @@
 /*
- * @Author: lxk0301 https://gitee.com/lxk0301
- * @Date: 2020-08-19 16:12:40
- * @Last Modified by: whyour
- * @Last Modified time: 2021-5-1 15:00:54
- * sendNotify 推送通知功能
- * @param text 通知头
- * @param desp 通知体
- * @param params 某些推送通知方式点击弹窗可跳转, 例：{ url: 'https://abc.com' }
- * @param author 作者仓库等信息  例：`本通知 By：https://github.com/whyour/qinglong`
+ * @Author: ccwav https://github.com/ccwav/QLScript2 
+ 
+ * sendNotify 推送通知功能 (text, desp, params , author , strsummary)
+ * @param text 通知标题  (必要)
+ * @param desp 通知内容  (必要)
+ * @param params 某些推送通知方式点击弹窗可跳转, 例：{ url: 'https://abc.com' } ，没啥用,只是为了兼容旧脚本保留  (非必要)
+ * @param author 通知底部作者`  (非必要)
+ * @param strsummary 指定某些微信模板通知的预览信息，空则默认为desp  (非必要)
+ 
+ * sendNotifybyWxPucher 一对一推送通知功能 (text, desp, PtPin, author, strsummary )
+ * @param text 通知标题  (必要)
+ * @param desp 通知内容  (必要)
+ * @param PtPin CK的PTPIN (必要)
+ * @param author 通知底部作者`  (非必要)
+ * @param strsummary 指定某些微信模板通知的预览信息，空则默认为desp  (非必要)
+ 
  */
 //详细说明参考 https://github.com/ccwav/QLScript2.
 const querystring = require('querystring');
 const exec = require('child_process').exec;
 const $ = new Env();
 const timeout = 15000; //超时时间(单位毫秒)
-console.log("加载sendNotify，当前版本: 20220722");
+console.log("加载sendNotify，当前版本: 20220723");
 // =======================================go-cqhttp通知设置区域===========================================
 //gobot_url 填写请求地址http://127.0.0.1/send_private_msg
 //gobot_token 填写在go-cqhttp文件设置的访问密钥
@@ -111,15 +118,6 @@ let WP_UIDS_ONE = "";
 let GOTIFY_URL = '';
 let GOTIFY_TOKEN = '';
 let GOTIFY_PRIORITY = 0;
-
-/**
- * sendNotify 推送通知功能
- * @param text 通知头
- * @param desp 通知体
- * @param params 某些推送通知方式点击弹窗可跳转, 例：{ url: 'https://abc.com' }
- * @param author 作者仓库等信息  例：`本通知 By：https://github.com/whyour/qinglong`
- * @returns {Promise<unknown>}
- */
 let PushErrorTime = 0;
 let strTitle = "";
 let ShowRemarkType = "1";
@@ -569,11 +567,22 @@ async function sendNotify(text, desp, params = {}, author = '\n\n本通知 By cc
 		        }
 		    }
 		}
-        
-
-        //console.log("UseGroup2 :"+UseGroup2);
-        //console.log("UseGroup3 :"+UseGroup3);
-
+        if (desp) {
+            for (lncount = 2; lncount < 20; lncount++) {
+                if (process.env["NOTIFY_INCLUDE_TEXT" + lncount]) {
+                    Notify_IncludeText = process.env["NOTIFY_INCLUDE_TEXT" + lncount].split('&');
+                    if (Notify_IncludeText.length > 0) {
+                        for (var Templ in Notify_IncludeText) {
+                            if (desp.indexOf(Notify_IncludeText[Templ]) != -1) {
+                                console.log("检测内容到内容存在组别推送的关键字(" + Notify_IncludeText[Templ] + ")，将推送到组" + lncount + "...");
+                                UseGroupNotify = lncount;
+								break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 		if (UseGroupNotify == 1)
 		    UseGroupNotify = "";
 
