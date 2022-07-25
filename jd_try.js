@@ -257,7 +257,7 @@ let args_xh = {
                         }
                         await try_apply(trialActivityTitleList[i], trialActivityIdList[i])
                         //console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
-                        const waitTime = generateRandomInteger(args_xh.applyInterval, 13000);
+                        const waitTime = generateRandomInteger(args_xh.applyInterval, 30000);
                         console.log(`随机等待${waitTime}ms后继续`);
                         await $.wait(waitTime);
                     }
