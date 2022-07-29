@@ -41,7 +41,7 @@ if ($.isNode()) {
             continue
         }
         await main();
-        //if (i == 0 && $.flag) return;
+        if ($.flag) return;
     }
 
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
