@@ -40,7 +40,11 @@ if ($.isNode()) {
             }
             continue
         }
-        await main();
+        try {
+            await main();
+        }catch (e) {
+            console.log(`好像账号黑号~~~`);
+        }
         if ($.flag) return;
     }
 
