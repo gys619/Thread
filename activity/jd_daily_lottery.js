@@ -1,13 +1,12 @@
 /*
 小鸽有礼-每日抽奖
 活动入口：惊喜-》我的-》寄件服务-》寻味四季-》右侧瓜分千万京豆
-author：star
-活动时间：2021-04-16至2021-05-17
+
 脚本兼容: QuantumultX, Surge, Loon, JSBox, Node.js
 ===================quantumultx================
 [task_local]
 #每日抽奖
-13 1,22,23 * * * https://gitee.com/lxk0301/jd_scripts/raw/master/jd_daily_lottery.js, tag=每日抽奖, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+30 9 * 7 * jd_daily_lottery.js, tag=每日抽奖, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('京东快递-每日抽奖');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -39,7 +38,7 @@ if ($.isNode()) {
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = $.UserName;
-      await TotalBean();
+      //await TotalBean();
       console.log(`\n*****开始【京东账号${$.index}】${$.nickName || $.UserName}*****\n`);
       if (!$.isLogin) {
         $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, {"open-url": "https://bean.m.jd.com/bean/signIndex.action"});
@@ -51,6 +50,7 @@ if ($.isNode()) {
       }
 
       await dailyLottery()
+			await $.wait(3000);
     }
   }
 })()
