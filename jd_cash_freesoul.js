@@ -1,13 +1,11 @@
 /*
 签到领现金，每日2毛～5毛
-动物园版本的sign
 活动入口：京东APP搜索领现金进入
-更新时间：2021-06-07
+来自：freesoul
 #签到领现金
 无需指定定时，每天运行一次即可
-10 10 * * * jd_cash_freesoul.js
  */
-const $ = new Env('签到领现金');
+const $ = new Env('签到领现金-加密');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 
