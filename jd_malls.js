@@ -8,7 +8,7 @@
 变量格式 ACT_URL="https://xxx.mall.json" 
 参考文件 docker文件里里面 mall.json
 
-10 * * * * jd_mall.js
+10 0,20 * * * jd_malls.js
 */
 const $ = new Env("逛会场领卷");
 const jdCookieNode = $.isNode() ? require("./jdCookie.js") : "";
