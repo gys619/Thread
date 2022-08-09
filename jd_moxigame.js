@@ -3,7 +3,7 @@
 入口： APP-我的--更多游戏
 日常任务，开宝箱，每日挑战，助力，转盘抽奖，游戏
 新手福利3天内70星兑换京豆礼包
-35 0,6,12,18 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_moxigame.js 
+35 12,18 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_moxigame.js 
 */
 
 const $ = new Env("东哥爱消除-加密");
