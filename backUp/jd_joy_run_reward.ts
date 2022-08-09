@@ -24,7 +24,7 @@ let h5stTool: H5ST = null
       await h5stTool.__genAlgo()
       res = await team('runningMyPrize', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "pageSize": 20, "time": null, "ids": null})
 	  rewardAmount = res.data.rewardAmount
-      if (res.data.runningCashStatus.currentEndTime && res.data.runningCashStatus.status === 0) {
+      if (res.data.runningCashStatus.currentEndTime) {
         console.log('可提现', rewardAmount)
         res = await api('runningPrizeDraw', {"linkId": "L-sOanK_5RJCz7I314FpnQ", "type": 2, "level": 3})
         await wait(2000)
