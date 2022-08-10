@@ -85,8 +85,12 @@ async function main() {
     await takeRequest('superBrandSecondFloorMainPage');
     if($.bizCode == 'MP001'){
         console.log(`本期活动结束，期待下期。。。`);
-		$.flag = true
+        $.flag = true;
         return ;
+    }
+    if (JSON.stringify($.activityInfo) === '{}') {
+        console.log(`获取活动详情失败`);
+        return;
     }
     console.log(`获取活动详情成功`);
     $.activityId = $.activityInfo.activityBaseInfo.activityId;

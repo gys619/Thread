@@ -2,7 +2,7 @@
 入口：首页下拉
 特务集勋章
 不开卡但尝试领取开卡任务奖励，集齐勋章晚上8点后瓜分，需要开卡才能集齐
-8 10,18,20 * * * jd_superBrandJXZ.js
+3 10,17,20 * * * jd_SuperBrandJXZ.js
  */
 const $ = new Env('特务集勋章');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -32,7 +32,7 @@ if ($.isNode()) {
         $.isLogin = true;
         $.nickName = '';
         $.UserName = decodeURIComponent($.cookie.match(/pt_pin=([^; ]+)(?=;?)/) && $.cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
-        //await TotalBean();
+        await TotalBean();
         console.log(`\n*****开始【京东账号${$.index}】${$.nickName || $.UserName}*****\n`);
         if (!$.isLogin) {
             $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -42,19 +42,14 @@ if ($.isNode()) {
             }
             continue
         }
-        try {
-            await main();
-        }catch (e) {
-            console.log(`好像账号黑号~~~`);
-        }
+        await main();
         await $.wait(2000);
-        if ($.flag) return;
+        if (i == 0 && $.flag) return;
     }
 
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
 
 async function main() {
-    $.runFlag = false;
     $.activityInfo = {};
     await takeRequest('showBadgeInfo');
     if ($.bizCode == 'MP001') {
@@ -98,18 +93,18 @@ async function doTask() {
         }
 
         if ($.oneTask.assignmentType === 1 || $.oneTask.assignmentType === 7 || $.oneTask.assignmentType === 5) {
-            let subInfo = $.oneTask.ext.productsInfo || $.oneTask.ext.shoppingActivity || $.oneTask.ext.brandMemberList|| $.oneTask.ext.sign2;
+            let subInfo = $.oneTask.ext.productsInfo || $.oneTask.ext.shoppingActivity || $.oneTask.ext.brandMemberList || $.oneTask.ext.sign2;
             if (subInfo && subInfo[0]) {
                 for (let j = 0; j < $.oneTask.assignmentTimesLimit; j++) {
                     $.runInfo = subInfo[j];
                     if ($.runInfo.status !== 1) {
                         continue;
                     }
-                    console.log(`任务：${$.runInfo.title || $.runInfo.shopName|| $.runInfo.skuName || $.runInfo.itemId},去执行`);
-                    if($.oneTask.assignmentType === 5){
-                    await takeRequest('superBrandDoTask', { "source": "badge", "activityId": $.activityId, "encryptProjectId": $.encryptProjectId, "encryptAssignmentId": $.oneTask.encryptAssignmentId, "assignmentType": $.oneTask.assignmentType, "itemId": $.runInfo.itemId, "actionType": 0 ,"dropDownChannel":1});
-                    }else{
-                    await takeRequest('superBrandDoTask', { "source": "badge", "activityId": $.activityId, "encryptProjectId": $.encryptProjectId, "encryptAssignmentId": $.oneTask.encryptAssignmentId, "assignmentType": $.oneTask.assignmentType, "itemId": $.runInfo.itemId, "actionType": 0 });
+                    console.log(`任务：${$.runInfo.title || $.runInfo.shopName || $.runInfo.skuName || $.runInfo.itemId},去执行`);
+                    if ($.oneTask.assignmentType === 5) {
+                        await takeRequest('superBrandDoTask', { "source": "badge", "activityId": $.activityId, "encryptProjectId": $.encryptProjectId, "encryptAssignmentId": $.oneTask.encryptAssignmentId, "assignmentType": $.oneTask.assignmentType, "itemId": $.runInfo.itemId, "actionType": 0, "dropDownChannel": 1 });
+                    } else {
+                        await takeRequest('superBrandDoTask', { "source": "badge", "activityId": $.activityId, "encryptProjectId": $.encryptProjectId, "encryptAssignmentId": $.oneTask.encryptAssignmentId, "assignmentType": $.oneTask.assignmentType, "itemId": $.runInfo.itemId, "actionType": 0 });
                     }
                     await $.wait(500);
 
