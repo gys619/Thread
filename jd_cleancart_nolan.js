@@ -5,7 +5,7 @@
 包括预售
 需要算法支持
 默认：不执行 如需要请添加环境变量
-gua_cleancart_Run="true"
+JD_CART_REMOVE="true"
 
 ——————————————
 1.@&@ 前面加数字 指定账号pin
@@ -18,7 +18,7 @@ gua_cleancart_Run="true"
 7.|-| 👉 账号之间隔开
 ——————————————
 
-商品名称规则
+商品名称规则,默认所有账号全清空
 ——————gua_cleancart_products————————
 pin2@&@商品1,商品2👉该pin这几个商品名不清空
 pin5@&@👉该pin全清
@@ -42,7 +42,7 @@ cron:8 8 8 8 *
 */
 let jdSignUrl = 'https://api.nolanstore.top/sign'
 let cleancartRun = 'false'
-let cleancartProducts = '*@&@'
+let cleancartProducts = ''
 const $ = new Env('清空购物车-Sign版');
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -60,9 +60,9 @@ if ($.isNode()) {
 
 message = ''
 
-cleancartRun = $.isNode() ? (process.env.gua_cleancart_Run ? process.env.gua_cleancart_Run : `${cleancartRun}`) : ($.getdata('gua_cleancart_Run') ? $.getdata('gua_cleancart_Run') : `${cleancartRun}`);
+cleancartRun = $.isNode() ? (process.env.JD_CART_REMOVE ? process.env.JD_CART_REMOVE : `${cleancartRun}`) : ($.getdata('JD_CART_REMOVE') ? $.getdata('JD_CART_REMOVE') : `${cleancartRun}`);
 
-cleancartProducts = $.isNode() ? (process.env.gua_cleancart_products ? process.env.gua_cleancart_products : `${cleancartProducts}`) : ($.getdata('gua_cleancart_products') ? $.getdata('gua_cleancart_products') : `${cleancartProducts}`);
+cleancartProducts = $.isNode() ? (process.env.gua_cleancart_products ? process.env.gua_cleancart_products : '*@&@') : ($.getdata('gua_cleancart_products') ? $.getdata('gua_cleancart_products') : `${cleancartProducts}`);
 
 let productsArr = []
 let cleancartProductsAll = []
@@ -87,16 +87,14 @@ for (let i in productsArr) {
     return;
   }
   if(cleancartRun !== 'true'){
-    console.log('脚本停止\n请添加环境变量[gua_cleancart_Run]为"true"')
+    console.log('脚本停止\n请添加环境变量JD_CART_REMOVE为"true"')
     return
   }
   if(!cleancartProducts){
     console.log('脚本停止\n请添加环境变量[gua_cleancart_products]\n清空商品\n内容规则看脚本文件')
     return
   }
-  if(jdSignUrl.indexOf("://jd.11111118/") > -1) {
-    return
-  }
+
   $.out = false
   console.log('\n==此脚本使用的签名接口来自Nolan提供的公益服务,大伙记得给他点赞==');
   for (let i = 0; i < cookiesArr.length; i++) {
