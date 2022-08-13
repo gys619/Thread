@@ -221,7 +221,7 @@ def happyDigHome(cookie):
  # 玩一玩
 def apDoTask(cookie):
      print('开始做玩一玩任务')
-     body={"linkId":linkId,"taskType":"BROWSE_CHANNEL","taskId":454,"channel":4,"itemId":"https%3A%2F%2Fsignfree.jd.com%2F%3FactivityId%3DPiuLvM8vamONsWzC0wqBGQ","checkVersion":False}
+     body={"linkId":linkId,"taskType":"BROWSE_CHANNEL","taskId":840,"channel":4,"itemId":"https%3A%2F%2Fprodev.m.jd.com%2Fjdlite%2Factive%2FeVgKdaU5TKnGZfSWCRe79hqfLXp%2Findex.html","checkVersion":False}
      res=taskGetUrl('apDoTask', body, cookie)
      if not res:
          return
