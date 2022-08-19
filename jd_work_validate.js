@@ -1,8 +1,3 @@
-/**
-cron=58 7,15,23 * * * jd_work_validate.js
-new Env('京东验证码获取');
- */
-
 let common = require("./function/common");
 let $ = new common.env('京东验证码获取');
 let validator = require("./function/jdValidate");
