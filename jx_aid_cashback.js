@@ -1,3 +1,8 @@
+/**
+cron=44 0-23/6 * * * jd_aid_cashback.js
+new Env('京喜购物返红包助力');
+ */
+
 let common = require("./function/common");
 let $ = new common.env('京喜购物返红包助力');
 let min = 5,
