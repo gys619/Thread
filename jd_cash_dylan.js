@@ -173,7 +173,7 @@ function index() {
                     await doTask(task.type, task.jump.params.path)
                     await $.wait(5000)
                   }
-                } else if (task.type === 16 || task.type===3 || task.type===5 || task.type===17 || task.type===21) {
+                } else {
                   for (let i = task.doTimes; i < task.times; ++i) {
                     console.log(`去做${task.name}任务 ${i+1}/${task.times}`)
                     await doTask(task.type, task.jump.params.url)
@@ -227,6 +227,7 @@ async function appdoTask(type,taskInfo) {
     })
   }
 }
+
 function doTask(type,taskInfo) {
   return new Promise((resolve) => {
     $.get(taskUrl("cash_doTask",{"type":type,"taskInfo":taskInfo}), (err, resp, data) => {
