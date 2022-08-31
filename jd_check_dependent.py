@@ -115,7 +115,7 @@ def check_ld_libc():
                 print("arm64-libc依赖安装失败,网络连接失败，请按依赖教程自行下载依赖文件")
 
 def download(systemFile):
-    raw_url = f"https://git.metauniverse-cn.com/https://raw.githubusercontent.com/555555/faker2/main/utils/{systemFile}"
+    raw_url = f"https://git.metauniverse-cn.com/https://raw.githubusercontent.com/shufflewzc/faker2/main/utils/{systemFile}"
     try:
         fileList = os.listdir()
         if systemFile in fileList:
@@ -163,7 +163,7 @@ def repoTreeUpdate():
     """
     判断utils内的主要文件是否更新(sha值是否变化)
     """
-    GitAPI = 'https://api.github.com/repos/555555/faker2/git/trees/main'
+    GitAPI = 'https://api.github.com/repos/shufflewzc/faker2/git/trees/main'
     try:
         session = requests.session()
         headers = {"Content-Type": "application/json"}
