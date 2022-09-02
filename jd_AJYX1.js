@@ -21,11 +21,11 @@
 请求太频繁会被黑ip
 过10分钟再执行
 
-cron:11 4,13 1-3,4-30/5 9 *
+cron:8 8 8 8 *
 ============Quantumultx===============
 [task_local]
 #9.1-9.30 安佳 邀新有礼
-11 4,13 1-3,4-30/5 9 * jd_AJYX.js, tag=9.1-9.30 安佳 邀新有礼, enabled=true
+8 8 8 8 * jd_AJYX.js, tag=9.1-9.30 安佳 邀新有礼, enabled=true
 
 */
 

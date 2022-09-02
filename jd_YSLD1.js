@@ -19,7 +19,7 @@
 
 [task_local]
 #9.1-9.30 雅诗兰黛奢雅邀请入会有礼
-11 3,16 1-8,9-30/5 9 * jd_YSLD.js, tag=9.1-9.30 雅诗兰黛奢雅邀请入会有礼, enabled=true
+8 8 8 8 * jd_YSLD.js, tag=9.1-9.30 雅诗兰黛奢雅邀请入会有礼, enabled=true
 
 */
 const $ = new Env('9.1-9.30 雅诗兰黛奢雅邀请入会有礼');
