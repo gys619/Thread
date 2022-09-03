@@ -1,6 +1,6 @@
 /*
 一次性脚本
-6 19 * * * jd_supergz.js, tag=频道关注
+6 19,22 * * * jd_supergz.js, tag=频道关注
  */
 
 const $ = new Env('频道关注');
