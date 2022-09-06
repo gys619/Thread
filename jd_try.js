@@ -726,14 +726,15 @@ function geth5st(body) {
             "functionId": "try_apply",
             "body": body,
             "appid": "newtry",
-            "client": "wh5",
+            "client": "wh5", 
             "clientVersion": "11.0.2",
             "ua": 'jdapp;iPhone;10.1.2;15.0;ff2caa92a8529e4788a34b3d8d4df66d9573f499;network/wifi;model/iPhone13,4;addressid/2074196292;appBuild/167802;jdSupportDarkMode/1;Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
             "pin": encodeURIComponent($.UserName)
         }),
         headers: {
             "Content-Type": "application/json"
-        }
+        },
+		timeout: 30000,
     },str='';
     return new Promise((resolve) => {
         $.post(opt, (err, resp, data) => {

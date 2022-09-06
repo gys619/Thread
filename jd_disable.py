@@ -83,17 +83,6 @@ def get_index(lst: list, item: str) -> list:
     return [index for (index, value) in enumerate(lst) if value == item]
 
 
-def getversion():
-    url = f"http://{ipport}/api/system"
-    response = requests.get(url=url)
-    data = json.loads(response.content.decode("utf-8"))
-    version = data.get("data").get("version")
-    if int(version.split('.')[0]) >= 2:
-        if int(version.split('.')[1]) >= 12:
-            return 1
-    return 0
-
-
 def get_duplicate_list(tasklist: list) -> tuple:
     logger.info("\n=== 第一轮初筛开始 ===")
 
@@ -101,10 +90,10 @@ def get_duplicate_list(tasklist: list) -> tuple:
     names = []
     cmds = []
     for task in tasklist:
-        if getversion() == 1:
-            ids.append(task.get("id"))
-        else:
+        if flag1:
             ids.append(task.get("_id"))
+        else:
+            ids.append(task.get("id"))
         names.append(task.get("name"))
         cmds.append(task.get("command"))
 
@@ -144,7 +133,10 @@ def reserve_task_only(
     for task1 in tem_tasks:
         for task2 in res_list:
             if task1.get("name") == task2.get("name"):
-                dup_ids.append(task1.get("_id"))
+                if flag1:
+                    dup_ids.append(task1.get("_id"))
+                else:
+                    dup_ids.append(task1.get("id"))
                 logger.info(f"【✅保留】{task2.get('command')}")
                 task3 = task1
         if task3:
@@ -168,13 +160,15 @@ def disable_duplicate_tasks(ids: list) -> None:
 
 
 def get_token() -> str or None:
+    path = '/ql/config/auth.json'  # 设置青龙 auth文件地址
+    global flag1
+    flag1 = True
+    if not os.path.isfile(path):
+        path = '/ql/data/config/auth.json'  # 尝试设置青龙 auth 新版文件地址
+        flag1 = False
     try:
-        if getversion() == 1:
-            with open("/ql/data/config/auth.json", "r", encoding="utf-8") as f:
-                data = json.load(f)
-        else:
-            with open("/ql/config/auth.json", "r", encoding="utf-8") as f:
-                data = json.load(f)
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
     except Exception:
         logger.info(f"❌无法获取 token!!!\n{traceback.format_exc()}")
         send("💔禁用重复任务失败", "无法获取 token!!!")
@@ -214,5 +208,5 @@ if __name__ == "__main__":
         logger.info("😁没有重复任务~")
     else:
         disable_duplicate_tasks(ids)
-    if send:
-        send("💖禁用重复任务成功", f"\n{sum}\n{filter}\n{disable}")
+    #if send:
+        #send("💖禁用重复任务成功", f"\n{sum}\n{filter}\n{disable}")

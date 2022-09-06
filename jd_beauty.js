@@ -82,7 +82,7 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
 
 async function accountCheck() {
   $.hasDone = false;
-  console.log(`***检测账号是否黑号***`);
+  //console.log(`***检测账号是否黑号***`);
   await getIsvToken()
   await $.wait(10000)
   await getIsvToken2()
@@ -575,7 +575,7 @@ function getIsvToken() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             $.isvToken = data['tokenKey'];
-            console.log(`isvToken:${$.isvToken}`);
+            //console.log(`isvToken:${$.isvToken}`);
           }
         }
       } catch (e) {
@@ -595,7 +595,7 @@ async function getIsvToken2() {
   } 
   let config = {
     url: 'https://api.m.jd.com/client.action?functionId=isvObfuscator',
-    body: body,
+    body: `${$.Signz}`,
     headers: {
       'Host': 'api.m.jd.com',
       'accept': '*/*',
@@ -616,7 +616,7 @@ async function getIsvToken2() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             $.token2 = data['token']
-            console.log(`token2:${$.token2}`);
+            //console.log(`token2:${$.token2}`);
           }
         }
       } catch (e) {
@@ -628,43 +628,31 @@ async function getIsvToken2() {
   })
 }
 function getSignfromDY(functionId, body) {	
-var strsign = '';
-let data = `functionId=${functionId}&body=${encodeURIComponent(JSON.stringify(body))}`
-  return new Promise((resolve) => {
-      let opt = {
-          url: "https://jd.nbplay.xyz/dylan/getsign",
-          body: data,
-      headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-      }
-      ,timeout: 30000
-      }
-      $.post(opt, async(err, resp, data) => {
-          try {
-            if (data){
-              data = JSON.parse(data);
-      if (data && data.code == 0) {
-                  console.log("连接DY服务成功" );
-                  if (data.data){
-                      strsign = data.data || '';
-        }
-                  if (strsign != ''){
-                      resolve(strsign);
-        }
-                  else
-                      console.log("签名获取失败,换个时间再试.");
-              } else {
-                  console.log(data.msg);
-              }
-            }else{console.log('连接连接DY服务失败，重试。。。')}	
-          }catch (e) {
-              $.logErr(e, resp);
-          }finally {
-      resolve(strsign);
-    }
-      })
-  })
-}
+let data={'fn':functionId,'body':JSON.stringify(body)};
+	let optionsions={'url':'https://api.nolanstore.top/sign','body':JSON.stringify(data),'headers':{"Content-Type": "application/json"},'timeout':30000};
+	return new Promise(async resolve=>{
+		$.post(optionsions,(err,resp,data)=>{
+			try{
+				if(err){
+					console.log(''+JSON.stringify(err));
+					console.log($.name+' getSign API请求失败，请检查网路重试');
+				}else{
+					data=JSON.parse(data);
+					if((typeof data==='object')&&data&&data.body){
+							$.Signz=data.body ||'';
+							} else {
+									console.log('获取服务失败~~');
+							}
+				}
+			}catch(e){
+				$.logErr(e,resp);
+			}
+			finally{
+				resolve(data);
+			}
+		});
+	});
+};
 function getToken() {
   let config = {
     url: 'https://xinruimz-isv.isvjcloud.com/api/auth',
@@ -692,7 +680,7 @@ function getToken() {
           if (safeGet(data)) {
             data = JSON.parse(data);
             $.token = data.access_token
-            console.log(`$.token ${$.token}`)
+            //console.log(`$.token ${$.token}`)
           }
         }
       } catch (e) {
