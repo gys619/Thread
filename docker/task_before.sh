@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#6dylan6_1124
+#6dylan6_924
 
 name_js=(
   fruit.js
@@ -62,7 +62,7 @@ do
 done
 }
  
-file_code=$dir_log/6dylan6_jdpro_jd_sharecode
+file_code=$dir_log/6dylan6_jdpro_jd_sharecode*
 combine_sub() {
     local what_combine=$1
     local combined_all=""
