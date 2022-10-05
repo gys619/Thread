@@ -42,12 +42,12 @@ if ($.isNode()) {
             }
             await info();
             await $.wait(500);
-            if ($.taskStatus !== 3) {
+            if ($.taskStatus !== 3 && $.taskEncId === 'ifiWT91zw2w=') {
                 await dotask('taskReceive');
-                await $.wait(200);
+                await $.wait(1000);
                 await dotask('taskFinish');
-                await $.wait(200);
-                await dotask('taskReward');
+                await $.wait(500);
+                await dotask('taskReward'); 
             } else {
                 $.log('已领取过！')
             }
@@ -84,7 +84,7 @@ async function info() {
                 } else {
                     data = JSON.parse(data)
                     if (data.success) {
-                        $.taskStatus = data.data.floorData.jxScoreTaskList.taskInfoList[0].taskStatus
+                        $.taskStatus = data.data.floorData.jxScoreTaskList.taskInfoList[0].taskStatus;
                         $.taskEncId = data.data.floorData.jxScoreTaskList.taskInfoList[0].taskEncId;
                     } else {
                         console.log(data.message)
@@ -111,7 +111,7 @@ function dotask(fn) {
                     if (data.success) {
                         if(fn === 'taskReward') console.log('任务完成，获得5京豆');
                     } else {
-                        console.log(`fn , data.message`);
+                        console.log(`${fn} , ${data.message}`);
                     }
                 }
             } catch (e) {
