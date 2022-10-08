@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Build 20220831-001-test
-## 6dylan6_1007
+## 6dylan6_1008
 
 name_js=(
   jd_fruit
@@ -9,18 +9,18 @@ name_js=(
   jd_plantBean
   jd_dreamFactory
   jd_jdfactory
-  jd_crazy_joy
-  jd_jdzz
+  #jd_crazy_joy
+  #jd_jdzz
   jd_jxnc
-  jd_bookshop
-  jd_cash
+  #jd_bookshop
+  #jd_cash
   jd_sgmh
   jd_cfd
   jd_health
-  jd_carnivalcity
-  jd_city
-  jd_moneyTree
-  jd_cfdtx
+  #jd_carnivalcity
+  #jd_city
+  #jd_moneyTree
+  #jd_cfdtx
 )
 name_config=(
   Fruit
@@ -28,18 +28,18 @@ name_config=(
   Bean
   DreamFactory
   JdFactory
-  Joy
-  Jdzz
+  #Joy
+  #Jdzz
   Jxnc
-  BookShop
-  Cash
+  #BookShop
+  #Cash
   Sgmh
   Cfd
   Health
-  Carni
-  City
-  MoneyTree
-  TokenJxnc
+  #Carni
+  #City
+  #MoneyTree
+  #TokenJxnc
 )
 name_chinese=(
   东东农场
@@ -47,18 +47,18 @@ name_chinese=(
   京东种豆得豆
   京喜工厂
   东东工厂
-  crazyJoy任务
-  京东赚赚
+  #crazyJoy任务
+  #京东赚赚
   京喜农场
-  口袋书店
-  签到领现金
+  #口袋书店
+  #签到领现金
   闪购盲盒
   京喜财富岛
   东东健康社区
-  京东手机狂欢城
-  城城领现金
-  摇钱树
-  京喜token
+  #京东手机狂欢城
+  #城城领现金
+  #摇钱树
+  #京喜token
 )
 env_name=(
   FRUITSHARECODES                     ## 1、东东农场互助码
@@ -66,18 +66,18 @@ env_name=(
   PLANT_BEAN_SHARECODES               ## 3、种豆得豆互助码
   DREAM_FACTORY_SHARE_CODES           ## 4、京喜工厂互助码
   DDFACTORY_SHARECODES                ## 5、东东工厂互助码
-  JDJOY_SHARECODES                    ## 6、疯狂的JOY互助码
-  JDZZ_SHARECODES                     ## 7、京东赚赚互助码
+  #JDJOY_SHARECODES                    ## 6、疯狂的JOY互助码
+  #JDZZ_SHARECODES                     ## 7、京东赚赚互助码
   JXNC_SHARECODES                     ## 8、京喜农场助力码
-  BOOKSHOP_SHARECODES                 ## 9、口袋书店互助码
-  JD_CASH_SHARECODES                  ## 10、签到领现金互助码
+  #BOOKSHOP_SHARECODES                 ## 9、口袋书店互助码
+  #JD_CASH_SHARECODES                  ## 10、签到领现金互助码
   JDSGMH_SHARECODES                   ## 11、闪购盲盒互助码
   JDCFD_SHARECODES                    ## 12、京喜财富岛互助码
   JDHEALTH_SHARECODES                 ## 13、东东健康社区互助码
-  JD818_SHARECODES                    ## 14、京东手机狂欢城互助码
-  CITY_SHARECODES                     ## 15、城城领现金互助码
-  MONEYTREE_SHARECODES                ## 16、摇钱树
-  JXNCTOKENS                          ## 17、京喜Token(京喜财富岛提现用)
+  #JD818_SHARECODES                    ## 14、京东手机狂欢城互助码
+  #CITY_SHARECODES                     ## 15、城城领现金互助码
+  #MONEYTREE_SHARECODES                ## 16、摇钱树
+  #JXNCTOKENS                          ## 17、京喜Token(京喜财富岛提现用)
 )
 var_name=(
   ForOtherFruit                       ## 1、东东农场互助规则
@@ -85,18 +85,18 @@ var_name=(
   ForOtherBean                        ## 3、种豆得豆互助规则
   ForOtherDreamFactory                ## 4、京喜工厂互助规则
   ForOtherJdFactory                   ## 5、东东工厂互助规则
-  ForOtherJoy                         ## 6、疯狂的JOY互助规则
-  ForOtherJdzz                        ## 7、京东赚赚互助规则
+  #ForOtherJoy                         ## 6、疯狂的JOY互助规则
+  #ForOtherJdzz                        ## 7、京东赚赚互助规则
   ForOtherJxnc                        ## 8、京喜农场助力码
-  ForOtherBookShop                    ## 9、口袋书店互助规则
-  ForOtherCash                        ## 10、签到领现金互助规则
+  #ForOtherBookShop                    ## 9、口袋书店互助规则
+  #ForOtherCash                        ## 10、签到领现金互助规则
   ForOtherSgmh                        ## 11、闪购盲盒互助规则
   ForOtherCfd                         ## 12、京喜财富岛互助规则
   ForOtherHealth                      ## 13、东东健康社区互助规则
-  ForOtherCarni                       ## 14、京东手机狂欢城互助规则
-  ForOtherCity                        ## 15、城城领现金互助规则
+  #ForOtherCarni                       ## 14、京东手机狂欢城互助规则
+  #ForOtherCity                        ## 15、城城领现金互助规则
   ForOtherMoneyTree                   ## 16、摇钱树
-  TokenJxnc                           ## 17、京喜Token(京喜财富岛提现用)
+  #TokenJxnc                           ## 17、京喜Token(京喜财富岛提现用)
 )
 
 local_scr=$1
@@ -862,7 +862,7 @@ Recombin_CK_cal(){
 
 ## 组合互助码格式化为全局变量的函数
 combine_sub() {
-    source $file_env
+    #source $file_env
     local what_combine=$1
     local combined_all=""
     local tmp1 tmp2
@@ -941,10 +941,12 @@ JS_Deps_Replace() {
 }
 
 [[ -f $dir_scripts/CK_WxPusherUid.json && $local_scr_dir && $local_scr_dir != $dir_scripts ]] && cp -rf $dir_scripts/CK_WxPusherUid.json $local_scr_dir/CK_WxPusherUid.json 
-source $file_env
+#source $file_env
 gen_pt_pin_array
 #JS_Deps_Replace
 TempBlock_CK
 #remove_void_ck
+if [[ -z $cookieStr ]];then
 Recombin_CK
+fi
 combine_only
