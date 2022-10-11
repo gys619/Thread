@@ -461,7 +461,7 @@ async function receivefruit(){
     "monitor_refer": "plant_receiveNutrientsTask",
     "monitor_source": "plant_app_plant_index",
     "awardType": "92",
-    "version": "9.2.4.1"
+    "version": "9.2.4.2"
 }
 await request('receiveNutrientsTask',body)
 }
@@ -812,7 +812,7 @@ function request(function_id, body = {}){
   })
 }
 function taskUrl(function_id, body) {
-  body["version"] = "9.2.4.1";
+  body["version"] = "9.2.4.2";
   body["monitor_source"] = "plant_app_plant_index";
   if (!body["monitor_refer"]){
   body["monitor_refer"] = "";
