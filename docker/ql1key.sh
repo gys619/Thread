@@ -133,7 +133,7 @@ else
     ing "开始添加6dylan6/jdpro拉库任务"
     sed -i 's/RepoFileExtensions.*/RepoFileExtensions=\"js py sh ts\"/g' $ql_path/data/config/config.sh
     if [ "$(grep -c "token" $ql_path/data/config/auth.json)" != 0 ]; then
-        docker exec -it qinglong /bin/bash -c "token=\$(cat /ql/config/auth.json | jq --raw-output .token) && curl -s -H 'Accept: application/json' -H \"Authorization: Bearer \$token\" -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept-Language: zh-CN,zh;q=0.9' --data-binary '{\"name\":\"拉库\",\"command\":\"ql repo https://js.dayplus.xyz/https://github.com/6dylan6/jdpro.git jd_|jx_|jddj_ backUp  ^jd[^_]|USER|JD|function|sendNotify\",\"schedule\":\"45 7-23/2  * * *\"}' --compressed 'http://127.0.0.1:5700/api/crons?t=1627380635389'"
+        docker exec -it qinglong /bin/bash -c "token=\$(cat /ql/config/auth.json | jq --raw-output .token) && curl -s -H 'Accept: application/json' -H \"Authorization: Bearer \$token\" -H 'Content-Type: application/json;charset=UTF-8' -H 'Accept-Language: zh-CN,zh;q=0.9' --data-binary '{\"name\":\"拉库\",\"command\":\"ql repo https://js.dayplus.xyz/https://github.com/6dylan6/jdpro.git \\\"jd_|jx_|jddj_\\\" \\\"backUp\\\"  \\\"^jd[^_]|USER|JD|function|sendNotify\\\"\",\"schedule\":\"45 7-23/2  * * *\"}' --compressed 'http://127.0.0.1:5700/api/crons?t=1627380635389'"
     ok "已添加拉库任务，刷新浏览器后去执行拉库任务吧!"
     else
          error "未检测到 token，请访问web完成初始化并登陆进去后,在运行一次脚本"
