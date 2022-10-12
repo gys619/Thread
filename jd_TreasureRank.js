@@ -103,7 +103,7 @@ function doTreasureInteractive(body, type) {
                                 if (data.result.rewardType === 20001) {
                                     console.log(data.result.rewardTitle, data.result.discount);
                                 } else {
-                                    $.log('今日已领取过！');
+                                    console.log(data);
                                 }
                                 break;
                         }
