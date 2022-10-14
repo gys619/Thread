@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 #2.11.3版本青龙一键安装并添加拉库任务
-#部署路径在/root/ql目录，容器名qinglong
 #端口5500
-#modify 2022-6-9
+#modify 2022-10-12
 
 Green="\033[32;1m"
 Red="\033[31m"
@@ -37,7 +36,9 @@ if [[ ! "$USER" == "root" ]]; then
   exit 1
 fi
 
-mkdir -p /root/ql && ql_path=/root/ql
+datav=/root/ql$(date +%Y%m%d)
+mkdir -p $datav  && ql_path=$datav
+
 
 ql_run() {
 if [  -z "$(docker ps -a | grep qinglong  2> /dev/null)" ]; then
@@ -155,5 +156,5 @@ ql_fix
 read -p "已初在浏览器始化并登陆青龙了?，那就按任意键继续！"
 add_repo
 sleep 2
-ok "已部署完成，2.11.3版本青龙，部署路径为/root/ql，容器名qinglong，访问地址http://ip:5500"
+ok "已部署完成，2.11.3版本青龙，数据保存路径为$datav，容器名qinglong，访问地址http://ip:5500"
 
