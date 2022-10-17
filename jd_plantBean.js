@@ -57,6 +57,7 @@ let lnrun = 0;
       $.index = i + 1;
       $.isLogin = true;
       $.nickName = '';
+			$.UA = require('./USER_AGENTS').UARAM();
       //await TotalBean();
       console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
       if (!$.isLogin) {
@@ -273,7 +274,9 @@ async function doTask() {
                          await tjdoublesign('https://wq.jd.com/tjjdsignin/SignedInfo?channel=jx_zdddsq&_t=1665408290789&h5st=20221010212450810%3B6918147264530298%3B0f6ed%3Btk02wc5421cb218nIrUUKibebHSO9xcuoGghWvuYMwC0SFXJaDjbIH5j0m1wTODJ7fc1RtfXsa5cpPVqYaFcfWpgnN63%3Badb2b487bdc5153c21cdb5904f6341286fda615ab4ebcf9a3e88e2d6b82ae05e%3B3.1%3B1665408290810%3B62f4d401ae05799f14989d31956d3c5f0a269d1342e4ecb6ab00268fc69555cdc3295f00e681fd72cd76a48b9fb3faf3579d80b37c85b023e9e8ba94d8d2b852b9cbef42726bbe41ffd8c74540f4a1ced584468ba9e46bfbef62144b678f5532e02456edc95e6131cb12c2dd5fa5c6c0496017f4d3b47ccd5533601d6637bade7c708817b3649de05cdc0f31e890c46e&_stk=_t%2Cchannel&_=1665408290814&sceneval=2&g_login_type=1&g_ty=ajax&appCode=msc588d6d5');
                          await $.wait(1000);
                          continue;    
-                case 3:
+                case 94:
+                        continue;
+								case 3:
                          console.log(`开始做 ${item.taskName}任务`);
                          let unFinishedShopNum = item.totalNum - item.gainedNum;
                          if (unFinishedShopNum === 0) {
@@ -483,7 +486,7 @@ async function dofarm(function_id){
         'Host': 'api.m.jd.com',
         'Accept': '*/*',
         'Connection': 'keep-alive',
-        'User-Agent': 'JD4iPhone/167283 (iPhone;iOS 13.6.1;Scale/3.00)',
+        'User-Agent': $.UA,
         'Accept-Encoding': 'gzip, deflate, br',
         'Referer': 'https://h5.m.jd.com'
       },
@@ -544,7 +547,7 @@ function tjdoublesign(url){
     headers: {
       'Accept':'application/json',
       'Referer': 'https://wqs.jd.com/',
-      'User-Agent': 'jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1',
+      'User-Agent': $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
       'Cookie': cookie
     }
   }
@@ -707,7 +710,7 @@ function requireConfig() {
 }
 function requestGet(function_id, body = {}) {
   if (!body.version) {
-    body["version"] = "9.2.4.1";
+    body["version"] = "9.2.4.2";
   }
   body["monitor_source"] = "plant_app_plant_index";
   body["monitor_refer"] = "";
@@ -720,7 +723,7 @@ function requestGet(function_id, body = {}) {
         'Host': 'api.m.jd.com',
         'Accept': '*/*',
         'Connection': 'keep-alive',
-        'User-Agent': 'JD4iPhone/167283 (iPhone;iOS 13.6.1;Scale/3.00)',
+        'User-Agent': $.UA,
         'Accept-Language': 'zh-Hans-CN;q=1,en-CN;q=0.9',
         'Accept-Encoding': 'gzip, deflate, br',
         'Content-Type': "application/x-www-form-urlencoded"
@@ -825,7 +828,7 @@ function taskUrl(function_id, body) {
       //"Host": "api.m.jd.com",
       "Accept": "*/*",
       //"Connection": "keep-alive",
-      "User-Agent": $.isNode() ? (process.env.JD_USER_AGENT ? process.env.JD_USER_AGENT : (require('./USER_AGENTS').USER_AGENT)) : ($.getdata('JDUA') ? $.getdata('JDUA') : "jdapp;iPhone;9.4.4;14.3;network/4g;Mozilla/5.0 (iPhone; CPU iPhone OS 14_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148;supportJDSHWK/1"),
+      "User-Agent": $.UA,
       "Accept-Language": "zh-Hans-CN;q=1,en-CN;q=0.9",
       "Accept-Encoding": "gzip, deflate, br",
       "Content-Type": "application/x-www-form-urlencoded"
