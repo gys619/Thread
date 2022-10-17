@@ -57,7 +57,7 @@ if ($.isNode()) {
       }
       await bean();
       await showMsg();
-			await $.wait(2000);
+			await $.wait(10*2000);
     }
   }
   allMessage += `\n今日全部账号收入：${allBean}个京豆 🐶\n`
