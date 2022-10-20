@@ -14,11 +14,11 @@
 请求太频繁会被黑ip
 过10分钟再执行
 
-cron:29 2,21 20-31 10 *
+cron:1 1 1 1 *
 ============Quantumultx===============
 [task_local]
 #10.20-11-13 祖玛珑邀请有礼
-29 2,21 20-31 10 * jd_zmlyx.js, tag=10.20-11-13 祖玛珑邀请有礼, enabled=true
+1 1 1 1 * jd_zmlyx.js, tag=10.20-11-13 祖玛珑邀请有礼, enabled=true
 
 */
 
