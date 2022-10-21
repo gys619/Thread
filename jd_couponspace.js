@@ -1,7 +1,7 @@
 
 /*
 入口：领券中心-右侧悬浮
-15 8,14 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_couponspace.js
+35 8,14 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_couponspace.js
 updatetime: 2022/10/20
  */
 
