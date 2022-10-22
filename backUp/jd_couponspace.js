@@ -1,8 +1,8 @@
 
 /*
 入口：领券中心-右侧悬浮
-15 8,14 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_couponspace.js
-updatetime: 2022/10/20
+35 8,14,22 * * * https://raw.githubusercontent.com/6dylan6/jdpro/main/jd_couponspace.js
+updatetime: 2022/10/21 瓜分
  */
 
 const $ = new Env('卷民空间站分红包');
@@ -11,6 +11,8 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '';
+let groId = [];
+let mssion = false;
 if ($.isNode()) {
     Object.keys(jdCookieNode).forEach((item) => {
         cookiesArr.push(jdCookieNode[item])
@@ -40,16 +42,21 @@ if ($.isNode()) {
                 }
                 continue
             }
+
             //await getExploreStatus();
             await homepage();
             await $.wait(500);
-            console.log('当前已有卡片：'+$.collectedCardsNum);
-            if ($.cardlist[0].isOpen){
+            console.log('当前已有卡片：' + $.collectedCardsNum);
+            if ($.cardlist[0].isOpen) {
                 let time = new Date($.exploreEndTime).toLocaleString();
                 console.log('已合成，等待开奖！' + time);
+                if (Date.now() >= $.exploreEndTime) {
+                    console.log('已到开奖时间，去开奖')
+                    await explorePlanet_divideReward();
+                }
                 continue;
             }
-            if ($.collectedCardsNum === 5){
+            if ($.collectedCardsNum === 5) {
                 console.log('已集齐卡片，开始合成');
                 await explorePlanet_compositeCard();
                 continue;
@@ -60,14 +67,17 @@ if ($.isNode()) {
                 await $.wait(500);
                 for (let item of $.tasklist) {
                     if (item.completedItemCount === item.groupItemCount) continue;
-                    await explorePlanet_taskReport(item.encryptTaskId, item.itemId,0);
+                    mssion = true;
+                    await explorePlanet_taskReport(item.encryptTaskId, item.itemId, 0);
                     await $.wait(1000);
                 }
                 for (let item of $.specialComponentTaskInfo) {
                     if (item.completedItemCount === item.groupItemCount || item.waitDuration !== 0) continue;
-                    await explorePlanet_taskReport(item.encryptTaskId, item.itemId,1);
+                    mssion = true;
+                    await explorePlanet_taskReport(item.encryptTaskId, item.itemId, 1);
                     await $.wait(1000);
                 }
+                if (!mssion) break;
                 //await $.wait(1000);
             }
             await homepage();
@@ -77,17 +87,22 @@ if ($.isNode()) {
                 await explorePlanet_explore();
                 await $.wait(500);
             }
+
             await homepage();
             await $.wait(500);
-            if ($.collectedCardsNum === 5){
+            if ($.collectedCardsNum === 5) {
                 console.log('已集齐卡片，开始合成');
                 await explorePlanet_compositeCard();
                 continue;
             }
-
+            await $.wait(500);
+            await explorePlanet_openGroup();
         }
         await $.wait(2000)
     }
+
+    // console.log('\n\n开始内部互助...')
+    // await help();
 })()
     .catch((e) => {
         $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '')
@@ -96,8 +111,18 @@ if ($.isNode()) {
         $.done();
     })
 
-
-
+async function help() {
+    for (let j of groId) {
+        console.log('去助力-->' + j);
+        for (let i = 0; i < cookiesArr.length; i++) {
+            if (cookiesArr[i]) {
+                cookie = cookiesArr[i];
+                await explorePlanet_assist(j);
+                await $.wait(500);
+            }
+        }
+    }
+}
 async function homepage() {
     return new Promise(async (resolve) => {
         $.post(taskUrl('explorePlanet_homePage', 'body={ "channel": "1" }'), async (err, resp, data) => {
@@ -110,7 +135,7 @@ async function homepage() {
                     if (data.data.biz_code === 0) {
                         $.activityid = data.data.result.activityId;
                         $.collectedCardsNum = data.data.result.collectedCardsNum;
-                        $.drawCardChance = data.data.result.drawCardChance||0;
+                        $.drawCardChance = data.data.result.drawCardChance || 0;
                         $.cardlist = data.data.result.cards;
                         $.exploreEndTime = data.data.result.exploreEndTime;
                     } else {
@@ -210,10 +235,81 @@ async function explorePlanet_compositeCard() {
                 } else {
                     data = JSON.parse(data)
                     if (data.data.biz_code === 0) {
-                        console.log('合成成功 ' + data.data.result.cardInfo.cardName||'');
-                        console.log('等待 '+new Date($.exploreEndTime).toLocaleString()+' 开奖');
+                        console.log('合成成功 ' + data.data.result.cardInfo.cardName || '');
+                        console.log('等待 ' + new Date($.exploreEndTime).toLocaleString() + ' 开奖');
                     } else {
                         console.log(data.data.biz_msg)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
+
+async function explorePlanet_assist(gId) {
+    return new Promise(async (resolve) => {
+        $.post(taskUrl('explorePlanet_assist', `body={"activityId":"9","groupId":${gId},"eu":"","fv":""}`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(` API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data)
+                    if (data.data.biz_code === 0) {
+                        console.log('助力成功 ' + gId);
+                    } else {
+                        console.log(data.data.biz_msg)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
+async function explorePlanet_openGroup() {
+    return new Promise(async (resolve) => {
+        $.post(taskUrl('explorePlanet_openGroup', `body={"activityId":"9"}`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(` API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data)
+                    if (data.data.biz_code !== 1004) {
+                        console.log('互助码：' + data.data.result.groupId)
+                        groId.push(data.data.result.groupId);
+                    } else {
+                        console.log(data.data.biz_msg)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
+async function explorePlanet_divideReward() {
+    return new Promise(async (resolve) => {
+        $.post(taskUrl('explorePlanet_divideReward', `body={"activityId":"9"}`), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(` API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data)
+                    if (data.data.biz_code === 0) {
+                        console.log('获得红包：' + data.data.result.discount);
+                    } else {
+                        console.log(data.data.biz_msg);
                     }
                 }
             } catch (e) {

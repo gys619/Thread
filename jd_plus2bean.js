@@ -1,6 +1,6 @@
 
 /*
-9 9 * * * jd_plus2bean.js
+9 8 * * * jd_plus2bean.js
  */
 
 const $ = new Env('plus专属礼');
