@@ -99,7 +99,7 @@ docker_install() {
             mkdir /etc/docker
             cat > /etc/docker/daemon.json <<EOF
 {
-    "registry-mirrors": ["http://hub-mirror.c.163.com"]
+    "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn/","https://hub-mirror.c.163.com","https://registry.docker-cn.com"]
 }
 EOF
             chmod +x /etc/docker/daemon.json
@@ -145,12 +145,14 @@ fi
 ql_fix() {
   docker exec -it qinglong /bin/bash -c "grep -lr 'cdn.jsde' /ql/dist/|xargs  sed -i  's#cdn.*.net/npm/#unpkg.com/#g'"
   docker exec -it qinglong /bin/bash -c "grep -lr 'unpkg.com' /ql/dist/ | xargs -I {} sh -c \"gzip -c {} > {}.gz\""
+  docker exec -it qinglong bash -c "curl -so /ql/deps/sendNotify.js  https://js.dayplus.xyz/https://raw.githubusercontent.com/6dylan6/jdpro/main/sendNotify.js"
 }
 
 ing "开始部署青龙并创建拉库任务，速度根据您的网速决定，请耐心等待....."
 read -p "按任意键开始部署。。。"
 docker_install
 docker_compose
+ing "开始创建容器，如果长时间卡住 ctrl+c终止后重试！！！"
 ql_run
 ql_fix
 read -p "已初在浏览器始化并登陆青龙了?，那就按任意键继续！"
