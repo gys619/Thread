@@ -1,10 +1,10 @@
 /*
-空气、6豆、10豆、20豆
-cron:1 10 * * *
+空气、18豆、36豆、72豆
+cron:1 15 * * *
 ============Quantumultx===============
 [task_local]
 #魔方红包雨
-1 12 * * * jd_mfredrain.js, tag=魔方红包雨, enabled=true
+1 15 * * * jd_mfredrain.js, tag=魔方红包雨, enabled=true
  */
 
 const $ = new Env('魔方红包雨');
@@ -84,7 +84,7 @@ async function dotask() {
 
 function taskUrl() {
   return {
-    url: `https://api.m.jd.com/client.action?client=wh5&clientVersion=1.0.0&appid=redrain-2021&functionId=doInteractiveAssignment&body=%7B%22completionFlag%22:true,%22sourceCode%22:%22acehby20210924%22,%22encryptProjectId%22:%22uyuXxVVy8C3AarwZ2VAHecYNat6%22,%22encryptAssignmentId%22:%2246xcZZ1QaAG7ykQzpDNtSwarHxSk%22%7D`,
+    url: `https://api.m.jd.com/client.action?client=wh5&clientVersion=1.0.0&appid=redrain-2021&functionId=doInteractiveAssignment&body=%7B%22completionFlag%22:true,%22sourceCode%22:%22acehby20210924%22,%22encryptProjectId%22:%222Hp1k6nThCcCdsG7Yu2fponFeVCv%22,%22encryptAssignmentId%22:%223c1UYoiXAuVCffASWpUEQeE2sx2a%22%7D`,
     headers: {
       'Host': 'api.m.jd.com',
       'accept':'application/json, text/plain, */*',
