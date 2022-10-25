@@ -185,15 +185,9 @@ function qryCompositeMaterials() {
           if (safeGet(data)) {
             data = JSON.parse(data)
 			//console.log(data)
-            for (let key of Object.keys(data.data.advData.list)) {
-              let vo = data.data.advData.list[key]
-              if (vo.next && vo.next.productGroup) {
-                for (let key of Object.keys(vo.next.productGroup.list)) {
-                  let skuVo = vo.next.productGroup.list[key]
-                  $.sku.push(skuVo.skuId)
-                }
-                break
-              }
+            if(data) {
+								$.sku = ["100040841833","10061725999787","100006061653","100006061653","100026676965", "100040026969", "100042896729", "100037217923", "100038193673", "100039920647", "10057211785565"]
+                // $.sku2.push(skuVo.advertId)
             }
           }
         }
@@ -217,10 +211,9 @@ function qryCompositeMaterials2() {
           if (safeGet(data)) {
             data = JSON.parse(data)
             //console.log(data);
-            for (let key of Object.keys(data.data.advData.list)) {
-              let vo = data.data.advData.list[key]
-              $.adv.push(vo.advertId)
-              // console.log($.adv);
+						if(data) {
+								$.adv = ["8801668406","6301676863"]
+                // $.sku2.push(skuVo.advertId)
             }
           }
         }
