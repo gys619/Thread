@@ -283,7 +283,7 @@ def check_ck(ck):  # 方法 检查 Cookie有效性 使用变量传递 单次调�
             'user-agent': ua
         }  # 设置 HTTP头
         try:  # 异常捕捉
-            res = requests.get(url=url, headers=headers, verify=False, timeout=10)  # 进行 HTTP请求[GET] 超时 10秒
+            res = requests.get(url=url, headers=headers, verify=False, timeout=10, allow_redirects=False)  # 进行 HTTP请求[GET] 超时 10秒
         except Exception as err:  # 异常捕捉
             logger.debug(str(err))  # 调试日志输出
             logger.info("JD接口错误 请重试或者更换IP")  # 标准日志输出
