@@ -37,7 +37,7 @@ except Exception as err:  # 异常捕捉
     logger.debug(str(err))  # 调试日志输出
     logger.info("无推送文件")  # 标准日志输出
 
-ver = 20524  # 版本号
+ver = 21027  # 版本号
 
 
 # def ql_2fa():
