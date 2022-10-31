@@ -159,9 +159,9 @@ function queryPanamaFloor() {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data)
-            for (let skuVo of data.data.advData.list) {
-				$.sku2 = ["100038312438","100022213851","100038312444","100038962384","100023274622", "100035222536", "10051584954296", "10052442367186"]
-                $.sku2.push(skuVo.advertId)
+            if(data) {
+								$.sku2 = ["100040841833","10061725999787","100006061653","100006061653","100026676965", "100040026969", "100042896729", "100037217923", "100038193673", "100039920647", "10057211785565"]
+                // $.sku2.push(skuVo.advertId)
             }
           }
         }
@@ -185,15 +185,9 @@ function qryCompositeMaterials() {
           if (safeGet(data)) {
             data = JSON.parse(data)
 			//console.log(data)
-            for (let key of Object.keys(data.data.advData.list)) {
-              let vo = data.data.advData.list[key]
-              if (vo.next && vo.next.productGroup) {
-                for (let key of Object.keys(vo.next.productGroup.list)) {
-                  let skuVo = vo.next.productGroup.list[key]
-                  $.sku.push(skuVo.skuId)
-                }
-                break
-              }
+            if(data) {
+								$.sku = ["100040841833","10061725999787","100006061653","100006061653","100026676965", "100040026969", "100042896729", "100037217923", "100038193673", "100039920647", "10057211785565"]
+                // $.sku2.push(skuVo.advertId)
             }
           }
         }
@@ -217,10 +211,9 @@ function qryCompositeMaterials2() {
           if (safeGet(data)) {
             data = JSON.parse(data)
             //console.log(data);
-            for (let key of Object.keys(data.data.advData.list)) {
-              let vo = data.data.advData.list[key]
-              $.adv.push(vo.advertId)
-              // console.log($.adv);
+						if(data) {
+								$.adv = ["8801668406","6301676863"]
+                // $.sku2.push(skuVo.advertId)
             }
           }
         }
