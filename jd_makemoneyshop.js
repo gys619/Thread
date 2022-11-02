@@ -25,7 +25,9 @@ if ($.isNode()) {
 if (process.env.DYJSHAREID) {
 	if (process.env.DYJSHAREID.indexOf('&') > -1) {
 		shareId = process.env.DYJSHAREID.split('&');
-	}
+	} else {
+        shareId = [process.env.DYJSHAREID];
+    }
 }
 let helpinfo = {};
 !(async () => {
@@ -77,7 +79,8 @@ let helpinfo = {};
 					if (helpinfo[$.UserName].nohelp) { console.log('已无助力次数了'); continue };
 					if (helpinfo[$.UserName].hot) { console.log('可能黑了，跳过！'); continue };
 					await help(shareId[j]);
-					await $.wait(1000);
+					console.log('随机等待');
+					await $.wait(parseInt(Math.random() * 3000 + 2000, 10))
 				}
 			}
 		}
