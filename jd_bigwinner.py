@@ -11,7 +11,7 @@ Python 3.9.7
 export dyjpin="需要助力的pin值"  
 
 cron: 6 6 6 6 *
-new Env('邀请赢大礼');
+new Env('赚钱大赢家');
 """
 
 ""#line:7:"""
