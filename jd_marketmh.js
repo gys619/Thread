@@ -1,7 +1,7 @@
 /*
 超市盲盒
 入口：京东APP-更多-超市盲盒
-31 12,21 * * *  jd_marketmh.js
+39 12,21 * * *  jd_marketmh.js
 updatetime：2022-10-28
 jdpro
  */
@@ -53,7 +53,7 @@ const JD_API_HOST = `https://api.m.jd.com/client.action`;
 
 async function main() {
     await starShopPageInfo({"taskId":"","linkId":linkId,"encryptPin":""})
-	if (!$.flag) await starShopDraw({"linkId":linkId,"isDailyRaffle":true});
+	//if (!$.flag) await starShopDraw({"linkId":linkId,"isDailyRaffle":true});
     await $.wait(1000);
     await apTaskList({"linkId":linkId});
     if ($.allList){
