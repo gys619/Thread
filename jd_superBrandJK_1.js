@@ -50,7 +50,7 @@ $.flag = false
 				await main($.cookie);
                 if (_0x44559b == 0 && $.flag) return;
 			}catch(_0x282ca){
-				console.log(JSON.stringify(_0x282ca));
+				console.log(_0x282ca);
 			}
 		}
 	}
@@ -88,7 +88,10 @@ $.flag = false
 			}else if(_0x224f8e.bizCode==='108'){
 				console.log('助力次数已用完');
 				_0x4ce29d=false;
-			}
+      } else if (_0x224f8e.bizMsg.indexOf('风控') > -1) {
+                console.log('黑号跳过！');
+                break;
+            }
 			console.log('助力结果：'+_0x224f8e.bizMsg);
 			await $.wait(2000);
 		}
@@ -104,6 +107,9 @@ async function main(_0x14f2ac){
 	if(_0x43a9de.bizCode == 'MP001'){
 		console.log('本期活动结束，等待下期。。。');
         $.flag = true
+        return;
+    } else if (_0x43a9de.bizCode == '2001') {
+        console.log('黑号了！');
 		return;
 	}
 	let _0x215414=_0x43a9de.result.activityBaseInfo;
