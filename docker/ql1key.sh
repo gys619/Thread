@@ -41,7 +41,7 @@ mkdir -p $datav  && ql_path=$datav
 
 
 ql_run() {
-if [  -z "$(docker ps -a | grep qinglong  2> /dev/null)" ]; then
+if [  -z "$(docker ps -a |awk '{print $NF}'| grep qinglong  2> /dev/null)" ]; then
 cd $ql_path
 cat > docker-compose.yml <<EOF
 version: '2'
