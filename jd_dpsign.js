@@ -1,7 +1,9 @@
 /*
 店铺签到，各类店铺签到，有新的店铺直接添加token即可
+可设置变量DPSTOKEN='A&B&C'
+会和内置的token去重合并
 每日最多签到22家店铺，超出失败
-更新日期:2022-5-11
+更新日期:2022-11-6
 cron 3 0,23 * * * jd_dpsign.js, tag=店铺签到
 */
 const $ = new Env('店铺签到');
@@ -19,16 +21,25 @@ let vender=''
 let num=0
 let shopname=''
 
+let dptoken = [];
+if (process.env.DPSTOKEN) {
+    if (process.env.DPSTOKEN.indexOf('&')){
+        dptoken = process.env.DPSTOKEN.split('&');
+    } else {
+        dptoken.push(process.env.DPSTOKEN);
+    }
+}
+
 const token=[
 
-  //"968A9A0D4932D48F74D22C7A52E56DAD",//2
-  //"69C81D088359551F6F756D4F7A3B7BC5",//37 
+  //"968A9A0D4932D48F74D22C7A52E56DAD",
+  //"69C81D088359551F6F756D4F7A3B7BC5",
   //"69C81D088359551F6F756D4F7A3B7BC5",//37  
   //"23114472F364FE7AFD884922C03813E6",//135
   //"CD0E17DB19BB894D54EBF70B2E3E40C0",//3
   //"D61A5DCC14FBD8FE566DE224AE730BAC",//7
   //"D61A5DCC14FBD8FE566DE224AE730BAC",//7
-  "74058B0E3F509C3016FCB12DC10D5FD2",//14 
+  //"74058B0E3F509C3016FCB12DC10D5FD2",//14 
   //"B881D49A8D25321D53538973C963F19F",//7
   //"032B7EC9D12D7113E3B1D4947CB66DFB",//3
   //"9D112935025746239099B25CB8B1EFEE",//3
@@ -50,7 +61,6 @@ const token=[
   
 ]
 
-$.TokenList =[];
 
 if ($.isNode()) {
   Object.keys(jdCookieNode).forEach((item) => {
@@ -74,13 +84,9 @@ if ($.isNode()) {
   }
   
 	$.TokenLists = []
-  
-        //$.innerTokenList = await getStoreTokee('https://zy.kejiwanjia.com/jd_dpqiandao.php');
-        $.innerTokenList = token
-	
-	$.TokenLists.push(...$.TokenList,...$.innerTokenList);
-
-	
+	$.TokenLists.push(...dptoken,...token);
+    $.TokenLists = [...new Set($.TokenLists)]
+    if ($.TokenLists.length === 0) {console.log('无店铺签到token，退出！');return};
   for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
@@ -116,7 +122,6 @@ if ($.isNode()) {
 async function babel_diy_zeus(){
 	
   for (var j = 0; j < $.TokenLists.length; j++) {
-	  
 	await $.wait(1000);  
     num=j+1
     if ($.TokenLists[j]=='') {continue}
