@@ -2,7 +2,7 @@
 汽车邀新100豆
 [task_local]
 #汽车邀新100豆
-29 11,21 * * * jd_car.js, tag=汽车邀新100豆, enabled=true
+2 2 29 2 * jd_car.js, tag=汽车邀新100豆, enabled=true
 */
 
 const $ = new Env('汽车邀新100豆');
