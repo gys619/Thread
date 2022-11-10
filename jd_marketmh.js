@@ -119,7 +119,7 @@ function starShopPageInfo(body) {
 function starShopDraw(body) {
     let opt =
     {
-        url: 'https://api.m.jd.com/?functionId=starShopDraw&body={%22linkId%22:%22qHqXOx2bvqgFOzTH_-iJoQ%22}&appid=activities_platform&t=1667822944208&client=android&clientVersion=11.3.0&h5st=20221107200904210%3B6499624445078456%3B568c6%3Btk02w69911b1718n4BJd1F3S7xUk5Lw%2Bnu3d2ZLLORy0io21aJoCapEcA8gbK9tvLzON1FQ1iLeder0OAU4Th%2F7yWwZn%3Beb5ae376b553da072432e7749e8b852745ad3ea35e554ce04d1eb2b0ab1c3bfa%3B3.1%3B1667822944210%3B62f4d401ae05799f14989d31956d3c5f0a269d1342e4ecb6ab00268fc69555cdc3295f00e681fd72cd76a48b9fb3faf3579d80b37c85b023e9e8ba94d8d2b852b9cbef42726bbe41ffd8c74540f4a1ced584468ba9e46bfbef62144b678f5532e02456edc95e6131cb12c2dd5fa5c6c0ca7e28a3c717e0dd9ae889f2eaf9441c5254165d7b1aa2509f8e74f626a4f631',
+        url: 'https://api.m.jd.com/?functionId=starShopDraw&body=%7B%22linkId%22%3A%22qHqXOx2bvqgFOzTH_-iJoQ%22%7D&appid=activities_platform&t=1668082944889&client=android&clientVersion=11.3.0&h5st=20221110202224891%3B8915369021164870%3B568c6%3Btk02wc2541cff18nKNebbMoTCZiHoj7rAhs6uyK6Ssp8617Yszpub65VJdSnR7okASgLjYbRuLIEkXs3oGSLvUqtlEkI%3B21201e9f709dc1d9fe819f63cd2bfbe1290f430bca899586af52516b3a2c1d6c%3B3.1%3B1668082944891%3B62f4d401ae05799f14989d31956d3c5f0a269d1342e4ecb6ab00268fc69555cdc3295f00e681fd72cd76a48b9fb3faf3579d80b37c85b023e9e8ba94d8d2b852b9cbef42726bbe41ffd8c74540f4a1ced584468ba9e46bfbef62144b678f5532e02456edc95e6131cb12c2dd5fa5c6c051cc8275f9c96483f5eec8eb4e0b34a249323b06e4472b355edbc807e2b1df6c',
         //body: `functionId=${functionId}&body=${JSON.stringify(body)}&client=wh5&clientVersion=1.0.0&uuid=ef746bc0663f7ca06cdd1fa724c15451900039cf`,
         headers: {
             'User-Agent': UA,
