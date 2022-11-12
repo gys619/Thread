@@ -37,7 +37,8 @@ $.outFlag = 0
     return;
   }
   if (!activityIdList) {
-    let data = await getData("https://gitee.com/KingRan521/JD-Scripts/raw/master/shareCodes/dlpj.json")
+    $.log(`没有电脑配件ID，尝试获取远程`);
+    let data = await getData("https://cdn.jsdelivr.net/gh/KingRan/shareCodes@master/dlpj.json")
     if (data && data.length) {
         $.log(`获取到远程且有数据`);
         activityIdList = data.join('@')

@@ -38,7 +38,7 @@ $.outFlag = 0
   }
   if (!activityIdList) {
     $.log(`没有电脑配件ID，尝试获取远程`);
-    let data = await getData("https://cdn.jsdelivr.net/gh/444444/shareCodes@master/dlpj.json")
+    let data = await getData("https://gitee.com/444444521/JD-Scripts/raw/master/shareCodes/dlpj.json")
     if (data && data.length) {
         $.log(`获取到远程且有数据`);
         activityIdList = data.join('@')

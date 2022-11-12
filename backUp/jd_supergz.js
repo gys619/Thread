@@ -1,14 +1,11 @@
 /*
 一次性脚本
-频道关注
-cron "11 21 25 10 *" jd_supergz.js
+6 8 * * * jd_supergz.js, tag=频道关注
  */
 
 const $ = new Env('频道关注');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
-
-
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
 let cookiesArr = [], cookie = '', message;
 
