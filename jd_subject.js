@@ -1,7 +1,7 @@
 
 /*
 入口：https://prodev.m.jd.com/mall/active/4JVvmjx2XwTx7cB64eAFPds1xCox/index.html
-22 0-23/3 * * * jd_subject.js
+22 0-23/4 * * * jd_subject.js
 */
 
 const $ = new Env('短视频点赞抽奖');
