@@ -1,7 +1,7 @@
 
 /*
 入口：https://prodev.m.jd.com/mall/active/4JVvmjx2XwTx7cB64eAFPds1xCox/index.html
-22 0-23/4 * * * jd_subject.js
+22 0-23/3 * * * jd_subject.js
 */
 
 const $ = new Env('短视频点赞抽奖');
@@ -24,7 +24,7 @@ if ($.isNode()) {
 		$.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 		return;
 	}
-	for (let i = 0; i < cookiesArr.length; i++) {
+	for (let i = 0; i < 20; i++) {
 		if (cookiesArr[i]) {
 			cookie = cookiesArr[i];
 			$.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
