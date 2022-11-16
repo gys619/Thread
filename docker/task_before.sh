@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 ## Build 20220831-001-test
-## 6dylan6_1008
+## 6dylan6_1116
 
 name_js=(
-  jd_fruit
+  jd_fruit_help
   jd_pet
   jd_plantBean
   jd_dreamFactory
