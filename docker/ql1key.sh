@@ -99,7 +99,7 @@ docker_install() {
             mkdir /etc/docker
             cat > /etc/docker/daemon.json <<EOF
 {
-    "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn/","https://hub-mirror.c.163.com","https://registry.docker-cn.com"]
+    "registry-mirrors": ["https://pee6w651.mirror.aliyuncs.com/","https://registry.docker-cn.com"]
 }
 EOF
             chmod +x /etc/docker/daemon.json
