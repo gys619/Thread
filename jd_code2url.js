@@ -36,11 +36,12 @@ function TotalBean(data) {
 				if (err) {
 					$.logErr(err)
 				} else {
-					if (data) {
-						data = JSON.parse(data);
-						console.log('链接为：' + data.data.jumpUrl);
+                    data = JSON.parse(data);
+					if (data.code == 0) {
+                        console.log('\n链接为：')
+						console.log(data.data.jumpUrl);
 					} else {
-						console.log('京东服务器返回空数据');
+						console.log(data.msg);
 					}
 				}
 			} catch (e) {
