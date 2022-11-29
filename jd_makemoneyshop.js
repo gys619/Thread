@@ -9,7 +9,7 @@
 DYJSHAREID = 'xxx&xxx&xxx'
 10 10 10 10 * https://raw.githubusercontent.com/11111129/jdpro/main/jd_makemoneyshop.js
 By: https://github.com/11111129/jdpro
-updatetime: 2022/11/13 不过滤黑号了，直接助力
+updatetime: 2022/11/25 
  */
 
 const $ = new Env('特价版大赢家');
@@ -78,7 +78,7 @@ let helpinfo = {};
 			helpnum = 0;
 			if ($.index === m) { console.log('已无账号可用于助力！结束\n'); break };
 			for (let i = k; i < m; i++) {
-				if (helpnum == 10) { console.log('助力已满，跳出！\n'); k = i; break };
+				if (helpnum == 5) { console.log('助力已满，跳出！\n'); k = i; break };
 				if ($.fullhelp) { console.log('助力已满，跳出！\n'); k = i - 1; break };
 				if (cookiesArr[i]) {
 					cookie = cookiesArr[i];
@@ -89,7 +89,7 @@ let helpinfo = {};
 					helpinfo[$.UserName].ua = UA;
 					console.log(`\n开始【账号${$.index}】${$.nickName || $.UserName}`);
 					if (helpinfo[$.UserName].nohelp) { console.log('已无助力次数了'); continue };
-					if (helpinfo[$.UserName].hot) { console.log('可能黑了，跳过！'); continue };
+					//if (helpinfo[$.UserName].hot) { console.log('可能黑了，跳过！'); continue };
 					await help(shareId[j]);
 					//console.log('随机等待1-2秒');
 					await $.wait(parseInt(Math.random() * 1000 + 1000, 10))
@@ -108,7 +108,6 @@ let helpinfo = {};
 			$.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
 			$.index = i + 1;
             $.canUseCoinAmount = 0;
-			if (Object.keys(helpinfo).length == 0) helpinfo[$.UserName] = {};
 			try {
 				UA = helpinfo[$.UserName].ua;
 			} catch (e) {
@@ -154,7 +153,7 @@ function getinfo(xc) {
 					if (data.code == 0) {
 						if (xc) {
 							let sId = data.data.shareId;
-							helpinfo[$.UserName].sId = `${sId}`;
+							//helpinfo[$.UserName].sId = `${sId}`;
 							console.log('助力码：' + sId);
 							console.log('当前营业金：' + data.data.canUseCoinAmount);
 						}
@@ -162,7 +161,7 @@ function getinfo(xc) {
 						console.log('此CK可能黑了！');
 					} else {
 						console.log(data.msg);
-						helpinfo[$.UserName].hot = 1;
+						//helpinfo[$.UserName].hot = 1;
 					}
 				}
 			} catch (e) {
