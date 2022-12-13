@@ -78,7 +78,7 @@ let helpinfo = {};
 			helpnum = 0;
 			if ($.index === m) { console.log('已无账号可用于助力！结束\n'); break };
 			for (let i = k; i < m; i++) {
-				if (helpnum == 10) { console.log('助力已满，跳出！\n'); k = i; break };
+				if (helpnum == 20) { console.log('助力已满，跳出！\n'); k = i; break };
 				if ($.fullhelp) { console.log('助力已满，跳出！\n'); k = i - 1; break };
 				if (cookiesArr[i]) {
 					cookie = cookiesArr[i];
