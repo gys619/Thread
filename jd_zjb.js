@@ -8,7 +8,7 @@ export InviterPin="9vOskAagcMJ4EOWXPQSS9A%3D%3D" ##你的邀请码
 
 [task_local]
 #柠檬赚金币
-20 0 * * * jd_zjb.js, tag=柠檬赚金币, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
+1 0,14 * * * jd_zjb.js, tag=柠檬赚金币, img-url=https://raw.githubusercontent.com/Orz-3/mini/master/Color/jd.png, enabled=true
 */
 const $ = new Env('极速版赚金币邀请');
 const notify = $.isNode() ? require('./sendNotify') : '';
@@ -59,11 +59,11 @@ const JD_API_HOST = 'https://api.m.jd.com/client.action';
         }
         continue
       }
-      await info()
+      // await info()
       if (InviterPin.length != 0) {
         await help()
       } else {
-        await help2("zjb",Math.random() > 0.5 ? "9vOskAagcMJ4EOWXPQSS9A%3D%3D" : "9irilvenEupYF488TUrl19DLuKQ9zWnXYHf9anC0ujw%3D")        
+        await help2("zjb",Math.random() > 0.5 ? "9vOskAagcMJ4EOWXPQSS9A%3D%3D" : "9irilvenEupYF488TUrl19DLuKQ9zWnXYHf9anC0ujw%3D")
       }
     }
   }
@@ -111,7 +111,7 @@ function help() {
   return new Promise(async (resolve) => {
     let options = {
       url: `https://api.m.jd.com`,
-      body: `functionId=TaskInviteService&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"${encodeURIComponent(InviterPin)}","type":1}}&appid=market-task-h5&uuid=7303439343432346-7356431353233311&eu=7303439343432341&fv=7356431353233321&_t=1623475839367`,
+      body: `functionId=TaskInviteServiceNew&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"${encodeURIComponent(InviterPin)}","type":1}}&appid=jx_h5&uuid=7303439343432346-7356431353233311&eu=7303439343432341&fv=7356431353233321&_t=1623475839367`,
       headers: {
         "Origin": "https://assignment.jd.com",
         "Host": "api.m.jd.com",
@@ -123,7 +123,7 @@ function help() {
       try {
         const reust = JSON.parse(data)
         if (reust.code == 0) {
-          $.log(`即将开始邀请：${InviterPin}\n邀请获得金币: ` + reust.data.coinReward * 0.1 + "金币")
+          $.log(`邀请获得金币: ` + reust.data.coinReward * 0.1 + "金币")
         } else
           console.log(reust.message)
       } catch (e) {
@@ -139,7 +139,7 @@ function help2(name,code) {
   return new Promise(async (resolve) => {
     let options = {
       url: `https://api.m.jd.com`,
-      body: `functionId=TaskInviteService&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"${code}","type":1}}&appid=market-task-h5&uuid=7303439343432346-7356431353233311&eu=7303439343432341&fv=7356431353233321&_t=1623475839367`,
+      body: `functionId=TaskInviteServiceNew&body={"method":"participateInviteTask","data":{"channel":"1","encryptionInviterPin":"${code}","type":1}}&appid=jx_h5&uuid=7303439343432346-7356431353233311&eu=7303439343432341&fv=7356431353233321&_t=1623475839367`,
       headers: {
         "Origin": "https://assignment.jd.com",
         "Host": "api.m.jd.com",
@@ -152,7 +152,7 @@ function help2(name,code) {
       try {
         const reust = JSON.parse(data)
         if (reust.code === 0) {
-          $.log(`赚金币助力【${name}】成功，感谢！`)
+          $.log(`邀请获得金币: ` + reust.data.coinReward * 0.1 + "金币")
         } else
           console.log(reust.message)
       } catch (e) {

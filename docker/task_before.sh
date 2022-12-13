@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ## Build 20220831-001-test
-## 6dylan6_1118
+## 6dylan6_1207
 
 name_js=(
   jd_farm_help
@@ -140,7 +140,9 @@ def_envs_tool(){
     local i
     for i in $@; do
         local token=$(cat $file_auth_user | jq -r .token)
-        curl -s --noproxy "*" "http://0.0.0.0:5600/api/envs?searchValue=$i" -H "Authorization: Bearer $token" | jq .data
+		if [[ ! -z ${token} ]]; then
+            curl -s --noproxy "*" "http://0.0.0.0:5600/api/envs?searchValue=$i" -H "Authorization: Bearer $token" | jq .data
+		fi
     done
 }
 
