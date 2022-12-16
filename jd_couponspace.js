@@ -1,7 +1,7 @@
 
 /*
 入口：领券中心
-35 8,12,21 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_couponspace.js
+15 8,12,21 * * * https://raw.githubusercontent.com/11111129/jdpro/main/jd_couponspace.js
 updatetime: 2022/10/27 
  */
 
@@ -45,7 +45,7 @@ if ($.isNode()) {
             }
 
             //await getExploreStatus();
-            console.log('本期活动已结束！') ; break;
+            //console.log('本期活动已结束！') ; break;
             await homepage();
             if ($.end) break;
             await $.wait(500);

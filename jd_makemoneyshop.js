@@ -9,7 +9,7 @@
 DYJSHAREID = 'xxx&xxx&xxx'
 10 10 10 10 * https://raw.githubusercontent.com/11111129/jdpro/main/jd_makemoneyshop.js
 By: https://github.com/11111129/jdpro
-updatetime: 2022/12/6 老接口
+updatetime: 2022/12/16 老接口已废
  */
 
 const $ = new Env('特价版大赢家');
@@ -39,8 +39,8 @@ let helpinfo = {};
 		$.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 		return;
 	}
-	console.log('\n运行一遍可以看到助力码，然后设置需要助力的！')
-	console.log('\n运行流程：助力--领取任务奖励！！！\n')
+	//console.log('\n运行一遍可以看到助力码，然后设置需要助力的！')
+	console.log('\n助力功能已废！！！\n')
 	// for (let i = 0; i < cookiesArr.length; i++) {
 	//     if (cookiesArr[i]) {
 	//         cookie = cookiesArr[i];
@@ -67,7 +67,7 @@ let helpinfo = {};
 	//     }
 
 	// }
-	if (shareId.length > 0) {
+	if (shareId.length > 0 && 0) {
 		console.log('\n\n开始助力...')
 		$.index = 1;
 		$.fullhelp = false;
@@ -97,7 +97,7 @@ let helpinfo = {};
 			}
 		}
 	} else {
-		console.log('无助立马请设置！！\n')
+		console.log('助力功能不可用！！\n')
 	}
 
 	console.log('开始领取任务奖励...')
