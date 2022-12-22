@@ -1,10 +1,10 @@
 /*
-东东农场助力
-20 2,5 * * * jd_farm_help.js
+东东农场邀请好友奖励
+8 1,10 * * * jd_farm_del.js
 updatetime:2022/12/22
 dlan
 */
-const $ = new Env('东东农场-助力');
+const $ = new Env('东东农场-邀好友奖励');
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
 //助力好友分享码(最多3个,否则后面的助力失败),原因:京东农场每人每天只有3次助力机会
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一京东账号的好友互助码请使用@符号隔开。
@@ -33,8 +33,8 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
             $.index = i + 1;
             $.isLogin = true;
             $.nickName = '';
-            await TotalBean();
-            console.log(`开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
+            //await TotalBean();
+            console.log(`\n开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
 
@@ -63,7 +63,7 @@ async function jdFruit() {
     try {
         await initForFarm();
         if ($.farmInfo.farmUserPro) {
-            await masterHelpShare();//助力好友
+            //await masterHelpShare();//助力好友
             await doDailyTask();
         } else {
             console.log(`初始化农场数据异常, 请登录京东 app查看农场0元水果功能是否正常,农场初始化数据: ${JSON.stringify($.farmInfo)}`);
@@ -79,9 +79,9 @@ async function jdFruit() {
 }
 async function doDailyTask() {
 
-    //await getAwardInviteFriend();
+    await getAwardInviteFriend();
 
-    await turntableFarm()//天天抽奖得好礼
+    //await turntableFarm()//天天抽奖得好礼
 }
 async function predictionFruit() {
     console.log('开始预测水果成熟时间\n');
@@ -1132,13 +1132,13 @@ function shareCodesFormat() {
             //newShareCodes = newShareCodes.concat(readShareCodeRes.data || []);
             newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
         }
-        console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
+        //console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
         resolve();
     })
 }
 function requireConfig() {
     return new Promise(resolve => {
-        console.log('开始获取配置文件\n')
+        //console.log('开始获取配置文件\n')
         notify = $.isNode() ? require('./sendNotify') : '';
         //Node.js用户请在jdCookie.js处填写京东ck;
         const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -1177,7 +1177,7 @@ function requireConfig() {
         }
         // console.log(`$.shareCodesArr::${JSON.stringify($.shareCodesArr)}`)
         // console.log(`jdFruitShareArr账号长度::${$.shareCodesArr.length}`)
-        console.log(`您提供了${$.shareCodesArr.length}个账号的农场助力码\n`);
+        //console.log(`您提供了${$.shareCodesArr.length}个账号的农场助力码\n`);
         resolve()
     })
 }
