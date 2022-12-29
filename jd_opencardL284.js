@@ -5,11 +5,11 @@
 第一个账号助力作者 其他依次助力CK1
 注意：第一个CK黑号会全部助力所填写的助力码
 
-cron:31 3,15 28-31,1-15 12,1
+cron:31 4,15 28-31,1-15 12,1 *
 ============Quantumultx===============
 [task_local]
 #12.28-1.15 年货大牌
-31 3,15 28-31,1-15 12,1 jd_opencardL284.js, tag=12.28-1.15 年货大牌, enabled=true
+31 4,15 28-31,1-15 12,1 * jd_opencardL284.js, tag=12.28-1.15 年货大牌, enabled=true
 */
 let opencard_toShop = "false"
 const $ = new Env("12.28-1.15 年货大牌");
