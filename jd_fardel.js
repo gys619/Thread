@@ -1,10 +1,10 @@
 /*
 东东农场邀请好友奖励
-8 1,10 * * * jd_farm_del.js
+8 1 * * * jd_farm_del.js
 updatetime:2022/12/22
 dlan
 */
-const $ = new Env('东东农场-邀好友奖励');
+const $ = new Env('东东农场-删好友奖励');
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
 //助力好友分享码(最多3个,否则后面的助力失败),原因:京东农场每人每天只有3次助力机会
 //此此内容是IOS用户下载脚本到本地使用，填写互助码的地方，同一京东账号的好友互助码请使用@符号隔开。
@@ -629,16 +629,16 @@ async function getAwardInviteFriend() {
                 }
             }
         }
-        await receiveFriendInvite();//为他人助力,接受邀请成为别人的好友
-        if ($.friendList.inviteFriendCount > 0) {
-            if ($.friendList.inviteFriendCount > $.friendList.inviteFriendGotAwardCount) {
-                console.log('开始领取邀请好友的奖励');
-                await awardInviteFriendForFarm();
-                console.log(`领取邀请好友的奖励结果：：${JSON.stringify($.awardInviteFriendRes)}`);
-            }
-        } else {
-            console.log('今日未邀请过好友')
-        }
+        //await receiveFriendInvite();//为他人助力,接受邀请成为别人的好友
+        //if ($.friendList.inviteFriendCount > 0) {
+        //    if ($.friendList.inviteFriendCount > $.friendList.inviteFriendGotAwardCount) {
+        //        console.log('开始领取邀请好友的奖励');
+        //        await awardInviteFriendForFarm();
+        //        console.log(`领取邀请好友的奖励结果：：${JSON.stringify($.awardInviteFriendRes)}`);
+        //    }
+        //} else {
+        //    console.log('今日未邀请过好友')
+        //}
     } else {
         console.log(`查询好友列表失败\n`);
     }
