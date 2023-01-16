@@ -97,7 +97,7 @@ function getid(functionid, source) {
 
 function doTask1() {
     return new Promise(async (resolve) => {
-        let body = `{"source":"${$.source}","activityId":${$.actid},"encryptProjectId":"mCqqcvGW1LKeAWqJtc6NwHGXK2u","completionFlag":1,"encryptAssignmentId":"H8VttZkAwM83dpETucHznqaNGAc","assignmentType":${$.assignmentType},"actionType":0}`
+        let body = `{"source":"${$.source}","activityId":"1012353","encryptProjectId":"mCqqcvGW1LKeAWqJtc6NwHGXK2u","completionFlag":1,"encryptAssignmentId":"H8VttZkAwM83dpETucHznqaNGAc","assignmentType":${$.assignmentType},"actionType":0}`
         const options = taskPostUrl(`superBrandDoTask`, body)
         $.post(options, async (err, resp, data) => {
             try {
