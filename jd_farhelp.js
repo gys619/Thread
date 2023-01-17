@@ -13,13 +13,14 @@ let shareCodes = [ // 这个列表填入你要助力的好友的shareCode
     ''
 ]
 
-let message = '', subTitle = '', option = {}, isFruitFinished = false;
+let message = '', subTitle = '', fulled=[], option = {}, isFruitFinished = false;
 const retainWater = 100;//保留水滴大于多少g,默认100g;
 let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭通知推送
 let jdFruitBeanCard = false;//农场使用水滴换豆卡(如果出现限时活动时100g水换20豆,此时比浇水划算,推荐换豆),true表示换豆(不浇水),false表示不换豆(继续浇水),脚本默认是浇水
 let randomCount = $.isNode() ? 20 : 5;
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
 const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://h5.m.jd.com/babelDiy/Zeus/3KSjXqQabiTuD1cJ28QskrpWoBKT/index.html%22%20%7D`;
+$.reqnum=1;
 !(async () => {
     await requireConfig();
     if (!cookiesArr[0]) {
@@ -477,6 +478,7 @@ async function masterHelpShare() {
                 console.log(`【助力结果】: 已经助力过TA了`);
             } else if ($.helpResult.helpResult.code === '10') {
                 console.log(`【助力结果】: 对方已满助力`);
+                fulled.push(code);
             } else {
                 console.log(`助力其他情况：${JSON.stringify($.helpResult.helpResult)}`);
             }
@@ -727,6 +729,7 @@ async function receiveFriendInvite() {
             console.log('自己不能邀请自己成为好友噢\n')
             continue
         }
+		if (newShareCodes.findIndex(code)>=5) break;
         await inviteFriend(code);
         // console.log(`接收邀请成为好友结果:${JSON.stringify($.inviteFriendRes)}`)
         if ($.inviteFriendRes && $.inviteFriendRes.helpResult && $.inviteFriendRes.helpResult.code === '0') {
@@ -1132,6 +1135,7 @@ function shareCodesFormat() {
             //newShareCodes = newShareCodes.concat(readShareCodeRes.data || []);
             newShareCodes = [...new Set([...newShareCodes, ...(readShareCodeRes.data || [])])];
         }
+        newShareCodes = newShareCodes.filter(item => { return fulled.indexOf(item) == -1 });
         console.log(`第${$.index}个京东账号将要助力的好友${JSON.stringify(newShareCodes)}`)
         resolve();
     })
@@ -1211,6 +1215,8 @@ function TotalBean() {
     });
 }
 function request(function_id, body = {}, timeout = 1000) {
+    if($.reqnum % 5 == 0 ) {console.log('\n等待1分钟......\n');timeout=60000};
+    $.reqnum++;     
     return new Promise(resolve => {
         setTimeout(() => {
             $.get(taskUrl(function_id, body), (err, resp, data) => {
