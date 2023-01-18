@@ -3,6 +3,8 @@
 20 2,5 * * * jd_farm_help.js
 updatetime:2022/12/22
 dlan
+变量
+epxort FRUIT_DELAY = '1000',设置等待时间(毫秒)，默认请求5次接口等待60秒（60000）
 */
 const $ = new Env('东东农场-助力');
 let cookiesArr = [], cookie = '', jdFruitShareArr = [], isBox = false, notify, newShareCodes, allMessage = '';
@@ -19,6 +21,7 @@ let jdNotify = false;//是否关闭通知，false打开通知推送，true关闭
 let jdFruitBeanCard = false;//农场使用水滴换豆卡(如果出现限时活动时100g水换20豆,此时比浇水划算,推荐换豆),true表示换豆(不浇水),false表示不换豆(继续浇水),脚本默认是浇水
 let randomCount = $.isNode() ? 20 : 5;
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
+const delay = process.env.FRUIT_DELAY||60000;
 const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%20%22des%22:%20%22m%22,%20%22url%22:%20%22https://h5.m.jd.com/babelDiy/Zeus/3KSjXqQabiTuD1cJ28QskrpWoBKT/index.html%22%20%7D`;
 $.reqnum=1;
 !(async () => {
@@ -729,7 +732,7 @@ async function receiveFriendInvite() {
             console.log('自己不能邀请自己成为好友噢\n')
             continue
         }
-		if (newShareCodes.findIndex(code)>=5) break;
+		if (newShareCodes.findIndex(a=>a===code) >= 5) break;
         await inviteFriend(code);
         // console.log(`接收邀请成为好友结果:${JSON.stringify($.inviteFriendRes)}`)
         if ($.inviteFriendRes && $.inviteFriendRes.helpResult && $.inviteFriendRes.helpResult.code === '0') {
@@ -1215,8 +1218,8 @@ function TotalBean() {
     });
 }
 function request(function_id, body = {}, timeout = 1000) {
-    if($.reqnum % 5 == 0 ) {console.log('\n等待1分钟......\n');timeout=60000};
-    $.reqnum++;     
+    if(process.env.FRUIT_DELAY && $.reqnum % 5 == 0 ) {console.log(`\n等待${delay/1000}秒......\n`);timeout=delay};
+    $.reqnum++;      
     return new Promise(resolve => {
         setTimeout(() => {
             $.get(taskUrl(function_id, body), (err, resp, data) => {
