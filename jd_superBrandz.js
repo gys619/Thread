@@ -48,7 +48,7 @@ if ($.isNode()) {
                 continue
             }
             await getid("superBrandTaskList", "hall_1111")
-						await doTask1();
+						// await doTask1();
         }
     }
 })()
@@ -58,7 +58,7 @@ if ($.isNode()) {
 //获取活动信息
 function getid(functionid, source) {
     return new Promise(async (resolve) => {
-        const options = taskPostUrl(functionid, `{"source":"${source}","activityId":1012333}`)
+        const options = taskPostUrl(functionid, `{"source":"${source}","activityId":1012465}`)
         //  console.log(options)
         $.post(options, async (err, resp, data) => {
             try {
@@ -71,8 +71,8 @@ function getid(functionid, source) {
                     if (data.data && data.code === "0" && data.data.result) {
                         $.result = data.data.result.taskList || []
                         for(const z of $.result){
-													$.actid = '1012333'
-													$.pid = '2aZfauURe2aNSkpWhRgJYi2SgSJc'
+													$.actid = '1012465'
+													$.pid = 'JFMx7ke6h6KejTzCXQTfpNi8v1L'
 													$.source = 'hall_1111'
 													$.assignmentName = z.assignmentName
 													$.assignmentType = z.assignmentType
@@ -95,53 +95,6 @@ function getid(functionid, source) {
     });
 }		
 
-function doTask1() {
-    return new Promise(async (resolve) => {
-        let body = `{"source":"${$.source}","activityId":"1012353","encryptProjectId":"mCqqcvGW1LKeAWqJtc6NwHGXK2u","completionFlag":1,"encryptAssignmentId":"H8VttZkAwM83dpETucHznqaNGAc","assignmentType":${$.assignmentType},"actionType":0}`
-        const options = taskPostUrl(`superBrandDoTask`, body)
-        $.post(options, async (err, resp, data) => {
-            try {
-                if (err) {
-                    console.log(`${JSON.stringify(err)}`);
-                    console.log(`${$.name} API请求失败，请检查网路重试`);
-                } else {
-                    data = JSON.parse(data);
-										// console.log(`${JSON.stringify(data)}`);
-                    if (data && data.code === "0") {
-                        if (data.data.bizCode === "0") {
-															$.results = data.data.result.rewards || []
-															for(const z of $.results){
-															krtype = z.awardType
-															if(z.awardType == 2) {
-																console.log(`获得：${z.awardName}`)
-															}else if(z.awardType == 3) {
-																console.log(`获得：️${z.beanNum} 豆子`)
-															}else if(z.awardType == 6){
-																console.log(`获得：${z.awardName}`)
-															}else if(z.awardType == 5){
-																console.log(`获得：${z.awardName}`)
-															}else{
-																console.log(`不知道获得了啥`)
-																console.log(data)
-															}
-														}
-                            console.log("任务成功啦~")
-                        } else {
-                            console.log(data.data.bizMsg)
-                        }
-                        resolve(data.data.bizCode)
-                    } else {
-                        console.log(data)
-                    }
-                }
-            } catch (e) {
-                $.logErr(e, resp);
-            } finally {
-                resolve();
-            }
-        });
-    });
-}
 function doTask() {
     return new Promise(async (resolve) => {
         let body = `{"source":"${$.source}","activityId":${$.actid},"encryptProjectId":"${$.pid}","completionFlag":1,"encryptAssignmentId":"${$.encryptAssignmentId}","assignmentType":${$.assignmentType},"actionType":0}`
