@@ -41,8 +41,8 @@ if ($.isNode()) {
             }
             await xxx1();
             await $.wait(500);
-            //await xxx2();
-			//await $.wait(500);
+            await xxx2();
+			await $.wait(500);
             //await xxx4();			
             //await $.wait(500);
             await xxx3();     
@@ -105,7 +105,7 @@ async function xxx1() {
 }
 async function xxx2() {
     let opt = {
-        url: `https://api.m.jd.com/api?functionId=superBrandDoTask&appid=ProductZ4Brand&client=wh5&t=1673920844810&body=%7B%22source%22%3A%22hall_1111%22%2C%22activityId%22%3A1012333%2C%22encryptProjectId%22%3A%222aZfauURe2aNSkpWhRgJYi2SgSJc%22%2C%22completionFlag%22%3A1%2C%22encryptAssignmentId%22%3A%223S59eXDjPwQAH4QbUkFjJg4KztmC%22%2C%22assignmentType%22%3A0%2C%22actionType%22%3A0%7D`,
+        url: `https://api.m.jd.com/api?functionId=superBrandDoTask&appid=ProductZ4Brand&client=wh5&t=1673920844810&body=%7B%22source%22%3A%22hall_1111%22%2C%22activityId%22%3A1012471%2C%22completionFlag%22%3A1%2C%22encryptProjectId%22%3A%223MhsbG1ZeDpqjoEaU2SEw38gdavD%22%2C%22encryptAssignmentId%22%3A%22379wQ992MFewWwiKrkfrNfmtbVwH%22%2C%22assignmentType%22%3A0%2C%22actionType%22%3A0%7D`,
         headers: {
             'Origin': 'https://prodev.m.jd.com',
             'User-Agent': $.UA,
