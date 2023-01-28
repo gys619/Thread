@@ -44,9 +44,9 @@ if ($.isNode()) {
             await xxx7();
             await $.wait(1000);
             await xxx1();
-            if ($.ban) { console.log('风控，跳出'); continue };
+            // if ($.ban) { console.log('风控，跳出'); continue };
             await $.wait(500);
-            if ($.done) continue;
+            // if ($.done) continue;
             await xxx2();
             await $.wait(500);
             await xxx4();
