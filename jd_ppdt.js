@@ -30,7 +30,7 @@ if ($.isNode()) {
             $.isLogin = true;
             $.nickName = '';
 			$.ban='';
-			$.done='';
+			$.donep='';
             $.UA = require('./USER_AGENTS').UARAM();
             //await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
@@ -41,14 +41,16 @@ if ($.isNode()) {
                 }
                 continue
             }
+            await xxx9();
+            await $.wait(1000);					
             await xxx8();
             await $.wait(1000);			
             await xxx7();
             await $.wait(1000);
             await xxx1();
-            // if ($.ban) { console.log('风控，跳出'); continue };
+            if ($.ban) { console.log('风控，跳出'); continue };
             await $.wait(500);
-            // if ($.donep) continue;
+            if ($.donep) continue;
             await xxx2();
             await $.wait(500);
             await xxx4();
@@ -426,6 +428,51 @@ async function xxx8() {
         })
     })
 }
+
+async function xxx9() {
+    let opt = {
+        url: `https://api.m.jd.com/?client=wh5&appid=ProductZ4Brand&functionId=superBrandDoTask&t=1674924479339&body=%7B%22source%22:%22hall_1111%22,%22activityId%22:1012484,%22completionFlag%22:1,%22encryptProjectId%22:%222AN5xMLxaTnvp8ienwesrM8d3ksF%22,%22encryptAssignmentId%22:%223V5ANrek6PQBNSkjtgwPBhyGNey7%22,%22assignmentType%22:0,%22actionType%22:0%7D`,
+        headers: {
+            'Origin': 'https://prodev.m.jd.com',
+            'User-Agent': $.UA,
+            'Cookie': cookie
+        }
+    }
+    return new Promise(async (resolve) => {
+        $.post(opt, async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(` API请求失败，请检查网路重试`)
+                } else {
+                    data = JSON.parse(data)
+                    if (data.code == 0) {
+                        if (data.data.bizCode == 0) {
+                            if (data.data?.result?.rewards.length != 0) {
+                                if (data.data?.result?.rewards[0].awardType === 3) {
+                                    console.log(` 恭喜获得 ${data.data?.result?.rewards[0].beanNum} 京豆`);
+                                } else {
+                                    console.log(JSON.stringify(data.data?.result?.rewards));
+                                }
+                            } else {
+                                console.log(JSON.stringify(data.data?.result));
+                            }
+                        } else {
+                            console.log(data.data.bizMsg);
+                        }
+                    } else {
+                        console.log(data.msg)
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data)
+            }
+        })
+    })
+}
+
 function TotalBean() {
     return new Promise((resolve) => {
         const options = {
