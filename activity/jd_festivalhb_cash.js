@@ -8,7 +8,7 @@ c47654fb387a2b2d84ffc19f16b52690  20元
 e55648727819d44b09a414aa99c10b48  0.38元
 559967f159d4fbd39d58bbd690875fc8  0.3元
 */
-let id='a3595d5c3b107a912ba368b3ebc70ffa';//一元
+let id='559967f159d4fbd39d58bbd690875fc8';//一元
 const $ = new Env('团圆红包提现');
 const notify = $.isNode() ? require('./sendNotify') : '';
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
@@ -36,9 +36,9 @@ if ($.isNode()) {
             $.isLogin = true;
             $.nickName = '';
             $.UA = require('./USER_AGENTS').UARAM();
-			console.log(`\n******开始【账号${$.index}】${$.nickName || $.UserName}*********\n`);
+						console.log(`\n******开始【账号${$.index}】${$.nickName || $.UserName}*********\n`);
             await cashout(id);
-            await $.wait(2000)
+            await $.wait(5000)
         }
     }
 })()
