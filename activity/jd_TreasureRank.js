@@ -2,9 +2,8 @@
 /*
 10豆 
 入口：排行榜-宝藏榜
-10 10 * * * jd_TreasureRank.js
 updatetime: 2022/9/29
-author: https://github.com/11111129/jdpro
+author: https://github.com/6dylan6/jdpro
  */
 
 const $ = new Env('京东宝藏榜');
@@ -33,7 +32,7 @@ if ($.isNode()) {
             $.index = i + 1;
             $.isLogin = true;
             $.nickName = '';
-            await TotalBean();
+            // await TotalBean();
             console.log(`\n******开始【京东账号${$.index}】${$.nickName || $.UserName}*********\n`);
             if (!$.isLogin) {
                 $.msg($.name, `【提示】cookie已失效`, `京东账号${$.index} ${$.nickName || $.UserName}\n请重新登录获取\nhttps://bean.m.jd.com/bean/signIndex.action`, { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
