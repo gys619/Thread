@@ -2,7 +2,7 @@
 京东快递
 @Leaf
 
-cron: 13 7,22 * * *
+随机定时
 */
 const $ = new Env('京东快递');
 const got = require('got');
