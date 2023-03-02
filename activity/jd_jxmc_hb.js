@@ -1,6 +1,6 @@
 /**
  惊喜牧场
- cron 23 0-23/3 * * * https://raw.githubusercontent.com/333333/jd/main/scripts/jd_jxmc.js
+ cron 23 0-23/3 * * * https://raw.githubusercontent.com/star261/jd/main/scripts/jd_jxmc.js
  */
 // prettier-ignore
 !function (t, r) { "object" == typeof exports ? module.exports = exports = r() : "function" == typeof define && define.amd ? define([], r) : t.CryptoJS = r() }(this, function () {
@@ -82,7 +82,7 @@ let token ='';
   }
   console.log('\n##################开始账号内互助#################\n');
   $.shareCode = undefined
-  await getShareCode('11111127')
+  await getShareCode('jxmc.json')
   let newCookiesArr = [];
   for(let i = 0;i<$.helpCkList.length;i+=4){
     newCookiesArr.push($.helpCkList.slice(i,i+4))
