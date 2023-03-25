@@ -1,7 +1,7 @@
 /*
 特物Z_超级品牌殿堂
-cron:18 10,18 * * *
-18 10,18 * * * jd_superBrandz.js
+cron:1 1 1 1 *
+1 1 1 1 * jd_superBrandz.js
 
  */
 const $ = new Env('特物Z_超级品牌殿堂');

@@ -25,8 +25,8 @@ let message = '', allMessage = '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '';
 const JD_API_HOST = 'https://api.m.jd.com/client.action';
-let appIdArr = [];
-let appNameArr = [];
+let appIdArr = ["1FFVWyqyD"];
+let appNameArr = ["踏海寻村"];
 let appId, appName;
 $.shareCode = [];
 if ($.isNode()) {
