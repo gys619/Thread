@@ -1,7 +1,7 @@
 /*
 特物Z_签到抽奖
 APP首页下拉
-5 8,16 * * * jd_superBrandSign.js
+5 3,10 * * * jd_superBrandSign.js
  */
 const $ = new Env('特物Z_签到抽奖');
 //Node.js用户请在jdCookie.js处填写京东ck;
