@@ -16,15 +16,16 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let cookiesArr = [], cookie = '';
 let cashout = []
 let isCashOut = process.env.isCashOut ?? false;
-if ($.isNode()) {
-  Object.keys(jdCookieNode).forEach((item) => {
-    cookiesArr.push(jdCookieNode[item])
-  })
-  if (process.env.JD_DEBUG && process.env.JD_DEBUG === 'false') console.log = () => {
-  };
-} else {
-  cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
-}
+cookiesArr = process.env.JD_COOKIE.split('&');
+const run_order = [
+    '100元',
+    '20元',
+    '8元',
+    '3元',
+    '1元',
+    '0.3元'
+];
+let run_flag = true;
 !(async () => {
   if (!cookiesArr[0]) {
     $.msg($.name, '【提示】请先获取京东账号一cookie\n直接使用NobyDa的京东签到获取', 'https://bean.m.jd.com/bean/signIndex.action', { "open-url": "https://bean.m.jd.com/bean/signIndex.action" });
@@ -34,7 +35,7 @@ if ($.isNode()) {
     console.log('[赚钱大赢家提现]默认不执行,需要执行 isCashOut 设置为 true,更多说明看注释')
     return
   }
-  for (let i = 0; i < 1; i++) {
+for (let i = 0; i < cookiesArr.length; i++) {
     if (cookiesArr[i]) {
       cookie = cookiesArr[i];
       $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
@@ -54,19 +55,23 @@ if ($.isNode()) {
       }
       $.ADID = getUUID("xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", 1);
       $.UUID = getUUID("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-      await getHome()
-      if ($.isNormal) {
+      //await getHome()
+      //if ($.isNormal) {
+          cashout = [];
         await getExchangequery()
-        await getExchange()
+        //await getExchange()
         if (cashout) {
-          cashout = cashout.reverse()
+          cashout = cashout.sort(function(a,b) {return Number(b.cashoutAmount)-Number(a.cashoutAmount)});
           // console.log(cashout)
+          run_flag = true;
           for (const cash of cashout) {
             console.log('去提现 -> '+cash.name)
-            await getExchangeOut(cash.id)
+            await getExchangeOut(cash.id);
+            await $.wait(5000);
+            if(!run_flag) break;
           }
         }
-      }
+      //}
     }
   }
 })().catch((e) => { $.log('', `❌ ${$.name}, 失败! 原因: ${e}!`, '') }).finally(() => { $.done(); })
@@ -110,7 +115,7 @@ async function getHome(){
 async function getExchangequery(){
   return new Promise(async resolve => {
     const options = {
-      url: `https://api.m.jd.com/api?functionId=makemoneyshop_exchangequery&appid=jdlt_h5&channel=jxh5&cv=1.2.5&clientVersion=1.2.5&client=jxh5&uuid=7296248594457&cthr=1&body=%7B%22activeId%22%3A%2263526d8f5fe613a6adb48f03%22%2C%22sceneval%22%3A2%2C%22buid%22%3A325%2C%22appCode%22%3A%22msc588d6d5%22%2C%22time%22%3A1671265664838%2C%22signStr%22%3A%22%22%7D&t=1671265664839&loginType=2`,
+      url: `https://api.m.jd.com/api?functionId=makemoneyshop_exchangequery&appid=jdlt_h5&t=1675779008647&channel=jxh5&cv=1.2.5&clientVersion=1.2.5&client=jxh5&uuid=7296248594457&cthr=1&loginType=2&body=%7B%22activeId%22%3A%2263526d8f5fe613a6adb48f03%22%2C%22sceneval%22%3A2%2C%22buid%22%3A325%2C%22appCode%22%3A%22ms2362fc9e%22%2C%22time%22%3A1675779008647%2C%22signStr%22%3A%2274a7040ca4225c03a11c792c44f98082%22%7D`,
       headers: {
         'Accept':'*/*',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -156,7 +161,7 @@ async function getExchangequery(){
 async function getExchange(){
   return new Promise(async resolve => {
     const options = {
-      url: `https://wq.jd.com/prmt_exchange/client/exchange/list-record?g_ty=h5&g_tk=&appCode=msc588d6d5&bizCode=makemoneyshop&exchangeType=2&current=1&size=20&sceneval=2`,
+      url: `https://api.m.jd.com/api?functionId=makemoneyshop_exchangequery&appid=jdlt_h5&t=1675779008647&channel=jxh5&cv=1.2.5&clientVersion=1.2.5&client=jxh5&uuid=7296248594457&cthr=1&loginType=2&body=%7B%22activeId%22%3A%2263526d8f5fe613a6adb48f03%22%2C%22sceneval%22%3A2%2C%22buid%22%3A325%2C%22appCode%22%3A%22ms2362fc9e%22%2C%22time%22%3A1675779008647%2C%22signStr%22%3A%2274a7040ca4225c03a11c792c44f98082%22%7D`,
       headers: {
         'Accept':'*/*',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -173,7 +178,7 @@ async function getExchange(){
         } else {
           if (data) {
             data = JSON.parse(data);
-            if (data.data && data.ret === 0) {
+            if (data.data && data.code === 0) {
               // console.log(data.data.records)
             }
           } else {
@@ -192,7 +197,7 @@ async function getExchange(){
 async function getExchangeOut(id){
   return new Promise(async resolve => {
     const options = {
-      url: `https://wq.jd.com/prmt_exchange/client/exchange?g_ty=h5&g_tk=&appCode=msc588d6d5&bizCode=makemoneyshop&ruleId=${id}&sceneval=2`,
+      url: `https://api.m.jd.com/api?functionId=jxPrmtExchange_exchange&appid=cs_h5&body=%7B%22bizCode%22%3A%22makemoneyshop%22%2C%22ruleId%22%3A%22${id}%22%2C%22sceneval%22%3A2%2C%22buid%22%3A325%2C%22appCode%22%3A%22%22%2C%22time%22%3A${Date.now()}%2C%22signStr%22%3A%22%22%7D`,
       headers: {
         'Accept':'*/*',
         'Accept-Encoding': 'gzip, deflate, br',
@@ -207,14 +212,13 @@ async function getExchangeOut(id){
         if (err) {
           console.log(`${JSON.stringify(err)}`)
         } else {
-          if (data) {
-            data = JSON.parse(data);
-            if (data.data) {
-              console.log(data)
+          data = data ? JSON.parse(data) : {};
+            if (data?.data && data?.code === 0) {
+              run_flag = false;
+              console.log('--> 叼毛提现成功')
+            } else {
+              console.log(`--> 叼毛提现失败: ${data?.msg||'估计403了吧'}`)
             }
-          } else {
-            console.log(`京东服务器返回空数据`)
-          }
         }
       } catch (e) {
         $.logErr(e, resp)
