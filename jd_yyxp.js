@@ -5,7 +5,7 @@ cron:35 0,11 * * *
 ============Quantumultx===============
 [task_local]
 #预约抽奖赢新品
-35 0,11 * * * jd_yyxp.js, tag=预约抽奖赢新品, enabled=true
+45 0,14 * * * jd_yyxp.js, tag=预约抽奖赢新品, enabled=true
 */
 
 const $ = new Env("预约抽奖赢新品");
